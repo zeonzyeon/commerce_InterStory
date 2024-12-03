@@ -21,8 +21,9 @@ public class Payment {
 	@Column(name = "payment_id")
 	private Long paymentId;
 
-	@Column(name = "user_id", nullable = false)
-	private Long userId;
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "user_id", nullable = false)
+	private User user;
 
 	@CreatedDate
 	@Column(name = "date", nullable = false, updatable = false)

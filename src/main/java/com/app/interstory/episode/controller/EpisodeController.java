@@ -5,9 +5,11 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.app.interstory.episode.domain.dto.EpisodeRequestDTO;
@@ -51,4 +53,16 @@ public class EpisodeController {
 		episodeService.deleteEpisode(novelId, episodeId);
 		return ResponseEntity.ok("Episode deleted successfully");
 	}
+
+	// 회차 구매
+	@PostMapping("/{episodeId}/purchase")
+	public ResponseEntity<String> purchaseEpisode(
+		@PathVariable Long novelId,     // 소설 ID
+		@PathVariable Long episodeId,  // 에피소드 ID
+		@RequestParam Long userId      // 사용자 ID
+	) {
+		episodeService.purchaseEpisode(userId, novelId, episodeId);
+		return ResponseEntity.ok("Episode purchased successfully!");
+	}
+
 }

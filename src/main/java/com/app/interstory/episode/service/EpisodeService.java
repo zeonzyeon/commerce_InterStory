@@ -85,4 +85,42 @@ public class EpisodeService {
 
 		episodeRepository.delete(episode);
 	}
+
+	// 회차 구매
+	@Transactional
+	public void purchaseEpisode(Long userId, Long novelId, Long episodeId) {
+		// 1. 사용자 조회
+		User user = userRepository.findById(userId)
+			.orElseThrow(() -> new RuntimeException("User not found"));
+
+		// 2. 에피소드 조회 및 검증
+		Episode episode = episodeRepository.findById(episodeId)
+			.orElseThrow(() -> new RuntimeException("Episode not found"));
+
+		if (!episode.getNovelId().equals(novelId)) {
+			throw new RuntimeException("Invalid novel ID for the given episode.");
+		}
+
+		// 3. 에피소드 가격 정의
+		Long episodePrice = 500L; // 임시 포인트
+
+		// 4. 포인트 확인
+		if (user.getPoint() < episodePrice) {
+			throw new RuntimeException("Insufficient points");
+		}
+
+		// 5. 포인트 차감
+		user.setPoint(user.getPoint() - episodePrice);
+		userRepository.save(user);
+
+		// 6. 포인트 사용 내역 저장
+		Point point = Point.builder()
+			.user(user)
+			.balance(-episodePrice)
+			.description("Episode purchase - ID: " + episodeId)
+			.build();
+		pointRepository.save(point);
+	}
+
+
 }

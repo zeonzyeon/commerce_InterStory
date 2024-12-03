@@ -21,8 +21,9 @@ public class Point {
 	@Column(name = "point_id")
 	private Long pointId;
 
-	@Column(name = "user_id", nullable = false)
-	private Long userId;
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "user_id", nullable = false)
+	private User user;
 
 	@CreatedDate
 	@Column(name = "used_at", nullable = false, updatable = false)
