@@ -24,7 +24,7 @@ public class Episode {
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "novel_id", nullable = false)
-	private Novel novelId;
+	private Novel novel;
 
 	@Column(name = "title", nullable = false)
 	private String title;

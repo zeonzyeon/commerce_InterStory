@@ -4,6 +4,8 @@ import java.sql.Timestamp;
 
 import org.springframework.data.annotation.CreatedDate;
 
+import com.app.interstory.user.domain.User;
+
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -22,8 +24,9 @@ public class Payment {
 	@Column(name = "payment_id")
 	private Long paymentId;
 
+	@ManyToOne(fetch = FetchType.LAZY)
 	@Column(name = "user_id", nullable = false)
-	private Long userId;
+	private User user;
 
 	@CreatedDate
 	@Column(name = "date", nullable = false, updatable = false)

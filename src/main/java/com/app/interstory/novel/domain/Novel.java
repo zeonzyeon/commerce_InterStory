@@ -22,7 +22,7 @@ public class Novel {
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "user_id", nullable = false)
-	private User userId;
+	private User user;
 
 	@Column(name = "title", nullable = false)
 	private String title;

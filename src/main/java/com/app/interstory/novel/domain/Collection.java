@@ -22,9 +22,9 @@ public class Collection {
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "user_id", nullable = false)
-	private User userId;
+	private User user;
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "episode_id", nullable = false)
-	private Episode episodeId;
+	private Episode episode;
 }
