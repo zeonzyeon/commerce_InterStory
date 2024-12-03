@@ -1,6 +1,8 @@
-package com.app.interstory.user.domain;
+package com.app.interstory.payment.domain;
 
 import java.sql.Timestamp;
+
+import com.app.interstory.user.domain.User;
 
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
