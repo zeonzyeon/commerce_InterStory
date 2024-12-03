@@ -1,4 +1,4 @@
-package com.app.interstory.comment.domain;
+package com.app.interstory.novel.domain;
 
 import java.sql.Timestamp;
 
