@@ -19,7 +19,6 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @Builder
 public class Comment {
-
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Column(name = "comment_id")
