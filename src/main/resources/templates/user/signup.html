@@ -1,0 +1,546 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+  <title>회원가입 | InterStory</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, system-ui, Roboto, sans-serif;
+    }
+
+    body {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      background: #0f0f0f;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .stars {
+      position: fixed;
+      width: 100vw;
+      height: 100vh;
+      background: radial-gradient(2px 2px at 20px 30px, #eee, rgba(0,0,0,0)),
+      radial-gradient(2px 2px at 40px 70px, #fff, rgba(0,0,0,0)),
+      radial-gradient(2px 2px at 50px 160px, #ddd, rgba(0,0,0,0)),
+      radial-gradient(2px 2px at 90px 40px, #fff, rgba(0,0,0,0));
+      background-size: 200px 200px;
+      animation: stars 4s linear infinite;
+    }
+
+    @keyframes stars {
+      0% { transform: translateY(0); }
+      100% { transform: translateY(-200px); }
+    }
+
+    .background-gradient {
+      position: fixed;
+      width: 100vw;
+      height: 100vh;
+      background:
+              radial-gradient(circle at 0% 0%, rgba(255, 51, 102, 0.1), transparent 50%),
+              radial-gradient(circle at 100% 100%, rgba(51, 102, 255, 0.1), transparent 50%);
+      filter: blur(60px);
+      z-index: 0;
+    }
+
+    .signup-container {
+      background: rgba(255, 255, 255, 0.95);
+      backdrop-filter: blur(10px);
+      padding: 2.5rem;
+      border-radius: 24px;
+      width: 90%;
+      max-width: 460px;
+      position: relative;
+      z-index: 1;
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+    }
+
+    .logo {
+      text-align: center;
+      margin-bottom: 2rem;
+    }
+
+    .logo h1 {
+      font-size: 1.8rem;
+      color: #111;
+      font-weight: 700;
+      letter-spacing: -0.5px;
+      margin: 0.5rem 0;
+    }
+
+    .logo span {
+      color: #666;
+      font-size: 0.95rem;
+      font-weight: 500;
+    }
+
+    .input-group {
+      margin-bottom: 1.25rem;
+      position: relative;
+    }
+
+    .input-group input {
+      width: 100%;
+      padding: 1rem 1.25rem;
+      border: 1.5px solid #eee;
+      border-radius: 14px;
+      font-size: 0.95rem;
+      background: rgba(255, 255, 255, 0.9);
+      transition: all 0.2s ease;
+    }
+
+    .input-group input:focus {
+      border-color: #333;
+      box-shadow: 0 0 0 4px rgba(51, 51, 51, 0.1);
+      outline: none;
+    }
+
+    .input-group button {
+      position: absolute;
+      right: 8px;
+      top: 50%;
+      transform: translateY(-50%);
+      padding: 0.5rem 1rem;
+      border: none;
+      border-radius: 10px;
+      background: #111;
+      color: white;
+      font-size: 0.85rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+
+    .input-group button:hover {
+      background: #000;
+      transform: translateY(-50%) translateX(-2px);
+    }
+
+    .verification-input {
+      max-height: 0;
+      overflow: hidden;
+      transition: max-height 0.3s ease-out;
+    }
+
+    .verification-input.active {
+      max-height: 100px;
+    }
+
+    .validation-message {
+      font-size: 0.85rem;
+      color: #ff3366;
+      margin-top: 0.5rem;
+      min-height: 20px;
+      opacity: 0;
+      transform: translateY(-10px);
+      transition: all 0.2s ease;
+    }
+
+    .validation-message.show {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    .signup-button {
+      width: 100%;
+      padding: 1rem;
+      border: none;
+      border-radius: 14px;
+      background: #111;
+      color: white;
+      font-size: 1rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      margin-top: 1rem;
+    }
+
+    .signup-button:hover {
+      background: #000;
+      transform: translateY(-2px);
+    }
+
+    .signup-button:disabled {
+      background: #ccc;
+      cursor: not-allowed;
+      transform: none;
+    }
+
+    .login-link {
+      text-align: center;
+      margin-top: 1.5rem;
+      color: #666;
+      font-size: 0.9rem;
+    }
+
+    .login-link a {
+      color: #111;
+      text-decoration: none;
+      font-weight: 600;
+      transition: color 0.2s ease;
+    }
+
+    .login-link a:hover {
+      color: #ff3366;
+    }
+
+    @media (max-width: 480px) {
+      .signup-container {
+        width: 100%;
+        height: 100vh;
+        border-radius: 0;
+        padding: 2rem 1.5rem;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+      }
+
+      body {
+        align-items: flex-start;
+      }
+
+      .input-group button {
+        padding: 0.5rem 0.75rem;
+        font-size: 0.8rem;
+      }
+    }
+
+    /* 성공 상태 스타일 */
+    .input-group.success input {
+      border-color: #00c853;
+    }
+
+    .input-group.success .validation-message {
+      color: #00c853;
+    }
+
+    /* 에러 상태 스타일 */
+    .input-group.error input {
+      border-color: #ff3366;
+    }
+
+    /* 로딩 애니메이션 */
+    @keyframes loading {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+
+    .loading {
+      position: relative;
+    }
+
+    .loading::after {
+      content: '';
+      position: absolute;
+      width: 20px;
+      height: 20px;
+      border: 2px solid #fff;
+      border-top-color: transparent;
+      border-radius: 50%;
+      animation: loading 0.8s linear infinite;
+      right: 10px;
+      top: calc(50% - 10px);
+    }
+  </style>
+</head>
+<body>
+<div class="stars"></div>
+<div class="background-gradient"></div>
+<div class="signup-container">
+  <div class="logo">
+    <h1>ENJOY YOUR INTERSTORY</h1>
+    <span>새로운 이야기의 시작</span>
+  </div>
+  <form id="signupForm">
+    <div class="input-group">
+      <input type="email" id="email" placeholder="이메일" required>
+      <button type="button" id="verifyEmailBtn">인증하기</button>
+      <div class="validation-message">올바른 이메일 주소를 입력해주세요</div>
+    </div>
+    <div class="input-group verification-input" id="verificationGroup">
+      <input type="text" id="verificationCode" placeholder="인증코드 입력">
+      <button type="button" id="verifyCodeBtn">확인</button>
+      <div class="validation-message" id="verificationMessage"></div>
+      <div class="validation-message"></div>
+    </div>
+    <div class="input-group">
+      <input type="text" id="nickname" placeholder="닉네임" required>
+      <button type="button" id="checkNicknameBtn">중복확인</button>
+      <div class="validation-message" id="nicknameMessage"></div>
+    </div>
+    <div class="input-group">
+      <input type="password" id="password" placeholder="비밀번호" required>
+      <div class="validation-message" id="passwordMessage"></div>
+    </div>
+    <div class="input-group">
+      <input type="password" id="confirmPassword" placeholder="비밀번호 확인" required>
+      <div class="validation-message" id="confirmPasswordMessage"></div>
+    </div>
+    <button type="submit" class="signup-button" disabled>가입하기</button>
+  </form>
+  <div class="login-link">
+    이미 계정이 있으신가요? <a href="/auth/login">로그인하기</a>
+  </div>
+</div>
+
+<script>
+  $(document).ready(function() {
+    // 요소 캐싱
+    const $form = $('#signupForm');
+    const $email = $('#email');
+    const $verifyEmailBtn = $('#verifyEmailBtn');
+    const $verificationGroup = $('#verificationGroup');
+    const $verificationCode = $('#verificationCode');
+    const $verifyCodeBtn = $('#verifyCodeBtn');
+    const $nickname = $('#nickname');
+    const $checkNicknameBtn = $('#checkNicknameBtn');
+    const $password = $('#password');
+    const $confirmPassword = $('#confirmPassword');
+    const $submitButton = $('.signup-button');
+
+    // 상태 변수
+    let isEmailVerified = false;
+    let isNicknameAvailable = false;
+    let isPasswordValid = false;
+    let isPasswordMatch = false;
+
+    // 이메일 인증 요청
+    $verifyEmailBtn.on('click', function() {
+      if (validateEmail($email.val())) {
+        const $btn = $(this);
+        $btn.prop('disabled', true).addClass('loading');
+
+        $.ajax({
+          url: '/api/auth/email-verification-send',
+          type: 'POST',
+          contentType: 'application/json',
+          data: JSON.stringify({ email: $email.val() }),
+          success: function() {
+            $verificationGroup.addClass('active');
+            showMessage('emailMessage', '인증 코드를 전송했습니다!', 'success');
+            $email.prop('readonly', true);
+          },
+          error: function(xhr) {
+            showMessage('emailMessage', '인증 코드 전송에 실패했습니다.', 'error');
+            $btn.prop('disabled', false);
+          },
+          complete: function() {
+            $btn.removeClass('loading');
+          }
+        });
+      } else {
+        showMessage('emailMessage', '유효한 이메일을 입력해주세요.', 'error');
+      }
+    });
+
+    // 인증 코드 확인
+    $verifyCodeBtn.on('click', function() {
+      const code = $verificationCode.val();
+      const email = $email.val();
+
+      if (!code) {
+        showMessage('verificationMessage', '인증 코드를 입력해주세요.', 'error');
+        return;
+      }
+
+      const $btn = $(this);
+      $btn.prop('disabled', true).addClass('loading');
+
+
+      $.ajax({
+        url: '/api/auth/email-verification',
+        type: 'POST',
+        contentType: 'application/json',
+        data: JSON.stringify({
+          email: email,
+          code: code
+        }),
+        success: function(response) {
+          isEmailVerified = true;
+          showMessage('verificationMessage', '이메일 인증이 완료되었습니다.', 'success');
+          $verificationCode.prop('readonly', true);
+          updateSubmitButton();
+        },
+        error: function() {
+          showMessage('verificationMessage', '잘못된 인증 코드입니다.', 'error');
+          $btn.prop('disabled', false);
+        },
+        complete: function() {
+          $btn.removeClass('loading');
+        }
+      });
+    });
+
+    // 닉네임 중복 확인
+    $checkNicknameBtn.on('click', function() {
+      const nickname = $nickname.val();
+      if (nickname.length < 2 || nickname.length > 10) {
+        showMessage('nicknameMessage', '닉네임은 2-10자 이내로 입력해주세요.', 'error');
+        return;
+      }
+
+      const $btn = $(this);
+      $btn.prop('disabled', true).addClass('loading');
+
+      $.ajax({
+        url: '/api/auth/nickname-verification',
+        type: 'POST',
+        contentType: 'application/json',
+        data: JSON.stringify({ nickname: nickname }),
+        success: function(response) {
+          isNicknameAvailable = response;
+
+          showMessage(
+                  'nicknameMessage',
+                  isNicknameAvailable ? '사용 가능한 닉네임입니다.' : '이미 사용 중인 닉네임입니다.',
+                  isNicknameAvailable ? 'success' : 'error'
+          );
+          if (isNicknameAvailable) {
+            $nickname.prop('readonly', true);
+          }
+          updateSubmitButton();
+        },
+        error: function() {
+          showMessage('nicknameMessage', '닉네임 확인 중 오류가 발생했습니다.', 'error');
+          $btn.prop('disabled', false);
+        },
+        complete: function() {
+          $btn.removeClass('loading');
+        }
+      });
+    });
+
+    // 비밀번호 유효성 검사
+    $password.on('input', function() {
+      const password = $(this).val();
+      isPasswordValid = validatePassword(password);
+      if (isPasswordValid) {
+        showMessage('passwordMessage', '사용 가능한 비밀번호입니다.', 'success');
+      } else {
+        showMessage('passwordMessage', '8자 이상의 영문, 숫자, 특수문자 조합이 필요합니다.', 'error');
+      }
+    });
+
+    // 비밀번호 확인 검사
+    $confirmPassword.on('input', function() {
+      validatePasswordMatch();
+      updateSubmitButton();
+    });
+
+    // 비밀번호 일치 확인
+    function validatePasswordMatch() {
+      const password = $password.val();
+      const confirmPassword = $confirmPassword.val();
+      isPasswordMatch = password === confirmPassword && password !== '';
+
+      if (confirmPassword !== '') {
+        showMessage(
+                'confirmPasswordMessage',
+                isPasswordMatch ? '비밀번호가 일치합니다.' : '비밀번호가 일치하지 않습니다.',
+                isPasswordMatch ? 'success' : 'error'
+        );
+      }
+    }
+
+    // 폼 제출
+    $form.on('submit', function(e) {
+      e.preventDefault();
+
+      if (!validateSignupForm()) {
+        return;
+      }
+
+      const userData = {
+        email: $email.val(),
+        password: $password.val(),
+        nickname: $nickname.val()
+      };
+
+      $submitButton.prop('disabled', true).addClass('loading');
+
+      $.ajax({
+        url: '/api/auth/signup',
+        type: 'POST',
+        contentType: 'application/json',
+        data: JSON.stringify(userData),
+        success: function(response) {
+          console.log(response)
+          alert(response);
+          window.location.href = '/auth/login';
+        },
+        error: function(xhr) {
+          alert('회원가입 중 오류가 발생했습니다.');
+          $submitButton.prop('disabled', false);
+        },
+        complete: function() {
+          $submitButton.removeClass('loading');
+        }
+      });
+    });
+
+    // 폼 유효성 검사
+    function validateSignupForm() {
+      if (!isEmailVerified) {
+        showMessage('emailMessage', '이메일 인증이 필요합니다.', 'error');
+        return false;
+      }
+
+      if (!isNicknameAvailable) {
+        showMessage('nicknameMessage', '닉네임 중복 확인이 필요합니다.', 'error');
+        return false;
+      }
+
+      if (!isPasswordValid) {
+        showMessage('passwordMessage', '올바른 비밀번호를 입력해주세요.', 'error');
+        return false;
+      }
+
+      if (!isPasswordMatch) {
+        showMessage('confirmPasswordMessage', '비밀번호가 일치하지 않습니다.', 'error');
+        return false;
+      }
+
+      return true;
+    }
+
+    // 제출 버튼 상태 업데이트
+    function updateSubmitButton() {
+      const isFormValid = isEmailVerified && isNicknameAvailable &&
+              isPasswordValid && isPasswordMatch;
+      $submitButton.prop('disabled', !isFormValid);
+    }
+
+    // 메시지 표시
+    function showMessage(elementId, message, type) {
+      const $messageElement = $(`#${elementId}`);
+      $messageElement
+              .text(message)
+              .addClass('show')
+              .parent()
+              .removeClass('success error')
+              .addClass(type);
+    }
+
+    // 이메일 유효성 검사
+    function validateEmail(email) {
+      return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+    }
+
+    // 비밀번호 유효성 검사
+    function validatePassword(password) {
+      // 실제 환경에서는 아래 정규식 사용
+      // return /^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*#?&])[A-Za-z\d@$!%*#?&]{8,}$/.test(password);
+      return password.length >= 2; // 개발 환경용 임시 검증
+    }
+  });
+</script>
+</body>
+</html>
