@@ -1,4 +1,4 @@
-package com.app.interstory.novel.domain;
+package com.app.interstory.novel.domain.entity;
 
 import com.app.interstory.user.domain.entity.User;
 
@@ -8,23 +8,23 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-@Getter
 @Entity
-@Table(name = "collection")
+@Table(name = "favorite_novel")
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class Collection {
+@Getter
+public class FavoriteNovel {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	@Column(name = "collection_id")
-	private Long collectionId;
+	@Column(name = "favorite_novel_id")
+	private Long favoriteNovelId;
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "user_id", nullable = false)
 	private User user;
 
 	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "episode_id", nullable = false)
-	private Episode episode;
+	@JoinColumn(name = "novel_id", nullable = false)
+	private Novel novel;
 }

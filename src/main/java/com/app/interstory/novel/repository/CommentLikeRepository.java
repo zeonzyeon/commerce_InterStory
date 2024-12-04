@@ -6,9 +6,9 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
-import com.app.interstory.novel.domain.Comment;
-import com.app.interstory.novel.domain.CommentLike;
-import com.app.interstory.user.domain.User;
+import com.app.interstory.novel.domain.entity.Comment;
+import com.app.interstory.novel.domain.entity.CommentLike;
+import com.app.interstory.user.domain.entity.User;
 
 @Repository
 public interface CommentLikeRepository extends JpaRepository<CommentLike, Long> {

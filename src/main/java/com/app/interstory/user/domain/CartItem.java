@@ -1,6 +1,6 @@
 package com.app.interstory.user.domain;
 
-import com.app.interstory.novel.domain.Episode;
+import com.app.interstory.novel.domain.entity.Episode;
 import com.app.interstory.user.domain.entity.User;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;

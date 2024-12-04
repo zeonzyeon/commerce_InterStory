@@ -8,9 +8,9 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.app.interstory.novel.domain.Comment;
-import com.app.interstory.novel.domain.CommentLike;
-import com.app.interstory.novel.domain.Episode;
+import com.app.interstory.novel.domain.entity.Comment;
+import com.app.interstory.novel.domain.entity.CommentLike;
+import com.app.interstory.novel.domain.entity.Episode;
 import com.app.interstory.novel.domain.Sort;
 import com.app.interstory.novel.dto.request.CommentRequestDto;
 import com.app.interstory.novel.dto.response.CommentListResponseDto;
@@ -19,8 +19,8 @@ import com.app.interstory.novel.repository.CommentLikeRepository;
 import com.app.interstory.novel.repository.CommentRepository;
 import com.app.interstory.novel.repository.EpisodeRepository;
 import com.app.interstory.user.domain.Roles;
-import com.app.interstory.user.domain.User;
 import com.app.interstory.user.domain.UserDetail;
+import com.app.interstory.user.domain.entity.User;
 
 import lombok.RequiredArgsConstructor;
 
