@@ -33,6 +33,7 @@ public class Novel {
 	@Column(name = "plan", columnDefinition = "TEXT", nullable = false)
 	private String plan;
 
+	@Builder.Default
 	@Column(name = "status", nullable = false)
 	private NovelStatus status = NovelStatus.DRAFT;
 
