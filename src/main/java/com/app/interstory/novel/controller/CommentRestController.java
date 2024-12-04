@@ -27,7 +27,7 @@ public class CommentRestController {
 	private final CommentService commentService;
 
 	// 댓글 작성
-	@PostMapping("/novels/{novelId}/episodes/{episodeId}/comments")
+	@PostMapping("/novels/episodes/{episodeId}/comments")
 	public ResponseEntity<String> writeComment(@RequestBody CommentRequestDto requestDto, @PathVariable long episodeId,
 		@AuthenticationPrincipal UserDetail userDetails) {
 		commentService.writeComment(requestDto, episodeId, userDetails);
@@ -35,7 +35,7 @@ public class CommentRestController {
 	}
 
 	// 회차 댓글 조회
-	@GetMapping("/novels/{novelId}/episodes/{episodeId}/comments")
+	@GetMapping("/novels/episodes/{episodeId}/comments")
 	public ResponseEntity<CommentListResponseDto> getEpisodeComment(@PathVariable Long episodeId,
 		@RequestParam(defaultValue = "NEW_TO_OLD") Sort sort, @RequestParam(defaultValue = "1") Integer page,
 		@AuthenticationPrincipal UserDetail userDetails) {
@@ -53,7 +53,7 @@ public class CommentRestController {
 	}
 
 	// 댓글 삭제
-	@DeleteMapping("/novels/{novelId}/episodes/{episodeId}/comments/{commentId}")
+	@DeleteMapping("/novels/episodes/comments/{commentId}")
 	public ResponseEntity<Void> deleteComment(@PathVariable Long commentId,
 		@AuthenticationPrincipal UserDetail userDetails) {
 		commentService.deleteComment(commentId, userDetails);
@@ -61,7 +61,7 @@ public class CommentRestController {
 	}
 
 	// 댓글 추천
-	@PostMapping("/novels/{novelId}/episodes/{episodeId}/comments/{commentId}/like")
+	@PostMapping("/novels/episodes/comments/{commentId}/like")
 	public ResponseEntity<String> likeComment(@PathVariable Long commentId,
 		@AuthenticationPrincipal UserDetail userDetails) {
 		String afterLikeMessage = commentService.likeComment(commentId, userDetails);
