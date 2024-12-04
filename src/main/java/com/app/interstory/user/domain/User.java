@@ -36,8 +36,9 @@ public class User {
 	@Column(name = "is_activity", nullable = false)
 	private boolean isActivity;
 
+	@Builder.Default
 	@Column(name = "role", nullable = false)
-	private Roles role;
+	private Roles role = Roles.PUBLIC;
 
 	@Column(name = "profile_renamed_filename")
 	private String profileRenamedFilename;
@@ -49,11 +50,13 @@ public class User {
 	@CreatedDate
 	private String createdAt;
 
+	@Builder.Default
 	@Column(name = "subscribe", nullable = false)
-	private boolean subscribe;
+	private boolean subscribe = false;
 
+	@Builder.Default
 	@Column(name = "auto_payment", nullable = false)
-	private boolean autoPayment;
+	private boolean autoPayment = false;
 
 	public void update(String profileUrl, String nickname, String password) {
 		this.profileUrl = profileUrl;

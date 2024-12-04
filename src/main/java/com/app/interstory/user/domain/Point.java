@@ -26,8 +26,8 @@ public class Point {
 	@JoinColumn(name = "user_id", nullable = false)
 	private User user;
 
-	@CreatedDate
 	@Column(name = "used_at", nullable = false, updatable = false)
+	@CreatedDate
 	private Timestamp usedAt;
 
 	@Column(name = "balance", nullable = false)

@@ -34,7 +34,7 @@ public class Novel {
 	private String plan;
 
 	@Column(name = "status", nullable = false)
-	private NovelStatus status;
+	private NovelStatus status = NovelStatus.DRAFT;
 
 	@Column(name = "thumbnail_renamed_filename")
 	private String thumbnailRenamedFilename;
