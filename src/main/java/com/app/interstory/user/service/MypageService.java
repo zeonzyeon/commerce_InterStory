@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service;
 
 import com.app.interstory.novel.domain.FavoriteNovel;
 import com.app.interstory.novel.domain.Novel;
+import com.app.interstory.novel.domain.RecentNovel;
 import com.app.interstory.novel.domain.Tag;
 import com.app.interstory.novel.domain.Episode;
 import com.app.interstory.novel.repository.EpisodeRepository;
@@ -17,6 +18,7 @@ import com.app.interstory.novel.repository.TagRepository;
 import com.app.interstory.user.domain.entity.User;
 import com.app.interstory.user.dto.request.UpdateUserRequestDTO;
 import com.app.interstory.user.dto.response.FavoriteNovelResponseDTO;
+import com.app.interstory.user.dto.response.ReadNovelResponseDTO;
 import com.app.interstory.user.dto.response.UpdateUserResponseDTO;
 import com.app.interstory.user.repository.UserRepository;
 
@@ -45,6 +47,7 @@ public class MypageService {
 
 	public Page<FavoriteNovelResponseDTO> getFavoriteNovels(User user, Pageable pageable) {
 		Page<FavoriteNovel> favoriteNovelPage = favoriteNovelRepository.findByUser(user, pageable);
+		// TODO: 만약 관심작품 선정은 했지만 한번도 열람하지 않았을 경우 예외처리 필요
 
 		return favoriteNovelPage.map(favoriteNovel -> {
 			Novel novel = favoriteNovel.getNovel();
@@ -64,6 +67,38 @@ public class MypageService {
 				.orElse(0);
 
 			return FavoriteNovelResponseDTO.builder()
+				.title(novel.getTitle())
+				.author(novel.getUser().getNickname())
+				.episodeCount(episodeCount)
+				.likeCount(likeCount)
+				.tags(tags)
+				.thumbnailUrl(novel.getThumbnailUrl())
+				.lastReadEpisode(lastReadEpisode)
+				.build();
+		});
+	}
+
+	public Page<ReadNovelResponseDTO> getReadNovels(User user, Pageable pageable) {
+		Page<RecentNovel> recentNovelPage = recentNovelRepository.findByUser(user, pageable);
+
+		return recentNovelPage.map(readNovel -> {
+			Novel novel = readNovel.getNovel();
+
+			Integer episodeCount = episodeRepository.countByNovel(novel);
+
+			Integer likeCount = episodeRepository.findByNovel(novel).stream()
+				.mapToInt(Episode::getLikeCount)
+				.sum();
+
+			List<String> tags = tagRepository.findByNovel(novel).stream()
+				.map(Tag::getTag)
+				.toList();
+
+			Integer lastReadEpisode = recentNovelRepository.findByUserAndNovel(user, novel)
+				.map(recentNovel -> recentNovel.getEpisode().getEpisodeId().intValue())
+				.orElse(0);
+
+			return ReadNovelResponseDTO.builder()
 				.title(novel.getTitle())
 				.author(novel.getUser().getNickname())
 				.episodeCount(episodeCount)
