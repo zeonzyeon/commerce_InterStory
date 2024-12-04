@@ -1,14 +1,14 @@
 package com.app.interstory.user.domain;
 
-import java.sql.Timestamp;
-
-import org.springframework.data.annotation.CreatedDate;
-
+import com.app.interstory.user.domain.entity.User;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.springframework.data.annotation.CreatedDate;
+
+import java.sql.Timestamp;
 
 @Entity
 @Table(name = "point")

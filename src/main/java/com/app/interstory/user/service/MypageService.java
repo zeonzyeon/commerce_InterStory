@@ -4,15 +4,7 @@ import java.util.List;
 
 import org.springframework.stereotype.Service;
 
-import com.app.interstory.novel.domain.Episode;
-import com.app.interstory.novel.domain.FavoriteNovel;
-import com.app.interstory.novel.domain.Novel;
-import com.app.interstory.novel.domain.Tag;
-import com.app.interstory.novel.repository.EpisodeRepository;
-import com.app.interstory.novel.repository.FavoriteNovelRepository;
-import com.app.interstory.novel.repository.RecentNovelRepository;
-import com.app.interstory.novel.repository.TagRepository;
-import com.app.interstory.user.domain.User;
+import com.app.interstory.user.domain.entity.User;
 import com.app.interstory.user.dto.request.UpdateUserRequestDTO;
 import com.app.interstory.user.dto.response.FavoriteNovelResponseDTO;
 import com.app.interstory.user.dto.response.UpdateUserResponseDTO;

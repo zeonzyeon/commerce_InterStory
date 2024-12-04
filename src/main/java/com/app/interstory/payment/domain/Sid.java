@@ -1,6 +1,6 @@
 package com.app.interstory.payment.domain;
 
-import com.app.interstory.user.domain.User;
+import com.app.interstory.user.domain.entity.User;
 
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
