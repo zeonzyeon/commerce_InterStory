@@ -1,17 +1,23 @@
-package com.app.interstory.user.domain;
+package com.app.interstory.user.domain.entity;
 
+import com.app.interstory.user.domain.Roles;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.RequiredArgsConstructor;
+
+import java.io.Serializable;
 
 @Entity
 @Table(name = "users")
 @NoArgsConstructor
 @AllArgsConstructor
+@Getter
 @Builder
-public class User {
+public class User implements Serializable {
+    private static final long serialVersionUID = 1L;
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -28,6 +34,7 @@ public class User {
     @Column(nullable = false)
     private Long point;
 
+    @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private Roles role;
 
@@ -35,6 +42,6 @@ public class User {
     private boolean isActivity;
 
     @Column(name = "profile_url")
-    private boolean profileUrl;
+    private String profileUrl;
 
 }

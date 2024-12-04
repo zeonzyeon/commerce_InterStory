@@ -1,8 +1,10 @@
 package com.app.interstory.user.service;
 
+import com.app.interstory.config.globalExeption.customException.DuplicateEmailException;
+import com.app.interstory.config.globalExeption.customException.DuplicateNicknameException;
 import com.app.interstory.user.domain.Roles;
 import com.app.interstory.user.dto.request.LocalSignUpRequest;
-import com.app.interstory.user.domain.User;
+import com.app.interstory.user.domain.entity.User;
 import com.app.interstory.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -24,7 +26,17 @@ public class UserService {
         return !userRepository.existsByNickname(nickname);
     }
 
+    @Transactional
     public User localSingUp(LocalSignUpRequest localSignUpRequest) {
+        if (userRepository.existsByEmail(localSignUpRequest.getEmail())) {
+            throw new DuplicateEmailException("이미 존재하는 이메일입니다.");
+        }
+
+        // 닉네임 중복 체크
+        if (userRepository.existsByNickname(localSignUpRequest.getNickname())) {
+            throw new DuplicateNicknameException("이미 존재하는 닉네임입니다.");
+        }
+
         return userRepository.save(localSignUpRequestToUser(localSignUpRequest));
     }
 

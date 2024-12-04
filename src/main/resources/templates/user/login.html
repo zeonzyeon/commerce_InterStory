@@ -4,281 +4,19 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>로그인 | InterStory</title>
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, system-ui, Roboto, sans-serif;
-        }
-
-        body {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            min-height: 100vh;
-            background: #0f0f0f;
-            position: relative;
-            overflow: hidden;
-        }
-
-        .stars {
-            position: fixed;
-            width: 100vw;
-            height: 100vh;
-            background: radial-gradient(2px 2px at 20px 30px, #eee, rgba(0,0,0,0)),
-            radial-gradient(2px 2px at 40px 70px, #fff, rgba(0,0,0,0)),
-            radial-gradient(2px 2px at 50px 160px, #ddd, rgba(0,0,0,0)),
-            radial-gradient(2px 2px at 90px 40px, #fff, rgba(0,0,0,0));
-            background-size: 200px 200px;
-            animation: stars 4s linear infinite;
-        }
-
-        @keyframes stars {
-            0% { transform: translateY(0); }
-            100% { transform: translateY(-200px); }
-        }
-
-        .background-gradient {
-            position: fixed;
-            width: 100vw;
-            height: 100vh;
-            background:
-                    radial-gradient(circle at 0% 0%, rgba(255, 51, 102, 0.1), transparent 50%),
-                    radial-gradient(circle at 100% 100%, rgba(51, 102, 255, 0.1), transparent 50%);
-            filter: blur(60px);
-            z-index: 0;
-        }
-
-        .login-container {
-            background: rgba(255, 255, 255, 0.95);
-            backdrop-filter: blur(10px);
-            padding: 2.5rem;
-            border-radius: 24px;
-            width: 90%;
-            max-width: 400px;
-            position: relative;
-            z-index: 1;
-            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
-        }
-
-        .logo {
-            text-align: center;
-            margin-bottom: 2.5rem;
-        }
-
-        .logo h1 {
-            font-size: 1.8rem;
-            color: #111;
-            font-weight: 700;
-            letter-spacing: -0.5px;
-            margin: 0.5rem 0;
-        }
-
-        .logo span {
-            color: #666;
-            font-size: 0.95rem;
-            font-weight: 500;
-        }
-
-        .input-group {
-            margin-bottom: 1.25rem;
-            position: relative;
-        }
-
-        .input-group input {
-            width: 100%;
-            padding: 1rem 1.25rem;
-            border: 1.5px solid #eee;
-            border-radius: 14px;
-            font-size: 0.95rem;
-            background: rgba(255, 255, 255, 0.9);
-            transition: all 0.2s ease;
-        }
-
-        .input-group input:focus {
-            border-color: #333;
-            box-shadow: 0 0 0 4px rgba(51, 51, 51, 0.1);
-            outline: none;
-        }
-
-        .input-group input::placeholder {
-            color: #999;
-            font-weight: 500;
-        }
-
-        .validation-message {
-            font-size: 0.85rem;
-            color: #ff3366;
-            margin-top: 0.5rem;
-            min-height: 20px;
-            opacity: 0;
-            transform: translateY(-10px);
-            transition: all 0.2s ease;
-        }
-
-        .validation-message.show {
-            opacity: 1;
-            transform: translateY(0);
-        }
-
-        .btn {
-            width: 100%;
-            padding: 1rem;
-            border: none;
-            border-radius: 14px;
-            font-size: 1rem;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.2s ease;
-            position: relative;
-            overflow: hidden;
-        }
-
-        .btn::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: -100%;
-            width: 100%;
-            height: 100%;
-            background: linear-gradient(
-                    90deg,
-                    transparent,
-                    rgba(255, 255, 255, 0.2),
-                    transparent
-            );
-            transition: 0.5s;
-        }
-
-        .btn:hover::before {
-            left: 100%;
-        }
-
-        .login-btn {
-            background: #111;
-            color: white;
-            margin-bottom: 1rem;
-        }
-
-        .login-btn:hover {
-            background: #000;
-            transform: translateY(-2px);
-        }
-
-        .kakao-btn {
-            background: #FEE500;
-            color: #000000;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 8px;
-        }
-
-        .kakao-btn:hover {
-            background: #FDD835;
-            transform: translateY(-2px);
-        }
-
-        .divider {
-            display: flex;
-            align-items: center;
-            text-align: center;
-            margin: 1.5rem 0;
-            color: #999;
-            font-size: 0.9rem;
-        }
-
-        .divider::before,
-        .divider::after {
-            content: '';
-            flex: 1;
-            border-bottom: 1px solid #eee;
-        }
-
-        .divider span {
-            padding: 0 1rem;
-        }
-
-        .signup-link {
-            display: block;
-            text-align: center;
-            margin-top: 1.5rem;
-            color: #666;
-            font-size: 0.9rem;
-            text-decoration: none;
-            font-weight: 500;
-            transition: all 0.2s ease;
-        }
-
-        .signup-link:hover {
-            color: #111;
-        }
-
-        .remember-forgot {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 1.5rem;
-            font-size: 0.9rem;
-            color: #666;
-        }
-
-        .remember-forgot label {
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-            cursor: pointer;
-        }
-
-        .remember-forgot a {
-            color: #111;
-            text-decoration: none;
-            font-weight: 500;
-            transition: color 0.2s ease;
-        }
-
-        .remember-forgot a:hover {
-            color: #ff3366;
-        }
-
-        @media (max-width: 480px) {
-            .login-container {
-                width: 100%;
-                height: 100vh;
-                border-radius: 0;
-                padding: 2rem 1.5rem;
-                display: flex;
-                flex-direction: column;
-                justify-content: center;
-            }
-
-            body {
-                align-items: flex-start;
-            }
-        }
-
-        @keyframes float {
-            0% { transform: translateY(0px); }
-            50% { transform: translateY(-10px); }
-            100% { transform: translateY(0px); }
-        }
-
-        .logo img {
-            animation: float 3s ease-in-out infinite;
-        }
-    </style>
+    <link rel="stylesheet" th:href="@{/css/user/login.css}">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 </head>
 <body>
 <div class="stars"></div>
 <div class="background-gradient"></div>
 <div class="login-container">
     <div class="logo">
-        <img src="/api/placeholder/80/80" alt="Logo" style="width: 80px; height: 80px; border-radius: 20px; margin-bottom: 1rem;">
+<!--        <img src="/" alt="Logo" style="width: 80px; height: 80px; border-radius: 20px; margin-bottom: 1rem;">-->
         <h1>ENJOY YOUR INTERSTORY</h1>
         <span>당신만의 이야기를 시작하세요</span>
     </div>
-    <form>
+    <form id="login-frm">
         <div class="input-group">
             <input type="email" id="email" placeholder="이메일" required>
             <div class="validation-message"></div>
@@ -290,7 +28,7 @@
         <div class="remember-forgot">
             <label>
                 <input type="checkbox" id="remember">
-                로그인 상태 유지
+                이메일 기억 하기
             </label>
             <a href="/auth/forgot-password">비밀번호 찾기</a>
         </div>
@@ -299,11 +37,168 @@
             <span>또는</span>
         </div>
         <button type="button" class="btn kakao-btn">
-            <img src="/api/placeholder/20/20" alt="kakao" style="width: 20px; height: 20px;">
+<!--            <img src="/api/placeholder/20/20" alt="kakao" style="width: 20px; height: 20px;">-->
             카카오로 시작하기
         </button>
     </form>
     <a href="/auth/signup" class="signup-link">아직 계정이 없으신가요? 가입하기</a>
 </div>
+
+<script>
+
+    $(document).ready(function() {
+        // 요소 캐싱
+        const $form = $('#login-frm');
+        const $email = $('#email');
+        const $password = $('#password');
+        const $loginBtn = $('.login-btn');
+        const $kakaoBtn = $('.kakao-btn');
+        const $remember = $('remember')
+
+        // 저장된 이메일 불러오기
+        const savedEmail = localStorage.getItem('rememberedEmail');
+        if (savedEmail) {
+            $email.val(savedEmail);
+            $remember.prop('checked');
+        }
+
+        // 폼 제출 처리
+        $form.on('submit', function(e) {
+            e.preventDefault();
+
+            // 입력값 검증
+            if (!validateForm()) {
+                return;
+            }
+
+            // 로그인 버튼 로딩 상태
+            $loginBtn.prop('disabled', true).addClass('loading');
+
+            const loginData = {
+                email: $email.val(),
+                password: $password.val(),
+            };
+
+
+
+            // 로그인 요청
+            $.ajax({
+                url: '/api/auth/login',
+                type: 'POST',
+                contentType: 'application/json',
+                data: JSON.stringify(loginData),
+                success: function(response) {
+
+                    if ($remember.is(':checked')) {
+                        localStorage.setItem('rememberedEmail', loginData.email);
+                    } else {
+                        localStorage.removeItem('rememberedEmail');
+                    }
+
+                    if (response.success) {
+                        window.location.href = response.redirectUrl;
+                    } else {
+                        showValidationMessage(response.message || '로그인에 실패했습니다.');
+                    }
+
+                },
+                error: function(xhr) {
+                    // 에러 메시지 표시
+                    let errorMessage = '로그인 중 오류가 발생했습니다.';
+                    if (xhr.status === 401) {
+                        errorMessage = '이메일 또는 비밀번호가 올바르지 않습니다.';
+                    }
+
+                    showValidationMessage(errorMessage);
+                    $loginBtn.prop('disabled', false);
+                },
+                complete: function() {
+                    $loginBtn.removeClass('loading');
+                }
+            });
+        });
+
+        // 카카오 로그인
+        $kakaoBtn.on('click', function() {
+            $(this).prop('disabled', true).addClass('loading');
+
+            // 카카오 로그인 요청
+            $.ajax({
+                url: '/api/auth/kakao',
+                type: 'GET',
+                success: function(response) {
+                    // 카카오 로그인 페이지로 리다이렉트
+                    window.location.href = response.redirectUrl;
+                },
+                error: function() {
+                    showValidationMessage('카카오 로그인 중 오류가 발생했습니다.');
+                    $kakaoBtn.prop('disabled', false);
+                },
+                complete: function() {
+                    $kakaoBtn.removeClass('loading');
+                }
+            });
+        });
+
+        // 입력값 검증
+        function validateForm() {
+            const email = $email.val();
+            const password = $password.val();
+
+            if (!email) {
+                showValidationMessage('이메일을 입력해주세요.', $email);
+                return false;
+            }
+
+            if (!validateEmail(email)) {
+                showValidationMessage('올바른 이메일 형식이 아닙니다.', $email);
+                return false;
+            }
+
+            if (!password) {
+                showValidationMessage('비밀번호를 입력해주세요.', $password);
+                return false;
+            }
+
+            return true;
+        }
+
+        // 이메일 형식 검증
+        function validateEmail(email) {
+            return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+        }
+
+        // 유효성 검사 메시지 표시
+        function showValidationMessage(message, $input) {
+            const $messageElement = $input ?
+                $input.siblings('.validation-message') :
+                $('.validation-message').first();
+
+            $messageElement
+                .text(message)
+                .addClass('show')
+                .parent()
+                .addClass('error');
+
+            // 3초 후 메시지 숨기기
+            setTimeout(() => {
+                $messageElement
+                    .removeClass('show')
+                    .parent()
+                    .removeClass('error');
+            }, 3000);
+        }
+
+        // 입력 필드 포커스 시 에러 상태 초기화
+        $('input').on('focus', function() {
+            $(this)
+                .siblings('.validation-message')
+                .removeClass('show')
+                .parent()
+                .removeClass('error');
+        });
+    });
+
+</script>
 </body>
 </html>
