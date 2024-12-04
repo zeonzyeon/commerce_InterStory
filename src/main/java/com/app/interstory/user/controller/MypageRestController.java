@@ -1,5 +1,7 @@
 package com.app.interstory.user.controller;
 
+import java.util.List;
+
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -11,6 +13,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.app.interstory.user.domain.UserDetail;
 import com.app.interstory.user.dto.request.UpdateUserRequestDTO;
+import com.app.interstory.user.dto.response.FavoriteNovelResponseDTO;
 import com.app.interstory.user.dto.response.MypageResponseDTO;
 import com.app.interstory.user.dto.response.UpdateUserResponseDTO;
 import com.app.interstory.user.service.MypageService;
@@ -24,11 +27,11 @@ import lombok.extern.slf4j.Slf4j;
 @RequiredArgsConstructor
 @Slf4j
 public class MypageRestController {
-	MypageService mypageService;
+	private final MypageService mypageService;
 
 	@GetMapping
 	public ResponseEntity<MypageResponseDTO> getUser(@AuthenticationPrincipal UserDetail userDetails) {
-		User user = mypageService.findById(userDetails.getUserId());
+		User user = userDetails.getUser();
 
 		MypageResponseDTO mypageResponseDTO = new MypageResponseDTO(
 			user.getNickname(),
@@ -43,8 +46,13 @@ public class MypageRestController {
 
 	@PutMapping
 	public ResponseEntity<UpdateUserResponseDTO> updateUser(@AuthenticationPrincipal UserDetail userDetails, @RequestBody UpdateUserRequestDTO updateUserRequestDTO) {
-		User user = mypageService.findById(userDetails.getUserId());
+		User user = userDetails.getUser();
 
 		return ResponseEntity.ok(mypageService.updateUser(user, updateUserRequestDTO));
+	}
+
+	@GetMapping("/favorite-novels")
+	public ResponseEntity<List<FavoriteNovelResponseDTO>> getFavoriteNovel(@AuthenticationPrincipal UserDetail userDetails) {
+		return ResponseEntity.ok(mypageService.getFavoriteNovels(userDetails.getUser()));
 	}
 }
