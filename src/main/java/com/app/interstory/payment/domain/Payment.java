@@ -1,16 +1,14 @@
 package com.app.interstory.payment.domain;
 
-import java.sql.Timestamp;
-
-import org.springframework.data.annotation.CreatedDate;
-
-import com.app.interstory.user.domain.User;
-
+import com.app.interstory.user.domain.entity.User;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.springframework.data.annotation.CreatedDate;
+
+import java.sql.Timestamp;
 
 @Entity
 @Table(name = "payment")
@@ -25,7 +23,7 @@ public class Payment {
 	private Long paymentId;
 
 	@ManyToOne(fetch = FetchType.LAZY)
-	@Column(name = "user_id", nullable = false)
+	@JoinColumn(name = "user_id", nullable = false)
 	private User user;
 
 	@CreatedDate

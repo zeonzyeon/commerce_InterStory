@@ -1,23 +1,16 @@
 package com.app.interstory.user.controller;
 
-import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
-
-import com.app.interstory.user.domain.UserDetail;
+import com.app.interstory.user.domain.CustomUserDetails;
+import com.app.interstory.user.domain.entity.User;
 import com.app.interstory.user.dto.request.UpdateUserRequestDTO;
 import com.app.interstory.user.dto.response.MypageResponseDTO;
 import com.app.interstory.user.dto.response.UpdateUserResponseDTO;
 import com.app.interstory.user.service.MypageService;
-import com.app.interstory.user.domain.User;
-
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/api/users")
@@ -27,8 +20,8 @@ public class MypageRestController {
 	MypageService mypageService;
 
 	@GetMapping
-	public ResponseEntity<MypageResponseDTO> getUser(@AuthenticationPrincipal UserDetail userDetails) {
-		User user = mypageService.findById(userDetails.getUserId());
+	public ResponseEntity<MypageResponseDTO> getUser(@AuthenticationPrincipal CustomUserDetails userDetails) {
+		User user = mypageService.findById(userDetails.getUser().getUserId());
 
 		MypageResponseDTO mypageResponseDTO = new MypageResponseDTO(
 			user.getNickname(),
@@ -42,8 +35,8 @@ public class MypageRestController {
 	}
 
 	@PutMapping
-	public ResponseEntity<UpdateUserResponseDTO> updateUser(@AuthenticationPrincipal UserDetail userDetails, @RequestBody UpdateUserRequestDTO updateUserRequestDTO) {
-		User user = mypageService.findById(userDetails.getUserId());
+	public ResponseEntity<UpdateUserResponseDTO> updateUser(@AuthenticationPrincipal CustomUserDetails userDetails, @RequestBody UpdateUserRequestDTO updateUserRequestDTO) {
+		User user = mypageService.findById(userDetails.getUser().getUserId());
 
 		return ResponseEntity.ok(mypageService.updateUser(user, updateUserRequestDTO));
 	}

@@ -1,14 +1,13 @@
 package com.app.interstory.payment.domain;
 
-import java.sql.Timestamp;
-
-import com.app.interstory.user.domain.User;
-
+import com.app.interstory.user.domain.entity.User;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+
+import java.sql.Timestamp;
 
 @Getter
 @Entity

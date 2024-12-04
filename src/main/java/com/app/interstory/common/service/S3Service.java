@@ -1,4 +1,4 @@
-package com.app.interstory.common;
+package com.app.interstory.common.service;
 
 import com.amazonaws.services.s3.AmazonS3Client;
 import com.amazonaws.services.s3.model.ObjectMetadata;
