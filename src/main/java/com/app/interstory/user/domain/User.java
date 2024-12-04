@@ -1,3 +1,4 @@
+
 package com.app.interstory.user.domain;
 
 import org.springframework.data.annotation.CreatedDate;
