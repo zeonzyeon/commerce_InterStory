@@ -22,7 +22,7 @@ public class Subscribe {
 	@Column(name = "subscribe_id")
 	private Long subscribeId;
 
-	@ManyToOne(fetch = FetchType.LAZY)
+	@OneToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "user_id", nullable = false)
 	private User user;
 
