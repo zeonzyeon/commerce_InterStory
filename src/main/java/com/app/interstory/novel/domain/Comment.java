@@ -46,4 +46,8 @@ public class Comment {
 	@Builder.Default
 	@Column(name = "status", nullable = false)
 	private Boolean status = true;
+
+	public void deleteComment() {
+		this.status = !this.status;
+	}
 }
