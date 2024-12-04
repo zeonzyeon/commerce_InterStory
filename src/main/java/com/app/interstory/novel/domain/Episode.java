@@ -50,6 +50,7 @@ public class Episode {
 	@Column(name = "content", columnDefinition = "TEXT", nullable = false)
 	private String content;
 
+	@Builder.Default
 	@Column(name = "status", nullable = false)
-	private Boolean status;
+	private Boolean status = true;
 }
