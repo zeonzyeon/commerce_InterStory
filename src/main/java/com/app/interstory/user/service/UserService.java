@@ -2,9 +2,8 @@ package com.app.interstory.user.service;
 
 import com.app.interstory.config.globalExeption.customException.DuplicateEmailException;
 import com.app.interstory.config.globalExeption.customException.DuplicateNicknameException;
-import com.app.interstory.user.domain.Roles;
-import com.app.interstory.user.dto.request.LocalSignUpRequest;
 import com.app.interstory.user.domain.entity.User;
+import com.app.interstory.user.dto.request.LocalSignUpRequest;
 import com.app.interstory.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -50,9 +49,8 @@ public class UserService {
                 .email(localSignUpRequest.getEmail())
                 .password(encoder.encode(localSignUpRequest.getPassword()))
                 .nickname(localSignUpRequest.getNickname())
-                .point(0L)
-                .role(Roles.PUBLIC)
-                .isActivity(true)
+//                .profileUrl("") 일단 s3 확인 후 추가
                 .build();
     }
+
 }

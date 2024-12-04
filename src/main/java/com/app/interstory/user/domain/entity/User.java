@@ -8,6 +8,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import java.io.Serializable;
 
@@ -17,8 +18,12 @@ import java.io.Serializable;
 @AllArgsConstructor
 @Getter
 @Builder
+@EntityListeners(AuditingEntityListener.class)
 public class User implements Serializable {
+
     private static final long serialVersionUID = 1L;
+    private static final Roles DEFAULT_ROLE = Roles.PUBLIC;
+    private static final long DEFAULT_POINT = 0L;
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -35,12 +40,13 @@ public class User implements Serializable {
     private String password;
 
     @Column(name = "point", nullable = false)
-    private Long point;
+    @Builder.Default
+    private Long point= DEFAULT_POINT;
 
     @Enumerated(EnumType.STRING)
     @Builder.Default
     @Column(name = "role", nullable = false)
-    private Roles role = Roles.PUBLIC;
+    private Roles role = DEFAULT_ROLE;
 
     @Builder.Default
     @Column(name = "is_activity", nullable = false)
@@ -52,7 +58,7 @@ public class User implements Serializable {
     @Column(name = "profile_url")
     private String profileUrl;
 
-    @Column(name = "created_at", nullable = false)
+    @Column(name = "created_at", nullable = false, updatable = false)
     @CreatedDate
     private String createdAt;
 
@@ -70,4 +76,6 @@ public class User implements Serializable {
         this.nickname = nickname;
         this.password = password;
     }
+
+
 }

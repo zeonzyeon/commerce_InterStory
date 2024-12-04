@@ -2,7 +2,7 @@ package com.app.interstory.user.service;
 
 import org.springframework.stereotype.Service;
 
-import com.app.interstory.user.domain.User;
+import com.app.interstory.user.domain.entity.User;
 import com.app.interstory.user.dto.request.UpdateUserRequestDTO;
 import com.app.interstory.user.dto.response.UpdateUserResponseDTO;
 import com.app.interstory.user.repository.UserRepository;
