@@ -33,8 +33,9 @@ public class User {
 	@Column(name = "point", nullable = false)
 	private Long point;
 
+	@Builder.Default
 	@Column(name = "is_activity", nullable = false)
-	private boolean isActivity;
+	private boolean isActivity = true;
 
 	@Builder.Default
 	@Column(name = "role", nullable = false)
