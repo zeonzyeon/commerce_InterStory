@@ -4,13 +4,10 @@ import com.app.interstory.user.domain.entity.User;
 import lombok.Builder;
 import lombok.Getter;
 import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import java.io.Serializable;
 import java.util.Collection;
-import java.util.Collections;
-import java.util.List;
 import java.util.Set;
 
 @Getter
