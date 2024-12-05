@@ -21,7 +21,7 @@ public class QUser extends EntityPathBase<User> {
 
     public final BooleanPath autoPayment = createBoolean("autoPayment");
 
-    public final StringPath createdAt = createString("createdAt");
+    public final DateTimePath<java.sql.Timestamp> createdAt = createDateTime("createdAt", java.sql.Timestamp.class);
 
     public final StringPath email = createString("email");
 

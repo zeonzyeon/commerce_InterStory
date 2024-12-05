@@ -1,7 +1,6 @@
 package com.app.interstory.user.controller;
 
 import com.app.interstory.user.domain.CustomUserDetails;
-import com.app.interstory.user.domain.entity.User;
 import com.app.interstory.user.dto.request.UpdateUserRequestDTO;
 import com.app.interstory.user.dto.response.FavoriteNovelResponseDTO;
 import com.app.interstory.user.dto.response.MypageResponseDTO;
@@ -14,6 +13,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
@@ -30,40 +30,29 @@ public class MypageRestController {
 
 	@GetMapping
 	public ResponseEntity<MypageResponseDTO> getUser(@AuthenticationPrincipal CustomUserDetails userDetails) {
-		User user = userDetails.getUser();
-
-		MypageResponseDTO mypageResponseDTO = new MypageResponseDTO(
-			user.getNickname(),
-			user.getProfileUrl(),
-			user.getPoint(),
-			user.getSubscribe(),
-			user.getAutoPayment()
-		);
-
-		return ResponseEntity.ok(mypageResponseDTO);
+		return ResponseEntity.ok(mypageService.getUser(userDetails));
 	}
 
 	@PutMapping
 	public ResponseEntity<UpdateUserResponseDTO> updateUser(@AuthenticationPrincipal CustomUserDetails userDetails, @RequestBody UpdateUserRequestDTO updateUserRequestDTO) {
-		User user = userDetails.getUser();
-
-		return ResponseEntity.ok(mypageService.updateUser(user, updateUserRequestDTO));
+		return ResponseEntity.ok(mypageService.updateUser(userDetails, updateUserRequestDTO));
 	}
 
 	@GetMapping("/favorite-novels")
-	public ResponseEntity<Page<FavoriteNovelResponseDTO>> getFavoriteNovel(@AuthenticationPrincipal CustomUserDetails userDetails, @PageableDefault(size = 10) Pageable pageable) {
-		return ResponseEntity.ok(mypageService.getFavoriteNovels(userDetails.getUser(), pageable));
+	public ResponseEntity<Page<FavoriteNovelResponseDTO>> getFavoriteNovel(@AuthenticationPrincipal CustomUserDetails userDetails) {
+		Pageable pageable = PageRequest.of(0, 10, Sort.unsorted());
+		return ResponseEntity.ok(mypageService.getFavoriteNovels(userDetails, pageable));
 	}
 
 	@GetMapping("/read-novels")
 	public ResponseEntity<Page<ReadNovelResponseDTO>> getReadNovel(@AuthenticationPrincipal CustomUserDetails userDetails,
 		@PageableDefault(size = 10, sort = "updatedAt", direction = Sort.Direction.DESC) Pageable pageable) {
-		return ResponseEntity.ok(mypageService.getReadNovels(userDetails.getUser(), pageable));
+		return ResponseEntity.ok(mypageService.getReadNovels(userDetails, pageable));
 	}
 
 	@GetMapping("/point-history")
 	public ResponseEntity<Page<PointHistoryResponseDTO>> getPointHistory(@AuthenticationPrincipal CustomUserDetails userDetails,
 		@PageableDefault(size = 10, sort = "usedAt", direction = Sort.Direction.DESC) Pageable pageable) {
-		return ResponseEntity.ok(mypageService.getPointHistory(userDetails.getUser(), pageable));
+		return ResponseEntity.ok(mypageService.getPointHistory(userDetails, pageable));
 	}
 }

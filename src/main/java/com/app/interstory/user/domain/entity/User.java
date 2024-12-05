@@ -13,6 +13,7 @@ import lombok.NoArgsConstructor;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import java.io.Serializable;
+import java.sql.Timestamp;
 
 @Entity
 @Table(name = "users")
@@ -65,7 +66,7 @@ public class User implements Serializable {
 
 	@Column(name = "created_at", nullable = false, updatable = false)
 	@CreatedDate
-	private String createdAt;
+	private Timestamp createdAt;
 
 	@Builder.Default
 	@Column(name = "subscribe", nullable = false)
