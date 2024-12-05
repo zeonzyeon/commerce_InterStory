@@ -48,5 +48,21 @@ public class AdminService {
         return UserListResponseDTO.from(userList, users.getTotalPages());
     }
 
+    public String activeUser(Long userId, CustomUserDetails userDetails) {
+        User currentUser = userDetails.getUser();
+
+        if (currentUser == null || currentUser.getRole() != Roles.ADMIN) {
+            throw new IllegalStateException("활성화 권한이 없습니다.");
+        }
+
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new RuntimeException("해당 ID의 유저가 없습니다."));
+
+        user.active();
+
+        userRepository.save(user);
+
+        return "유저 활성화가 완료되었습니다.";
+    }
 }
 

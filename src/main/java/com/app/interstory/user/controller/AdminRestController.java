@@ -2,10 +2,7 @@ package com.app.interstory.user.controller;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import com.app.interstory.user.domain.CustomUserDetails;
 import com.app.interstory.user.dto.response.UserListResponseDTO;
@@ -23,4 +20,9 @@ public class AdminRestController {
 	public ResponseEntity<UserListResponseDTO> getUsers(@RequestParam(defaultValue = "1") Integer page, @AuthenticationPrincipal CustomUserDetails userDetails) {
 		return ResponseEntity.ok(adminService.getUsers(page, userDetails));
 	}
-}
+
+	@PostMapping("/users/{userId}/active")
+	public ResponseEntity<String> activeUser(@PathVariable Long userId, @AuthenticationPrincipal CustomUserDetails userDetails) {
+		return ResponseEntity.ok(adminService.activeUser(userId, userDetails));
+	}
+	}
