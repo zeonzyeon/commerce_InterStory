@@ -10,7 +10,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -24,13 +23,13 @@ public class AdminService {
     private final UserRepository userRepository;
 
     @Transactional
-    public UserListResponseDTO getUsers(@RequestParam(defaultValue = "1") Integer page, @AuthenticationPrincipal CustomUserDetails userDetails) {
+    public UserListResponseDTO getUsers(@RequestParam(defaultValue = "1") Integer page, CustomUserDetails userDetails) {
         final int getUserCount = 10;
 
         User user = userDetails.getUser();
 
         if (user == null || user.getRole() != Roles.ADMIN) {
-            throw new IllegalStateException("조회 권한이 없습니다.");
+            throw new IllegalStateException("유저 조회 권한이 없습니다.");
         }
 
         Pageable pageable = PageRequest.of(page - 1, getUserCount);
@@ -48,11 +47,12 @@ public class AdminService {
         return UserListResponseDTO.from(userList, users.getTotalPages());
     }
 
+    @Transactional
     public String activeUser(Long userId, CustomUserDetails userDetails) {
         User currentUser = userDetails.getUser();
 
         if (currentUser == null || currentUser.getRole() != Roles.ADMIN) {
-            throw new IllegalStateException("활성화 권한이 없습니다.");
+            throw new IllegalStateException("유저 활성화 권한이 없습니다.");
         }
 
         User user = userRepository.findById(userId)
@@ -63,6 +63,27 @@ public class AdminService {
         userRepository.save(user);
 
         return "유저 활성화가 완료되었습니다.";
+    }
+
+    @Transactional
+    public UserListResponseDTO searchUsers(String nickname, String email, Integer page, CustomUserDetails userDetails) {
+        final int getUserCount = 10;
+
+        User currentUser = userDetails.getUser();
+
+        if (currentUser == null || currentUser.getRole() != Roles.ADMIN) {
+            throw new IllegalStateException("유저 검색 권한이 없습니다.");
+        }
+
+        Pageable pageable = PageRequest.of(page - 1, getUserCount);
+
+        Page<User> users = userRepository.searchUsers(nickname, email, pageable);
+
+        List<UserResponseDTO> userList = users.stream()
+                .map(UserResponseDTO::from)
+                .toList();
+
+        return UserListResponseDTO.from(userList, users.getTotalPages());
     }
 }
 
