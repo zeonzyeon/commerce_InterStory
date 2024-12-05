@@ -37,7 +37,7 @@ public class QUser extends EntityPathBase<User> {
 
     public final StringPath profileUrl = createString("profileUrl");
 
-    public final EnumPath<com.app.interstory.user.domain.Roles> role = createEnum("role", com.app.interstory.user.domain.Roles.class);
+    public final EnumPath<com.app.interstory.user.domain.enumtypes.Roles> role = createEnum("role", com.app.interstory.user.domain.enumtypes.Roles.class);
 
     public final BooleanPath subscribe = createBoolean("subscribe");
 

@@ -6,11 +6,11 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
-import com.app.interstory.novel.domain.FavoriteNovel;
-import com.app.interstory.novel.domain.Novel;
-import com.app.interstory.novel.domain.RecentNovel;
-import com.app.interstory.novel.domain.Tag;
-import com.app.interstory.novel.domain.Episode;
+import com.app.interstory.novel.domain.entity.FavoriteNovel;
+import com.app.interstory.novel.domain.entity.Novel;
+import com.app.interstory.novel.domain.entity.RecentNovel;
+import com.app.interstory.novel.domain.entity.Tag;
+import com.app.interstory.novel.domain.entity.Episode;
 import com.app.interstory.novel.repository.EpisodeRepository;
 import com.app.interstory.novel.repository.FavoriteNovelRepository;
 import com.app.interstory.novel.repository.RecentNovelRepository;
