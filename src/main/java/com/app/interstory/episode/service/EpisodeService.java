@@ -24,7 +24,8 @@ public class EpisodeService {
 	private final PaymentRepository paymentRepository;
 
 	public EpisodeService(EpisodeRepository episodeRepository, UserRepository userRepository,
-		CollectionRepository collectionRepository, PointRepository pointRepository, PaymentRepository paymentRepository) {
+		CollectionRepository collectionRepository, PointRepository pointRepository,
+		PaymentRepository paymentRepository) {
 		this.episodeRepository = episodeRepository;
 		this.userRepository = userRepository;
 		this.collectionRepository = collectionRepository;
@@ -122,5 +123,25 @@ public class EpisodeService {
 		pointRepository.save(point);
 	}
 
+	// 장바구니 담기
+	@Transactional
+	public String addItemToCart(Long novelId, Long episodeId) {
+		// 동일한 에피소드가 이미 장바구니에 담겼는지 확인
+		boolean exists = cartItemRepository.existsByUserIdAndEpisodeId(userId, episodeId);
 
+		if (exists) {
+			// 이미 담긴 회차
+			return "이미 담긴 회차입니다.";
+		}
+
+		// 장바구니에 새로운 에피소드 추가
+		CartItem cartItem = CartItem.builder()
+			.userId(userId)
+			.episodeId(episodeId)
+			.build();
+
+		cartItemRepository.save(cartItem);
+
+		return "회차가 장바구니에 성공적으로 담겼습니다.";
+	}
 }

@@ -57,12 +57,21 @@ public class EpisodeController {
 	// 회차 구매
 	@PostMapping("/{episodeId}/purchase")
 	public ResponseEntity<String> purchaseEpisode(
-		@PathVariable Long novelId,     // 소설 ID
-		@PathVariable Long episodeId,  // 에피소드 ID
-		@RequestParam Long userId      // 사용자 ID
+		@PathVariable Long novelId,
+		@PathVariable Long episodeId,
+		@RequestParam Long userId
 	) {
 		episodeService.purchaseEpisode(userId, novelId, episodeId);
 		return ResponseEntity.ok("Episode purchased successfully!");
 	}
 
+	// 장바구니 담기
+	@PostMapping("/cart")
+	public ResponseEntity<String> addItemToCart(
+		@RequestParam Long userId,      // 사용자 ID
+		@RequestParam Long episodeId   // 에피소드 ID
+	) {
+		String message = episodeService.addItemToCart(userId, episodeId);
+		return ResponseEntity.ok(message);
+	}
 }
