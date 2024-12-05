@@ -25,7 +25,10 @@ public class User implements Serializable {
 
 	private static final long serialVersionUID = 1L;
 	private static final Roles DEFAULT_ROLE = Roles.PUBLIC;
-	private static final long DEFAULT_POINT = 0L;
+	private static final Long DEFAULT_POINT = 0L;
+	private static final Boolean DEFAULT_IS_ACTIVITY = true;
+	private static final Boolean DEFAULT_SUBSCRIBE = false;
+	private static final Boolean DEFAULT_AUTO_PAYMENT = false;
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -52,7 +55,7 @@ public class User implements Serializable {
 
 	@Builder.Default
 	@Column(name = "is_activity", nullable = false)
-	private boolean isActivity = true;
+	private Boolean isActivity = DEFAULT_IS_ACTIVITY;
 
 	@Column(name = "profile_renamed_filename")
 	private String profileRenamedFilename;
@@ -66,11 +69,11 @@ public class User implements Serializable {
 
 	@Builder.Default
 	@Column(name = "subscribe", nullable = false)
-	private boolean subscribe = false;
+	private Boolean subscribe = DEFAULT_SUBSCRIBE;
 
 	@Builder.Default
 	@Column(name = "auto_payment", nullable = false)
-	private boolean autoPayment = false;
+	private Boolean autoPayment = DEFAULT_AUTO_PAYMENT;
 
 	//business method
 	public void update(String profileUrl, String nickname, String password) {

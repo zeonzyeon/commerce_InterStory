@@ -13,6 +13,10 @@ import lombok.NoArgsConstructor;
 @Builder
 @Getter
 public class Settlement {
+	private static final Integer DEFAULT_VIEW_COUNT = 0;
+	private static final Long DEFAULT_FEE = 0L;
+	private static final String DEFAULT_ACCOUNT_NUMBER = "";
+
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Column(name = "settlement_id")
@@ -24,13 +28,13 @@ public class Settlement {
 
 	@Builder.Default
 	@Column(name = "view_count", nullable = false)
-	private Integer viewCount = 0;
+	private Integer viewCount = DEFAULT_VIEW_COUNT;
 
 	@Builder.Default
 	@Column(name = "fee", nullable = false)
-	private Long fee = 0L;
+	private Long fee = DEFAULT_FEE;
 
 	@Builder.Default
 	@Column(name = "account_number", nullable = false)
-	private String accountNumber = "";
+	private String accountNumber = DEFAULT_ACCOUNT_NUMBER;
 }

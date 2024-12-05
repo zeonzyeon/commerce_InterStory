@@ -21,6 +21,9 @@ import java.sql.Timestamp;
 @Builder
 @EntityListeners(AuditingEntityListener.class)
 public class Comment {
+	private static final Integer DEFAULT_LIKE_COUNT = 0;
+	private static final Boolean DEFAULT_STATUS = true;
+
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Column(name = "comment_id")
@@ -43,9 +46,9 @@ public class Comment {
 
 	@Builder.Default
 	@Column(name = "like_count", nullable = false)
-	private Integer likeCount = 0;
+	private Integer likeCount = DEFAULT_LIKE_COUNT;
 
 	@Builder.Default
 	@Column(name = "status", nullable = false)
-	private Boolean status = true;
+	private Boolean status = DEFAULT_STATUS;
 }

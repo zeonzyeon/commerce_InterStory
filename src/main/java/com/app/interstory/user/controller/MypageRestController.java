@@ -35,8 +35,8 @@ public class MypageRestController {
 			user.getNickname(),
 			user.getProfileUrl(),
 			user.getPoint(),
-			user.isSubscribe(),
-			user.isAutoPayment()
+			user.getSubscribe(),
+			user.getAutoPayment()
 		);
 
 		return ResponseEntity.ok(mypageResponseDTO);
