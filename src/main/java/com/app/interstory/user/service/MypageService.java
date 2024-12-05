@@ -92,7 +92,7 @@ public class MypageService {
 
 			Map<String, Object> getLastReadEpisodeNumber = episodeRepository.findRowNumberByNovelIdAndEpisodeId(novel.getNovelId(), lastReadEpisodeId);
 
-			Integer lastReadEpisodeNumber;
+			int lastReadEpisodeNumber;
 			if (getLastReadEpisodeNumber != null && getLastReadEpisodeNumber.containsKey("row_number")) {
 				lastReadEpisodeNumber = Integer.parseInt(getLastReadEpisodeNumber.get("row_number").toString());
 			} else {
