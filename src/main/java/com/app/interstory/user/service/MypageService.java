@@ -152,9 +152,9 @@ public class MypageService {
 		return pointPage.map(pointHistory -> {
 			String pointChange;
 			if (pointHistory.getBalance() > 0) {
-				pointChange = pointHistory.getBalance() + "P 사용";
-			} else {
 				pointChange = pointHistory.getBalance() + "P 충전";
+			} else {
+				pointChange = Math.abs(pointHistory.getBalance()) + "P 사용";
 			}
 
 			return PointHistoryResponseDTO.builder()
