@@ -3,6 +3,7 @@ package com.app.interstory.novel.domain.entity;
 import java.sql.Timestamp;
 
 import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -16,6 +17,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
+@EntityListeners(AuditingEntityListener.class)
 public class Episode {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
