@@ -73,7 +73,7 @@ public class MypageService {
 		User user = userDetails.getUser();
 
 		Page<FavoriteNovel> favoriteNovelPage = favoriteNovelRepository.findFavoritesSortedByLatestEpisode(user, pageable);
-		// TODO: 만약 관심작품 선정은 했지만 한번도 열람하지 않았을 경우 예외처리 필요
+		// 만약 관심작품 선정은 했지만 한번도 열람하지 않았을 경우 EpisodeId는 0으로 처리됨
 
 		return favoriteNovelPage.map(favoriteNovel -> {
 			Novel novel = favoriteNovel.getNovel();
