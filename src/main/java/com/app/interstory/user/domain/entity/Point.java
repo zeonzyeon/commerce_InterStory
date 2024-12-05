@@ -1,37 +1,39 @@
-package com.app.interstory.payment.domain;
+package com.app.interstory.user.domain.entity;
 
-import com.app.interstory.user.domain.entity.User;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+
 import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import java.sql.Timestamp;
 
 @Entity
-@Table(name = "payment")
+@Table(name = "point")
 @NoArgsConstructor
 @AllArgsConstructor
-@Getter
 @Builder
-public class Payment {
+@Getter
+@EntityListeners(AuditingEntityListener.class)
+public class Point {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	@Column(name = "payment_id")
-	private Long paymentId;
+	@Column(name = "point_id")
+	private Long pointId;
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "user_id", nullable = false)
 	private User user;
 
+	@Column(name = "used_at", nullable = false, updatable = false)
 	@CreatedDate
-	@Column(name = "date", nullable = false, updatable = false)
-	private Timestamp date;
+	private Timestamp usedAt;
 
-	@Column(name = "amount", nullable = false)
-	private Long amount;
+	@Column(name = "balance", nullable = false)
+	private Long balance;
 
 	@Column(name = "description", nullable = false)
 	private String description;

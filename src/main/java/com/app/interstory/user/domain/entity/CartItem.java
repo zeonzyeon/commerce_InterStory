@@ -1,6 +1,6 @@
-package com.app.interstory.payment.domain;
+package com.app.interstory.user.domain.entity;
 
-import com.app.interstory.user.domain.entity.User;
+import com.app.interstory.novel.domain.entity.Episode;
 
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -8,22 +8,23 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-@Getter
 @Entity
-@Table(name = "sid")
+@Table(name = "cart_item")
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class Sid {
+@Getter
+public class CartItem {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	@Column(name = "sid_id")
-	private Long sidId;
+	@Column(name = "cart_item_id")
+	private Long cartItemId;
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "user_id", nullable = false)
 	private User user;
 
-	@Column(name = "sid", nullable = false)
-	private String sid;
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "episode_id", nullable = false)
+	private Episode episode;
 }

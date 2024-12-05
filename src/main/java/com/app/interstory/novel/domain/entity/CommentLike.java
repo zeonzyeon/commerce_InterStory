@@ -1,6 +1,7 @@
 package com.app.interstory.novel.domain.entity;
 
 import com.app.interstory.user.domain.entity.User;
+
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -14,18 +15,18 @@ import lombok.NoArgsConstructor;
 @Getter
 @Builder
 public class CommentLike {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "comment_like_id")
-    private Long commentLikeId;
+	@Id
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	@Column(name = "comment_like_id")
+	private Long commentLikeId;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "user_id", nullable = false)
-    private User user;
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "user_id", nullable = false)
+	private User user;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "comment_id", nullable = false)
-    private Comment comment;
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "comment_id", nullable = false)
+	private Comment comment;
 
     public CommentLike(Comment comment, User user) {
         this.user = user;

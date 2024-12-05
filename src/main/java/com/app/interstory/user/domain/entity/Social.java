@@ -1,6 +1,7 @@
-package com.app.interstory.user.domain;
+package com.app.interstory.user.domain.entity;
 
-import com.app.interstory.user.domain.entity.User;
+import com.app.interstory.user.domain.enumtypes.Provider;
+
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;

@@ -1,30 +1,29 @@
-package com.app.interstory.user.domain;
+package com.app.interstory.payment.domain.entity;
 
-import com.app.interstory.novel.domain.entity.Episode;
 import com.app.interstory.user.domain.entity.User;
+
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+@Getter
 @Entity
-@Table(name = "cart_item")
+@Table(name = "sid")
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-@Getter
-public class CartItem {
+public class Sid {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	@Column(name = "cart_item_id")
-	private Long cartItemId;
+	@Column(name = "sid_id")
+	private Long sidId;
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "user_id", nullable = false)
 	private User user;
 
-	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "episode_id", nullable = false)
-	private Episode episode;
+	@Column(name = "sid", nullable = false)
+	private String sid;
 }

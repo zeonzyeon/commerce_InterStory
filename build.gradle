@@ -37,7 +37,8 @@ dependencies {
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
     testImplementation 'org.springframework.security:spring-security-test'
     testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
-
+    testCompileOnly 'org.projectlombok:lombok'
+    testAnnotationProcessor 'org.projectlombok:lombok'
 
 
     // QueryDsl
@@ -74,8 +75,6 @@ tasks.named('test') {
 }
 
 
-
-
 def querydslSrcDir = layout.buildDirectory.dir('generated/querydsl').get().asFile
 
 tasks.withType(JavaCompile) {
@@ -83,7 +82,7 @@ tasks.withType(JavaCompile) {
 }
 
 sourceSets {
-    main.java.srcDirs += [ querydslSrcDir ]
+    main.java.srcDirs += [querydslSrcDir]
 }
 
 clean {

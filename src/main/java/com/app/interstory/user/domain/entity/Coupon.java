@@ -1,4 +1,4 @@
-package com.app.interstory.user.domain;
+package com.app.interstory.user.domain.entity;
 
 import java.sql.Timestamp;
 

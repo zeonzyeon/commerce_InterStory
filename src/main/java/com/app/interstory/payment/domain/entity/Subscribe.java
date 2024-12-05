@@ -1,31 +1,31 @@
-package com.app.interstory.user.domain;
+package com.app.interstory.payment.domain.entity;
 
 import com.app.interstory.user.domain.entity.User;
+
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+import java.sql.Timestamp;
+
 @Getter
 @Entity
-@Table(name = "coupon")
+@Table(name = "subscribe")
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class UserCoupon {
+public class Subscribe {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	@Column(name = "user_coupon_id")
-	private Long userCouponId;
+	@Column(name = "subscribe_id")
+	private Long subscribeId;
 
-	@ManyToOne(fetch = FetchType.LAZY)
+	@OneToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "user_id", nullable = false)
 	private User user;
 
-	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "coupon_id", nullable = false)
-	private Coupon coupon;
-
-
+	@Column(name = "end_at", nullable = false)
+	private Timestamp endAt;
 }

@@ -1,5 +1,9 @@
 package com.app.interstory.novel.domain.entity;
 
+import java.sql.Timestamp;
+
+import org.hibernate.annotations.UpdateTimestamp;
+
 import com.app.interstory.user.domain.entity.User;
 
 import jakarta.persistence.*;
@@ -31,4 +35,8 @@ public class RecentNovel {
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "episode_id", nullable = false)
 	private Episode episode;
+
+	@Column(name = "updated_at", nullable = false)
+	@UpdateTimestamp
+	private Timestamp updatedAt;
 }
