@@ -21,6 +21,7 @@ import com.app.interstory.user.domain.entity.Point;
 import com.app.interstory.user.domain.entity.User;
 import com.app.interstory.user.dto.request.UpdateUserRequestDTO;
 import com.app.interstory.user.dto.response.FavoriteNovelResponseDTO;
+import com.app.interstory.user.dto.response.MyNovelResponseDTO;
 import com.app.interstory.user.dto.response.MypageResponseDTO;
 import com.app.interstory.user.dto.response.PointHistoryResponseDTO;
 import com.app.interstory.user.dto.response.ReadNovelResponseDTO;
@@ -80,8 +81,6 @@ public class MypageService {
 
 			Integer episodeCount = episodeRepository.countByNovel(novel);
 
-			Integer likeCount = novel.getLikeCount();
-
 			List<String> tags = tagRepository.findByNovel(novel).stream()
 				.map(Tag::getTag)
 				.toList();
@@ -103,7 +102,7 @@ public class MypageService {
 				.title(novel.getTitle())
 				.author(novel.getUser().getNickname())
 				.episodeCount(episodeCount)
-				.likeCount(likeCount)
+				.likeCount(novel.getLikeCount())
 				.tags(tags)
 				.thumbnailUrl(novel.getThumbnailUrl())
 				.lastReadEpisodeId(lastReadEpisodeId)
@@ -122,8 +121,6 @@ public class MypageService {
 
 			Integer episodeCount = episodeRepository.countByNovel(novel);
 
-			Integer likeCount = novel.getLikeCount();
-
 			List<String> tags = tagRepository.findByNovel(novel).stream()
 				.map(Tag::getTag)
 				.toList();
@@ -136,7 +133,7 @@ public class MypageService {
 				.title(novel.getTitle())
 				.author(novel.getUser().getNickname())
 				.episodeCount(episodeCount)
-				.likeCount(likeCount)
+				.likeCount(novel.getLikeCount())
 				.tags(tags)
 				.thumbnailUrl(novel.getThumbnailUrl())
 				.lastReadEpisode(lastReadEpisode)
@@ -161,6 +158,27 @@ public class MypageService {
 				.pointChange(pointChange)
 				.description(pointHistory.getDescription())
 				.date(pointHistory.getUsedAt())
+				.build();
+		});
+	}
+
+	public Page<MyNovelResponseDTO> getMyNovels(CustomUserDetails userDetails, Pageable pageable) {
+		User user = userDetails.getUser();
+
+		Page<Novel> novelPage = novelRepository.findNovelsSortedByLatestEpisode(user, pageable);
+
+		return novelPage.map(myNovel -> {
+
+			List<String> tags = tagRepository.findByNovel(myNovel).stream()
+				.map(Tag::getTag)
+				.toList();
+
+			return MyNovelResponseDTO.builder()
+				.title(myNovel.getTitle())
+				.likeCount(myNovel.getLikeCount())
+				.tags(tags)
+				.thumbnailUrl(myNovel.getThumbnailUrl())
+				// TODO: REDIS로부터 작품 반응 조회
 				.build();
 		});
 	}
