@@ -20,17 +20,23 @@ public class AdminRestController {
         return ResponseEntity.ok(adminService.getUsers(page, userDetails));
     }
 
-	@GetMapping("/users/search")
-	public ResponseEntity<UserListResponseDTO> searchUsers(
-			@RequestParam(required = false) String nickname,
-			@RequestParam(required = false) String email,
-			@RequestParam(defaultValue = "1") Integer page,
-			@AuthenticationPrincipal CustomUserDetails userDetails) {
-		return ResponseEntity.ok(adminService.searchUsers(nickname, email, page, userDetails));
-	}
+    @GetMapping("/users/search")
+    public ResponseEntity<UserListResponseDTO> searchUsers(
+            @RequestParam(required = false) String nickname,
+            @RequestParam(required = false) String email,
+            @RequestParam(defaultValue = "1") Integer page,
+            @AuthenticationPrincipal CustomUserDetails userDetails) {
+        return ResponseEntity.ok(adminService.searchUsers(nickname, email, page, userDetails));
+    }
 
     @PostMapping("/users/{userId}/active")
     public ResponseEntity<String> activeUser(@PathVariable Long userId, @AuthenticationPrincipal CustomUserDetails userDetails) {
         return ResponseEntity.ok(adminService.activeUser(userId, userDetails));
     }
+
+    @PostMapping("/notices")
+    public ResponseEntity<String> writeNotice(@RequestBody NoticeRequestDTO noticeRequestDTO, @AuthenticationPrincipal CustomUserDetails userDetails) {
+        return ResponseEntity.ok(adminService.writeNotice(noticeRequestDTO, userDetails));
+    }
+
 }

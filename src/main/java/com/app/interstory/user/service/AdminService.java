@@ -1,10 +1,13 @@
 package com.app.interstory.user.service;
 
 import com.app.interstory.user.domain.CustomUserDetails;
+import com.app.interstory.user.domain.entity.Notice;
 import com.app.interstory.user.domain.entity.User;
 import com.app.interstory.user.domain.enumtypes.Roles;
+import com.app.interstory.user.dto.request.NoticeRequestDTO;
 import com.app.interstory.user.dto.response.UserListResponseDTO;
 import com.app.interstory.user.dto.response.UserResponseDTO;
+import com.app.interstory.user.repository.NoticeRepository;
 import com.app.interstory.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -21,6 +24,7 @@ import java.util.List;
 public class AdminService {
 
     private final UserRepository userRepository;
+    private final NoticeRepository noticeRepository;
 
     @Transactional
     public UserListResponseDTO getUsers(@RequestParam(defaultValue = "1") Integer page, CustomUserDetails userDetails) {
@@ -85,5 +89,20 @@ public class AdminService {
 
         return UserListResponseDTO.from(userList, users.getTotalPages());
     }
+
+    @Transactional
+    public String writeNotice(NoticeRequestDTO noticeRequestDTO, CustomUserDetails userDetails) {
+        User user = userDetails.getUser();
+
+        if (user == null || user.getRole() != Roles.ADMIN) {
+            throw new IllegalStateException("공지사항 작성 권한이 없습니다.");
+        }
+
+        Notice notice = Notice.builder().user(user).title(noticeRequestDTO.getTitle()).content(noticeRequestDTO.getContent()).build();
+        noticeRepository.save(notice);
+
+        return "공지사항 작성이 완료되었습니다.";
+    }
+
 }
 
