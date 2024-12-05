@@ -5,6 +5,7 @@ import com.app.interstory.user.domain.entity.User;
 import com.app.interstory.user.dto.request.UpdateUserRequestDTO;
 import com.app.interstory.user.dto.response.FavoriteNovelResponseDTO;
 import com.app.interstory.user.dto.response.MypageResponseDTO;
+import com.app.interstory.user.dto.response.PointHistoryResponseDTO;
 import com.app.interstory.user.dto.response.ReadNovelResponseDTO;
 import com.app.interstory.user.dto.response.UpdateUserResponseDTO;
 import com.app.interstory.user.service.MypageService;
@@ -58,5 +59,11 @@ public class MypageRestController {
 	public ResponseEntity<Page<ReadNovelResponseDTO>> getReadNovel(@AuthenticationPrincipal CustomUserDetails userDetails,
 		@PageableDefault(size = 10, sort = "updatedAt", direction = Sort.Direction.DESC) Pageable pageable) {
 		return ResponseEntity.ok(mypageService.getReadNovels(userDetails.getUser(), pageable));
+	}
+
+	@GetMapping("/point-history")
+	public ResponseEntity<Page<PointHistoryResponseDTO>> getPointHistory(@AuthenticationPrincipal CustomUserDetails userDetails,
+		@PageableDefault(size = 10, sort = "usedAt", direction = Sort.Direction.DESC) Pageable pageable) {
+		return ResponseEntity.ok(mypageService.getPointHistory(userDetails.getUser(), pageable));
 	}
 }

@@ -3,7 +3,9 @@ package com.app.interstory.user.service;
 import java.util.List;
 
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import com.app.interstory.novel.domain.entity.FavoriteNovel;
@@ -15,11 +17,14 @@ import com.app.interstory.novel.repository.EpisodeRepository;
 import com.app.interstory.novel.repository.FavoriteNovelRepository;
 import com.app.interstory.novel.repository.RecentNovelRepository;
 import com.app.interstory.novel.repository.TagRepository;
+import com.app.interstory.user.domain.entity.Point;
 import com.app.interstory.user.domain.entity.User;
 import com.app.interstory.user.dto.request.UpdateUserRequestDTO;
 import com.app.interstory.user.dto.response.FavoriteNovelResponseDTO;
+import com.app.interstory.user.dto.response.PointHistoryResponseDTO;
 import com.app.interstory.user.dto.response.ReadNovelResponseDTO;
 import com.app.interstory.user.dto.response.UpdateUserResponseDTO;
+import com.app.interstory.user.repository.PointRepository;
 import com.app.interstory.user.repository.UserRepository;
 
 import lombok.RequiredArgsConstructor;
@@ -32,6 +37,7 @@ public class MypageService {
 	private final TagRepository tagRepository;
 	private final FavoriteNovelRepository favoriteNovelRepository;
 	private final RecentNovelRepository recentNovelRepository;
+	private final PointRepository pointRepository;
 
 	public UpdateUserResponseDTO updateUser(User user, UpdateUserRequestDTO updateUserRequestDTO) {
 		user.update(
@@ -106,6 +112,25 @@ public class MypageService {
 				.tags(tags)
 				.thumbnailUrl(novel.getThumbnailUrl())
 				.lastReadEpisode(lastReadEpisode)
+				.build();
+		});
+	}
+
+	public Page<PointHistoryResponseDTO> getPointHistory(User user, Pageable pageable) {
+		Page<Point> pointPage = pointRepository.findByUser(user, pageable);
+
+		return pointPage.map(pointHistory -> {
+			String pointChange;
+			if (pointHistory.getBalance() > 0) {
+				pointChange = pointHistory.getBalance() + "P 사용";
+			} else {
+				pointChange = pointHistory.getBalance() + "P 충전";
+			}
+
+			return PointHistoryResponseDTO.builder()
+				.pointChange(pointChange)
+				.description(pointHistory.getDescription())
+				.date(pointHistory.getUsedAt())
 				.build();
 		});
 	}
