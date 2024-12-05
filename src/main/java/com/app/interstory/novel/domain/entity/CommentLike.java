@@ -27,4 +27,9 @@ public class CommentLike {
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "comment_id", nullable = false)
 	private Comment comment;
+
+    public CommentLike(Comment comment, User user) {
+        this.user = user;
+        this.comment = comment;
+    }
 }
