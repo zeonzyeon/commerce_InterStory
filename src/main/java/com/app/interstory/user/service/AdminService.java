@@ -29,9 +29,7 @@ public class AdminService {
 
         User user = userDetails.getUser();
 
-        if (user == null) {
-            throw new IllegalStateException("로그인이 필요한 서비스입니다.");
-        } else if (user.getRole() != Roles.ADMIN) {
+        if (user == null || user.getRole() != Roles.ADMIN) {
             throw new IllegalStateException("조회 권한이 없습니다.");
         }
 
@@ -49,5 +47,6 @@ public class AdminService {
 
         return UserListResponseDTO.from(userList, users.getTotalPages());
     }
+
 }
 
