@@ -1,12 +1,11 @@
-package com.app.interstory.episode.service;
+package com.app.interstory.novel.service;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.app.interstory.episode.domain.dto.EpisodeRequestDTO;
-import com.app.interstory.episode.domain.dto.EpisodeResponseDTO;
-import com.app.interstory.episode.repository.CartItemRepository;
-import com.app.interstory.episode.repository.PointRepository;
+import com.app.interstory.novel.dto.request.EpisodeRequestDTO;
+import com.app.interstory.novel.dto.response.EpisodeResponseDTO;
+import com.app.interstory.novel.repository.CartItemRepository;
 import com.app.interstory.novel.domain.entity.Episode;
 import com.app.interstory.novel.domain.entity.EpisodeLike;
 import com.app.interstory.novel.domain.entity.Novel;
@@ -16,6 +15,7 @@ import com.app.interstory.novel.repository.NovelRepository;
 import com.app.interstory.user.domain.entity.CartItem;
 import com.app.interstory.user.domain.entity.Point;
 import com.app.interstory.user.domain.entity.User;
+import com.app.interstory.user.repository.PointRepository;
 import com.app.interstory.user.repository.UserRepository;
 
 @Service

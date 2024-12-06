@@ -12,7 +12,6 @@ import lombok.NoArgsConstructor;
 
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
-import java.io.Serializable;
 import java.sql.Timestamp;
 
 @Entity
@@ -22,13 +21,13 @@ import java.sql.Timestamp;
 @Getter
 @Builder
 @EntityListeners(AuditingEntityListener.class)
-public class User{
+public class User {
 
-    private static final Roles DEFAULT_ROLE = Roles.PUBLIC;
-    private static final long DEFAULT_POINT = 0L;
-    private static final Boolean DEFAULT_IS_ACTIVITY = true;
-    private static final Boolean DEFAULT_SUBSCRIBE = false;
-    private static final Boolean DEFAULT_AUTO_PAYMENT = false;
+	private static final Roles DEFAULT_ROLE = Roles.PUBLIC;
+	private static final long DEFAULT_POINT = 0L;
+	private static final Boolean DEFAULT_IS_ACTIVITY = true;
+	private static final Boolean DEFAULT_SUBSCRIBE = false;
+	private static final Boolean DEFAULT_AUTO_PAYMENT = false;
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -75,21 +74,21 @@ public class User{
 	@Column(name = "auto_payment", nullable = false)
 	private Boolean autoPayment = DEFAULT_AUTO_PAYMENT;
 
-    @OneToOne(mappedBy = "user", cascade = CascadeType.ALL,orphanRemoval = true)
-    private Social social;
+	@OneToOne(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+	private Social social;
 
-    //연관관계 method
-    public void addSocialProvider(Social social) {
-        this.social = social;
-        social.addUser(this);
-    }
+	//연관관계 method
+	public void addSocialProvider(Social social) {
+		this.social = social;
+		social.addUser(this);
+	}
 
-    //business method
-    public void update(String profileUrl, String nickname, String password) {
-        this.profileUrl = profileUrl;
-        this.nickname = nickname;
-        this.password = password;
-    }
+	//business method
+	public void update(String profileUrl, String nickname, String password) {
+		this.profileUrl = profileUrl;
+		this.nickname = nickname;
+		this.password = password;
+	}
 
 	public void reducePointsForPurchase(Long amount) {
 		if (this.point < amount) {

@@ -5,7 +5,7 @@ import java.sql.Timestamp;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
-import com.app.interstory.episode.domain.dto.EpisodeRequestDTO;
+import com.app.interstory.novel.dto.request.EpisodeRequestDTO;
 
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;

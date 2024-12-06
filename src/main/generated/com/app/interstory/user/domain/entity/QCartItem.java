@@ -47,7 +47,7 @@ public class QCartItem extends EntityPathBase<CartItem> {
     public QCartItem(Class<? extends CartItem> type, PathMetadata metadata, PathInits inits) {
         super(type, metadata, inits);
         this.episode = inits.isInitialized("episode") ? new com.app.interstory.novel.domain.entity.QEpisode(forProperty("episode"), inits.get("episode")) : null;
-        this.user = inits.isInitialized("user") ? new QUser(forProperty("user")) : null;
+        this.user = inits.isInitialized("user") ? new QUser(forProperty("user"), inits.get("user")) : null;
     }
 
 }

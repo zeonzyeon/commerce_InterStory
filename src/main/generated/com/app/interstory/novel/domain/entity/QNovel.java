@@ -64,7 +64,7 @@ public class QNovel extends EntityPathBase<Novel> {
 
     public QNovel(Class<? extends Novel> type, PathMetadata metadata, PathInits inits) {
         super(type, metadata, inits);
-        this.user = inits.isInitialized("user") ? new com.app.interstory.user.domain.entity.QUser(forProperty("user")) : null;
+        this.user = inits.isInitialized("user") ? new com.app.interstory.user.domain.entity.QUser(forProperty("user"), inits.get("user")) : null;
     }
 
 }
