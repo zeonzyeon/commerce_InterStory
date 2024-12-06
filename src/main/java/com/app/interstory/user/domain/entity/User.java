@@ -53,18 +53,18 @@ public class User {
 	@Column(name = "password")
 	private String password;
 
-    @Column(name = "point", nullable = false)
-    @Builder.Default
-    private Long point = DEFAULT_POINT;
+	@Column(name = "point", nullable = false)
+	@Builder.Default
+	private Long point = DEFAULT_POINT;
 
 	@Enumerated(EnumType.STRING)
 	@Builder.Default
 	@Column(name = "role", nullable = false)
 	private Roles role = DEFAULT_ROLE;
 
-    @Builder.Default
-    @Column(name = "is_activity", nullable = false)
-    private Boolean isActivity = DEFAULT_IS_ACTIVITY;
+	@Builder.Default
+	@Column(name = "is_activity", nullable = false)
+	private Boolean isActivity = DEFAULT_IS_ACTIVITY;
 
 	@Column(name = "profile_renamed_filename")
 	private String profileRenamedFilename;
@@ -84,8 +84,8 @@ public class User {
 	@Column(name = "auto_payment", nullable = false)
 	private Boolean isAutoPayment = DEFAULT_AUTO_PAYMENT;
 
-    @OneToOne(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
-    private Social social;
+	@OneToOne(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+	private Social social;
 
 	//연관관계 method
 	public void addSocialProvider(Social social) {
@@ -127,7 +127,7 @@ public class User {
 		return this.getProfileRenamedFilename().equals("user.png");
 	}
 
-    public void active() {
-        this.isActivity = true;
-    }
+	public void active() {
+		this.isActivity = true;
+	}
 }
