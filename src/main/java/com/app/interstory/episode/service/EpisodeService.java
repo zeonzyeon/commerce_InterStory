@@ -41,26 +41,31 @@ public class EpisodeService {
 	// 회차 작성
 	@Transactional
 	public EpisodeResponseDTO writeEpisode(Long novelId, EpisodeRequestDTO requestDTO) {
-		// Novel 엔티티 조회
 		Novel novel = novelRepository.findById(novelId)
 			.orElseThrow(() -> new RuntimeException("Novel not found"));
 
-		// Episode 엔티티 생성
+		if (requestDTO.getTitle() == null || requestDTO.getTitle().isEmpty()) {
+			throw new IllegalArgumentException("Episode title cannot be null");
+		}
+
+		if (requestDTO.getContent() == null || requestDTO.getContent().isEmpty()) {
+			throw new IllegalArgumentException("Episode content cannot be null");
+		}
+
 		Episode episode = Episode.builder()
 			.novel(novel)
 			.title(requestDTO.getTitle())
 			.thumbnailRenamedFilename(requestDTO.getThumbnailRenamedFilename())
 			.thumbnailUrl(requestDTO.getThumbnailUrl())
 			.content(requestDTO.getContent())
-			.status(requestDTO.getStatus() != null ? requestDTO.getStatus() : true)
+			.status(true)
 			.build();
-
-		episodeRepository.save(episode);
 
 		return convertToDTO(episode);
 	}
 
 	// 회차 수정
+	@Transactional
 	public EpisodeResponseDTO updateEpisode(Long novelId, Long episodeId, EpisodeRequestDTO requestDTO) {
 		Episode episode = episodeRepository.findById(episodeId)
 			.orElseThrow(() -> new RuntimeException("Episode not found"));
@@ -69,21 +74,9 @@ public class EpisodeService {
 			throw new IllegalArgumentException("Invalid novelId for the given episode.");
 		}
 
-		Episode updatedEpisode = Episode.builder()
-			.episodeId(episode.getEpisodeId())
-			.novel(episode.getNovel())
-			.title(requestDTO.getTitle())
-			.thumbnailRenamedFilename(requestDTO.getThumbnailRenamedFilename())
-			.thumbnailUrl(requestDTO.getThumbnailUrl())
-			.content(requestDTO.getContent())
-			.viewCount(episode.getViewCount())
-			.likeCount(episode.getLikeCount())
-			.publishedAt(episode.getPublishedAt())
-			.status(requestDTO.getStatus())
-			.build();
+		episode.updateEpisode(requestDTO);
 
-		Episode savedEpisode = episodeRepository.save(updatedEpisode);
-		return convertToDTO(savedEpisode);
+		return convertToDTO(episode);
 	}
 
 	// 회차 상세 조회
@@ -113,6 +106,7 @@ public class EpisodeService {
 	}
 
 	// 회차 삭제
+	@Transactional
 	public void deleteEpisode(Long novelId, Long episodeId) {
 		Episode episode = episodeRepository.findById(episodeId)
 			.orElseThrow(() -> new RuntimeException("Episode not found"));
@@ -121,7 +115,7 @@ public class EpisodeService {
 			throw new RuntimeException("Episode does not belong to the specified novel");
 		}
 
-		episodeRepository.delete(episode);
+		episode.markAsDeleted();
 	}
 
 	// 회차 구매
@@ -142,31 +136,12 @@ public class EpisodeService {
 		// 3. 에피소드 가격 정의
 		Long episodePrice = 500L; // 임시 포인트
 
-		// 4. 포인트 확인
-		if (user.getPoint() < episodePrice) {
-			throw new RuntimeException("Insufficient points");
-		}
+		// 4. 포인트 차감
+		user.reducePointsForPurchase(episodePrice);
 
-		// 5. 포인트 차감
-		User updatedUser = User.builder()
-			.userId(user.getUserId())
-			.email(user.getEmail())
-			.nickname(user.getNickname())
-			.password(user.getPassword())
-			.point(user.getPoint() - episodePrice)
-			.role(user.getRole())
-			.isActivity(user.getIsActivity())
-			.profileRenamedFilename(user.getProfileRenamedFilename())
-			.profileUrl(user.getProfileUrl())
-			.createdAt(user.getCreatedAt())
-			.subscribe(user.getSubscribe())
-			.autoPayment(user.getAutoPayment())
-			.build();
-		userRepository.save(updatedUser);
-
-		// 6. 포인트 사용 내역 저장
+		// 5. 포인트 사용 내역 저장
 		Point point = Point.builder()
-			.user(updatedUser)
+			.user(user)
 			.balance(-episodePrice)
 			.description("Episode purchase - ID: " + episodeId)
 			.build();
@@ -182,17 +157,12 @@ public class EpisodeService {
 		Episode episode = episodeRepository.findById(episodeId)
 			.orElseThrow(() -> new RuntimeException("Episode not found"));
 
-		boolean exists = cartItemRepository.existsByUserAndEpisode(user.getUserId(), episode.getEpisodeId());
-
-		if (exists) {
+		if (cartItemRepository.existsByUserAndEpisode(user, episode)) {
 			return "이미 담긴 회차입니다.";
 		}
 
-		CartItem cartItem = CartItem.builder()
-			.user(user)
-			.episode(episode)
-			.build();
-
+		// 장바구니 아이템 생성
+		CartItem cartItem = new CartItem(user, episode); // 엔티티 생성자로 처리
 		cartItemRepository.save(cartItem);
 
 		return "회차가 장바구니에 성공적으로 담겼습니다.";
@@ -237,6 +207,7 @@ public class EpisodeService {
 			.build();
 		episodeRepository.save(episode);
 
+		// 추천 취소 추가
 		return "회차를 추천했습니다.";
 	}
 }

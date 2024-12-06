@@ -82,4 +82,10 @@ public class User implements Serializable {
 		this.password = password;
 	}
 
+	public void reducePointsForPurchase(Long amount) {
+		if (this.point < amount) {
+			throw new RuntimeException("Insufficient points");
+		}
+		this.point -= amount;
+	}
 }
