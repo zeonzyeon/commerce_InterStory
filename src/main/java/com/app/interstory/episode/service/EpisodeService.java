@@ -3,17 +3,14 @@ package com.app.interstory.episode.service;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.app.interstory.episode.domain.Episode;
-import com.app.interstory.episode.domain.Payment;
-import com.app.interstory.episode.domain.Point;
-import com.app.interstory.episode.domain.User;
 import com.app.interstory.episode.domain.dto.EpisodeRequestDTO;
 import com.app.interstory.episode.domain.dto.EpisodeResponseDTO;
+import com.app.interstory.episode.repository.CartItemRepository;
 import com.app.interstory.episode.repository.CollectionRepository;
-import com.app.interstory.episode.repository.EpisodeRepository;
-import com.app.interstory.episode.repository.PaymentRepository;
 import com.app.interstory.episode.repository.PointRepository;
-import com.app.interstory.episode.repository.UserRepository;
+import com.app.interstory.novel.domain.entity.Episode;
+import com.app.interstory.user.domain.entity.CartItem;
+import com.app.interstory.user.domain.entity.User;
 
 @Service
 public class EpisodeService {
@@ -21,16 +18,16 @@ public class EpisodeService {
 	private final UserRepository userRepository;
 	private final CollectionRepository collectionRepository;
 	private final PointRepository pointRepository;
-	private final PaymentRepository paymentRepository;
+	private final CartItemRepository cartItemRepository;
 
 	public EpisodeService(EpisodeRepository episodeRepository, UserRepository userRepository,
 		CollectionRepository collectionRepository, PointRepository pointRepository,
-		PaymentRepository paymentRepository) {
+		CartItemRepository cartItemRepository) {
 		this.episodeRepository = episodeRepository;
 		this.userRepository = userRepository;
 		this.collectionRepository = collectionRepository;
 		this.pointRepository = pointRepository;
-		this.paymentRepository = paymentRepository;
+		this.cartItemRepository = cartItemRepository;
 	}
 
 	// 회차 수정
@@ -125,19 +122,26 @@ public class EpisodeService {
 
 	// 장바구니 담기
 	@Transactional
-	public String addItemToCart(Long novelId, Long episodeId) {
+	public String addItemToCart(Long userId, Long episodeId) {
+		// 사용자 조회
+		User user = userRepository.findById(userId)
+			.orElseThrow(() -> new RuntimeException("User not found"));
+
+		// 에피소드 조회
+		Episode episode = episodeRepository.findById(episodeId)
+			.orElseThrow(() -> new RuntimeException("Episode not found"));
+
 		// 동일한 에피소드가 이미 장바구니에 담겼는지 확인
-		boolean exists = cartItemRepository.existsByUserIdAndEpisodeId(userId, episodeId);
+		boolean exists = cartItemRepository.existsByUserAndEpisode(user, episode);
 
 		if (exists) {
-			// 이미 담긴 회차
 			return "이미 담긴 회차입니다.";
 		}
 
 		// 장바구니에 새로운 에피소드 추가
 		CartItem cartItem = CartItem.builder()
-			.userId(userId)
-			.episodeId(episodeId)
+			.user(user)
+			.episode(episode)
 			.build();
 
 		cartItemRepository.save(cartItem);

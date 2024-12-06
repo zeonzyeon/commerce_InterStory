@@ -26,6 +26,8 @@ public class EpisodeController {
 		this.episodeService = episodeService;
 	}
 
+	// 회차 작성
+	@GetMapping
 	// 회차 수정
 	@PutMapping("/{episodeId}")
 	public ResponseEntity<EpisodeResponseDTO> updateEpisode(
@@ -68,8 +70,8 @@ public class EpisodeController {
 	// 장바구니 담기
 	@PostMapping("/cart")
 	public ResponseEntity<String> addItemToCart(
-		@RequestParam Long userId,      // 사용자 ID
-		@RequestParam Long episodeId   // 에피소드 ID
+		@RequestParam Long userId,
+		@RequestParam Long episodeId
 	) {
 		String message = episodeService.addItemToCart(userId, episodeId);
 		return ResponseEntity.ok(message);
