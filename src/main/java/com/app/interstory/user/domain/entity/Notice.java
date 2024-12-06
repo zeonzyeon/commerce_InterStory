@@ -36,4 +36,9 @@ public class Notice {
     @Column(name = "created_at", nullable = false)
     @CreatedDate
     private Timestamp createdAt;
+
+    public void update(String title, String content) {
+        this.title = title;
+        this.content = content;
+    }
 }

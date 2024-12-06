@@ -4,7 +4,9 @@ import com.app.interstory.user.domain.CustomUserDetails;
 import com.app.interstory.user.domain.entity.Notice;
 import com.app.interstory.user.domain.entity.User;
 import com.app.interstory.user.domain.enumtypes.Roles;
+import com.app.interstory.user.dto.response.NoticeListResponseDTO;
 import com.app.interstory.user.dto.request.NoticeRequestDTO;
+import com.app.interstory.user.dto.response.NoticeResponseDTO;
 import com.app.interstory.user.dto.response.UserListResponseDTO;
 import com.app.interstory.user.dto.response.UserResponseDTO;
 import com.app.interstory.user.repository.NoticeRepository;
@@ -13,6 +15,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -104,5 +107,59 @@ public class AdminService {
         return "공지사항 작성이 완료되었습니다.";
     }
 
-}
+    @Transactional
+    public String updateNotice(Long noticeId, NoticeRequestDTO noticeRequestDTO, CustomUserDetails userDetails) {
+        User user = userDetails.getUser();
 
+        if (user == null || user.getRole() != Roles.ADMIN) {
+            throw new IllegalStateException("공지사항 수정 권한이 없습니다.");
+        }
+
+        Notice notice = noticeRepository.findById(noticeId)
+                .orElseThrow(() -> new RuntimeException("해당 ID의 공지사항이 없습니다."));
+
+        notice.update(noticeRequestDTO.getTitle(), noticeRequestDTO.getContent());
+
+        return "공지사항 수정이 완료되었습니다.";
+    }
+
+    @Transactional
+    public NoticeListResponseDTO getNoticeList(Integer page) {
+        final int getItemCount = 10;
+
+        Pageable pageable = PageRequest.of(page - 1, getItemCount, Sort.by(Sort.Direction.DESC, "createdAt"));
+
+        Page<Notice> notices = noticeRepository.findAll(pageable);
+
+        if (page > notices.getTotalPages()) {
+            throw new RuntimeException("유효하지 않은 페이지입니다.");
+        }
+
+        List<NoticeResponseDTO> noticeResponseDtos = notices.stream().map(NoticeResponseDTO::from).toList();
+
+        return NoticeListResponseDTO.from(noticeResponseDtos, notices.getTotalPages());
+    }
+
+    @Transactional
+    public NoticeResponseDTO getNoticeDetail(Long noticeId) {
+        Notice notice = noticeRepository.findById(noticeId)
+                .orElseThrow(() -> new RuntimeException("해당 Id의 공지사항이 없습니다."));
+
+        return NoticeResponseDTO.from(notice);
+    }
+
+    @Transactional
+    public void deleteNotice(Long noticeId, CustomUserDetails userDetails) {
+        User user = userDetails.getUser();
+
+        if (user == null || user.getRole() != Roles.ADMIN) {
+            throw new IllegalStateException("공지사항 삭제 권한이 없습니다.");
+        }
+
+        Notice notice = noticeRepository.findById(noticeId)
+                .orElseThrow(() -> new RuntimeException("해당 공지사항을 발견하지 못했습니다."));
+
+        noticeRepository.delete(notice);
+    }
+
+}

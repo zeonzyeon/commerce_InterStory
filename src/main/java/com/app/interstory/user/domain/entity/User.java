@@ -14,7 +14,6 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import java.io.Serializable;
 import java.sql.Timestamp;
-import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "users")
@@ -82,6 +81,10 @@ public class User implements Serializable {
 		this.profileUrl = profileUrl;
 		this.nickname = nickname;
 		this.password = password;
+	}
+
+	public void active() {
+		this.isActivity = Boolean.TRUE;
 	}
 
 }
