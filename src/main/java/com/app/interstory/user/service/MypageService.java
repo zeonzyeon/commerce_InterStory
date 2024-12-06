@@ -60,8 +60,8 @@ public class MypageService {
 			user.getNickname(),
 			user.getProfileUrl(),
 			user.getPoint(),
-			user.getSubscribe(),
-			user.getAutoPayment()
+			user.getIsSubscribe(),
+			user.getIsAutoPayment()
 		);
 	}
 
@@ -84,7 +84,8 @@ public class MypageService {
 	public Page<FavoriteNovelResponseDTO> getFavoriteNovels(CustomUserDetails userDetails, Pageable pageable) {
 		Long userId = userDetails.getUser().getUserId();
 
-		Page<FavoriteNovel> favoriteNovelPage = favoriteNovelRepository.findFavoritesSortedByLatestEpisode(userId, pageable);
+		Page<FavoriteNovel> favoriteNovelPage = favoriteNovelRepository.findFavoritesSortedByLatestEpisode(userId,
+			pageable);
 		// 만약 관심작품 선정은 했지만 한번도 열람하지 않았을 경우 EpisodeId는 0으로 처리됨
 
 		return favoriteNovelPage.map(favoriteNovel -> {
@@ -100,7 +101,8 @@ public class MypageService {
 				.map(recentNovel -> recentNovel.getEpisode().getEpisodeId())
 				.orElse(0L);
 
-			Map<String, Object> getLastReadEpisodeNumber = episodeRepository.findRowNumberByNovelIdAndEpisodeId(novel.getNovelId(), lastReadEpisodeId);
+			Map<String, Object> getLastReadEpisodeNumber = episodeRepository.findRowNumberByNovelIdAndEpisodeId(
+				novel.getNovelId(), lastReadEpisodeId);
 
 			int lastReadEpisodeNumber;
 			if (getLastReadEpisodeNumber != null && getLastReadEpisodeNumber.containsKey("row_number")) {
@@ -207,7 +209,8 @@ public class MypageService {
 	}
 
 	@Transactional
-	public SettlementResponseDTO updateSettlement(CustomUserDetails userDetails, SettlementRequestDTO settlementRequestDTO) {
+	public SettlementResponseDTO updateSettlement(CustomUserDetails userDetails,
+		SettlementRequestDTO settlementRequestDTO) {
 		Long userId = userDetails.getUser().getUserId();
 
 		Settlement settlement = settlementRepository.findByUser_UserId(userId)
