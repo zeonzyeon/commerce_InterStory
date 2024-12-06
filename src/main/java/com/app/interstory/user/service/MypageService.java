@@ -19,15 +19,19 @@ import com.app.interstory.novel.repository.RecentNovelRepository;
 import com.app.interstory.novel.repository.TagRepository;
 import com.app.interstory.user.domain.CustomUserDetails;
 import com.app.interstory.user.domain.entity.Point;
+import com.app.interstory.user.domain.entity.Settlement;
 import com.app.interstory.user.domain.entity.User;
+import com.app.interstory.user.dto.request.SettlementRequestDTO;
 import com.app.interstory.user.dto.request.UpdateUserRequestDTO;
 import com.app.interstory.user.dto.response.FavoriteNovelResponseDTO;
 import com.app.interstory.user.dto.response.MyNovelResponseDTO;
 import com.app.interstory.user.dto.response.MypageResponseDTO;
 import com.app.interstory.user.dto.response.PointHistoryResponseDTO;
 import com.app.interstory.user.dto.response.ReadNovelResponseDTO;
+import com.app.interstory.user.dto.response.SettlementResponseDTO;
 import com.app.interstory.user.dto.response.UpdateUserResponseDTO;
 import com.app.interstory.user.repository.PointRepository;
+import com.app.interstory.user.repository.SettlementRepository;
 import com.app.interstory.user.repository.UserRepository;
 
 import lombok.RequiredArgsConstructor;
@@ -44,9 +48,13 @@ public class MypageService {
 	private final RecentNovelRepository recentNovelRepository;
 	private final PointRepository pointRepository;
 	private final NovelRepository novelRepository;
+	private final SettlementRepository settlementRepository;
 
 	public MypageResponseDTO getUser(CustomUserDetails userDetails) {
-		User user = userDetails.getUser();
+		Long userId = userDetails.getUser().getUserId();
+
+		User user = userRepository.findById(userId)
+			.orElseThrow(() -> new IllegalArgumentException("해당 사용자가 없습니다. id=" + userId));
 
 		return new MypageResponseDTO(
 			user.getNickname(),
@@ -184,5 +192,31 @@ public class MypageService {
 				// TODO: REDIS로부터 작품 반응 조회
 				.build();
 		});
+	}
+
+	public SettlementResponseDTO getSettlement(CustomUserDetails userDetails) {
+		Long userId = userDetails.getUser().getUserId();
+
+		Settlement settlement = settlementRepository.findByUser_UserId(userId)
+			.orElseThrow(() -> new IllegalArgumentException("해당 사용자의 정산 정보가 없습니다. id=" + userId));
+
+		return SettlementResponseDTO.builder()
+			.fee(settlement.getFee())
+			.accountNumber(settlement.getAccountNumber())
+			.build();
+	}
+
+	@Transactional
+	public SettlementResponseDTO updateSettlement(CustomUserDetails userDetails, SettlementRequestDTO settlementRequestDTO) {
+		Long userId = userDetails.getUser().getUserId();
+
+		Settlement settlement = settlementRepository.findByUser_UserId(userId)
+			.orElseThrow(() -> new IllegalArgumentException("해당 사용자의 정산 정보가 없습니다. id=" + userId));
+
+		settlement.updateAccountNumber(settlementRequestDTO.getAccountNumber());
+
+		return SettlementResponseDTO.builder()
+			.accountNumber(settlement.getAccountNumber())
+			.build();
 	}
 }

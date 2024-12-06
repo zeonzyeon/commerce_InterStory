@@ -1,12 +1,14 @@
 package com.app.interstory.user.controller;
 
 import com.app.interstory.user.domain.CustomUserDetails;
+import com.app.interstory.user.dto.request.SettlementRequestDTO;
 import com.app.interstory.user.dto.request.UpdateUserRequestDTO;
 import com.app.interstory.user.dto.response.FavoriteNovelResponseDTO;
 import com.app.interstory.user.dto.response.MyNovelResponseDTO;
 import com.app.interstory.user.dto.response.MypageResponseDTO;
 import com.app.interstory.user.dto.response.PointHistoryResponseDTO;
 import com.app.interstory.user.dto.response.ReadNovelResponseDTO;
+import com.app.interstory.user.dto.response.SettlementResponseDTO;
 import com.app.interstory.user.dto.response.UpdateUserResponseDTO;
 import com.app.interstory.user.service.MypageService;
 
@@ -60,5 +62,15 @@ public class MypageRestController {
 	@GetMapping("/my-novels")
 	public ResponseEntity<Page<MyNovelResponseDTO>> getMyNovel(@AuthenticationPrincipal CustomUserDetails userDetails, @PageableDefault(size = 10) Pageable pageable) {
 		return ResponseEntity.ok(mypageService.getMyNovels(userDetails, pageable));
+	}
+
+	@GetMapping("/settlement")
+	public ResponseEntity<SettlementResponseDTO> getSettlement(@AuthenticationPrincipal CustomUserDetails userDetails) {
+		return ResponseEntity.ok(mypageService.getSettlement(userDetails));
+	}
+
+	@PutMapping("/settlement")
+	public ResponseEntity<SettlementResponseDTO> updateSettlement(@AuthenticationPrincipal CustomUserDetails userDetails, @RequestBody SettlementRequestDTO settlementRequestDTO) {
+		return ResponseEntity.ok(mypageService.updateSettlement(userDetails, settlementRequestDTO));
 	}
 }
