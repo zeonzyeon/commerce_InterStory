@@ -40,7 +40,7 @@ public class User {
 	@Column(name = "nickname", nullable = false, unique = true)
 	private String nickname;
 
-	@Column(name = "password", nullable = false)
+	@Column(name = "password")
 	private String password;
 
 	@Column(name = "point", nullable = false)
