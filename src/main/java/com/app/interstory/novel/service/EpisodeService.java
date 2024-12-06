@@ -1,12 +1,11 @@
-package com.app.interstory.episode.service;
+package com.app.interstory.novel.service;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.app.interstory.episode.domain.dto.EpisodeRequestDTO;
-import com.app.interstory.episode.domain.dto.EpisodeResponseDTO;
-import com.app.interstory.episode.repository.CartItemRepository;
-import com.app.interstory.episode.repository.PointRepository;
+import com.app.interstory.novel.dto.request.EpisodeRequestDTO;
+import com.app.interstory.novel.dto.response.EpisodeResponseDTO;
+import com.app.interstory.novel.repository.CartItemRepository;
 import com.app.interstory.novel.domain.entity.Episode;
 import com.app.interstory.novel.domain.entity.EpisodeLike;
 import com.app.interstory.novel.domain.entity.Novel;
@@ -16,9 +15,13 @@ import com.app.interstory.novel.repository.NovelRepository;
 import com.app.interstory.user.domain.entity.CartItem;
 import com.app.interstory.user.domain.entity.Point;
 import com.app.interstory.user.domain.entity.User;
+import com.app.interstory.user.repository.PointRepository;
 import com.app.interstory.user.repository.UserRepository;
 
+import lombok.RequiredArgsConstructor;
+
 @Service
+@RequiredArgsConstructor
 public class EpisodeService {
 	private final NovelRepository novelRepository;
 	private final EpisodeRepository episodeRepository;
@@ -26,17 +29,6 @@ public class EpisodeService {
 	private final PointRepository pointRepository;
 	private final CartItemRepository cartItemRepository;
 	private final EpisodeLikeRepository episodeLikeRepository;
-
-	public EpisodeService(NovelRepository novelRepository, EpisodeRepository episodeRepository,
-		UserRepository userRepository, PointRepository pointRepository,
-		CartItemRepository cartItemRepository, EpisodeLikeRepository episodeLikeRepository) {
-		this.novelRepository = novelRepository;
-		this.episodeRepository = episodeRepository;
-		this.userRepository = userRepository;
-		this.pointRepository = pointRepository;
-		this.cartItemRepository = cartItemRepository;
-		this.episodeLikeRepository = episodeLikeRepository;
-	}
 
 	// 회차 작성
 	@Transactional

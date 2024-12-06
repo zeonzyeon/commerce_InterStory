@@ -3,8 +3,10 @@ package com.app.interstory.user.dto.response;
 import java.util.List;
 
 import lombok.Builder;
+import lombok.Getter;
 
 @Builder
+@Getter
 public class FavoriteNovelResponseDTO {
 	String title;
 	String author;
@@ -12,5 +14,6 @@ public class FavoriteNovelResponseDTO {
 	Integer likeCount;
 	List<String> tags;
 	String thumbnailUrl;
-	Integer lastReadEpisode;
+	Long lastReadEpisodeId;
+	Integer lastReadEpisodeNumber;
 }

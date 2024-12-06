@@ -36,6 +36,7 @@ replay_pid*
 .gradle
 docker
 build
+/src/main/resources/data.sql
 .idea
 .idea/**/workspace.xml
 .idea/**/tasks.xml

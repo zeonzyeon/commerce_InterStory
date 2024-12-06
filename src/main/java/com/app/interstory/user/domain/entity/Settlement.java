@@ -37,4 +37,8 @@ public class Settlement {
 	@Builder.Default
 	@Column(name = "account_number", nullable = false)
 	private String accountNumber = DEFAULT_ACCOUNT_NUMBER;
+
+	public void updateAccountNumber(String accountNumber) {
+		this.accountNumber = accountNumber;
+	}
 }

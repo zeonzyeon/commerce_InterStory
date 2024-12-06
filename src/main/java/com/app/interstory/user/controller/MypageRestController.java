@@ -1,17 +1,20 @@
 package com.app.interstory.user.controller;
 
 import com.app.interstory.user.domain.CustomUserDetails;
-import com.app.interstory.user.domain.entity.User;
+import com.app.interstory.user.dto.request.SettlementRequestDTO;
 import com.app.interstory.user.dto.request.UpdateUserRequestDTO;
 import com.app.interstory.user.dto.response.FavoriteNovelResponseDTO;
+import com.app.interstory.user.dto.response.MyNovelResponseDTO;
 import com.app.interstory.user.dto.response.MypageResponseDTO;
+import com.app.interstory.user.dto.response.PointHistoryResponseDTO;
 import com.app.interstory.user.dto.response.ReadNovelResponseDTO;
+import com.app.interstory.user.dto.response.SettlementResponseDTO;
 import com.app.interstory.user.dto.response.UpdateUserResponseDTO;
 import com.app.interstory.user.service.MypageService;
-import com.app.interstory.user.service.UserService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
@@ -25,40 +28,47 @@ import org.springframework.web.bind.annotation.*;
 @Slf4j
 public class MypageRestController {
 	private final MypageService mypageService;
-	private final UserService userService;
 
 	@GetMapping
 	public ResponseEntity<MypageResponseDTO> getUser(@AuthenticationPrincipal CustomUserDetails userDetails) {
-		User user = userService.findById(userDetails.getUser().getUserId());
-
-		MypageResponseDTO mypageResponseDTO = new MypageResponseDTO(
-			user.getNickname(),
-			user.getProfileUrl(),
-			user.getPoint(),
-			user.getSubscribe(),
-			user.getAutoPayment()
-		);
-
-		return ResponseEntity.ok(mypageResponseDTO);
+		return ResponseEntity.ok(mypageService.getUser(userDetails));
 	}
 
 	@PutMapping
 	public ResponseEntity<UpdateUserResponseDTO> updateUser(@AuthenticationPrincipal CustomUserDetails userDetails, @RequestBody UpdateUserRequestDTO updateUserRequestDTO) {
-		User user = userService.findById(userDetails.getUser().getUserId());
-
-		return ResponseEntity.ok(mypageService.updateUser(user, updateUserRequestDTO));
+		return ResponseEntity.ok(mypageService.updateUser(userDetails, updateUserRequestDTO));
 	}
 
 	@GetMapping("/favorite-novels")
-	public ResponseEntity<Page<FavoriteNovelResponseDTO>> getFavoriteNovel(@AuthenticationPrincipal CustomUserDetails userDetails, @PageableDefault(size = 10) Pageable pageable) {
-		User user = userService.findById(userDetails.getUser().getUserId());
-		return ResponseEntity.ok(mypageService.getFavoriteNovels(user, pageable));
+	public ResponseEntity<Page<FavoriteNovelResponseDTO>> getFavoriteNovel(@AuthenticationPrincipal CustomUserDetails userDetails) {
+		Pageable pageable = PageRequest.of(0, 10, Sort.unsorted());
+		return ResponseEntity.ok(mypageService.getFavoriteNovels(userDetails, pageable));
 	}
 
 	@GetMapping("/read-novels")
 	public ResponseEntity<Page<ReadNovelResponseDTO>> getReadNovel(@AuthenticationPrincipal CustomUserDetails userDetails,
 		@PageableDefault(size = 10, sort = "updatedAt", direction = Sort.Direction.DESC) Pageable pageable) {
-		User user = userService.findById(userDetails.getUser().getUserId());
-		return ResponseEntity.ok(mypageService.getReadNovels(user , pageable));
+		return ResponseEntity.ok(mypageService.getReadNovels(userDetails, pageable));
+	}
+
+	@GetMapping("/point-history")
+	public ResponseEntity<Page<PointHistoryResponseDTO>> getPointHistory(@AuthenticationPrincipal CustomUserDetails userDetails,
+		@PageableDefault(size = 10, sort = "usedAt", direction = Sort.Direction.DESC) Pageable pageable) {
+		return ResponseEntity.ok(mypageService.getPointHistory(userDetails, pageable));
+	}
+
+	@GetMapping("/my-novels")
+	public ResponseEntity<Page<MyNovelResponseDTO>> getMyNovel(@AuthenticationPrincipal CustomUserDetails userDetails, @PageableDefault(size = 10) Pageable pageable) {
+		return ResponseEntity.ok(mypageService.getMyNovels(userDetails, pageable));
+	}
+
+	@GetMapping("/settlement")
+	public ResponseEntity<SettlementResponseDTO> getSettlement(@AuthenticationPrincipal CustomUserDetails userDetails) {
+		return ResponseEntity.ok(mypageService.getSettlement(userDetails));
+	}
+
+	@PutMapping("/settlement")
+	public ResponseEntity<SettlementResponseDTO> updateSettlement(@AuthenticationPrincipal CustomUserDetails userDetails, @RequestBody SettlementRequestDTO settlementRequestDTO) {
+		return ResponseEntity.ok(mypageService.updateSettlement(userDetails, settlementRequestDTO));
 	}
 }

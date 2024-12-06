@@ -1,4 +1,4 @@
-package com.app.interstory.episode.controller;
+package com.app.interstory.novel.controller;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -12,9 +12,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.app.interstory.episode.domain.dto.EpisodeRequestDTO;
-import com.app.interstory.episode.domain.dto.EpisodeResponseDTO;
-import com.app.interstory.episode.service.EpisodeService;
+import com.app.interstory.novel.dto.request.EpisodeRequestDTO;
+import com.app.interstory.novel.dto.response.EpisodeResponseDTO;
+import com.app.interstory.novel.service.EpisodeService;
 
 @RestController
 @RequestMapping("/api/novels/{novelId}/episodes")
