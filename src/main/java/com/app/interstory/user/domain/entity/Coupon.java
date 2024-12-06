@@ -2,7 +2,16 @@ package com.app.interstory.user.domain.entity;
 
 import java.sql.Timestamp;
 
-import jakarta.persistence.*;
+import com.app.interstory.user.domain.enumtypes.CouponEffect;
+
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -29,9 +38,7 @@ public class Coupon {
 	@Column(name = "code", nullable = false)
 	private String code;
 
-	@Column(name = "minimum", nullable = false)
-	private Long minimum;
-
-	@Column(name = "discount", nullable = false)
-	private Long discount;
+	@Enumerated(EnumType.STRING)
+	@Column(name = "coupon_effect", nullable = false)
+	private CouponEffect couponEffect;
 }

@@ -78,7 +78,7 @@ public class User {
 
 	@Builder.Default
 	@Column(name = "subscribe", nullable = false)
-	private Boolean IsSubscribe = DEFAULT_SUBSCRIBE;
+	private Boolean isSubscribe = DEFAULT_SUBSCRIBE;
 
 	@Builder.Default
 	@Column(name = "auto_payment", nullable = false)
@@ -125,5 +125,9 @@ public class User {
 	//기본 이미지 확인
 	public Boolean isDefaultProfile() {
 		return this.getProfileRenamedFilename().equals("user.png");
+	}
+
+	public void active() {
+		this.isActivity = true;
 	}
 }
