@@ -1,5 +1,7 @@
 package com.app.interstory.novel.controller;
 
+import java.util.Map;
+
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -12,6 +14,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.amazonaws.services.ec2.model.PurchaseRequest;
 import com.app.interstory.novel.dto.request.EpisodeRequestDTO;
 import com.app.interstory.novel.dto.response.EpisodeResponseDTO;
 import com.app.interstory.novel.service.EpisodeService;
@@ -67,27 +70,30 @@ public class EpisodeController {
 	public ResponseEntity<String> purchaseEpisode(
 		@PathVariable Long novelId,
 		@PathVariable Long episodeId,
-		@RequestParam Long userId
+		@RequestBody Map<String, Long> body
 	) {
-		episodeService.purchaseEpisode(userId, novelId, episodeId);
-		return ResponseEntity.ok("Episode purchased successfully!");
+		Long userId = body.get("userId");
+		return ResponseEntity.ok("Purchase successful!");
 	}
 
 	// 장바구니 담기
 	@PostMapping("/cart")
-	public ResponseEntity<String> addItemToCart(
+	public ResponseEntity<String> addToCart(
 		@RequestParam Long userId,
-		@RequestParam Long episodeId
+		@RequestBody Map<String, Long> request
 	) {
-		String message = episodeService.addItemToCart(userId, episodeId);
-		return ResponseEntity.ok(message);
+		String result = episodeService.addItemToCart(userId, request.get("episodeId"));
+		return ResponseEntity.ok(result);
 	}
 
 	// 회차 추천
 	@PostMapping("/{episodeId}/like")
 	public ResponseEntity<String> likeEpisode(
+		@PathVariable Long novelId,
 		@PathVariable Long episodeId,
-		@RequestParam Long userId) {
+		@RequestBody Map<String, Long> request
+	) {
+		Long userId = request.get("userId");
 		String result = episodeService.likeEpisode(userId, episodeId);
 		return ResponseEntity.ok(result);
 	}
