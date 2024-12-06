@@ -71,8 +71,8 @@ public class MypageService {
 			user.getNickname(),
 			user.getProfileUrl(),
 			user.getPoint(),
-			user.getSubscribe(),
-			user.getAutoPayment()
+			user.getIsSubscribe(),
+			user.getIsAutoPayment()
 		);
 	}
 

@@ -1,7 +1,9 @@
 package com.app.interstory.util;
 
+import java.sql.Timestamp;
 import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
+import java.time.format.DateTimeFormatter;
 import java.util.Date;
 
 public class Utils {
@@ -26,5 +28,11 @@ public class Utils {
         return sdf.format(new Date()) + df.format(Math.random() * 1000);
     }
 
-
+    public static String formatTimestamp(Timestamp timestamp) {
+        if (timestamp != null) {
+            return timestamp.toLocalDateTime()
+                    .format(DateTimeFormatter.ofPattern("yyyy.MM.dd HH:mm:ss"));
+        }
+        return null;
+    }
 }
