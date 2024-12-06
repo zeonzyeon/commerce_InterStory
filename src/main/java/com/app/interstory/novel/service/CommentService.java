@@ -24,6 +24,8 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
+import static com.app.interstory.util.Utils.formatTimestamp;
+
 @Service
 @RequiredArgsConstructor
 public class CommentService {
@@ -35,7 +37,7 @@ public class CommentService {
     @Transactional
     public void writeComment(CommentRequestDto requestDto, long episodeId, CustomUserDetails userDetails) {
         User user = userRepository.findById(userDetails.getUser().getUserId())
-                .orElseThrow(()-> new UsernameNotFoundException("없는 사용자"));
+                .orElseThrow(() -> new UsernameNotFoundException("로그인이 필요한 서비스입니다."));
 
         if (user == null) {
             throw new IllegalStateException("로그인이 필요한 서비스입니다.");
@@ -54,7 +56,7 @@ public class CommentService {
         final int getItemCount = 4;
 
         User user = userRepository.findById(userDetails.getUser().getUserId())
-                .orElseThrow(()-> new UsernameNotFoundException("없는 사용자"));
+                .orElseThrow(() -> new UsernameNotFoundException("유효하지 않는 사용자입니다."));
 
         Pageable pageable = PageRequest.of(page - 1, getItemCount);
 
@@ -71,7 +73,7 @@ public class CommentService {
                         .nickname(comment.getUser().getNickname())
                         .profileUrl(comment.getUser().getProfileUrl())
                         .content("삭제된 댓글입니다.")
-                        .createdAt(CommentResponseDto.formatTimestamp(comment.getCreatedAt()))
+                        .createdAt(formatTimestamp(comment.getCreatedAt()))
                         .likeCount(comment.getLikeCount())
                         .isLiked(false)
                         .status(comment.getStatus())
@@ -82,7 +84,7 @@ public class CommentService {
                         .nickname(comment.getUser().getNickname())
                         .profileUrl(comment.getUser().getProfileUrl())
                         .content(comment.getContent())
-                        .createdAt(CommentResponseDto.formatTimestamp(comment.getCreatedAt()))
+                        .createdAt(formatTimestamp(comment.getCreatedAt()))
                         .likeCount(comment.getLikeCount())
                         .isLiked(commentLikeRepository.existsByCommentAndUser(comment, user))
                         .status(comment.getStatus())
@@ -98,7 +100,7 @@ public class CommentService {
         final int getItemCount = 4;
 
         User user = userRepository.findById(userDetails.getUser().getUserId())
-                .orElseThrow(()-> new UsernameNotFoundException("없는 사용자"));
+                .orElseThrow(() -> new UsernameNotFoundException("유효하지 않는 사용자입니다."));
 
         Pageable pageable = PageRequest.of(page - 1, getItemCount);
 
@@ -114,7 +116,7 @@ public class CommentService {
                         .nickname(comment.getUser().getNickname())
                         .profileUrl(comment.getUser().getProfileUrl())
                         .content("삭제된 댓글입니다.")
-                        .createdAt(CommentResponseDto.formatTimestamp(comment.getCreatedAt()))
+                        .createdAt(formatTimestamp(comment.getCreatedAt()))
                         .likeCount(comment.getLikeCount())
                         .isLiked(false)
                         .status(comment.getStatus())
@@ -125,7 +127,7 @@ public class CommentService {
                         .nickname(comment.getUser().getNickname())
                         .profileUrl(comment.getUser().getProfileUrl())
                         .content(comment.getContent())
-                        .createdAt(CommentResponseDto.formatTimestamp(comment.getCreatedAt()))
+                        .createdAt(formatTimestamp(comment.getCreatedAt()))
                         .likeCount(comment.getLikeCount())
                         .isLiked(commentLikeRepository.existsByCommentAndUser(comment, user))
                         .status(comment.getStatus())
@@ -139,7 +141,7 @@ public class CommentService {
     @Transactional
     public void deleteComment(Long commentId, CustomUserDetails userDetails) {
         User user = userRepository.findById(userDetails.getUser().getUserId())
-                .orElseThrow(()-> new UsernameNotFoundException("없는 사용자"));
+                .orElseThrow(() -> new UsernameNotFoundException("없는 사용자"));
 
         if (user == null) {
             throw new IllegalStateException("로그인이 필요한 서비스입니다.");
@@ -160,7 +162,7 @@ public class CommentService {
         String afterLikeMessage;
 
         User user = userRepository.findById(userDetails.getUser().getUserId())
-                .orElseThrow(()-> new UsernameNotFoundException("없는 사용자"));
+                .orElseThrow(() -> new UsernameNotFoundException("없는 사용자"));
 
         if (user == null) {
             throw new IllegalStateException("로그인이 필요한 서비스입니다.");

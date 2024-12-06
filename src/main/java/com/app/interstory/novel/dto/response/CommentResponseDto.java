@@ -18,12 +18,4 @@ public class CommentResponseDto {
 	private final Integer likeCount;
 	private final Boolean isLiked;
 	private final Boolean status;
-
-	public static String formatTimestamp(Timestamp timestamp) {
-		if (timestamp != null) {
-			return timestamp.toLocalDateTime()
-					.format(DateTimeFormatter.ofPattern("yyyy.MM.dd HH:mm:ss"));
-		}
-		return null;
-	}
 }

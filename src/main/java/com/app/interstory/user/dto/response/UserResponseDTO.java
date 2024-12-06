@@ -4,8 +4,7 @@ import com.app.interstory.user.domain.entity.User;
 import lombok.Builder;
 import lombok.Getter;
 
-import java.sql.Timestamp;
-import java.time.format.DateTimeFormatter;
+import static com.app.interstory.util.Utils.formatTimestamp;
 
 @Getter
 @Builder
@@ -26,13 +25,5 @@ public class UserResponseDTO {
                 .isActivity(user.getIsActivity())
                 .createdAt(formatTimestamp(user.getCreatedAt()))
                 .build();
-    }
-
-    public static String formatTimestamp(Timestamp timestamp) {
-        if (timestamp != null) {
-            return timestamp.toLocalDateTime()
-                    .format(DateTimeFormatter.ofPattern("yyyy.MM.dd HH:mm:ss"));
-        }
-        return null;
     }
 }
