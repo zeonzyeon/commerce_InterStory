@@ -89,12 +89,10 @@ public class EpisodeController {
 	// 회차 추천
 	@PostMapping("/{episodeId}/like")
 	public ResponseEntity<String> likeEpisode(
-		@PathVariable Long novelId,
 		@PathVariable Long episodeId,
-		@RequestBody Map<String, Long> request
-	) {
+		@RequestBody Map<String, Long> request) {
 		Long userId = request.get("userId");
-		String result = episodeService.likeEpisode(userId, episodeId);
-		return ResponseEntity.ok(result);
+		String message = episodeService.likeEpisode(userId, episodeId);
+		return ResponseEntity.ok(message);
 	}
 }
