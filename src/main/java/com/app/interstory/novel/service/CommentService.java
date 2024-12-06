@@ -36,12 +36,14 @@ public class CommentService {
 
     @Transactional
     public void writeComment(CommentRequestDto requestDto, long episodeId, CustomUserDetails userDetails) {
-        User user = userRepository.findById(userDetails.getUser().getUserId())
-                .orElseThrow(() -> new UsernameNotFoundException("로그인이 필요한 서비스입니다."));
 
-        if (user == null) {
+        if (userDetails == null) {
             throw new IllegalStateException("로그인이 필요한 서비스입니다.");
         }
+
+        User user = userRepository.findById(userDetails.getUser().getUserId())
+                .orElseThrow(() -> new UsernameNotFoundException("유효하지 않는 사용자입니다."));
+
 
         Episode episode = episodeRepository.findById(episodeId)
                 .orElseThrow(() -> new RuntimeException("해당 에피소드를 찾을 수 없습니다."));
@@ -53,10 +55,8 @@ public class CommentService {
 
     @Transactional
     public CommentListResponseDto getEpisodeComment(Long episodeId, Sort sort, Integer page, CustomUserDetails userDetails) {
-        final int getItemCount = 4;
 
-        User user = userRepository.findById(userDetails.getUser().getUserId())
-                .orElseThrow(() -> new UsernameNotFoundException("유효하지 않는 사용자입니다."));
+        final int getItemCount = 4;
 
         Pageable pageable = PageRequest.of(page - 1, getItemCount);
 
@@ -66,9 +66,18 @@ public class CommentService {
             throw new RuntimeException("유효하지 않은 페이지입니다.");
         }
 
+        User user;
+
+        if(userDetails != null) {
+            user = userRepository.findById(userDetails.getUser().getUserId())
+                    .orElseThrow(() -> new UsernameNotFoundException("유효하지 않는 사용자입니다."));
+        } else {
+            user = null;
+        }
+
         List<CommentResponseDto> commentResponseDtos = comments.getContent().stream().map(comment -> {
 
-            if (!comment.getStatus() && user.getRole() != Roles.ADMIN) {
+            if (!comment.getStatus() && (user == null || user.getRole() != Roles.ADMIN)) {
                 return CommentResponseDto.builder()
                         .nickname(comment.getUser().getNickname())
                         .profileUrl(comment.getUser().getProfileUrl())
@@ -97,10 +106,8 @@ public class CommentService {
 
     @Transactional
     public CommentListResponseDto getNovelComment(Long novelId, Sort sort, Integer page, CustomUserDetails userDetails) {
-        final int getItemCount = 4;
 
-        User user = userRepository.findById(userDetails.getUser().getUserId())
-                .orElseThrow(() -> new UsernameNotFoundException("유효하지 않는 사용자입니다."));
+        final int getItemCount = 4;
 
         Pageable pageable = PageRequest.of(page - 1, getItemCount);
 
@@ -110,8 +117,17 @@ public class CommentService {
             throw new RuntimeException("유효하지 않은 페이지입니다.");
         }
 
+        User user;
+
+        if(userDetails != null) {
+            user = userRepository.findById(userDetails.getUser().getUserId())
+                    .orElseThrow(() -> new UsernameNotFoundException("유효하지 않는 사용자입니다."));
+        } else {
+            user = null;
+        }
+
         List<CommentResponseDto> commentResponseDtos = comments.getContent().stream().map(comment -> {
-            if (!comment.getStatus() && user.getRole() != Roles.ADMIN) {
+            if (!comment.getStatus() && (user == null || user.getRole() != Roles.ADMIN)) {
                 return CommentResponseDto.builder()
                         .nickname(comment.getUser().getNickname())
                         .profileUrl(comment.getUser().getProfileUrl())
@@ -140,12 +156,13 @@ public class CommentService {
 
     @Transactional
     public void deleteComment(Long commentId, CustomUserDetails userDetails) {
-        User user = userRepository.findById(userDetails.getUser().getUserId())
-                .orElseThrow(() -> new UsernameNotFoundException("없는 사용자"));
 
-        if (user == null) {
+        if (userDetails == null) {
             throw new IllegalStateException("로그인이 필요한 서비스입니다.");
         }
+
+        User user = userRepository.findById(userDetails.getUser().getUserId())
+                .orElseThrow(() -> new UsernameNotFoundException("없는 사용자"));
 
         Comment comment = commentRepository.findById(commentId)
                 .orElseThrow(() -> new RuntimeException("해당 댓글을 발견하지 못했습니다."));
@@ -159,14 +176,15 @@ public class CommentService {
 
     @Transactional
     public String likeComment(Long commentId, CustomUserDetails userDetails) {
+
+        if (userDetails == null) {
+            throw new IllegalStateException("로그인이 필요한 서비스입니다.");
+        }
+
         String afterLikeMessage;
 
         User user = userRepository.findById(userDetails.getUser().getUserId())
                 .orElseThrow(() -> new UsernameNotFoundException("없는 사용자"));
-
-        if (user == null) {
-            throw new IllegalStateException("로그인이 필요한 서비스입니다.");
-        }
 
         Comment comment = commentRepository.findById(commentId)
                 .orElseThrow(() -> new RuntimeException("해당 댓글을 발견하지 못했습니다."));
