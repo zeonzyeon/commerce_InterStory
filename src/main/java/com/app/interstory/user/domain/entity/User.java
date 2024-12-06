@@ -1,15 +1,13 @@
 package com.app.interstory.user.domain.entity;
 
-import org.springframework.data.annotation.CreatedDate;
-
-import com.app.interstory.user.domain.Roles;
+import com.app.interstory.user.domain.enumtypes.Roles;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
-
 
 import java.sql.Timestamp;
 
@@ -67,11 +65,11 @@ public class User{
 
     @Builder.Default
     @Column(name = "subscribe", nullable = false)
-    private boolean subscribe = DEFAULT_SUBSCRIBE;
+    private Boolean subscribe = DEFAULT_SUBSCRIBE;
 
     @Builder.Default
     @Column(name = "auto_payment", nullable = false)
-    private boolean autoPayment = DEFAULT_AUTO_PAYMENT;
+    private Boolean autoPayment = DEFAULT_AUTO_PAYMENT;
 
     @OneToOne(mappedBy = "user", cascade = CascadeType.ALL,orphanRemoval = true)
     private Social social;
@@ -88,6 +86,5 @@ public class User{
         this.nickname = nickname;
         this.password = password;
     }
-
 
 }

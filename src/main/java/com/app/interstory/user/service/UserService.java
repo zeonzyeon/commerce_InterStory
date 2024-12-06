@@ -5,14 +5,15 @@ import com.app.interstory.config.globalExeption.customException.DuplicateEmailEx
 import com.app.interstory.config.globalExeption.customException.DuplicateNicknameException;
 import com.app.interstory.user.domain.entity.Social;
 import com.app.interstory.user.domain.entity.User;
+import com.app.interstory.user.dto.request.LocalSignUpRequest;
 import com.app.interstory.user.dto.vo.KakaoAPI;
 import com.app.interstory.user.dto.vo.KakaoUserInfo;
-import com.app.interstory.user.dto.request.LocalSignUpRequest;
 import com.app.interstory.user.repository.SocialRepository;
 import com.app.interstory.user.repository.UserRepository;
 import com.app.interstory.util.Utils;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -68,6 +69,10 @@ public class UserService {
                 .orElseGet(()->createKaKaoUser(userInfo));
     }
 
+    public User findById(Long userId) {
+        return userRepository.findById(userId).orElseThrow(() -> new UsernameNotFoundException("사용자를 찾을 수 없습니다"));
+    }
+
     //빌드시 테스트 계정 생성
 
 
@@ -109,6 +114,7 @@ public class UserService {
                 .profileUrl(filePathConfig.getUserDefaultProfilePath())
                 .build();
     }
+
 
 
 }

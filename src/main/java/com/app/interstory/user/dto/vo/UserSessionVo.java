@@ -1,5 +1,6 @@
 package com.app.interstory.user.dto.vo;
 
+import com.app.interstory.user.domain.enumtypes.Roles;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -19,5 +20,7 @@ public class UserSessionVo implements Serializable {
     private String email;
     private String nickname;
     private String password;
+    private Roles role;
+    private String profile_url;
 
 }

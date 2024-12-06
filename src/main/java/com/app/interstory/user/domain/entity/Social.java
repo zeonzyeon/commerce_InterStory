@@ -28,4 +28,8 @@ public class Social {
 
 	@Column(name = "client_id", nullable = false)
 	private String clientId;
+
+    public void addUser(User user) {
+		this.user = user;
+    }
 }

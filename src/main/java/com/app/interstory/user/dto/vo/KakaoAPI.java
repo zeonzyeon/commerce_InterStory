@@ -1,6 +1,6 @@
 package com.app.interstory.user.dto.vo;
 
-import com.app.interstory.user.domain.Provider;
+import com.app.interstory.user.domain.enumtypes.Provider;
 import lombok.Getter;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
