@@ -11,8 +11,8 @@ import com.app.interstory.novel.repository.CommentLikeRepository;
 import com.app.interstory.novel.repository.CommentRepository;
 import com.app.interstory.novel.repository.EpisodeRepository;
 import com.app.interstory.user.domain.CustomUserDetails;
-import com.app.interstory.user.domain.Roles;
 import com.app.interstory.user.domain.entity.User;
+import com.app.interstory.user.domain.enumtypes.Roles;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -66,7 +66,7 @@ public class CommentService {
                         .nickname(comment.getUser().getNickname())
                         .profileUrl(comment.getUser().getProfileUrl())
                         .content("삭제된 댓글입니다.")
-                        .createdAt(comment.getCreatedAt())
+                        .createdAt(CommentResponseDto.formatTimestamp(comment.getCreatedAt()))
                         .likeCount(comment.getLikeCount())
                         .isLiked(false)
                         .status(comment.getStatus())
@@ -77,7 +77,7 @@ public class CommentService {
                         .nickname(comment.getUser().getNickname())
                         .profileUrl(comment.getUser().getProfileUrl())
                         .content(comment.getContent())
-                        .createdAt(comment.getCreatedAt())
+                        .createdAt(CommentResponseDto.formatTimestamp(comment.getCreatedAt()))
                         .likeCount(comment.getLikeCount())
                         .isLiked(commentLikeRepository.existsByCommentAndUser(comment, user))
                         .status(comment.getStatus())
@@ -108,7 +108,7 @@ public class CommentService {
                         .nickname(comment.getUser().getNickname())
                         .profileUrl(comment.getUser().getProfileUrl())
                         .content("삭제된 댓글입니다.")
-                        .createdAt(comment.getCreatedAt())
+                        .createdAt(CommentResponseDto.formatTimestamp(comment.getCreatedAt()))
                         .likeCount(comment.getLikeCount())
                         .isLiked(false)
                         .status(comment.getStatus())
@@ -119,7 +119,7 @@ public class CommentService {
                         .nickname(comment.getUser().getNickname())
                         .profileUrl(comment.getUser().getProfileUrl())
                         .content(comment.getContent())
-                        .createdAt(comment.getCreatedAt())
+                        .createdAt(CommentResponseDto.formatTimestamp(comment.getCreatedAt()))
                         .likeCount(comment.getLikeCount())
                         .isLiked(commentLikeRepository.existsByCommentAndUser(comment, user))
                         .status(comment.getStatus())
