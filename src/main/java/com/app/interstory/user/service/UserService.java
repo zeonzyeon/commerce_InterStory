@@ -144,12 +144,8 @@ public class UserService {
     }
 
     private void checkIdentity(withdrawalRequest request, CustomUserDetails currentUser) {
-        log.info("request UserId:::::{}",request.getUserId());
-        log.info("currentUser UserId:::::{}",currentUser.getUser().getUserId());
         boolean isOwner = Objects.equals(request.getUserId(), currentUser.getUser().getUserId());
         boolean isAdmin = currentUser.getUser().getRole().equals(Roles.ADMIN);
-        log.info("isOwner:::::{}",isOwner);
-        log.info("isAdmin:::::{}",isAdmin);
 
         if(!isOwner && !isAdmin){
             throw new WrongApproach("잘못된 접근 : 계정을 확인하세요.");
