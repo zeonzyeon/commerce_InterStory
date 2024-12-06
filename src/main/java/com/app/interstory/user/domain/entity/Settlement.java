@@ -41,4 +41,9 @@ public class Settlement {
 	public void updateAccountNumber(String accountNumber) {
 		this.accountNumber = accountNumber;
 	}
+
+	public void requestSettlement() {
+		this.viewCount = 0;
+		this.fee = 0L;
+	}
 }
