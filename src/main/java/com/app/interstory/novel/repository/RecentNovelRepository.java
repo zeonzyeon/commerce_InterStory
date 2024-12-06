@@ -10,12 +10,11 @@ import org.springframework.stereotype.Repository;
 
 import com.app.interstory.novel.domain.entity.Novel;
 import com.app.interstory.novel.domain.entity.RecentNovel;
-import com.app.interstory.user.domain.entity.User;
 
 @Repository
 public interface RecentNovelRepository extends JpaRepository<RecentNovel, Long> {
-	Optional<RecentNovel> findByUserAndNovel(User user, Novel novel);
+	Optional<RecentNovel> findByUser_UserIdAndNovel(Long userId, Novel novel);
 
 	@EntityGraph(attributePaths = {"novel"})
-	Page<RecentNovel> findByUser(User user, Pageable pageable);
+	Page<RecentNovel> findByUser_UserId(Long userId, Pageable pageable);
 }

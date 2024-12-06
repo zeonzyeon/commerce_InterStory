@@ -74,9 +74,9 @@ public class MypageService {
 	}
 
 	public Page<FavoriteNovelResponseDTO> getFavoriteNovels(CustomUserDetails userDetails, Pageable pageable) {
-		User user = userDetails.getUser();
+		Long userId = userDetails.getUser().getUserId();
 
-		Page<FavoriteNovel> favoriteNovelPage = favoriteNovelRepository.findFavoritesSortedByLatestEpisode(user, pageable);
+		Page<FavoriteNovel> favoriteNovelPage = favoriteNovelRepository.findFavoritesSortedByLatestEpisode(userId, pageable);
 		// 만약 관심작품 선정은 했지만 한번도 열람하지 않았을 경우 EpisodeId는 0으로 처리됨
 
 		return favoriteNovelPage.map(favoriteNovel -> {
@@ -88,7 +88,7 @@ public class MypageService {
 				.map(Tag::getTag)
 				.toList();
 
-			Long lastReadEpisodeId = recentNovelRepository.findByUserAndNovel(user, novel)
+			Long lastReadEpisodeId = recentNovelRepository.findByUser_UserIdAndNovel(userId, novel)
 				.map(recentNovel -> recentNovel.getEpisode().getEpisodeId())
 				.orElse(0L);
 
@@ -115,9 +115,9 @@ public class MypageService {
 	}
 
 	public Page<ReadNovelResponseDTO> getReadNovels(CustomUserDetails userDetails, Pageable pageable) {
-		User user = userDetails.getUser();
+		Long userId = userDetails.getUser().getUserId();
 
-		Page<RecentNovel> recentNovelPage = recentNovelRepository.findByUser(user, pageable);
+		Page<RecentNovel> recentNovelPage = recentNovelRepository.findByUser_UserId(userId, pageable);
 
 		return recentNovelPage.map(readNovel -> {
 			Novel novel = readNovel.getNovel();
@@ -128,7 +128,7 @@ public class MypageService {
 				.map(Tag::getTag)
 				.toList();
 
-			Integer lastReadEpisode = recentNovelRepository.findByUserAndNovel(user, novel)
+			Integer lastReadEpisode = recentNovelRepository.findByUser_UserIdAndNovel(userId, novel)
 				.map(recentNovel -> recentNovel.getEpisode().getEpisodeId().intValue())
 				.orElse(0);
 
@@ -145,9 +145,9 @@ public class MypageService {
 	}
 
 	public Page<PointHistoryResponseDTO> getPointHistory(CustomUserDetails userDetails, Pageable pageable) {
-		User user = userDetails.getUser();
+		Long userId = userDetails.getUser().getUserId();
 
-		Page<Point> pointPage = pointRepository.findByUser(user, pageable);
+		Page<Point> pointPage = pointRepository.findByUser_UserId(userId, pageable);
 
 		return pointPage.map(pointHistory -> {
 			String pointChange;
@@ -166,9 +166,9 @@ public class MypageService {
 	}
 
 	public Page<MyNovelResponseDTO> getMyNovels(CustomUserDetails userDetails, Pageable pageable) {
-		User user = userDetails.getUser();
+		Long userId = userDetails.getUser().getUserId();
 
-		Page<Novel> novelPage = novelRepository.findNovelsSortedByLatestEpisode(user, pageable);
+		Page<Novel> novelPage = novelRepository.findNovelsSortedByLatestEpisode(userId, pageable);
 
 		return novelPage.map(myNovel -> {
 

@@ -10,5 +10,5 @@ import com.app.interstory.user.domain.entity.User;
 
 @Repository
 public interface PointRepository extends JpaRepository<Point, Long> {
-	Page<Point> findByUser(User user, Pageable pageable);
+	Page<Point> findByUser_UserId(Long userId, Pageable pageable);
 }

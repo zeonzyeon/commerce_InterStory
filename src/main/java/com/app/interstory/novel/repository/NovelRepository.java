@@ -8,7 +8,6 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import com.app.interstory.novel.domain.entity.Novel;
-import com.app.interstory.user.domain.entity.User;
 
 @Repository
 public interface NovelRepository extends JpaRepository<Novel, Long> {
@@ -16,9 +15,9 @@ public interface NovelRepository extends JpaRepository<Novel, Long> {
 		SELECT n
 		FROM Novel n
 		LEFT JOIN Episode e ON n.novelId = e.novel.novelId
-		WHERE n.user = :user
+		WHERE n.user.userId = :userId
 		GROUP BY n
 		ORDER BY MAX(e.publishedAt) DESC
 		""")
-	Page<Novel> findNovelsSortedByLatestEpisode(@Param("user") User user, Pageable pageable);
+	Page<Novel> findNovelsSortedByLatestEpisode(@Param("userId") Long userId, Pageable pageable);
 }
