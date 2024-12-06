@@ -10,13 +10,15 @@ import org.springframework.data.repository.query.Param;
 
 import java.util.Optional;
 
-public interface UserRepository  extends JpaRepository<User, Long> {
+
+public interface UserRepository  extends JpaRepository<User, Long> , UserRepositoryCustom{
     
     boolean existsByEmail(String email);
 
     boolean existsByNickname(String nickname);
 
     Optional<User> findByEmail(String username);
+
 
     Page<User> findByRoleNot(Roles role, Pageable pageable);
 

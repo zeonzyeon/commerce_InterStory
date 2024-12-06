@@ -1,18 +1,21 @@
 package com.app.interstory.user.controller;
 
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+
 import com.app.interstory.user.domain.CustomUserDetails;
 import com.app.interstory.user.domain.entity.User;
 import com.app.interstory.user.dto.vo.KakaoAPI;
 import com.app.interstory.user.service.AuthenticationService;
-import com.app.interstory.user.service.UserService;
+
 import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 
 @Controller
 @RequestMapping("auth")
@@ -21,7 +24,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 public class UserController {
 
     private final KakaoAPI kakaoAPI;
-    private final UserService userService;
     private final AuthenticationService authenticationService;
 
     //로그인 페이지
@@ -40,10 +42,7 @@ public class UserController {
     @GetMapping("/login/kakao")
     public String kakaoLogin() {
         System.out.println("유알엘 연결확인!!!!!!!!!!!!!!");
-//        return "redirect:" + kakaoAPI.getKAKAO_KAUTH_URL() + "?" +
-//                "client_id=" + kakaoAPI.getClientId() +
-//                "&redirect_uri=" + kakaoAPI.getRedirectUri() +
-//                "&response_type=code";
+
         return "redirect:" + kakaoAPI.getAuthorizationUrl();
     }
 
@@ -57,6 +56,18 @@ public class UserController {
         session.setAttribute("SPRING_SECURITY_CONTEXT", SecurityContextHolder.getContext());
 
         return "redirect:/";
+    }
+
+    //회원탈퇴 페이지
+    @GetMapping("/withdrawal")
+    public String withdrawal(
+        @AuthenticationPrincipal CustomUserDetails customUserDetails,
+        Model model
+    ) {
+        model.addAttribute("user", customUserDetails);
+
+
+        return "user/withdrawal";
     }
 
 }

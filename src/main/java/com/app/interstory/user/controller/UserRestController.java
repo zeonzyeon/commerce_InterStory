@@ -1,18 +1,31 @@
 package com.app.interstory.user.controller;
 
+import java.io.IOException;
+
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
 import com.app.interstory.user.domain.CustomUserDetails;
-import com.app.interstory.user.dto.request.*;
-import com.app.interstory.user.domain.entity.User;
+import com.app.interstory.user.dto.request.EmailRequest;
+import com.app.interstory.user.dto.request.EmailVerificationRequest;
+import com.app.interstory.user.dto.request.LocalLoginRequest;
+import com.app.interstory.user.dto.request.LocalSignUpRequest;
+import com.app.interstory.user.dto.request.NicknameRequest;
+import com.app.interstory.user.dto.request.withdrawalRequest;
 import com.app.interstory.user.dto.response.LoginResponse;
+import com.app.interstory.user.dto.response.UserResponse;
 import com.app.interstory.user.service.AuthenticationService;
 import com.app.interstory.user.service.EmailService;
 import com.app.interstory.user.service.UserService;
+
 import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("api/auth")
@@ -29,7 +42,7 @@ public class UserRestController {
     @PostMapping("/email-verification-send")
     public ResponseEntity<Boolean> sendVerificationEmail(@RequestBody EmailRequest emailRequest) {
         String code = emailService.sendVerificationEmail(emailRequest.getEmail());
-        log.info("code: {}", code);
+
         return ResponseEntity.ok().build();
     }
 
@@ -39,6 +52,7 @@ public class UserRestController {
     {
         boolean verification =emailService.verifyCode(request.getEmail(),request.getCode());
         log.info("verification: {}", verification);
+
         return ResponseEntity.ok(verification);
     }
 
@@ -52,7 +66,7 @@ public class UserRestController {
     //회원 가입 폼 제출
      @PostMapping("/signup")
     public ResponseEntity<String> localSignup (@RequestBody LocalSignUpRequest localSignUpRequest){
-        User savedUser = userService.localSingUp(localSignUpRequest);
+        UserResponse savedUser = userService.localSingUp(localSignUpRequest);
 
         return ResponseEntity.ok("회원가입을 성공했습니다.");
      }
@@ -72,6 +86,18 @@ public class UserRestController {
                         .success(true)
                         .build()
         );
+    }
+
+    //회원탈퇴
+    @PostMapping("/withdrawal")
+    public ResponseEntity<?> withdrawal(
+        @AuthenticationPrincipal CustomUserDetails currentUser,
+        @RequestBody withdrawalRequest request
+    ) throws IOException {
+
+        UserResponse userResponse = userService.withdrawal(request,currentUser);
+
+        return ResponseEntity.ok().build();
     }
 
 }
