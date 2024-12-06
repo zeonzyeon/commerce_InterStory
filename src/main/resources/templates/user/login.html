@@ -36,11 +36,11 @@
         <div class="divider">
             <span>또는</span>
         </div>
-        <button type="button" class="btn kakao-btn">
-<!--            <img src="/api/placeholder/20/20" alt="kakao" style="width: 20px; height: 20px;">-->
-            카카오로 시작하기
-        </button>
     </form>
+    <a th:href="@{/auth/login/kakao}" class="btn kakao-btn">
+        <img th:src="@{/images/kakao-icon.png}" alt="kakao" style="width: 20px; height: 20px;">
+        카카오로 시작하기
+    </a>
     <a href="/auth/signup" class="signup-link">아직 계정이 없으신가요? 가입하기</a>
 </div>
 
@@ -53,7 +53,7 @@
         const $password = $('#password');
         const $loginBtn = $('.login-btn');
         const $kakaoBtn = $('.kakao-btn');
-        const $remember = $('remember')
+        const $remember = $('#remember')
 
         // 저장된 이메일 불러오기
         const savedEmail = localStorage.getItem('rememberedEmail');
@@ -61,6 +61,7 @@
             $email.val(savedEmail);
             $remember.prop('checked',true);
         }
+
 
         // 폼 제출 처리
         $form.on('submit', function(e) {
@@ -78,8 +79,6 @@
                 email: $email.val(),
                 password: $password.val(),
             };
-
-
 
             // 로그인 요청
             $.ajax({
@@ -114,28 +113,6 @@
                 },
                 complete: function() {
                     $loginBtn.removeClass('loading');
-                }
-            });
-        });
-
-        // 카카오 로그인
-        $kakaoBtn.on('click', function() {
-            $(this).prop('disabled', true).addClass('loading');
-
-            // 카카오 로그인 요청
-            $.ajax({
-                url: '/api/auth/kakao',
-                type: 'GET',
-                success: function(response) {
-                    // 카카오 로그인 페이지로 리다이렉트
-                    window.location.href = response.redirectUrl;
-                },
-                error: function() {
-                    showValidationMessage('카카오 로그인 중 오류가 발생했습니다.');
-                    $kakaoBtn.prop('disabled', false);
-                },
-                complete: function() {
-                    $kakaoBtn.removeClass('loading');
                 }
             });
         });
