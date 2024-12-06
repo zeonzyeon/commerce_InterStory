@@ -18,7 +18,10 @@ import com.app.interstory.user.domain.entity.User;
 import com.app.interstory.user.repository.PointRepository;
 import com.app.interstory.user.repository.UserRepository;
 
+import lombok.RequiredArgsConstructor;
+
 @Service
+@RequiredArgsConstructor
 public class EpisodeService {
 	private final NovelRepository novelRepository;
 	private final EpisodeRepository episodeRepository;
@@ -26,17 +29,6 @@ public class EpisodeService {
 	private final PointRepository pointRepository;
 	private final CartItemRepository cartItemRepository;
 	private final EpisodeLikeRepository episodeLikeRepository;
-
-	public EpisodeService(NovelRepository novelRepository, EpisodeRepository episodeRepository,
-		UserRepository userRepository, PointRepository pointRepository,
-		CartItemRepository cartItemRepository, EpisodeLikeRepository episodeLikeRepository) {
-		this.novelRepository = novelRepository;
-		this.episodeRepository = episodeRepository;
-		this.userRepository = userRepository;
-		this.pointRepository = pointRepository;
-		this.cartItemRepository = cartItemRepository;
-		this.episodeLikeRepository = episodeLikeRepository;
-	}
 
 	// 회차 작성
 	@Transactional
