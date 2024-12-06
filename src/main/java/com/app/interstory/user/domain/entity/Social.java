@@ -39,9 +39,10 @@ public class Social {
 	private String clientId;
 
 	//business method
-    public void addUser(User user) {
+	public void addUser(User user) {
 		this.user = user;
-    }
+	}
+
 	public void deleteSocial() {
 		this.user = null;
 	}
