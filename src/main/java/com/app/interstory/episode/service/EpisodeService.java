@@ -65,18 +65,25 @@ public class EpisodeService {
 		Episode episode = episodeRepository.findById(episodeId)
 			.orElseThrow(() -> new RuntimeException("Episode not found"));
 
-		if (!episode.getNovelId().equals(novelId)) {
+		if (!episode.getNovel().getNovelId().equals(novelId)) {
 			throw new IllegalArgumentException("Invalid novelId for the given episode.");
 		}
 
-		episode.setTitle(requestDTO.getTitle());
-		episode.setThumbnailRenamedFilename(requestDTO.getThumbnailRenamedFilename());
-		episode.setThumbnailUrl(requestDTO.getThumbnailUrl());
-		episode.setContent(requestDTO.getContent());
-		episode.setStatus(requestDTO.getStatus());
+		Episode updatedEpisode = Episode.builder()
+			.episodeId(episode.getEpisodeId())
+			.novel(episode.getNovel())
+			.title(requestDTO.getTitle())
+			.thumbnailRenamedFilename(requestDTO.getThumbnailRenamedFilename())
+			.thumbnailUrl(requestDTO.getThumbnailUrl())
+			.content(requestDTO.getContent())
+			.viewCount(episode.getViewCount())
+			.likeCount(episode.getLikeCount())
+			.publishedAt(episode.getPublishedAt())
+			.status(requestDTO.getStatus())
+			.build();
 
-		Episode updatedEpisode = episodeRepository.save(episode);
-		return convertToDTO(updatedEpisode);
+		Episode savedEpisode = episodeRepository.save(updatedEpisode);
+		return convertToDTO(savedEpisode);
 	}
 
 	// 회차 상세 조회
@@ -84,7 +91,7 @@ public class EpisodeService {
 		Episode episode = episodeRepository.findById(episodeId)
 			.orElseThrow(() -> new RuntimeException("Episode not found"));
 
-		if (!episode.getNovelId().equals(novelId)) {
+		if (!episode.getNovel().getNovelId().equals(novelId)) {
 			throw new RuntimeException("Episode does not belong to the specified novel");
 		}
 
@@ -110,7 +117,7 @@ public class EpisodeService {
 		Episode episode = episodeRepository.findById(episodeId)
 			.orElseThrow(() -> new RuntimeException("Episode not found"));
 
-		if (!episode.getNovelId().equals(novelId)) {
+		if (!episode.getNovel().getNovelId().equals(novelId)) {
 			throw new RuntimeException("Episode does not belong to the specified novel");
 		}
 
@@ -128,7 +135,7 @@ public class EpisodeService {
 		Episode episode = episodeRepository.findById(episodeId)
 			.orElseThrow(() -> new RuntimeException("Episode not found"));
 
-		if (!episode.getNovelId().equals(novelId)) {
+		if (!episode.getNovel().getNovelId().equals(novelId)) {
 			throw new RuntimeException("Invalid novel ID for the given episode.");
 		}
 
@@ -141,12 +148,25 @@ public class EpisodeService {
 		}
 
 		// 5. 포인트 차감
-		user.setPoint(user.getPoint() - episodePrice);
-		userRepository.save(user);
+		User updatedUser = User.builder()
+			.userId(user.getUserId())
+			.email(user.getEmail())
+			.nickname(user.getNickname())
+			.password(user.getPassword())
+			.point(user.getPoint() - episodePrice)
+			.role(user.getRole())
+			.isActivity(user.getIsActivity())
+			.profileRenamedFilename(user.getProfileRenamedFilename())
+			.profileUrl(user.getProfileUrl())
+			.createdAt(user.getCreatedAt())
+			.subscribe(user.getSubscribe())
+			.autoPayment(user.getAutoPayment())
+			.build();
+		userRepository.save(updatedUser);
 
 		// 6. 포인트 사용 내역 저장
 		Point point = Point.builder()
-			.user(user)
+			.user(updatedUser)
 			.balance(-episodePrice)
 			.description("Episode purchase - ID: " + episodeId)
 			.build();
@@ -156,22 +176,18 @@ public class EpisodeService {
 	// 장바구니 담기
 	@Transactional
 	public String addItemToCart(Long userId, Long episodeId) {
-		// 사용자 조회
 		User user = userRepository.findById(userId)
 			.orElseThrow(() -> new RuntimeException("User not found"));
 
-		// 에피소드 조회
 		Episode episode = episodeRepository.findById(episodeId)
 			.orElseThrow(() -> new RuntimeException("Episode not found"));
 
-		// 동일한 에피소드가 이미 장바구니에 담겼는지 확인
 		boolean exists = cartItemRepository.existsByUserAndEpisode(user, episode);
 
 		if (exists) {
 			return "이미 담긴 회차입니다.";
 		}
 
-		// 장바구니에 새로운 에피소드 추가
 		CartItem cartItem = CartItem.builder()
 			.user(user)
 			.episode(episode)
