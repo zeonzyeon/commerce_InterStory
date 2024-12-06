@@ -5,7 +5,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.app.interstory.novel.dto.request.EpisodeRequestDTO;
 import com.app.interstory.novel.dto.response.EpisodeResponseDTO;
-import com.app.interstory.novel.repository.CartItemRepository;
+import com.app.interstory.user.repository.CartItemRepository;
 import com.app.interstory.novel.domain.entity.Episode;
 import com.app.interstory.novel.domain.entity.EpisodeLike;
 import com.app.interstory.novel.domain.entity.Novel;

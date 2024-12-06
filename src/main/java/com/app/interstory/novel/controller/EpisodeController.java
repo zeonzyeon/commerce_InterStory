@@ -14,7 +14,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.amazonaws.services.ec2.model.PurchaseRequest;
 import com.app.interstory.novel.dto.request.EpisodeRequestDTO;
 import com.app.interstory.novel.dto.response.EpisodeResponseDTO;
 import com.app.interstory.novel.service.EpisodeService;
