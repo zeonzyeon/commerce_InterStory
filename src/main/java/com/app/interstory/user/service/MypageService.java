@@ -6,6 +6,7 @@ import java.util.Map;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.app.interstory.novel.domain.entity.FavoriteNovel;
 import com.app.interstory.novel.domain.entity.Novel;
@@ -56,16 +57,18 @@ public class MypageService {
 		);
 	}
 
+	@Transactional
 	public UpdateUserResponseDTO updateUser(CustomUserDetails userDetails, UpdateUserRequestDTO updateUserRequestDTO) {
-		User user = userDetails.getUser();
+		Long userId = userDetails.getUser().getUserId();
+
+		User user = userRepository.findById(userId)
+			.orElseThrow(() -> new IllegalArgumentException("해당 사용자가 없습니다. id=" + userId));
 
 		user.update(
 			updateUserRequestDTO.getProfileUrl(),
 			updateUserRequestDTO.getNickname(),
 			updateUserRequestDTO.getPassword()
 		);
-
-		userRepository.save(user);
 
 		return new UpdateUserResponseDTO(user.getProfileUrl(), user.getNickname(), user.getPassword());
 	}
