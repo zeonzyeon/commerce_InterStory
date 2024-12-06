@@ -1,15 +1,28 @@
 package com.app.interstory.user.domain.entity;
 
+import java.sql.Timestamp;
+
+import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
+
 import com.app.interstory.user.domain.enumtypes.Roles;
-import jakarta.persistence.*;
+import com.app.interstory.user.dto.request.withdrawalRequest;
+
+import jakarta.persistence.CascadeType;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.EntityListeners;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.OneToOne;
+import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import org.springframework.data.annotation.CreatedDate;
-import org.springframework.data.jpa.domain.support.AuditingEntityListener;
-
-import java.sql.Timestamp;
 
 @Entity
 @Table(name = "users")
@@ -65,11 +78,11 @@ public class User{
 
     @Builder.Default
     @Column(name = "subscribe", nullable = false)
-    private Boolean subscribe = DEFAULT_SUBSCRIBE;
+    private Boolean isSubscribe = DEFAULT_SUBSCRIBE;
 
     @Builder.Default
     @Column(name = "auto_payment", nullable = false)
-    private Boolean autoPayment = DEFAULT_AUTO_PAYMENT;
+    private Boolean  isAutoPayment = DEFAULT_AUTO_PAYMENT;
 
     @OneToOne(mappedBy = "user", cascade = CascadeType.ALL,orphanRemoval = true)
     private Social social;
@@ -87,4 +100,23 @@ public class User{
         this.password = password;
     }
 
+    //소셜 회원 탈퇴
+    public void deleteSocial() {
+        this.social.deleteSocial();
+        this.social = null;
+    }
+
+    //회원 탈퇴
+    public void withdrawal(withdrawalRequest request){
+        this.isActivity = false;
+        this.email += "[탈퇴 회원]";
+        this.nickname += "[탈퇴 회원]:";
+        //적을 공간이 없어서 임시로 저장
+        this.profileRenamedFilename ="[탈퇴 사유]:"+request.getReason()+"\n[탈퇴 사유]:"+request.getReasonDetail();
+    }
+
+    //기본 이미지 확인
+    public Boolean isDefaultProfile(){
+        return this.getProfileRenamedFilename().equals("user.png");
+    }
 }

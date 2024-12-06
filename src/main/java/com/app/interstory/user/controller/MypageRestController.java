@@ -1,5 +1,17 @@
 package com.app.interstory.user.controller;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.web.PageableDefault;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
 import com.app.interstory.user.domain.CustomUserDetails;
 import com.app.interstory.user.domain.entity.User;
 import com.app.interstory.user.dto.request.UpdateUserRequestDTO;
@@ -9,15 +21,9 @@ import com.app.interstory.user.dto.response.ReadNovelResponseDTO;
 import com.app.interstory.user.dto.response.UpdateUserResponseDTO;
 import com.app.interstory.user.service.MypageService;
 import com.app.interstory.user.service.UserService;
+
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
-import org.springframework.data.web.PageableDefault;
-import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/api/users")
@@ -35,8 +41,8 @@ public class MypageRestController {
 			user.getNickname(),
 			user.getProfileUrl(),
 			user.getPoint(),
-			user.getSubscribe(),
-			user.getAutoPayment()
+			user.getIsSubscribe(),
+			user.getIsAutoPayment()
 		);
 
 		return ResponseEntity.ok(mypageResponseDTO);

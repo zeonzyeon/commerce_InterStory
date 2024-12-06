@@ -1,0 +1,134 @@
+/* withdrawal.css */
+.withdrawal-container {
+    background: white;
+    border-radius: 10px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    padding: 30px;
+}
+
+.warning-section {
+    text-align: center;
+    margin-bottom: 30px;
+    color: #ff4444;
+}
+
+.warning-section i {
+    font-size: 48px;
+    margin-bottom: 15px;
+}
+
+.warning-text {
+    color: #666;
+}
+
+.notice-section {
+    background: #fff5f5;
+    padding: 20px;
+    border-radius: 8px;
+    margin-bottom: 30px;
+}
+
+.notice-list {
+    list-style: none;
+    padding: 0;
+}
+
+.notice-list li {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 10px;
+    color: #666;
+}
+
+.notice-list i {
+    color: #ff4444;
+}
+
+.reason-section,
+.confirm-section {
+    margin-bottom: 30px;
+}
+
+.sub-text {
+    color: #666;
+    font-size: 14px;
+    margin-bottom: 15px;
+}
+
+.reason-options {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 15px;
+    margin-bottom: 20px;
+}
+
+.reason-option {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    cursor: pointer;
+}
+
+.reason-detail {
+    width: 100%;
+    min-height: 100px;
+    padding: 12px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    resize: vertical;
+}
+
+.password-input {
+    width: 100%;
+    padding: 12px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+}
+
+.confirm-checkbox {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 30px;
+}
+
+.button-group {
+    display: flex;
+    gap: 15px;
+    justify-content: center;
+}
+
+.cancel-btn,
+.withdraw-btn {
+    padding: 12px 30px;
+    border-radius: 5px;
+    font-size: 16px;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.cancel-btn {
+    background: white;
+    border: 1px solid #ddd;
+    color: #666;
+}
+
+.withdraw-btn {
+    background: #ff4444;
+    border: none;
+    color: white;
+}
+
+.withdraw-btn:disabled {
+    background: #ccc;
+    cursor: not-allowed;
+}
+
+.cancel-btn:hover {
+    background: #f5f5f5;
+}
+
+.withdraw-btn:hover:not(:disabled) {
+    background: #ff2222;
+}
