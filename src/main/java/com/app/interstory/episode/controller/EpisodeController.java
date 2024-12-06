@@ -82,4 +82,13 @@ public class EpisodeController {
 		String message = episodeService.addItemToCart(userId, episodeId);
 		return ResponseEntity.ok(message);
 	}
+
+	// 회차 추천
+	@PostMapping("/{episodeId}/like")
+	public ResponseEntity<String> likeEpisode(
+		@PathVariable Long episodeId,
+		@RequestParam Long userId) {
+		String result = episodeService.likeEpisode(userId, episodeId);
+		return ResponseEntity.ok(result);
+	}
 }

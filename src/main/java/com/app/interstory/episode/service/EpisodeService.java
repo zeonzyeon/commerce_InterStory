@@ -6,10 +6,11 @@ import org.springframework.transaction.annotation.Transactional;
 import com.app.interstory.episode.domain.dto.EpisodeRequestDTO;
 import com.app.interstory.episode.domain.dto.EpisodeResponseDTO;
 import com.app.interstory.episode.repository.CartItemRepository;
-import com.app.interstory.episode.repository.CollectionRepository;
 import com.app.interstory.episode.repository.PointRepository;
 import com.app.interstory.novel.domain.entity.Episode;
+import com.app.interstory.novel.domain.entity.EpisodeLike;
 import com.app.interstory.novel.domain.entity.Novel;
+import com.app.interstory.novel.repository.EpisodeLikeRepository;
 import com.app.interstory.novel.repository.EpisodeRepository;
 import com.app.interstory.novel.repository.NovelRepository;
 import com.app.interstory.user.domain.entity.CartItem;
@@ -22,20 +23,19 @@ public class EpisodeService {
 	private final NovelRepository novelRepository;
 	private final EpisodeRepository episodeRepository;
 	private final UserRepository userRepository;
-	private final CollectionRepository collectionRepository;
 	private final PointRepository pointRepository;
 	private final CartItemRepository cartItemRepository;
+	private final EpisodeLikeRepository episodeLikeRepository;
 
 	public EpisodeService(NovelRepository novelRepository, EpisodeRepository episodeRepository,
-		UserRepository userRepository,
-		CollectionRepository collectionRepository, PointRepository pointRepository,
-		CartItemRepository cartItemRepository) {
+		UserRepository userRepository, PointRepository pointRepository,
+		CartItemRepository cartItemRepository, EpisodeLikeRepository episodeLikeRepository) {
 		this.novelRepository = novelRepository;
 		this.episodeRepository = episodeRepository;
 		this.userRepository = userRepository;
-		this.collectionRepository = collectionRepository;
 		this.pointRepository = pointRepository;
 		this.cartItemRepository = cartItemRepository;
+		this.episodeLikeRepository = episodeLikeRepository;
 	}
 
 	// 회차 작성
@@ -182,7 +182,7 @@ public class EpisodeService {
 		Episode episode = episodeRepository.findById(episodeId)
 			.orElseThrow(() -> new RuntimeException("Episode not found"));
 
-		boolean exists = cartItemRepository.existsByUserAndEpisode(user, episode);
+		boolean exists = cartItemRepository.existsByUserAndEpisode(user.getUserId(), episode.getEpisodeId());
 
 		if (exists) {
 			return "이미 담긴 회차입니다.";
@@ -196,5 +196,47 @@ public class EpisodeService {
 		cartItemRepository.save(cartItem);
 
 		return "회차가 장바구니에 성공적으로 담겼습니다.";
+	}
+
+	// 회차 추천
+	@Transactional
+	public String likeEpisode(Long userId, Long episodeId) {
+		// 사용자 조회
+		User user = userRepository.findById(userId)
+			.orElseThrow(() -> new RuntimeException("User not found"));
+
+		// 에피소드 조회
+		Episode episode = episodeRepository.findById(episodeId)
+			.orElseThrow(() -> new RuntimeException("Episode not found"));
+
+		// 이미 추천했는지 확인
+		boolean exists = episodeLikeRepository.existsByUserAndEpisode(user, episode);
+		if (exists) {
+			return "이미 추천한 회차입니다.";
+		}
+
+		// 추천 추가
+		EpisodeLike episodeLike = EpisodeLike.builder()
+			.user(user)
+			.episode(episode)
+			.build();
+		episodeLikeRepository.save(episodeLike);
+
+		// 에피소드 추천 수 증가
+		episode = Episode.builder()
+			.episodeId(episode.getEpisodeId())
+			.novel(episode.getNovel())
+			.title(episode.getTitle())
+			.viewCount(episode.getViewCount())
+			.publishedAt(episode.getPublishedAt())
+			.thumbnailRenamedFilename(episode.getThumbnailRenamedFilename())
+			.thumbnailUrl(episode.getThumbnailUrl())
+			.likeCount(episode.getLikeCount() + 1) // 추천 수 증가
+			.content(episode.getContent())
+			.status(episode.getStatus())
+			.build();
+		episodeRepository.save(episode);
+
+		return "회차를 추천했습니다.";
 	}
 }
