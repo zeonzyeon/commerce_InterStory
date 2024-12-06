@@ -9,25 +9,55 @@ import com.app.interstory.episode.repository.CartItemRepository;
 import com.app.interstory.episode.repository.CollectionRepository;
 import com.app.interstory.episode.repository.PointRepository;
 import com.app.interstory.novel.domain.entity.Episode;
+import com.app.interstory.novel.domain.entity.Novel;
+import com.app.interstory.novel.repository.EpisodeRepository;
+import com.app.interstory.novel.repository.NovelRepository;
 import com.app.interstory.user.domain.entity.CartItem;
+import com.app.interstory.user.domain.entity.Point;
 import com.app.interstory.user.domain.entity.User;
+import com.app.interstory.user.repository.UserRepository;
 
 @Service
 public class EpisodeService {
+	private final NovelRepository novelRepository;
 	private final EpisodeRepository episodeRepository;
 	private final UserRepository userRepository;
 	private final CollectionRepository collectionRepository;
 	private final PointRepository pointRepository;
 	private final CartItemRepository cartItemRepository;
 
-	public EpisodeService(EpisodeRepository episodeRepository, UserRepository userRepository,
+	public EpisodeService(NovelRepository novelRepository, EpisodeRepository episodeRepository,
+		UserRepository userRepository,
 		CollectionRepository collectionRepository, PointRepository pointRepository,
 		CartItemRepository cartItemRepository) {
+		this.novelRepository = novelRepository;
 		this.episodeRepository = episodeRepository;
 		this.userRepository = userRepository;
 		this.collectionRepository = collectionRepository;
 		this.pointRepository = pointRepository;
 		this.cartItemRepository = cartItemRepository;
+	}
+
+	// 회차 작성
+	@Transactional
+	public EpisodeResponseDTO writeEpisode(Long novelId, EpisodeRequestDTO requestDTO) {
+		// Novel 엔티티 조회
+		Novel novel = novelRepository.findById(novelId)
+			.orElseThrow(() -> new RuntimeException("Novel not found"));
+
+		// Episode 엔티티 생성
+		Episode episode = Episode.builder()
+			.novel(novel)
+			.title(requestDTO.getTitle())
+			.thumbnailRenamedFilename(requestDTO.getThumbnailRenamedFilename())
+			.thumbnailUrl(requestDTO.getThumbnailUrl())
+			.content(requestDTO.getContent())
+			.status(requestDTO.getStatus() != null ? requestDTO.getStatus() : true)
+			.build();
+
+		episodeRepository.save(episode);
+
+		return convertToDTO(episode);
 	}
 
 	// 회차 수정
@@ -64,9 +94,12 @@ public class EpisodeService {
 	private EpisodeResponseDTO convertToDTO(Episode episode) {
 		return EpisodeResponseDTO.builder()
 			.episodeId(episode.getEpisodeId())
-			.novelId(episode.getNovelId())
+			.novelId(episode.getNovel().getNovelId())
 			.title(episode.getTitle())
+			.viewCount(episode.getViewCount())
+			.publishedAt(episode.getPublishedAt())
 			.thumbnailUrl(episode.getThumbnailUrl())
+			.likeCount(episode.getLikeCount())
 			.content(episode.getContent())
 			.status(episode.getStatus())
 			.build();

@@ -27,7 +27,13 @@ public class EpisodeController {
 	}
 
 	// 회차 작성
-	@GetMapping
+	@PostMapping
+	public ResponseEntity<EpisodeResponseDTO> createEpisode(@PathVariable Long novelId,
+		@RequestBody EpisodeRequestDTO requestDTO) {
+		EpisodeResponseDTO responseDTO = episodeService.writeEpisode(novelId, requestDTO);
+		return ResponseEntity.ok(responseDTO);
+	}
+
 	// 회차 수정
 	@PutMapping("/{episodeId}")
 	public ResponseEntity<EpisodeResponseDTO> updateEpisode(
