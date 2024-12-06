@@ -1,15 +1,16 @@
 package com.app.interstory.user.domain.entity;
 
+import org.springframework.data.annotation.CreatedDate;
+
 import com.app.interstory.user.domain.Roles;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
-import java.io.Serializable;
+
 import java.sql.Timestamp;
 
 @Entity
@@ -19,11 +20,13 @@ import java.sql.Timestamp;
 @Getter
 @Builder
 @EntityListeners(AuditingEntityListener.class)
-public class User implements Serializable {
+public class User{
 
-    private static final long serialVersionUID = 1L;
     private static final Roles DEFAULT_ROLE = Roles.PUBLIC;
     private static final long DEFAULT_POINT = 0L;
+    private static final Boolean DEFAULT_IS_ACTIVITY = true;
+    private static final Boolean DEFAULT_SUBSCRIBE = false;
+    private static final Boolean DEFAULT_AUTO_PAYMENT = false;
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -50,7 +53,7 @@ public class User implements Serializable {
 
     @Builder.Default
     @Column(name = "is_activity", nullable = false)
-    private boolean isActivity = true;
+    private boolean isActivity = DEFAULT_IS_ACTIVITY;
 
     @Column(name = "profile_renamed_filename")
     private String profileRenamedFilename;
@@ -64,11 +67,11 @@ public class User implements Serializable {
 
     @Builder.Default
     @Column(name = "subscribe", nullable = false)
-    private boolean subscribe = false;
+    private boolean subscribe = DEFAULT_SUBSCRIBE;
 
     @Builder.Default
     @Column(name = "auto_payment", nullable = false)
-    private boolean autoPayment = false;
+    private boolean autoPayment = DEFAULT_AUTO_PAYMENT;
 
     @OneToOne(mappedBy = "user", cascade = CascadeType.ALL,orphanRemoval = true)
     private Social social;
@@ -85,5 +88,6 @@ public class User implements Serializable {
         this.nickname = nickname;
         this.password = password;
     }
+
 
 }

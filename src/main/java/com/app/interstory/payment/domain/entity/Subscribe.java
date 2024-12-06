@@ -1,31 +1,31 @@
-package com.app.interstory.user.domain.entity;
+package com.app.interstory.payment.domain.entity;
 
-import com.app.interstory.user.domain.enumtypes.Provider;
+import com.app.interstory.user.domain.entity.User;
+
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+import java.sql.Timestamp;
+
+@Getter
 @Entity
-@Table(name = "social")
+@Table(name = "subscribe")
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-@Getter
-public class Social {
+public class Subscribe {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	@Column(name = "social_id")
-	private Long socialId;
+	@Column(name = "subscribe_id")
+	private Long subscribeId;
 
 	@OneToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "user_id", nullable = false)
 	private User user;
 
-	@Column(name = "provider", nullable = false)
-	private Provider provider;
-
-	@Column(name = "client_id", nullable = false)
-	private String clientId;
+	@Column(name = "end_at", nullable = false)
+	private Timestamp endAt;
 }

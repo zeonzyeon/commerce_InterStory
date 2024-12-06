@@ -37,6 +37,9 @@ dependencies {
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
     testImplementation 'org.springframework.security:spring-security-test'
     testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+    testCompileOnly 'org.projectlombok:lombok'
+    testAnnotationProcessor 'org.projectlombok:lombok'
+
 
     //Apache HttpClient 의존 추가
     implementation 'org.apache.httpcomponents.client5:httpclient5-fluent:5.2.1'
@@ -73,7 +76,6 @@ dependencies {
 tasks.named('test') {
     useJUnitPlatform()
 }
-
 
 
 def querydslSrcDir = layout.buildDirectory.dir('generated/querydsl').get().asFile

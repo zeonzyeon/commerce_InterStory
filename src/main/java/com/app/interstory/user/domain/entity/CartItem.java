@@ -1,6 +1,7 @@
 package com.app.interstory.user.domain.entity;
 
-import com.app.interstory.user.domain.enumtypes.Provider;
+import com.app.interstory.novel.domain.entity.Episode;
+
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -8,24 +9,22 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 @Entity
-@Table(name = "social")
+@Table(name = "cart_item")
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
 @Getter
-public class Social {
+public class CartItem {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	@Column(name = "social_id")
-	private Long socialId;
+	@Column(name = "cart_item_id")
+	private Long cartItemId;
 
-	@OneToOne(fetch = FetchType.LAZY)
+	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "user_id", nullable = false)
 	private User user;
 
-	@Column(name = "provider", nullable = false)
-	private Provider provider;
-
-	@Column(name = "client_id", nullable = false)
-	private String clientId;
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "episode_id", nullable = false)
+	private Episode episode;
 }
