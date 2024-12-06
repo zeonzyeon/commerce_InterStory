@@ -8,10 +8,9 @@ import com.app.interstory.user.dto.response.MypageResponseDTO;
 import com.app.interstory.user.dto.response.ReadNovelResponseDTO;
 import com.app.interstory.user.dto.response.UpdateUserResponseDTO;
 import com.app.interstory.user.service.MypageService;
-
+import com.app.interstory.user.service.UserService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
@@ -26,10 +25,11 @@ import org.springframework.web.bind.annotation.*;
 @Slf4j
 public class MypageRestController {
 	private final MypageService mypageService;
+	private final UserService userService;
 
 	@GetMapping
 	public ResponseEntity<MypageResponseDTO> getUser(@AuthenticationPrincipal CustomUserDetails userDetails) {
-		User user = userDetails.getUser();
+		User user = userService.findById(userDetails.getUser().getUserId());
 
 		MypageResponseDTO mypageResponseDTO = new MypageResponseDTO(
 			user.getNickname(),
@@ -44,19 +44,21 @@ public class MypageRestController {
 
 	@PutMapping
 	public ResponseEntity<UpdateUserResponseDTO> updateUser(@AuthenticationPrincipal CustomUserDetails userDetails, @RequestBody UpdateUserRequestDTO updateUserRequestDTO) {
-		User user = userDetails.getUser();
+		User user = userService.findById(userDetails.getUser().getUserId());
 
 		return ResponseEntity.ok(mypageService.updateUser(user, updateUserRequestDTO));
 	}
 
 	@GetMapping("/favorite-novels")
 	public ResponseEntity<Page<FavoriteNovelResponseDTO>> getFavoriteNovel(@AuthenticationPrincipal CustomUserDetails userDetails, @PageableDefault(size = 10) Pageable pageable) {
-		return ResponseEntity.ok(mypageService.getFavoriteNovels(userDetails.getUser(), pageable));
+		User user = userService.findById(userDetails.getUser().getUserId());
+		return ResponseEntity.ok(mypageService.getFavoriteNovels(user, pageable));
 	}
 
 	@GetMapping("/read-novels")
 	public ResponseEntity<Page<ReadNovelResponseDTO>> getReadNovel(@AuthenticationPrincipal CustomUserDetails userDetails,
 		@PageableDefault(size = 10, sort = "updatedAt", direction = Sort.Direction.DESC) Pageable pageable) {
-		return ResponseEntity.ok(mypageService.getReadNovels(userDetails.getUser(), pageable));
+		User user = userService.findById(userDetails.getUser().getUserId());
+		return ResponseEntity.ok(mypageService.getReadNovels(user , pageable));
 	}
 }

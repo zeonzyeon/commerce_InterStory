@@ -1,7 +1,6 @@
 package com.app.interstory.user.domain.entity;
 
 import com.app.interstory.user.domain.enumtypes.Provider;
-
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -29,4 +28,8 @@ public class Social {
 
 	@Column(name = "client_id", nullable = false)
 	private String clientId;
+
+    public void addUser(User user) {
+		this.user = user;
+    }
 }

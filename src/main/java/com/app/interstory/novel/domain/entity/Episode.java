@@ -5,6 +5,8 @@ import java.sql.Timestamp;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
+import com.app.interstory.episode.domain.dto.EpisodeRequestDTO;
+
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -59,4 +61,26 @@ public class Episode {
 	@Builder.Default
 	@Column(name = "status", nullable = false)
 	private Boolean status = DEFAULT_STATUS;
+
+	public void updateEpisode(EpisodeRequestDTO requestDTO) {
+		if (requestDTO.getTitle() != null) {
+			this.title = requestDTO.getTitle();
+		}
+		if (requestDTO.getThumbnailRenamedFilename() != null) {
+			this.thumbnailRenamedFilename = requestDTO.getThumbnailRenamedFilename();
+		}
+		if (requestDTO.getThumbnailUrl() != null) {
+			this.thumbnailUrl = requestDTO.getThumbnailUrl();
+		}
+		if (requestDTO.getContent() != null) {
+			this.content = requestDTO.getContent();
+		}
+		if (requestDTO.getStatus() != null) {
+			this.status = requestDTO.getStatus();
+		}
+	}
+
+	public void markAsDeleted() {
+		this.status = false;
+	}
 }
