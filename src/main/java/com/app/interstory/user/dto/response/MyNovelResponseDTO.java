@@ -7,12 +7,11 @@ import lombok.Getter;
 
 @Builder
 @Getter
-public class ReadNovelResponseDTO {
+public class MyNovelResponseDTO {
 	String title;
-	String author;
-	Integer episodeCount;
 	Integer likeCount;
 	List<String> tags;
 	String thumbnailUrl;
-	Integer lastReadEpisode;
+	// TODO: REDIS로부터 작품 반응 조회
+	// String reaction;
 }
