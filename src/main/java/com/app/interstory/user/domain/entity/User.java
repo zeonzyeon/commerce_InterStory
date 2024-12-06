@@ -1,16 +1,16 @@
 package com.app.interstory.user.domain.entity;
 
-import org.springframework.data.annotation.CreatedDate;
-
 import com.app.interstory.user.domain.Roles;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import java.io.Serializable;
+import java.sql.Timestamp;
 
 @Entity
 @Table(name = "users")
@@ -36,7 +36,7 @@ public class User implements Serializable {
     @Column(name = "nickname", nullable = false, unique = true)
     private String nickname;
 
-    @Column(name = "password", nullable = false)
+    @Column(name = "password")
     private String password;
 
     @Column(name = "point", nullable = false)
@@ -60,7 +60,7 @@ public class User implements Serializable {
 
     @Column(name = "created_at", nullable = false, updatable = false)
     @CreatedDate
-    private String createdAt;
+    private Timestamp createdAt;
 
     @Builder.Default
     @Column(name = "subscribe", nullable = false)
@@ -70,12 +70,20 @@ public class User implements Serializable {
     @Column(name = "auto_payment", nullable = false)
     private boolean autoPayment = false;
 
+    @OneToOne(mappedBy = "user", cascade = CascadeType.ALL,orphanRemoval = true)
+    private Social social;
+
+    //연관관계 method
+    public void addSocialProvider(Social social) {
+        this.social = social;
+        social.addUser(this);
+    }
+
     //business method
     public void update(String profileUrl, String nickname, String password) {
         this.profileUrl = profileUrl;
         this.nickname = nickname;
         this.password = password;
     }
-
 
 }
