@@ -51,4 +51,12 @@ public class Comment {
 	@Builder.Default
 	@Column(name = "status", nullable = false)
 	private Boolean status = DEFAULT_STATUS;
+
+    public void deleteComment() {
+        this.status = !this.status;
+    }
+
+    public void setCommentLike(Integer likeCount) {
+        this.likeCount = likeCount;
+    }
 }

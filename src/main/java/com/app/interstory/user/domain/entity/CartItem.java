@@ -27,4 +27,9 @@ public class CartItem {
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "episode_id", nullable = false)
 	private Episode episode;
+
+	public CartItem(User user, Episode episode) {
+		this.user = user;
+		this.episode = episode;
+	}
 }

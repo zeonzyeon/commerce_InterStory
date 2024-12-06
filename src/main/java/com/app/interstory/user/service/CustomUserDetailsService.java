@@ -2,6 +2,7 @@ package com.app.interstory.user.service;
 
 import com.app.interstory.user.domain.CustomUserDetails;
 import com.app.interstory.user.domain.entity.User;
+import com.app.interstory.user.dto.vo.UserSessionVo;
 import com.app.interstory.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -30,6 +31,11 @@ public class CustomUserDetailsService implements UserDetailsService {
         return createUserDetails(currentUser);
     }
 
+    public CustomUserDetails loadUserBySocial(User socialUser) {
+
+        return createUserDetails(socialUser);
+    }
+
     private CustomUserDetails createUserDetails(User currentUser) {
         //권한 설정
         Set<GrantedAuthority> authorities = Set.of(
@@ -38,8 +44,21 @@ public class CustomUserDetailsService implements UserDetailsService {
 
         return CustomUserDetails.builder()
                 .authorities(authorities)
-                .user(currentUser)
+                .user(createUserSessionVo(currentUser))
                 .build();
+    }
+
+
+    //convert
+    public UserSessionVo createUserSessionVo(User user) {
+        return new UserSessionVo(
+                user.getUserId(),
+                user.getEmail(),
+                user.getNickname(),
+                user.getPassword(),
+                user.getRole(),
+                user.getProfileUrl()
+        );
     }
 
 }

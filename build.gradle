@@ -41,6 +41,9 @@ dependencies {
     testAnnotationProcessor 'org.projectlombok:lombok'
 
 
+    //Apache HttpClient 의존 추가
+    implementation 'org.apache.httpcomponents.client5:httpclient5-fluent:5.2.1'
+
     // QueryDsl
     implementation 'com.querydsl:querydsl-jpa:5.0.0:jakarta'
     implementation 'org.springframework.boot:spring-boot-starter-validation'
@@ -82,7 +85,7 @@ tasks.withType(JavaCompile) {
 }
 
 sourceSets {
-    main.java.srcDirs += [querydslSrcDir]
+    main.java.srcDirs += [ querydslSrcDir ]
 }
 
 clean {
