@@ -18,7 +18,7 @@ import java.sql.Timestamp;
 @Getter
 @Builder
 @EntityListeners(AuditingEntityListener.class)
-public class User{
+public class User {
 
     private static final Roles DEFAULT_ROLE = Roles.PUBLIC;
     private static final long DEFAULT_POINT = 0L;
@@ -31,8 +31,8 @@ public class User{
     @Column(name = "user_id")
     private Long userId;
 
-	@Column(name = "email", nullable = false, unique = true)
-	private String email;
+    @Column(name = "email", nullable = false, unique = true)
+    private String email;
 
     @Column(name = "nickname", nullable = false, unique = true)
     private String nickname;
@@ -42,7 +42,7 @@ public class User{
 
     @Column(name = "point", nullable = false)
     @Builder.Default
-    private Long point= DEFAULT_POINT;
+    private Long point = DEFAULT_POINT;
 
     @Enumerated(EnumType.STRING)
     @Builder.Default
@@ -51,7 +51,7 @@ public class User{
 
     @Builder.Default
     @Column(name = "is_activity", nullable = false)
-    private boolean isActivity = DEFAULT_IS_ACTIVITY;
+    private Boolean isActivity = DEFAULT_IS_ACTIVITY;
 
     @Column(name = "profile_renamed_filename")
     private String profileRenamedFilename;
@@ -71,7 +71,7 @@ public class User{
     @Column(name = "auto_payment", nullable = false)
     private Boolean autoPayment = DEFAULT_AUTO_PAYMENT;
 
-    @OneToOne(mappedBy = "user", cascade = CascadeType.ALL,orphanRemoval = true)
+    @OneToOne(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
     private Social social;
 
     //연관관계 method
@@ -87,10 +87,14 @@ public class User{
         this.password = password;
     }
 
-	public void reducePointsForPurchase(Long amount) {
-		if (this.point < amount) {
-			throw new RuntimeException("Insufficient points");
-		}
-		this.point -= amount;
-	}
+    public void reducePointsForPurchase(Long amount) {
+        if (this.point < amount) {
+            throw new RuntimeException("Insufficient points");
+        }
+        this.point -= amount;
+    }
+
+    public void active() {
+        this.isActivity = true;
+    }
 }

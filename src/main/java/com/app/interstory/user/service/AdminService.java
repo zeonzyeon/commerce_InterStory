@@ -16,6 +16,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -33,15 +34,13 @@ public class AdminService {
     public UserListResponseDTO getUsers(@RequestParam(defaultValue = "1") Integer page, CustomUserDetails userDetails) {
         final int getUserCount = 10;
 
-        User user = userDetails.getUser();
-
-        if (user == null || user.getRole() != Roles.ADMIN) {
+        if (userDetails.getUser().getRole() != Roles.ADMIN) {
             throw new IllegalStateException("유저 조회 권한이 없습니다.");
         }
 
         Pageable pageable = PageRequest.of(page - 1, getUserCount);
 
-        Page<User> users = userRepository.findByRoleNot(user.getRole(), pageable);
+        Page<User> users = userRepository.findByRoleNot(userDetails.getUser().getRole(), pageable);
 
         if (page > users.getTotalPages()) {
             throw new RuntimeException("유효하지 않은 페이지입니다.");
@@ -56,9 +55,7 @@ public class AdminService {
 
     @Transactional
     public String activeUser(Long userId, CustomUserDetails userDetails) {
-        User currentUser = userDetails.getUser();
-
-        if (currentUser == null || currentUser.getRole() != Roles.ADMIN) {
+        if (userDetails.getUser().getRole() != Roles.ADMIN) {
             throw new IllegalStateException("유저 활성화 권한이 없습니다.");
         }
 
@@ -76,9 +73,7 @@ public class AdminService {
     public UserListResponseDTO searchUsers(String nickname, String email, Integer page, CustomUserDetails userDetails) {
         final int getUserCount = 10;
 
-        User currentUser = userDetails.getUser();
-
-        if (currentUser == null || currentUser.getRole() != Roles.ADMIN) {
+        if (userDetails.getUser().getRole() != Roles.ADMIN) {
             throw new IllegalStateException("유저 검색 권한이 없습니다.");
         }
 
@@ -95,9 +90,14 @@ public class AdminService {
 
     @Transactional
     public String writeNotice(NoticeRequestDTO noticeRequestDTO, CustomUserDetails userDetails) {
-        User user = userDetails.getUser();
+        User user = userRepository.findById(userDetails.getUser().getUserId())
+                .orElseThrow(() -> new UsernameNotFoundException("유효하지 않는 사용자입니다."));
 
-        if (user == null || user.getRole() != Roles.ADMIN) {
+        if (user == null) {
+            throw new IllegalStateException("로그인이 필요한 서비스입니다.");
+        }
+
+        if (userDetails.getUser().getRole() != Roles.ADMIN) {
             throw new IllegalStateException("공지사항 작성 권한이 없습니다.");
         }
 
@@ -109,9 +109,7 @@ public class AdminService {
 
     @Transactional
     public String updateNotice(Long noticeId, NoticeRequestDTO noticeRequestDTO, CustomUserDetails userDetails) {
-        User user = userDetails.getUser();
-
-        if (user == null || user.getRole() != Roles.ADMIN) {
+        if (userDetails.getUser().getRole() != Roles.ADMIN) {
             throw new IllegalStateException("공지사항 수정 권한이 없습니다.");
         }
 
@@ -150,9 +148,7 @@ public class AdminService {
 
     @Transactional
     public void deleteNotice(Long noticeId, CustomUserDetails userDetails) {
-        User user = userDetails.getUser();
-
-        if (user == null || user.getRole() != Roles.ADMIN) {
+        if (userDetails.getUser().getRole() != Roles.ADMIN) {
             throw new IllegalStateException("공지사항 삭제 권한이 없습니다.");
         }
 
