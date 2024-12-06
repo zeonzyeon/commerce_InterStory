@@ -1,27 +1,26 @@
 package com.app.interstory.user.domain;
 
-import com.app.interstory.user.domain.entity.User;
+import com.app.interstory.user.dto.vo.UserSessionVo;
 import lombok.Builder;
 import lombok.Getter;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
-import java.io.Serializable;
 import java.util.Collection;
 import java.util.Set;
 
 @Getter
 @Builder
-public class CustomUserDetails implements UserDetails, Serializable {
+public class CustomUserDetails implements UserDetails {
     private static final long serialVersionUID = 1L;
-    private final User user;
+
+    private final UserSessionVo user;
     private Set<GrantedAuthority> authorities;
 
-    public CustomUserDetails(User user,  Set<GrantedAuthority> authorities) {
+    public CustomUserDetails(UserSessionVo user,  Set<GrantedAuthority> authorities) {
         this.user = user;
         this.authorities = authorities;
     }
-
 
     @Override
     public boolean isAccountNonExpired() {

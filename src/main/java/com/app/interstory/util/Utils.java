@@ -19,5 +19,12 @@ public class Utils {
         return sdf.format(new Date()) + df.format(Math.random() * 1000) + ext;
     }
 
+    public static String getRenameNickname(String nickname) {
+        // 형식객체
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd_HHmmssSSS_");
+        DecimalFormat df = new DecimalFormat("000");
+        return sdf.format(new Date()) + df.format(Math.random() * 1000);
+    }
+
 
 }
