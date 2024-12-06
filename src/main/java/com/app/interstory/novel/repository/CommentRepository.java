@@ -2,6 +2,7 @@ package com.app.interstory.novel.repository;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -20,5 +21,6 @@ public interface CommentRepository extends JpaRepository<Comment, Long> {
 		+ "CASE WHEN :sort = '추천순' THEN c.likeCount END DESC")
 	Page<Comment> findCommentsByNovelId(@Param("novelId") Long novelId, @Param("sort") String sort, Pageable pageable);
 
+	@EntityGraph(attributePaths = {"episode", "episode.novel"})
 	Page<Comment> findByUser_UserId(Long userId, Pageable pageable);
 }
