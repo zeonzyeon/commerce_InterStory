@@ -52,7 +52,7 @@ public class QRecentNovel extends EntityPathBase<RecentNovel> {
         super(type, metadata, inits);
         this.episode = inits.isInitialized("episode") ? new QEpisode(forProperty("episode"), inits.get("episode")) : null;
         this.novel = inits.isInitialized("novel") ? new QNovel(forProperty("novel"), inits.get("novel")) : null;
-        this.user = inits.isInitialized("user") ? new com.app.interstory.user.domain.entity.QUser(forProperty("user")) : null;
+        this.user = inits.isInitialized("user") ? new com.app.interstory.user.domain.entity.QUser(forProperty("user"), inits.get("user")) : null;
     }
 
 }

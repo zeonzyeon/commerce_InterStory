@@ -47,7 +47,7 @@ public class QFavoriteNovel extends EntityPathBase<FavoriteNovel> {
     public QFavoriteNovel(Class<? extends FavoriteNovel> type, PathMetadata metadata, PathInits inits) {
         super(type, metadata, inits);
         this.novel = inits.isInitialized("novel") ? new QNovel(forProperty("novel"), inits.get("novel")) : null;
-        this.user = inits.isInitialized("user") ? new com.app.interstory.user.domain.entity.QUser(forProperty("user")) : null;
+        this.user = inits.isInitialized("user") ? new com.app.interstory.user.domain.entity.QUser(forProperty("user"), inits.get("user")) : null;
     }
 
 }

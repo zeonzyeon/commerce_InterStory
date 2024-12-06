@@ -1,24 +1,17 @@
-package com.app.interstory.episode.domain.dto;
+package com.app.interstory.novel.dto.request;
 
 import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-
-import java.sql.Timestamp;
 
 @Getter
 @AllArgsConstructor
 @NoArgsConstructor
-@Builder
-public class EpisodeResponseDTO {
-	private Long episodeId;
+public class EpisodeRequestDTO {
 	private Long novelId;
 	private String title;
-	private Integer viewCount;
-	private Timestamp publishedAt;
+	private String thumbnailRenamedFilename;
 	private String thumbnailUrl;
-	private Integer likeCount;
 	private String content;
 	private Boolean status;
 }

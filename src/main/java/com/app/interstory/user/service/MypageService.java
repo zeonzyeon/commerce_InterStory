@@ -1,100 +1,142 @@
 package com.app.interstory.user.service;
 
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.app.interstory.novel.domain.entity.FavoriteNovel;
 import com.app.interstory.novel.domain.entity.Novel;
 import com.app.interstory.novel.domain.entity.RecentNovel;
 import com.app.interstory.novel.domain.entity.Tag;
-import com.app.interstory.novel.domain.entity.Episode;
 import com.app.interstory.novel.repository.EpisodeRepository;
 import com.app.interstory.novel.repository.FavoriteNovelRepository;
+import com.app.interstory.novel.repository.NovelRepository;
 import com.app.interstory.novel.repository.RecentNovelRepository;
 import com.app.interstory.novel.repository.TagRepository;
+import com.app.interstory.user.domain.CustomUserDetails;
+import com.app.interstory.user.domain.entity.Point;
+import com.app.interstory.user.domain.entity.Settlement;
 import com.app.interstory.user.domain.entity.User;
+import com.app.interstory.user.dto.request.SettlementRequestDTO;
 import com.app.interstory.user.dto.request.UpdateUserRequestDTO;
 import com.app.interstory.user.dto.response.FavoriteNovelResponseDTO;
+import com.app.interstory.user.dto.response.MyNovelResponseDTO;
+import com.app.interstory.user.dto.response.MypageResponseDTO;
+import com.app.interstory.user.dto.response.PointHistoryResponseDTO;
 import com.app.interstory.user.dto.response.ReadNovelResponseDTO;
+import com.app.interstory.user.dto.response.SettlementResponseDTO;
 import com.app.interstory.user.dto.response.UpdateUserResponseDTO;
+import com.app.interstory.user.repository.PointRepository;
+import com.app.interstory.user.repository.SettlementRepository;
 import com.app.interstory.user.repository.UserRepository;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class MypageService {
 	private final UserRepository userRepository;
 	private final EpisodeRepository episodeRepository;
 	private final TagRepository tagRepository;
 	private final FavoriteNovelRepository favoriteNovelRepository;
 	private final RecentNovelRepository recentNovelRepository;
+	private final PointRepository pointRepository;
+	private final NovelRepository novelRepository;
+	private final SettlementRepository settlementRepository;
 
-	public UpdateUserResponseDTO updateUser(User user, UpdateUserRequestDTO updateUserRequestDTO) {
+	public MypageResponseDTO getUser(CustomUserDetails userDetails) {
+		Long userId = userDetails.getUser().getUserId();
+
+		User user = userRepository.findById(userId)
+			.orElseThrow(() -> new IllegalArgumentException("해당 사용자가 없습니다. id=" + userId));
+
+		return new MypageResponseDTO(
+			user.getNickname(),
+			user.getProfileUrl(),
+			user.getPoint(),
+			user.getSubscribe(),
+			user.getAutoPayment()
+		);
+	}
+
+	@Transactional
+	public UpdateUserResponseDTO updateUser(CustomUserDetails userDetails, UpdateUserRequestDTO updateUserRequestDTO) {
+		Long userId = userDetails.getUser().getUserId();
+
+		User user = userRepository.findById(userId)
+			.orElseThrow(() -> new IllegalArgumentException("해당 사용자가 없습니다. id=" + userId));
+
 		user.update(
 			updateUserRequestDTO.getProfileUrl(),
 			updateUserRequestDTO.getNickname(),
 			updateUserRequestDTO.getPassword()
 		);
 
-		userRepository.save(user);
-
 		return new UpdateUserResponseDTO(user.getProfileUrl(), user.getNickname(), user.getPassword());
 	}
 
-	public Page<FavoriteNovelResponseDTO> getFavoriteNovels(User user, Pageable pageable) {
-		Page<FavoriteNovel> favoriteNovelPage = favoriteNovelRepository.findByUser(user, pageable);
-		// TODO: 만약 관심작품 선정은 했지만 한번도 열람하지 않았을 경우 예외처리 필요
+	public Page<FavoriteNovelResponseDTO> getFavoriteNovels(CustomUserDetails userDetails, Pageable pageable) {
+		Long userId = userDetails.getUser().getUserId();
+
+		Page<FavoriteNovel> favoriteNovelPage = favoriteNovelRepository.findFavoritesSortedByLatestEpisode(userId, pageable);
+		// 만약 관심작품 선정은 했지만 한번도 열람하지 않았을 경우 EpisodeId는 0으로 처리됨
 
 		return favoriteNovelPage.map(favoriteNovel -> {
 			Novel novel = favoriteNovel.getNovel();
 
 			Integer episodeCount = episodeRepository.countByNovel(novel);
 
-			Integer likeCount = episodeRepository.findByNovel(novel).stream()
-				.mapToInt(Episode::getLikeCount)
-				.sum();
-
 			List<String> tags = tagRepository.findByNovel(novel).stream()
 				.map(Tag::getTag)
 				.toList();
 
-			Integer lastReadEpisode = recentNovelRepository.findByUserAndNovel(user, novel)
-				.map(recentNovel -> recentNovel.getEpisode().getEpisodeId().intValue())
-				.orElse(0);
+			Long lastReadEpisodeId = recentNovelRepository.findByUser_UserIdAndNovel(userId, novel)
+				.map(recentNovel -> recentNovel.getEpisode().getEpisodeId())
+				.orElse(0L);
+
+			Map<String, Object> getLastReadEpisodeNumber = episodeRepository.findRowNumberByNovelIdAndEpisodeId(novel.getNovelId(), lastReadEpisodeId);
+
+			int lastReadEpisodeNumber;
+			if (getLastReadEpisodeNumber != null && getLastReadEpisodeNumber.containsKey("row_number")) {
+				lastReadEpisodeNumber = Integer.parseInt(getLastReadEpisodeNumber.get("row_number").toString());
+			} else {
+				lastReadEpisodeNumber = 0;
+			}
 
 			return FavoriteNovelResponseDTO.builder()
 				.title(novel.getTitle())
 				.author(novel.getUser().getNickname())
 				.episodeCount(episodeCount)
-				.likeCount(likeCount)
+				.likeCount(novel.getLikeCount())
 				.tags(tags)
 				.thumbnailUrl(novel.getThumbnailUrl())
-				.lastReadEpisode(lastReadEpisode)
+				.lastReadEpisodeId(lastReadEpisodeId)
+				.lastReadEpisodeNumber(lastReadEpisodeNumber)
 				.build();
 		});
 	}
 
-	public Page<ReadNovelResponseDTO> getReadNovels(User user, Pageable pageable) {
-		Page<RecentNovel> recentNovelPage = recentNovelRepository.findByUser(user, pageable);
+	public Page<ReadNovelResponseDTO> getReadNovels(CustomUserDetails userDetails, Pageable pageable) {
+		Long userId = userDetails.getUser().getUserId();
+
+		Page<RecentNovel> recentNovelPage = recentNovelRepository.findByUser_UserId(userId, pageable);
 
 		return recentNovelPage.map(readNovel -> {
 			Novel novel = readNovel.getNovel();
 
 			Integer episodeCount = episodeRepository.countByNovel(novel);
 
-			Integer likeCount = episodeRepository.findByNovel(novel).stream()
-				.mapToInt(Episode::getLikeCount)
-				.sum();
-
 			List<String> tags = tagRepository.findByNovel(novel).stream()
 				.map(Tag::getTag)
 				.toList();
 
-			Integer lastReadEpisode = recentNovelRepository.findByUserAndNovel(user, novel)
+			Integer lastReadEpisode = recentNovelRepository.findByUser_UserIdAndNovel(userId, novel)
 				.map(recentNovel -> recentNovel.getEpisode().getEpisodeId().intValue())
 				.orElse(0);
 
@@ -102,11 +144,79 @@ public class MypageService {
 				.title(novel.getTitle())
 				.author(novel.getUser().getNickname())
 				.episodeCount(episodeCount)
-				.likeCount(likeCount)
+				.likeCount(novel.getLikeCount())
 				.tags(tags)
 				.thumbnailUrl(novel.getThumbnailUrl())
 				.lastReadEpisode(lastReadEpisode)
 				.build();
 		});
+	}
+
+	public Page<PointHistoryResponseDTO> getPointHistory(CustomUserDetails userDetails, Pageable pageable) {
+		Long userId = userDetails.getUser().getUserId();
+
+		Page<Point> pointPage = pointRepository.findByUser_UserId(userId, pageable);
+
+		return pointPage.map(pointHistory -> {
+			String pointChange;
+			if (pointHistory.getBalance() > 0) {
+				pointChange = pointHistory.getBalance() + "P 충전";
+			} else {
+				pointChange = Math.abs(pointHistory.getBalance()) + "P 사용";
+			}
+
+			return PointHistoryResponseDTO.builder()
+				.pointChange(pointChange)
+				.description(pointHistory.getDescription())
+				.date(pointHistory.getUsedAt())
+				.build();
+		});
+	}
+
+	public Page<MyNovelResponseDTO> getMyNovels(CustomUserDetails userDetails, Pageable pageable) {
+		Long userId = userDetails.getUser().getUserId();
+
+		Page<Novel> novelPage = novelRepository.findNovelsSortedByLatestEpisode(userId, pageable);
+
+		return novelPage.map(myNovel -> {
+
+			List<String> tags = tagRepository.findByNovel(myNovel).stream()
+				.map(Tag::getTag)
+				.toList();
+
+			return MyNovelResponseDTO.builder()
+				.title(myNovel.getTitle())
+				.likeCount(myNovel.getLikeCount())
+				.tags(tags)
+				.thumbnailUrl(myNovel.getThumbnailUrl())
+				// TODO: REDIS로부터 작품 반응 조회
+				.build();
+		});
+	}
+
+	public SettlementResponseDTO getSettlement(CustomUserDetails userDetails) {
+		Long userId = userDetails.getUser().getUserId();
+
+		Settlement settlement = settlementRepository.findByUser_UserId(userId)
+			.orElseThrow(() -> new IllegalArgumentException("해당 사용자의 정산 정보가 없습니다. id=" + userId));
+
+		return SettlementResponseDTO.builder()
+			.fee(settlement.getFee())
+			.accountNumber(settlement.getAccountNumber())
+			.build();
+	}
+
+	@Transactional
+	public SettlementResponseDTO updateSettlement(CustomUserDetails userDetails, SettlementRequestDTO settlementRequestDTO) {
+		Long userId = userDetails.getUser().getUserId();
+
+		Settlement settlement = settlementRepository.findByUser_UserId(userId)
+			.orElseThrow(() -> new IllegalArgumentException("해당 사용자의 정산 정보가 없습니다. id=" + userId));
+
+		settlement.updateAccountNumber(settlementRequestDTO.getAccountNumber());
+
+		return SettlementResponseDTO.builder()
+			.accountNumber(settlement.getAccountNumber())
+			.build();
 	}
 }
