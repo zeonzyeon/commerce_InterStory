@@ -8,27 +8,35 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.app.interstory.novel.domain.entity.Comment;
+import com.app.interstory.novel.domain.entity.Episode;
 import com.app.interstory.novel.domain.entity.FavoriteNovel;
 import com.app.interstory.novel.domain.entity.Novel;
 import com.app.interstory.novel.domain.entity.RecentNovel;
 import com.app.interstory.novel.domain.entity.Tag;
+import com.app.interstory.novel.repository.CommentRepository;
 import com.app.interstory.novel.repository.EpisodeRepository;
 import com.app.interstory.novel.repository.FavoriteNovelRepository;
 import com.app.interstory.novel.repository.NovelRepository;
 import com.app.interstory.novel.repository.RecentNovelRepository;
 import com.app.interstory.novel.repository.TagRepository;
+import com.app.interstory.payment.domain.entity.Subscribe;
+import com.app.interstory.payment.domain.repository.SubscribeRepository;
 import com.app.interstory.user.domain.CustomUserDetails;
 import com.app.interstory.user.domain.entity.Point;
 import com.app.interstory.user.domain.entity.Settlement;
 import com.app.interstory.user.domain.entity.User;
-import com.app.interstory.user.dto.request.SettlementRequestDTO;
+import com.app.interstory.user.dto.request.AccountRequestDTO;
 import com.app.interstory.user.dto.request.UpdateUserRequestDTO;
+import com.app.interstory.user.dto.response.AccountResponseDTO;
 import com.app.interstory.user.dto.response.FavoriteNovelResponseDTO;
+import com.app.interstory.user.dto.response.MyCommentResponseDTO;
 import com.app.interstory.user.dto.response.MyNovelResponseDTO;
 import com.app.interstory.user.dto.response.MypageResponseDTO;
 import com.app.interstory.user.dto.response.PointHistoryResponseDTO;
 import com.app.interstory.user.dto.response.ReadNovelResponseDTO;
 import com.app.interstory.user.dto.response.SettlementResponseDTO;
+import com.app.interstory.user.dto.response.SubscriptionResponseDTO;
 import com.app.interstory.user.dto.response.UpdateUserResponseDTO;
 import com.app.interstory.user.repository.PointRepository;
 import com.app.interstory.user.repository.SettlementRepository;
@@ -41,6 +49,7 @@ import lombok.extern.slf4j.Slf4j;
 @RequiredArgsConstructor
 @Slf4j
 public class MypageService {
+	private static final String NOT_FOUND_USER_ID = "해당 사용자가 없습니다. id : ";
 	private final UserRepository userRepository;
 	private final EpisodeRepository episodeRepository;
 	private final TagRepository tagRepository;
@@ -49,12 +58,14 @@ public class MypageService {
 	private final PointRepository pointRepository;
 	private final NovelRepository novelRepository;
 	private final SettlementRepository settlementRepository;
+	private final CommentRepository commentRepository;
+	private final SubscribeRepository subscribeRepository;
 
 	public MypageResponseDTO getUser(CustomUserDetails userDetails) {
 		Long userId = userDetails.getUser().getUserId();
 
 		User user = userRepository.findById(userId)
-			.orElseThrow(() -> new IllegalArgumentException("해당 사용자가 없습니다. id=" + userId));
+			.orElseThrow(() -> new IllegalArgumentException(NOT_FOUND_USER_ID + userId));
 
 		return new MypageResponseDTO(
 			user.getNickname(),
@@ -70,7 +81,7 @@ public class MypageService {
 		Long userId = userDetails.getUser().getUserId();
 
 		User user = userRepository.findById(userId)
-			.orElseThrow(() -> new IllegalArgumentException("해당 사용자가 없습니다. id=" + userId));
+			.orElseThrow(() -> new IllegalArgumentException(NOT_FOUND_USER_ID + userId));
 
 		user.update(
 			updateUserRequestDTO.getProfileUrl(),
@@ -189,7 +200,6 @@ public class MypageService {
 				.likeCount(myNovel.getLikeCount())
 				.tags(tags)
 				.thumbnailUrl(myNovel.getThumbnailUrl())
-				// TODO: REDIS로부터 작품 반응 조회
 				.build();
 		});
 	}
@@ -198,25 +208,83 @@ public class MypageService {
 		Long userId = userDetails.getUser().getUserId();
 
 		Settlement settlement = settlementRepository.findByUser_UserId(userId)
-			.orElseThrow(() -> new IllegalArgumentException("해당 사용자의 정산 정보가 없습니다. id=" + userId));
+			.orElseThrow(() -> new IllegalArgumentException(NOT_FOUND_USER_ID + userId));
 
 		return SettlementResponseDTO.builder()
 			.fee(settlement.getFee())
+			.build();
+	}
+
+	@Transactional
+	public void requestSettlement(CustomUserDetails userDetails) {
+		Long userId = userDetails.getUser().getUserId();
+
+		Settlement settlement = settlementRepository.findByUser_UserId(userId)
+			.orElseThrow(() -> new IllegalArgumentException(NOT_FOUND_USER_ID + userId));
+
+		settlement.requestSettlement();
+	}
+
+	public Page<MyCommentResponseDTO> getMyComments(CustomUserDetails userDetails, Pageable pageable) {
+		Long userId = userDetails.getUser().getUserId();
+
+		Page<Comment> myCommentPage = commentRepository.findByUser_UserId(userId, pageable);
+
+		return myCommentPage.map(myComment -> {
+			Novel novel = myComment.getEpisode().getNovel();
+			Episode episode = myComment.getEpisode();
+
+			Map<String, Object> getEpisodeNumber = episodeRepository.findRowNumberByNovelIdAndEpisodeId(novel.getNovelId(), episode.getEpisodeId());
+
+			long episodeNumber;
+			if (getEpisodeNumber != null && getEpisodeNumber.containsKey("row_number")) {
+				episodeNumber = Integer.parseInt(getEpisodeNumber.get("row_number").toString());
+			} else {
+				episodeNumber = 0L;
+			}
+
+			return MyCommentResponseDTO.builder()
+				.novelTitle(novel.getTitle())
+				.episodeNumber(episodeNumber)
+				.content(myComment.getContent())
+				.createdAt(myComment.getCreatedAt())
+				.likeCount(myComment.getLikeCount())
+				.build();
+		});
+	}
+
+	public AccountResponseDTO getAccount(CustomUserDetails userDetails) {
+		Long userId = userDetails.getUser().getUserId();
+
+		Settlement settlement = settlementRepository.findByUser_UserId(userId)
+			.orElseThrow(() -> new IllegalArgumentException(NOT_FOUND_USER_ID + userId));
+
+		return AccountResponseDTO.builder()
 			.accountNumber(settlement.getAccountNumber())
 			.build();
 	}
 
 	@Transactional
-	public SettlementResponseDTO updateSettlement(CustomUserDetails userDetails, SettlementRequestDTO settlementRequestDTO) {
+	public AccountResponseDTO updateAccount(CustomUserDetails userDetails, AccountRequestDTO accountRequestDTO) {
 		Long userId = userDetails.getUser().getUserId();
 
 		Settlement settlement = settlementRepository.findByUser_UserId(userId)
-			.orElseThrow(() -> new IllegalArgumentException("해당 사용자의 정산 정보가 없습니다. id=" + userId));
+			.orElseThrow(() -> new IllegalArgumentException(NOT_FOUND_USER_ID + userId));
 
-		settlement.updateAccountNumber(settlementRequestDTO.getAccountNumber());
+		settlement.updateAccountNumber(accountRequestDTO.getAccountNumber());
 
-		return SettlementResponseDTO.builder()
+		return AccountResponseDTO.builder()
 			.accountNumber(settlement.getAccountNumber())
+			.build();
+	}
+
+	public SubscriptionResponseDTO getSubscription(CustomUserDetails userDetails) {
+		Long userId = userDetails.getUser().getUserId();
+
+		Subscribe subscribe = subscribeRepository.findByUser_UserId(userId);
+
+		return SubscriptionResponseDTO.builder()
+			.endAt(subscribe.getEndAt())
 			.build();
 	}
 }

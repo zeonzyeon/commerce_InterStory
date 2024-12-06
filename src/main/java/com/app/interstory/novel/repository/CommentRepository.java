@@ -19,4 +19,6 @@ public interface CommentRepository extends JpaRepository<Comment, Long> {
 		+ "CASE WHEN :sort = '오래된순' THEN c.createdAt END ASC, " + "CASE WHEN :sort = '최신순' THEN c.createdAt END DESC, "
 		+ "CASE WHEN :sort = '추천순' THEN c.likeCount END DESC")
 	Page<Comment> findCommentsByNovelId(@Param("novelId") Long novelId, @Param("sort") String sort, Pageable pageable);
+
+	Page<Comment> findByUser_UserId(Long userId, Pageable pageable);
 }

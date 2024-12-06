@@ -1,18 +1,5 @@
 package com.app.interstory.user.controller;
 
-import com.app.interstory.user.domain.CustomUserDetails;
-import com.app.interstory.user.dto.request.SettlementRequestDTO;
-import com.app.interstory.user.dto.request.UpdateUserRequestDTO;
-import com.app.interstory.user.dto.response.FavoriteNovelResponseDTO;
-import com.app.interstory.user.dto.response.MyNovelResponseDTO;
-import com.app.interstory.user.dto.response.MypageResponseDTO;
-import com.app.interstory.user.dto.response.PointHistoryResponseDTO;
-import com.app.interstory.user.dto.response.ReadNovelResponseDTO;
-import com.app.interstory.user.dto.response.SettlementResponseDTO;
-import com.app.interstory.user.dto.response.UpdateUserResponseDTO;
-import com.app.interstory.user.service.MypageService;
-import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -20,7 +7,30 @@ import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
+import com.app.interstory.user.domain.CustomUserDetails;
+import com.app.interstory.user.dto.request.AccountRequestDTO;
+import com.app.interstory.user.dto.request.UpdateUserRequestDTO;
+import com.app.interstory.user.dto.response.AccountResponseDTO;
+import com.app.interstory.user.dto.response.FavoriteNovelResponseDTO;
+import com.app.interstory.user.dto.response.MyCommentResponseDTO;
+import com.app.interstory.user.dto.response.MyNovelResponseDTO;
+import com.app.interstory.user.dto.response.MypageResponseDTO;
+import com.app.interstory.user.dto.response.PointHistoryResponseDTO;
+import com.app.interstory.user.dto.response.ReadNovelResponseDTO;
+import com.app.interstory.user.dto.response.SettlementResponseDTO;
+import com.app.interstory.user.dto.response.SubscriptionResponseDTO;
+import com.app.interstory.user.dto.response.UpdateUserResponseDTO;
+import com.app.interstory.user.service.MypageService;
+
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
 @RestController
 @RequestMapping("/api/users")
@@ -67,8 +77,30 @@ public class MypageRestController {
 		return ResponseEntity.ok(mypageService.getSettlement(userDetails));
 	}
 
-	@PutMapping("/settlement")
-	public ResponseEntity<SettlementResponseDTO> updateSettlement(@AuthenticationPrincipal CustomUserDetails userDetails, @RequestBody SettlementRequestDTO settlementRequestDTO) {
-		return ResponseEntity.ok(mypageService.updateSettlement(userDetails, settlementRequestDTO));
+	@PostMapping("/settlement")
+	public ResponseEntity<Void> requestSettlement(@AuthenticationPrincipal CustomUserDetails userDetails) {
+		mypageService.requestSettlement(userDetails);
+		return ResponseEntity.ok().build();
+	}
+
+	@GetMapping("/my-comments")
+	public ResponseEntity<Page<MyCommentResponseDTO>> getMyComments(@AuthenticationPrincipal CustomUserDetails userDetails,
+		@PageableDefault(size = 10, sort = "createdAt", direction = Sort.Direction.DESC) Pageable pageable) {
+		return ResponseEntity.ok(mypageService.getMyComments(userDetails, pageable));
+	}
+
+	@GetMapping("/account")
+	public ResponseEntity<AccountResponseDTO> getAccount(@AuthenticationPrincipal CustomUserDetails userDetails) {
+		return ResponseEntity.ok(mypageService.getAccount(userDetails));
+	}
+
+	@PutMapping("/account")
+	public ResponseEntity<AccountResponseDTO> updateAccount(@AuthenticationPrincipal CustomUserDetails userDetails, @RequestBody AccountRequestDTO accountRequestDTO) {
+		return ResponseEntity.ok(mypageService.updateAccount(userDetails, accountRequestDTO));
+	}
+
+	@GetMapping("/subscription")
+	public ResponseEntity<SubscriptionResponseDTO> getSubscription(@AuthenticationPrincipal CustomUserDetails userDetails) {
+		return ResponseEntity.ok(mypageService.getSubscription(userDetails));
 	}
 }

@@ -3,6 +3,6 @@ package com.app.interstory.user.dto.request;
 import lombok.Getter;
 
 @Getter
-public class SettlementRequestDTO {
+public class AccountRequestDTO {
 	String accountNumber;
 }
