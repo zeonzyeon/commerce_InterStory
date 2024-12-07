@@ -12,6 +12,4 @@ public class MyNovelResponseDTO {
 	Integer likeCount;
 	List<String> tags;
 	String thumbnailUrl;
-	// TODO: REDIS로부터 작품 반응 조회
-	// String reaction;
 }

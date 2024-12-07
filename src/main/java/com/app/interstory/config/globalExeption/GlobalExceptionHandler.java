@@ -1,10 +1,5 @@
 package com.app.interstory.config.globalExeption;
 
-import com.app.interstory.config.globalExeption.customException.DuplicateEmailException;
-import com.app.interstory.config.globalExeption.customException.DuplicateNicknameException;
-import lombok.Getter;
-import lombok.Setter;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.AccessDeniedException;
@@ -13,6 +8,14 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseBody;
+
+import com.app.interstory.config.globalExeption.customException.DuplicateEmailException;
+import com.app.interstory.config.globalExeption.customException.DuplicateNicknameException;
+import com.app.interstory.config.globalExeption.customException.WrongApproach;
+
+import lombok.Getter;
+import lombok.Setter;
+import lombok.extern.slf4j.Slf4j;
 
 @ControllerAdvice
 @Slf4j
@@ -36,6 +39,14 @@ public class GlobalExceptionHandler {
         return ResponseEntity
                 .status(HttpStatus.CONFLICT)
                 .body(new ErrorResponse("409", e.getMessage()));
+    }
+
+    @ExceptionHandler({WrongApproach.class})
+    public ResponseEntity<ErrorResponse> handleWrongApproach(RuntimeException e) {
+        log.error("Wrong approach error occurred: ", e);
+        return ResponseEntity
+            .status(HttpStatus.UNAUTHORIZED)
+            .body(new ErrorResponse("401", e.getMessage()));
     }
 
     @ExceptionHandler(AuthenticationException.class)

@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <title>회원 탈퇴</title>
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+<!--  <link rel="stylesheet" th:href="@{/css/common/header.css}">-->
+<!--  <link rel="stylesheet" th:href="@{/css/common/footer.css}">-->
+  <link rel="stylesheet" th:href="@{/css/user/withdrawal.css}">
+<!--  <link rel="stylesheet" th:href="@{/css/user/profileSidebar.css}">-->
+</head>
+<body>
+<!--<div th:replace="~{common/header :: header}"></div>-->
+<div class="page-container">
+
+  <!-- 메인 콘텐츠 -->
+  <div class="withdrawal-container">
+    <div class="warning-section">
+      <i class="fas fa-exclamation-triangle"></i>
+      <h2>회원 탈퇴</h2>
+      <p class="warning-text">
+        탈퇴하기 전에 다음 사항을 꼭 확인해주세요.
+      </p>
+    </div>
+
+    <!-- 주의사항 목록 -->
+    <div class="notice-section">
+      <h3>탈퇴 시 주의사항</h3>
+      <ul class="notice-list">
+        <li>
+          <i class="fas fa-check"></i>
+          회원님의 모든 데이터는 회원 탈퇴 처리되며, 복구할 수 없습니다.
+        </li>
+        <li>
+          <i class="fas fa-check"></i>
+          작성하신 게시글, 댓글은 삭제되지 않으며, '탈퇴한 사용자'로 표시됩니다.
+        </li>
+        <li>
+          <i class="fas fa-check"></i>
+          보유하신 포인트와 권한은 모두 소멸됩니다.
+        </li>
+      </ul>
+    </div>
+
+    <!-- 탈퇴 사유 선택 -->
+    <div class="reason-section">
+      <h3>탈퇴 사유</h3>
+      <p class="sub-text">서비스 개선을 위해 탈퇴 사유를 선택해주세요.</p>
+      <div class="reason-options">
+        <label class="reason-option">
+          <input name="reason" type="radio" value="사용빈도 낮음">
+          <span>사용빈도가 낮아요</span>
+        </label>
+        <label class="reason-option">
+          <input name="reason" type="radio" value="서비스 불만족">
+          <span>서비스가 불만족스러워요</span>
+        </label>
+        <label class="reason-option">
+          <input name="reason" type="radio" value="개인정보 보호">
+          <span>개인정보를 보호하고 싶어요</span>
+        </label>
+        <label class="reason-option">
+          <input name="reason" type="radio" value="기타">
+          <span>기타</span>
+        </label>
+      </div>
+      <textarea class="reason-detail"
+                id="reasonDetail"
+                placeholder="기타 사유나 개선사항을 자유롭게 작성해주세요.">
+      </textarea>
+    </div>
+
+
+    <!-- 최종 확인 체크박스 -->
+    <div class="final-confirm">
+      <label class="confirm-checkbox">
+        <input id="confirmCheck" type="checkbox">
+        <span>모든 주의사항을 확인했으며, 이에 동의합니다.</span>
+      </label>
+    </div>
+
+    <!-- 버튼 영역 -->
+    <div class="button-group">
+      <button class="cancel-btn" onclick="history.back()">취소</button>
+      <button class="withdraw-btn"
+              disabled
+              onclick="confirmWithdrawal()">회원 탈퇴</button>
+    </div>
+  </div>
+</div>
+<script>
+
+  document.addEventListener("DOMContentLoaded", () => {
+    const checkbox = document.getElementById('confirmCheck');
+    const withdrawBtn = document.querySelector('.withdraw-btn');
+    const reasonDetail = document.getElementById('reasonDetail');
+
+    checkbox.addEventListener('change', () => {
+      // 탈퇴 사유 체크 여부 확인
+      const selectedReason = document.querySelector('input[name="reason"]:checked')?.value;
+
+      if (checkbox.checked) {  // 체크박스가 체크되었을 때만 검증
+        if (!selectedReason) {
+          checkbox.checked = false;
+          alert("탈퇴사유를 체크해주세요");
+          return;
+        }
+
+        // 기타 선택시 상세 사유 입력 확인
+        if (selectedReason === "기타" && reasonDetail.value.trim() === '') {
+          checkbox.checked = false;
+          alert("탈퇴 사유를 적어주세요");
+          return;
+        }
+      }
+
+      withdrawBtn.disabled = !checkbox.checked;
+    });
+  });
+
+  const confirmWithdrawal = () => {
+    if (!confirm('정말로 탈퇴하시겠습니까? 이 작업은 취소할 수 없습니다.')) {
+      return;
+    }
+
+    const reason = document.querySelector('input[name="reason"]:checked')?.value;
+    const reasonDetail = document.getElementById('reasonDetail').value;
+    const userId = "[[${user.user.userId}]]"
+    console.log(userId);
+    fetch('/api/auth/withdrawal', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        reason: reason,
+        reasonDetail: reasonDetail,
+        userId: userId
+      })
+    })
+            .then(response => {
+              if (response.ok) {
+                alert('회원 탈퇴가 완료되었습니다. 그동안 이용해 주셔서 감사합니다.');
+                window.location.href = '/auth/logout';
+              } else {
+                throw new Error('탈퇴 처리 중 오류가 발생했습니다.');
+              }
+            })
+            .catch(error => {
+              alert(error.message);
+            });
+  }
+</script>
+</body>
+</html>
