@@ -130,4 +130,18 @@ public class NovelService {
 			.tag(novel.getTag())
 			.build());
 	}
+
+	// 소설 삭제
+	@Transactional
+	public void deleteNovel(Long novelId) {
+		Novel novel = novelRepository.findById(novelId)
+			.orElseThrow(() -> new RuntimeException("Novel not found with id: " + novelId));
+
+		if (novel.getStatus() == NovelStatus.DELETED) {
+			throw new RuntimeException("Novel is already deleted.");
+		}
+
+		novel.markAsDeleted();
+		novelRepository.save(novel);
+	}
 }

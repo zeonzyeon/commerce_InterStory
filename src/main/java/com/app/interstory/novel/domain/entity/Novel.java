@@ -95,4 +95,7 @@ public class Novel {
 		this.status = status;
 	}
 
+	public void markAsDeleted() {
+		this.status = NovelStatus.DELETED;
+	}
 }
