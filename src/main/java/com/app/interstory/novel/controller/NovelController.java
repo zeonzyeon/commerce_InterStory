@@ -2,14 +2,17 @@ package com.app.interstory.novel.controller;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.app.interstory.novel.dto.request.NovelRequestDTO;
+import com.app.interstory.novel.dto.response.NovelDetailResponseDTO;
 import com.app.interstory.novel.service.NovelService;
 
 import lombok.RequiredArgsConstructor;
@@ -36,6 +39,16 @@ public class NovelController {
 	) {
 		novelService.updateNovel(novelId, novelRequestDTO);
 		return ResponseEntity.ok("Novel updated successfully.");
+	}
+
+	// 소설 상세 조회
+	@GetMapping("/{novelId}")
+	public ResponseEntity<NovelDetailResponseDTO> readNovel(
+		@PathVariable Long novelId,
+		@RequestParam(required = false, defaultValue = "latest") String sort
+	) {
+		NovelDetailResponseDTO responseDTO = novelService.readNovel(novelId, sort);
+		return ResponseEntity.ok(responseDTO);
 	}
 }
 
