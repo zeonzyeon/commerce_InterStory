@@ -72,6 +72,9 @@ public class EpisodeController {
 		@RequestBody Map<String, Long> body
 	) {
 		Long userId = body.get("userId");
+
+		episodeService.purchaseEpisode(userId, novelId, episodeId);
+
 		return ResponseEntity.ok("Purchase successful!");
 	}
 
