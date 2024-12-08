@@ -30,6 +30,6 @@ public interface EpisodeRepository extends JpaRepository<Episode, Long> {
 	// 회차 리스트 최신순 정렬
 	List<Episode> findByNovelOrderByPublishedAtDesc(Novel novel);
 
-	// 회차 리스트 추천 수 정렬
+	// 회차 리스트 추천수 정렬
 	List<Episode> findByNovelOrderByLikeCountDesc(Novel novel);
 }

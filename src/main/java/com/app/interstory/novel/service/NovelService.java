@@ -3,6 +3,8 @@ package com.app.interstory.novel.service;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -12,6 +14,7 @@ import com.app.interstory.novel.domain.enumtypes.NovelStatus;
 import com.app.interstory.novel.dto.request.NovelRequestDTO;
 import com.app.interstory.novel.dto.response.EpisodeResponseDTO;
 import com.app.interstory.novel.dto.response.NovelDetailResponseDTO;
+import com.app.interstory.novel.dto.response.NovelResponseDTO;
 import com.app.interstory.novel.repository.EpisodeRepository;
 import com.app.interstory.novel.repository.NovelRepository;
 import com.app.interstory.user.domain.entity.User;
@@ -102,4 +105,29 @@ public class NovelService {
 		);
 	}
 
+	// 소설 목록 조회
+	public Page<NovelResponseDTO> getNovelList(
+		Long userId,
+		String status,
+		String title,
+		String author,
+		Boolean monetized,
+		String tag,
+		String sort,
+		Pageable pageable
+	) {
+		Page<Novel> novels = novelRepository.findAllWithFiltersAndSort(
+			userId, status, title, author, monetized, tag, sort, pageable
+		);
+
+		return novels.map(novel -> NovelResponseDTO.builder()
+			.novelId(novel.getNovelId())
+			.title(novel.getTitle())
+			.description(novel.getDescription())
+			.thumbnailUrl(novel.getThumbnailUrl())
+			.likeCount(novel.getLikeCount())
+			.status(novel.getStatus())
+			.tag(novel.getTag())
+			.build());
+	}
 }

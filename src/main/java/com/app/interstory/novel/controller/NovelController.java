@@ -1,5 +1,7 @@
 package com.app.interstory.novel.controller;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -13,6 +15,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.app.interstory.novel.dto.request.NovelRequestDTO;
 import com.app.interstory.novel.dto.response.NovelDetailResponseDTO;
+import com.app.interstory.novel.dto.response.NovelResponseDTO;
 import com.app.interstory.novel.service.NovelService;
 
 import lombok.RequiredArgsConstructor;
@@ -49,6 +52,24 @@ public class NovelController {
 	) {
 		NovelDetailResponseDTO responseDTO = novelService.readNovel(novelId, sort);
 		return ResponseEntity.ok(responseDTO);
+	}
+
+	// 소설 목록 조회
+	@GetMapping
+	public ResponseEntity<Page<NovelResponseDTO>> getNovelList(
+		@RequestParam(required = false) Long userId,
+		@RequestParam(required = false) String status,
+		@RequestParam(required = false) String title,
+		@RequestParam(required = false) String author,
+		@RequestParam(required = false) Boolean monetized,
+		@RequestParam(required = false) String tag,
+		@RequestParam(defaultValue = "latest") String sort,
+		Pageable pageable
+	) {
+		Page<NovelResponseDTO> novels = novelService.getNovelList(
+			userId, status, title, author, monetized, tag, sort, pageable
+		);
+		return ResponseEntity.ok(novels);
 	}
 }
 
