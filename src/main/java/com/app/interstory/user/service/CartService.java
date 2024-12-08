@@ -4,13 +4,12 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
+import com.app.interstory.novel.repository.EpisodeRepository;
 import com.app.interstory.user.domain.entity.CartItem;
 import com.app.interstory.user.domain.entity.User;
 import com.app.interstory.user.dto.response.CartItemResponseDTO;
 import com.app.interstory.user.repository.CartItemRepository;
-import com.app.interstory.novel.repository.EpisodeRepository;
 import com.app.interstory.user.repository.PointRepository;
 import com.app.interstory.user.repository.UserRepository;
 
@@ -38,6 +37,20 @@ public class CartService {
 				item.getEpisode().getEpisodeId(),
 				item.getEpisode().getTitle()))
 			.collect(Collectors.toList());
+	}
+
+	// 장바구니 아이템 삭제
+	public void deleteCartItems(Long userId, List<Long> cartItemIds) {
+		User user = userRepository.findById(userId)
+			.orElseThrow(() -> new RuntimeException("User not found"));
+
+		List<CartItem> cartItems = cartItemRepository.findByUserAndCartItemIdIn(user, cartItemIds);
+
+		if (cartItems.isEmpty()) {
+			throw new RuntimeException("No matching cart items found for deletion.");
+		}
+
+		cartItemRepository.deleteAll(cartItems);
 	}
 }
 

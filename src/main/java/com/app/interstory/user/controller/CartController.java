@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -31,4 +32,10 @@ public class CartController {
 		return ResponseEntity.ok(cartItems);
 	}
 
+	// 장바구니 아이템 삭제
+	@DeleteMapping
+	public ResponseEntity<String> deleteCartItems(@RequestParam Long userId, @RequestBody List<Long> cartItemIds) {
+		cartService.deleteCartItems(userId, cartItemIds);
+		return ResponseEntity.ok("Selected cart items deleted successfully.");
+	}
 }
