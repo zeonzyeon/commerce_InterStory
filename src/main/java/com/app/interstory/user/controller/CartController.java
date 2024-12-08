@@ -6,6 +6,7 @@ import java.util.Map;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -32,10 +33,17 @@ public class CartController {
 		return ResponseEntity.ok(cartItems);
 	}
 
-	// 장바구니 아이템 삭제
+	// 장바구니 아이템 선택 삭제
 	@DeleteMapping
 	public ResponseEntity<String> deleteCartItems(@RequestParam Long userId, @RequestBody List<Long> cartItemIds) {
 		cartService.deleteCartItems(userId, cartItemIds);
 		return ResponseEntity.ok("Selected cart items deleted successfully.");
+	}
+
+	// 장바구니 아이템 선택 결제
+	@PostMapping("/purchase-items")
+	public ResponseEntity<String> purchaseCartItems(@RequestParam Long userId, @RequestBody List<Long> cartItemIds) {
+		cartService.purchaseCartItems(userId, cartItemIds);
+		return ResponseEntity.ok("Purchase successful.");
 	}
 }
