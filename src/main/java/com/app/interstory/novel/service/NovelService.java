@@ -39,4 +39,19 @@ public class NovelService {
 		return novel.getNovelId();
 	}
 
+	// 소설 수정
+	public void updateNovel(Long novelId, NovelRequestDTO novelRequestDTO) {
+		Novel novel = novelRepository.findById(novelId)
+			.orElseThrow(() -> new RuntimeException("Novel not found"));
+
+		novel.update(
+			novelRequestDTO.getTitle(),
+			novelRequestDTO.getDescription(),
+			novelRequestDTO.getPlan(),
+			novelRequestDTO.getThumbnailRenamedFilename(),
+			novelRequestDTO.getThumbnailUrl(),
+			novelRequestDTO.getTag(),
+			novelRequestDTO.getStatus()
+		);
+	}
 }
