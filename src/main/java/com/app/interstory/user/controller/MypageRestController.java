@@ -16,8 +16,11 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.app.interstory.user.domain.CustomUserDetails;
 import com.app.interstory.user.dto.request.AccountRequestDTO;
+import com.app.interstory.user.dto.request.CouponRequestDTO;
+import com.app.interstory.user.dto.request.SaveCouponRequestDTO;
 import com.app.interstory.user.dto.request.UpdateUserRequestDTO;
 import com.app.interstory.user.dto.response.AccountResponseDTO;
+import com.app.interstory.user.dto.response.CouponResponseDTO;
 import com.app.interstory.user.dto.response.FavoriteNovelResponseDTO;
 import com.app.interstory.user.dto.response.MyCommentResponseDTO;
 import com.app.interstory.user.dto.response.MyNovelResponseDTO;
@@ -27,6 +30,7 @@ import com.app.interstory.user.dto.response.ReadNovelResponseDTO;
 import com.app.interstory.user.dto.response.SettlementResponseDTO;
 import com.app.interstory.user.dto.response.SubscriptionResponseDTO;
 import com.app.interstory.user.dto.response.UpdateUserResponseDTO;
+import com.app.interstory.user.dto.response.UserCouponResponseDTO;
 import com.app.interstory.user.service.MypageService;
 
 import lombok.RequiredArgsConstructor;
@@ -97,6 +101,16 @@ public class MypageRestController {
 	@PutMapping("/account")
 	public ResponseEntity<AccountResponseDTO> updateAccount(@AuthenticationPrincipal CustomUserDetails userDetails, @RequestBody AccountRequestDTO accountRequestDTO) {
 		return ResponseEntity.ok(mypageService.updateAccount(userDetails, accountRequestDTO));
+	}
+
+	@GetMapping("/coupons")
+	public ResponseEntity<Page<UserCouponResponseDTO>> getCoupons(@AuthenticationPrincipal CustomUserDetails userDetails, Pageable pageable) {
+		return ResponseEntity.ok(mypageService.getCoupons(userDetails, pageable));
+	}
+
+	@PostMapping("/coupons")
+	public ResponseEntity<UserCouponResponseDTO> saveCoupon(@AuthenticationPrincipal CustomUserDetails userDetails, @RequestBody SaveCouponRequestDTO saveCouponRequestDTO) {
+		return ResponseEntity.ok(mypageService.saveCoupon(userDetails, saveCouponRequestDTO.getCouponCode()));
 	}
 
 	@GetMapping("/subscription")
