@@ -82,10 +82,11 @@ def querydslSrcDir = layout.buildDirectory.dir('generated/querydsl').get().asFil
 
 tasks.withType(JavaCompile) {
     options.getGeneratedSourceOutputDirectory().set(file(querydslSrcDir))
+    options.compilerArgs << "-parameters"
 }
 
 sourceSets {
-    main.java.srcDirs += [ querydslSrcDir ]
+    main.java.srcDirs += [querydslSrcDir]
 }
 
 clean {

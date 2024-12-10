@@ -35,14 +35,20 @@ public class CartController {
 
 	// 장바구니 아이템 선택 삭제
 	@DeleteMapping
-	public ResponseEntity<String> deleteCartItems(@RequestParam Long userId, @RequestBody List<Long> cartItemIds) {
+	public ResponseEntity<String> deleteCartItems(
+		@RequestParam("userId") Long userId,
+		@RequestBody List<Long> cartItemIds) {
+		if (cartItemIds == null || cartItemIds.isEmpty()) {
+			return ResponseEntity.badRequest().body("Cart item IDs cannot be empty.");
+		}
 		cartService.deleteCartItems(userId, cartItemIds);
 		return ResponseEntity.ok("Selected cart items deleted successfully.");
 	}
 
 	// 장바구니 아이템 선택 결제
 	@PostMapping("/purchase-items")
-	public ResponseEntity<String> purchaseCartItems(@RequestParam Long userId, @RequestBody List<Long> cartItemIds) {
+	public ResponseEntity<String> purchaseCartItems(@RequestParam("userId") Long userId,
+		@RequestBody List<Long> cartItemIds) {
 		cartService.purchaseCartItems(userId, cartItemIds);
 		return ResponseEntity.ok("Purchase successful.");
 	}
