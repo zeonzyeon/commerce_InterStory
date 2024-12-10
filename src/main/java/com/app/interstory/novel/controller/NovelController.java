@@ -14,6 +14,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.app.interstory.novel.domain.enumtypes.MainTag;
+import com.app.interstory.novel.domain.enumtypes.NovelStatus;
 import com.app.interstory.novel.dto.request.NovelRequestDTO;
 import com.app.interstory.novel.dto.response.NovelDetailResponseDTO;
 import com.app.interstory.novel.dto.response.NovelResponseDTO;
@@ -58,7 +60,7 @@ public class NovelController {
 	@GetMapping
 	public ResponseEntity<Page<NovelResponseDTO>> getNovelList(
 		@RequestParam(name = "userId", required = false) Long userId,
-		@RequestParam(name = "status", required = false) String status,
+		@RequestParam(name = "status", required = false) NovelStatus status,
 		@RequestParam(name = "title", required = false) String title,
 		@RequestParam(name = "author", required = false) String author,
 		@RequestParam(name = "monetized", required = false) Boolean monetized,
@@ -70,8 +72,17 @@ public class NovelController {
 			throw new IllegalArgumentException("Invalid sort parameter: " + sort);
 		}
 
+		MainTag mainTag = null;
+		if (tag != null) {
+			try {
+				mainTag = MainTag.valueOf(tag.toUpperCase());
+			} catch (IllegalArgumentException e) {
+				throw new IllegalArgumentException("Invalid tag parameter: " + tag);
+			}
+		}
+
 		Page<NovelResponseDTO> novels = novelService.getNovelList(
-			userId, status, title, author, monetized, tag, sort, pageable
+			userId, status, title, author, monetized, mainTag, sort, null
 		);
 		return ResponseEntity.ok(novels);
 	}

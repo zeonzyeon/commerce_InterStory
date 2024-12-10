@@ -8,6 +8,8 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import com.app.interstory.novel.domain.entity.Novel;
+import com.app.interstory.novel.domain.enumtypes.MainTag;
+import com.app.interstory.novel.domain.enumtypes.NovelStatus;
 
 @Repository
 public interface NovelRepository extends JpaRepository<Novel, Long>, NovelRepositoryCustom {
@@ -35,11 +37,11 @@ public interface NovelRepository extends JpaRepository<Novel, Long>, NovelReposi
 		"CASE WHEN :sort = 'latest' THEN MAX(e.publishedAt) END DESC")
 	Page<Novel> findAllWithDynamicSort(
 		@Param("userId") Long userId,
-		@Param("status") String status,
+		@Param("status") NovelStatus status,
 		@Param("title") String title,
 		@Param("author") String author,
 		@Param("monetized") Boolean monetized,
-		@Param("tag") String tag,
+		@Param("tag") MainTag tag,
 		@Param("sort") String sort,
 		Pageable pageable
 	);

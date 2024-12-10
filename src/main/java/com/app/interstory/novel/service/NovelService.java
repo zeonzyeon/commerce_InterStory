@@ -10,6 +10,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.app.interstory.novel.domain.entity.Episode;
 import com.app.interstory.novel.domain.entity.Novel;
+import com.app.interstory.novel.domain.enumtypes.MainTag;
 import com.app.interstory.novel.domain.enumtypes.NovelStatus;
 import com.app.interstory.novel.dto.request.NovelRequestDTO;
 import com.app.interstory.novel.dto.response.EpisodeResponseDTO;
@@ -106,11 +107,11 @@ public class NovelService {
 	// 소설 목록 조회
 	public Page<NovelResponseDTO> getNovelList(
 		Long userId,
-		String status,
+		NovelStatus status,
 		String title,
 		String author,
 		Boolean monetized,
-		String tag,
+		MainTag tag,
 		String sort,
 		Pageable pageable
 	) {
