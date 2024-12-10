@@ -21,13 +21,11 @@ public class QCoupon extends EntityPathBase<Coupon> {
 
     public final StringPath code = createString("code");
 
+    public final EnumPath<com.app.interstory.user.domain.enumtypes.CouponEffect> couponEffect = createEnum("couponEffect", com.app.interstory.user.domain.enumtypes.CouponEffect.class);
+
     public final NumberPath<Long> couponId = createNumber("couponId", Long.class);
 
-    public final NumberPath<Long> discount = createNumber("discount", Long.class);
-
     public final DateTimePath<java.sql.Timestamp> expiredAt = createDateTime("expiredAt", java.sql.Timestamp.class);
-
-    public final NumberPath<Long> minimum = createNumber("minimum", Long.class);
 
     public final StringPath name = createString("name");
 

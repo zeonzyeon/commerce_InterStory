@@ -63,7 +63,7 @@ public class CartService {
 			.orElseThrow(() -> new RuntimeException("User not found"));
 
 		// 2. 장바구니 아이템 조회 및 검증
-		List<CartItem> cartItems = cartItemRepository.findByIdInAndUser(cartItemIds, user);
+		List<CartItem> cartItems = cartItemRepository.findByCartItemIdInAndUser(cartItemIds, user);
 		if (cartItems.isEmpty()) {
 			throw new RuntimeException("No matching cart items found for purchase.");
 		}
