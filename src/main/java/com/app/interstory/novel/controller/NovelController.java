@@ -38,35 +38,38 @@ public class NovelController {
 	// 소설 수정
 	@PutMapping("/{novelId}")
 	public ResponseEntity<String> updateNovel(
-		@PathVariable Long novelId,
+		@PathVariable("novelId") Long novelId,
 		@RequestBody NovelRequestDTO novelRequestDTO
 	) {
 		novelService.updateNovel(novelId, novelRequestDTO);
-		return ResponseEntity.ok("Novel updated successfully.");
+		return ResponseEntity.ok("Novel updated successfully");
 	}
 
 	// 소설 상세 조회
 	@GetMapping("/{novelId}")
-	public ResponseEntity<NovelDetailResponseDTO> readNovel(
-		@PathVariable Long novelId,
-		@RequestParam(required = false, defaultValue = "latest") String sort
-	) {
-		NovelDetailResponseDTO responseDTO = novelService.readNovel(novelId, sort);
-		return ResponseEntity.ok(responseDTO);
+	public ResponseEntity<NovelDetailResponseDTO> getNovelDetail(
+		@PathVariable("novelId") Long novelId,
+		@RequestParam(name = "sort", defaultValue = "latest") String sort) {
+		NovelDetailResponseDTO response = novelService.readNovel(novelId, sort);
+		return ResponseEntity.ok(response);
 	}
 
 	// 소설 목록 조회
 	@GetMapping
 	public ResponseEntity<Page<NovelResponseDTO>> getNovelList(
-		@RequestParam(required = false) Long userId,
-		@RequestParam(required = false) String status,
-		@RequestParam(required = false) String title,
-		@RequestParam(required = false) String author,
-		@RequestParam(required = false) Boolean monetized,
-		@RequestParam(required = false) String tag,
-		@RequestParam(defaultValue = "latest") String sort,
+		@RequestParam(name = "userId", required = false) Long userId,
+		@RequestParam(name = "status", required = false) String status,
+		@RequestParam(name = "title", required = false) String title,
+		@RequestParam(name = "author", required = false) String author,
+		@RequestParam(name = "monetized", required = false) Boolean monetized,
+		@RequestParam(name = "tag", required = false) String tag,
+		@RequestParam(name = "sort", defaultValue = "latest") String sort,
 		Pageable pageable
 	) {
+		if (!"latest".equals(sort) && !"recommendations".equals(sort)) {
+			throw new IllegalArgumentException("Invalid sort parameter: " + sort);
+		}
+
 		Page<NovelResponseDTO> novels = novelService.getNovelList(
 			userId, status, title, author, monetized, tag, sort, pageable
 		);
@@ -75,8 +78,8 @@ public class NovelController {
 
 	// 소설 삭제
 	@DeleteMapping("/{novelId}")
-	public ResponseEntity<Void> deleteNovel(@PathVariable Long novelId) {
-		novelService.deleteNovel(novelId);
+	public ResponseEntity<Void> deleteNovel(@PathVariable("novelId") Long id) {
+		novelService.deleteNovel(id);
 		return ResponseEntity.noContent().build();
 	}
 }

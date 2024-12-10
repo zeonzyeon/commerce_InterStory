@@ -27,9 +27,9 @@ public interface EpisodeRepository extends JpaRepository<Episode, Long> {
 	Map<String, Object> findRowNumberByNovelIdAndEpisodeId(@Param("novelId") Long novelId,
 		@Param("episodeId") Long episodeId);
 
-	// 회차 리스트 최신순 정렬
-	List<Episode> findByNovelOrderByPublishedAtDesc(Novel novel);
+	@Query("SELECT e FROM Episode e WHERE e.novel.novelId = :novelId ORDER BY e.publishedAt DESC")
+	List<Episode> findEpisodesByNovelIdOrderByPublishedAt(@Param("novelId") Long novelId);
 
-	// 회차 리스트 추천수 정렬
-	List<Episode> findByNovelOrderByLikeCountDesc(Novel novel);
+	@Query("SELECT e FROM Episode e WHERE e.novel.novelId = :novelId ORDER BY e.likeCount DESC")
+	List<Episode> findEpisodesByNovelIdOrderByLikeCount(@Param("novelId") Long novelId);
 }

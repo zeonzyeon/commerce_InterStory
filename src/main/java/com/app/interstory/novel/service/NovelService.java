@@ -51,6 +51,7 @@ public class NovelService {
 	}
 
 	// 소설 수정
+	@Transactional
 	public void updateNovel(Long novelId, NovelRequestDTO novelRequestDTO) {
 		Novel novel = novelRepository.findById(novelId)
 			.orElseThrow(() -> new RuntimeException("Novel not found"));
@@ -72,12 +73,9 @@ public class NovelService {
 		Novel novel = novelRepository.findById(novelId)
 			.orElseThrow(() -> new RuntimeException("Novel not found"));
 
-		List<Episode> episodes;
-		if ("recommendations".equals(sort)) {
-			episodes = episodeRepository.findByNovelOrderByLikeCountDesc(novel);
-		} else {
-			episodes = episodeRepository.findByNovelOrderByPublishedAtDesc(novel);
-		}
+		List<Episode> episodes = "recommendations".equals(sort)
+			? episodeRepository.findEpisodesByNovelIdOrderByLikeCount(novelId)
+			: episodeRepository.findEpisodesByNovelIdOrderByPublishedAt(novelId);
 
 		List<EpisodeResponseDTO> episodeDTOs = episodes.stream()
 			.map(episode -> EpisodeResponseDTO.builder()
@@ -116,7 +114,7 @@ public class NovelService {
 		String sort,
 		Pageable pageable
 	) {
-		Page<Novel> novels = novelRepository.findAllWithFiltersAndSort(
+		Page<Novel> novels = novelRepository.findAllWithDynamicSort(
 			userId, status, title, author, monetized, tag, sort, pageable
 		);
 
