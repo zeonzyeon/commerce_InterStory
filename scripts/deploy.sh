@@ -21,8 +21,8 @@ JAR_NAME=$(basename $BUILD_JAR)
 
 echo "## build file name : $JAR_NAME" >> $LOG_PATH
 
-echo "## copy build file" >> $LOG_PATH
-cp $BUILD_JAR $DEPLOY_PATH
+#echo "## copy build file" >> $LOG_PATH
+#cp $BUILD_JAR $DEPLOY_PATH
 
 echo "## current pid" >> $LOG_PATH
 CURRENT_PID=$(pgrep -f $JAR_NAME)
