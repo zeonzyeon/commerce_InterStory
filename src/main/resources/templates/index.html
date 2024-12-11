@@ -1,0 +1,376 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta content="width=device-width, initial-scale=1.0" name="viewport">
+    <title>InterStory</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, system-ui, Roboto, sans-serif;
+        }
+
+        body {
+            background: #f8f9fa;
+            color: #333;
+        }
+
+        /* 헤더 스타일 */
+        .header {
+            background: #fff;
+            padding: 1rem 2rem;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .header-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 2rem;
+        }
+
+        .logo-area {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            min-width: 150px;
+        }
+
+        .logo-image {
+            width: 32px;
+            height: 32px;
+            object-fit: cover;
+        }
+
+        .logo-text {
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: #111;
+        }
+
+        .search-bar {
+            flex: 1;
+            max-width: 400px;
+            position: relative;
+        }
+
+        /* 반응형 처리 */
+        @media (max-width: 768px) {
+            .header-content {
+                gap: 1rem;
+            }
+
+            .logo-area {
+                min-width: auto;
+            }
+
+            .logo-text {
+                font-size: 1.1rem;
+            }
+
+            .search-bar {
+                max-width: 200px;
+            }
+        }
+
+        .search-bar {
+            flex: 0 1 400px;
+            position: relative;
+        }
+
+        .search-bar input {
+            width: 100%;
+            padding: 0.75rem 1rem;
+            border: 1px solid #ddd;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            background: #f8f9fa;
+        }
+
+        .search-bar input:focus {
+            outline: none;
+            border-color: #333;
+            background: #fff;
+        }
+
+        .user-profile {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .user-profile img {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            object-fit: cover;
+        }
+
+        /* 메인 컨텐츠 */
+        .main-content {
+            max-width: 1200px;
+            margin: 2rem auto;
+            padding: 0 1rem;
+        }
+
+        /* 카테고리 네비게이션 */
+        .category-nav {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 2rem;
+            overflow-x: auto;
+            padding-bottom: 0.5rem;
+        }
+
+        .category-nav button {
+            padding: 0.5rem 1rem;
+            border: none;
+            background: none;
+            cursor: pointer;
+            font-size: 0.9rem;
+            color: #666;
+            white-space: nowrap;
+        }
+
+        .category-nav button.active {
+            color: #111;
+            font-weight: 600;
+            position: relative;
+        }
+
+        .category-nav button.active::after {
+            content: '';
+            position: absolute;
+            bottom: -4px;
+            left: 0;
+            width: 100%;
+            height: 2px;
+            background: #111;
+        }
+
+        /* AI 추천 작품 섹션 */
+        .section-title {
+            font-size: 1.5rem;
+            margin-bottom: 1rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .section-title a {
+            font-size: 0.9rem;
+            color: #666;
+            text-decoration: none;
+        }
+
+        .ai-recommendations {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 3rem;
+        }
+
+        .novel-card {
+            background: #fff;
+            border-radius: 8px;
+            overflow: hidden;
+            transition: transform 0.2s;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+
+        .novel-card:hover {
+            transform: translateY(-4px);
+        }
+
+        .novel-card img {
+            width: 100%;
+            height: 240px;
+            object-fit: cover;
+        }
+
+        .novel-info {
+            padding: 1rem;
+        }
+
+        .novel-title {
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            font-size: 0.95rem;
+        }
+
+        .novel-author {
+            color: #666;
+            font-size: 0.85rem;
+        }
+
+        /* 인기/신작 목록 */
+        .novel-list {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+            gap: 1.5rem;
+        }
+
+        .sort-options {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        .sort-options button {
+            padding: 0.5rem 1rem;
+            border: 1px solid #ddd;
+            border-radius: 20px;
+            background: #fff;
+            cursor: pointer;
+            font-size: 0.9rem;
+        }
+
+        .sort-options button.active {
+            background: #111;
+            color: #fff;
+            border-color: #111;
+        }
+
+        @media (max-width: 768px) {
+            .header {
+                padding: 1rem;
+            }
+
+            .search-bar {
+                flex: 0 1 200px;
+            }
+
+            .ai-recommendations,
+            .novel-list {
+                grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+                gap: 1rem;
+            }
+
+            .novel-card img {
+                height: 200px;
+            }
+        }
+    </style>
+</head>
+<body>
+<!-- 헤더 -->
+<header class="header">
+    <div class="header-content">
+        <div class="logo-area">
+            <img alt="로고" class="logo-image" th:src="@{/images/logo.png}">
+            <span class="logo-text">InterStory</span>
+        </div>
+        <div class="search-bar">
+            <input placeholder="제목/작가로 검색" type="text">
+        </div>
+        <div class="user-profile">
+            <span th:text="${userNickname}">닉네임</span>
+            <img alt="프로필" src="/images/default-profile.png" th:src="${userProfileImage}">
+        </div>
+    </div>
+</header>
+
+<!-- 메인 컨텐츠 -->
+<main class="main-content">
+    <!-- 카테고리 네비게이션 -->
+    <nav class="category-nav">
+        <button class="active">오늘신작</button>
+        <button>판타지</button>
+        <button>현대판타지</button>
+        <button>로맨스</button>
+        <button>로맨스판타지</button>
+        <button>무협</button>
+        <button>라이트노벨</button>
+        <button>SF</button>
+        <button>스포츠</button>
+        <button>기타</button>
+    </nav>
+
+    <!-- AI 추천 작품 -->
+    <section>
+        <h2 class="section-title">
+            AI 추천 작품
+            <a href="#more">더보기 ></a>
+        </h2>
+        <div class="ai-recommendations">
+            <!-- 작품 카드 반복 -->
+            <div class="novel-card" th:each="novel : ${aiRecommendations}">
+                <img alt="작품 썸네일" th:src="${novel.coverImage}">
+                <div class="novel-info">
+                    <div class="novel-title" th:text="${novel.title}">작품 제목</div>
+                    <div class="novel-author" th:text="${novel.author}">작가명</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 인기/신작 목록 -->
+    <section>
+        <h2 class="section-title">인기 작품</h2>
+        <div class="sort-options">
+            <button class="active">인기순</button>
+            <button>최신순</button>
+            <button>이름순</button>
+        </div>
+        <div class="novel-list">
+            <!-- 작품 카드 반복 -->
+            <div class="novel-card" th:each="novel : ${popularNovels}">
+                <img alt="작품 썸네일" th:src="${novel.coverImage}">
+                <div class="novel-info">
+                    <div class="novel-title" th:text="${novel.title}">작품 제목</div>
+                    <div class="novel-author" th:text="${novel.author}">작가명</div>
+                </div>
+            </div>
+        </div>
+    </section>
+</main>
+
+<script th:inline="javascript">
+    // 정렬 버튼 클릭 이벤트
+    document.querySelectorAll('.sort-options button').forEach(button => {
+        button.addEventListener('click', function() {
+            // 현재 활성화된 버튼의 active 클래스 제거
+            document.querySelector('.sort-options button.active').classList.remove('active');
+            // 클릭된 버튼에 active 클래스 추가
+            this.classList.add('active');
+
+            // 정렬 방식에 따른 작품 목록 요청
+            const sortType = this.textContent;
+            fetchNovels(sortType);
+        });
+    });
+
+    // 작품 목록 불러오기
+    function fetchNovels(sortType) {
+        fetch(`/api/novels?sort=${sortType}`)
+            .then(response => response.json())
+            .then(data => {
+                // 작품 목록 업데이트
+                updateNovelList(data);
+            })
+            .catch(error => console.error('Error:', error));
+    }
+
+    // 작품 목록 업데이트
+    function updateNovelList(novels) {
+        const novelList = document.querySelector('.novel-list');
+        novelList.innerHTML = novels.map(novel => `
+                <div class="novel-card">
+                    <img src="${novel.coverImage}" alt="작품 썸네일">
+                    <div class="novel-info">
+                        <div class="novel-title">${novel.title}</div>
+                        <div class="novel-author">${novel.author}</div>
+                    </div>
+                </div>
+            `).join('');
+    }
+</script>
+</body>
+</html>
