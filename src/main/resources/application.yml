@@ -71,6 +71,12 @@ kakao:
   redirect_uri: ${KAKAO_REDIRECT_URI}
   admin_key: ${KAKAO_ADMIN_KEY}
 
+kakaopay:
+  secretKey: ${KAKAOPAY_SECRET_KEY}
+  onetime_cid: ${KAKAOPAY_ONETIME_CID}
+  sequence_cid: ${KAKAOPAY_SEQUENCE_CID}
+  subscription_cid: ${KAKAOPAY_SUBSCRIP_CID}
+
 logging:
   level:
     org.hibernate.SQL: INFO
