@@ -16,7 +16,7 @@ ERROR_LOG_PATH=$LOG_DIR/spring-deploy_err.log
 JAVA_OPTS="-Dspring.profiles.active=prod -Dserver.port=8080 -Xms512m -Xmx1024m"
 
 # SNAPSHOT.jar 파일 찾기
-BUILD_JAR=$(ls $DEPLOY_PATH/build/libs/*SNAPSHOT.jar)
+BUILD_JAR=$(ls $DEPLOY_PATH/*SNAPSHOT.jar)
 JAR_NAME=$(basename $BUILD_JAR)
 
 echo "## build file name : $JAR_NAME" >> $LOG_PATH
