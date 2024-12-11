@@ -31,7 +31,7 @@ public class CartService {
 		User user = userRepository.findById(userId)
 			.orElseThrow(() -> new RuntimeException("User not found"));
 
-		List<CartItem> cartItems = cartItemRepository.findByUser(user);
+		List<CartItem> cartItems = cartItemRepository.findByUser_UserId(userId);
 
 		return cartItems.stream()
 			.map(item -> new CartItemResponseDTO(

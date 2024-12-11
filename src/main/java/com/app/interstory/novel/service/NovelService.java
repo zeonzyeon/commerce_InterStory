@@ -32,7 +32,6 @@ public class NovelService {
 	private final EpisodeRepository episodeRepository;
 
 	// 소설 작성
-	@Transactional
 	public Long writeNovel(NovelRequestDTO novelRequestDTO) {
 		User user = userRepository.findById(novelRequestDTO.getUserId())
 			.orElseThrow(() -> new RuntimeException("User not found"));
@@ -70,7 +69,6 @@ public class NovelService {
 	}
 
 	// 소설 상세 조회
-	@Transactional(readOnly = true)
 	public NovelDetailResponseDTO readNovel(Long novelId, String sort, Integer page, Pageable pageable) {
 		Novel novel = novelRepository.findById(novelId)
 			.orElseThrow(() -> new RuntimeException("Novel not found"));
@@ -113,7 +111,6 @@ public class NovelService {
 	}
 
 	// 소설 목록 조회
-	@Transactional(readOnly = true)
 	public Page<NovelResponseDTO> getNovelList(
 		Long userId,
 		NovelStatus status,

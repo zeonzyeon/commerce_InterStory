@@ -11,7 +11,7 @@ import com.app.interstory.user.domain.entity.User;
 public interface CartItemRepository extends JpaRepository<CartItem, Long> {
 	boolean existsByUserAndEpisode(User user, Episode episode);
 
-	List<CartItem> findByUser(User user);
+	List<CartItem> findByUser_UserId(Long userId);
 
 	List<CartItem> findByUserAndCartItemIdIn(User user, List<Long> cartItemIds);
 
