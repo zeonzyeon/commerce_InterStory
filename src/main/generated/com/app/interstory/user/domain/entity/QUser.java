@@ -22,13 +22,15 @@ public class QUser extends EntityPathBase<User> {
 
     public static final QUser user = new QUser("user");
 
-    public final BooleanPath autoPayment = createBoolean("autoPayment");
-
     public final DateTimePath<java.sql.Timestamp> createdAt = createDateTime("createdAt", java.sql.Timestamp.class);
 
     public final StringPath email = createString("email");
 
     public final BooleanPath isActivity = createBoolean("isActivity");
+
+    public final BooleanPath isAutoPayment = createBoolean("isAutoPayment");
+
+    public final BooleanPath isSubscribe = createBoolean("isSubscribe");
 
     public final StringPath nickname = createString("nickname");
 
@@ -43,8 +45,6 @@ public class QUser extends EntityPathBase<User> {
     public final EnumPath<com.app.interstory.user.domain.enumtypes.Roles> role = createEnum("role", com.app.interstory.user.domain.enumtypes.Roles.class);
 
     public final QSocial social;
-
-    public final BooleanPath subscribe = createBoolean("subscribe");
 
     public final NumberPath<Long> userId = createNumber("userId", Long.class);
 
