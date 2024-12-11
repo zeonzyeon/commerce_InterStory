@@ -1,6 +1,7 @@
 package com.app.interstory.novel.controller;
 
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -49,10 +50,12 @@ public class NovelController {
 
 	// 소설 상세 조회
 	@GetMapping("/{novelId}")
-	public ResponseEntity<NovelDetailResponseDTO> getNovelDetail(
+	public ResponseEntity<NovelDetailResponseDTO> readNovel(
 		@PathVariable("novelId") Long novelId,
-		@RequestParam(name = "sort", defaultValue = "latest") String sort) {
-		NovelDetailResponseDTO response = novelService.readNovel(novelId, sort);
+		@RequestParam(name = "sort", defaultValue = "latest") String sort,
+		@RequestParam(name = "page", defaultValue = "1") int page
+	) {
+		NovelDetailResponseDTO response = novelService.readNovel(novelId, sort, page, null);
 		return ResponseEntity.ok(response);
 	}
 
@@ -66,7 +69,8 @@ public class NovelController {
 		@RequestParam(name = "monetized", required = false) Boolean monetized,
 		@RequestParam(name = "tag", required = false) String tag,
 		@RequestParam(name = "sort", defaultValue = "latest") String sort,
-		Pageable pageable
+		@RequestParam(name = "page", defaultValue = "1") int page,
+		@RequestParam(name = "size", defaultValue = "10") int size
 	) {
 		if (!"latest".equals(sort) && !"recommendations".equals(sort)) {
 			throw new IllegalArgumentException("Invalid sort parameter: " + sort);
@@ -81,8 +85,10 @@ public class NovelController {
 			}
 		}
 
+		Pageable pageable = PageRequest.of(page - 1, size);
+
 		Page<NovelResponseDTO> novels = novelService.getNovelList(
-			userId, status, title, author, monetized, mainTag, sort, null
+			userId, status, title, author, monetized, mainTag, sort, pageable
 		);
 		return ResponseEntity.ok(novels);
 	}

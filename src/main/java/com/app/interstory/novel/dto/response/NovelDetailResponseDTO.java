@@ -18,5 +18,6 @@ public class NovelDetailResponseDTO {
 	private NovelStatus status;
 	private MainTag tag;
 	private List<EpisodeResponseDTO> episodes;
+	private int totalPages;
 }
 
