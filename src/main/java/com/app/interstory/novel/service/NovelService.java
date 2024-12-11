@@ -122,12 +122,8 @@ public class NovelService {
 		Boolean monetized,
 		MainTag tag,
 		String sort,
-		Pageable page
+		Pageable pageable
 	) {
-		final int getItemCount = 10;
-
-		Pageable pageable = PageRequest.of(page - 1, getItemCount);
-
 		Page<Novel> novels = novelRepository.findAllWithDynamicSort(
 			userId, status, title, author, monetized, tag, sort, pageable
 		);

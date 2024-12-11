@@ -90,6 +90,7 @@ public class NovelController {
 		Page<NovelResponseDTO> novels = novelService.getNovelList(
 			userId, status, title, author, monetized, mainTag, sort, pageable
 		);
+
 		return ResponseEntity.ok(novels);
 	}
 

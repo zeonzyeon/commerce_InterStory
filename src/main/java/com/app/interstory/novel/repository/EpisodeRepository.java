@@ -1,8 +1,9 @@
 package com.app.interstory.novel.repository;
 
-import java.util.List;
 import java.util.Map;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -27,9 +28,25 @@ public interface EpisodeRepository extends JpaRepository<Episode, Long> {
 	Map<String, Object> findRowNumberByNovelIdAndEpisodeId(@Param("novelId") Long novelId,
 		@Param("episodeId") Long episodeId);
 
-	@Query("SELECT e FROM Episode e WHERE e.novel.novelId = :novelId ORDER BY e.publishedAt DESC")
-	List<Episode> findEpisodesByNovelIdOrderByPublishedAt(@Param("novelId") Long novelId);
+	@Query("""
+		    SELECT e
+		    FROM Episode e
+		    WHERE e.novel.novelId = :novelId
+		    ORDER BY e.likeCount DESC
+		""")
+	Page<Episode> findEpisodesByNovelIdOrderByLikeCount(
+		@Param("novelId") Long novelId,
+		Pageable pageable
+	);
 
-	@Query("SELECT e FROM Episode e WHERE e.novel.novelId = :novelId ORDER BY e.likeCount DESC")
-	List<Episode> findEpisodesByNovelIdOrderByLikeCount(@Param("novelId") Long novelId);
+	@Query("""
+		    SELECT e
+		    FROM Episode e
+		    WHERE e.novel.novelId = :novelId
+		    ORDER BY e.publishedAt DESC
+		""")
+	Page<Episode> findEpisodesByNovelIdOrderByPublishedAt(
+		@Param("novelId") Long novelId,
+		Pageable pageable
+	);
 }

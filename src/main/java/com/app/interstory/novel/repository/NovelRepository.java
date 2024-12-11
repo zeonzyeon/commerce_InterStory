@@ -7,7 +7,6 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
-import com.app.interstory.novel.domain.entity.Episode;
 import com.app.interstory.novel.domain.entity.Novel;
 import com.app.interstory.novel.domain.enumtypes.MainTag;
 import com.app.interstory.novel.domain.enumtypes.NovelStatus;
@@ -23,28 +22,6 @@ public interface NovelRepository extends JpaRepository<Novel, Long>, NovelReposi
 		ORDER BY MAX(e.publishedAt) DESC
 		""")
 	Page<Novel> findNovelsSortedByLatestEpisode(@Param("userId") Long userId, Pageable pageable);
-
-	@Query("""
-		    SELECT e
-		    FROM Episode e
-		    WHERE e.novel.novelId = :novelId
-		    ORDER BY e.likeCount DESC
-		""")
-	Page<Episode> findEpisodesByNovelIdOrderByLikeCount(
-		@Param("novelId") Long novelId,
-		Pageable pageable
-	);
-
-	@Query("""
-		    SELECT e
-		    FROM Episode e
-		    WHERE e.novel.novelId = :novelId
-		    ORDER BY e.publishedAt DESC
-		""")
-	Page<Episode> findEpisodesByNovelIdOrderByPublishedAt(
-		@Param("novelId") Long novelId,
-		Pageable pageable
-	);
 
 	@Query("""
 		    SELECT n
