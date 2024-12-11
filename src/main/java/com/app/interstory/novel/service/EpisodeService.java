@@ -3,18 +3,18 @@ package com.app.interstory.novel.service;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.app.interstory.novel.dto.request.EpisodeRequestDTO;
-import com.app.interstory.novel.dto.response.EpisodeResponseDTO;
-import com.app.interstory.user.repository.CartItemRepository;
 import com.app.interstory.novel.domain.entity.Episode;
 import com.app.interstory.novel.domain.entity.EpisodeLike;
 import com.app.interstory.novel.domain.entity.Novel;
+import com.app.interstory.novel.dto.request.EpisodeRequestDTO;
+import com.app.interstory.novel.dto.response.EpisodeResponseDTO;
 import com.app.interstory.novel.repository.EpisodeLikeRepository;
 import com.app.interstory.novel.repository.EpisodeRepository;
 import com.app.interstory.novel.repository.NovelRepository;
 import com.app.interstory.user.domain.entity.CartItem;
 import com.app.interstory.user.domain.entity.Point;
 import com.app.interstory.user.domain.entity.User;
+import com.app.interstory.user.repository.CartItemRepository;
 import com.app.interstory.user.repository.PointRepository;
 import com.app.interstory.user.repository.UserRepository;
 
@@ -113,11 +113,9 @@ public class EpisodeService {
 	// 회차 구매
 	@Transactional
 	public void purchaseEpisode(Long userId, Long novelId, Long episodeId) {
-		// 1. 사용자 조회
 		User user = userRepository.findById(userId)
 			.orElseThrow(() -> new RuntimeException("User not found"));
 
-		// 2. 에피소드 조회 및 검증
 		Episode episode = episodeRepository.findById(episodeId)
 			.orElseThrow(() -> new RuntimeException("Episode not found"));
 
@@ -125,13 +123,10 @@ public class EpisodeService {
 			throw new RuntimeException("Invalid novel ID for the given episode.");
 		}
 
-		// 3. 에피소드 가격 정의
-		Long episodePrice = 500L; // 임시 포인트
+		Long episodePrice = 5L;
 
-		// 4. 포인트 차감
 		user.reducePointsForPurchase(episodePrice);
 
-		// 5. 포인트 사용 내역 저장
 		Point point = Point.builder()
 			.user(user)
 			.balance(-episodePrice)
@@ -153,7 +148,6 @@ public class EpisodeService {
 			return "이미 담긴 회차입니다.";
 		}
 
-		// 장바구니 아이템 생성
 		CartItem cartItem = new CartItem(user, episode);
 		cartItemRepository.save(cartItem);
 
@@ -165,19 +159,17 @@ public class EpisodeService {
 	public String likeEpisode(Long userId, Long episodeId) {
 		String afterLikeMessage;
 
-		User user = userRepository.findById(userId)
-			.orElseThrow(() -> new RuntimeException("User not found"));
-
 		Episode episode = episodeRepository.findById(episodeId)
 			.orElseThrow(() -> new RuntimeException("Episode not found"));
 
-		if (episodeLikeRepository.existsByUserAndEpisode(user, episode)) {
-			episodeLikeRepository.deleteByUserAndEpisode(user, episode);
+		if (episodeLikeRepository.existsByUser_UserIdAndEpisode(userId, episode)) {
+			episodeLikeRepository.deleteByUserIdAndEpisode(userId, episode);
 			episode.decrementLikeCount();
 			afterLikeMessage = "회차 추천이 취소되었습니다.";
 		} else {
 			EpisodeLike episodeLike = EpisodeLike.builder()
-				.user(user)
+				.user(userRepository.findById(userId)
+					.orElseThrow(() -> new RuntimeException("User not found")))
 				.episode(episode)
 				.build();
 			episodeLikeRepository.save(episodeLike);

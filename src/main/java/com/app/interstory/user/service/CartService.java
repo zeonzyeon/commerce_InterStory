@@ -28,9 +28,6 @@ public class CartService {
 
 	// 장바구니 아이템 조회
 	public List<CartItemResponseDTO> getCartItems(Long userId) {
-		User user = userRepository.findById(userId)
-			.orElseThrow(() -> new RuntimeException("User not found"));
-
 		List<CartItem> cartItems = cartItemRepository.findByUser_UserId(userId);
 
 		return cartItems.stream()
@@ -46,7 +43,7 @@ public class CartService {
 		User user = userRepository.findById(userId)
 			.orElseThrow(() -> new RuntimeException("User not found"));
 
-		List<CartItem> cartItems = cartItemRepository.findByUserAndCartItemIdIn(user, cartItemIds);
+		List<CartItem> cartItems = cartItemRepository.findByUser_UserIdAndCartItemIdIn(userId, cartItemIds);
 
 		if (cartItems.isEmpty()) {
 			throw new RuntimeException("No matching cart items found for deletion.");
@@ -63,7 +60,7 @@ public class CartService {
 			.orElseThrow(() -> new RuntimeException("User not found"));
 
 		// 2. 장바구니 아이템 조회 및 검증
-		List<CartItem> cartItems = cartItemRepository.findByCartItemIdInAndUser(cartItemIds, user);
+		List<CartItem> cartItems = cartItemRepository.findByCartItemIdInAndUser_UserId(cartItemIds, userId);
 		if (cartItems.isEmpty()) {
 			throw new RuntimeException("No matching cart items found for purchase.");
 		}

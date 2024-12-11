@@ -4,7 +4,6 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -13,13 +12,13 @@ import com.app.interstory.novel.domain.entity.Episode;
 import com.app.interstory.novel.domain.entity.Novel;
 import com.app.interstory.novel.domain.enumtypes.MainTag;
 import com.app.interstory.novel.domain.enumtypes.NovelStatus;
+import com.app.interstory.novel.domain.enumtypes.Sort;
 import com.app.interstory.novel.dto.request.NovelRequestDTO;
 import com.app.interstory.novel.dto.response.EpisodeResponseDTO;
 import com.app.interstory.novel.dto.response.NovelDetailResponseDTO;
 import com.app.interstory.novel.dto.response.NovelResponseDTO;
 import com.app.interstory.novel.repository.EpisodeRepository;
 import com.app.interstory.novel.repository.NovelRepository;
-import com.app.interstory.user.domain.entity.User;
 import com.app.interstory.user.repository.UserRepository;
 
 import lombok.RequiredArgsConstructor;
@@ -32,12 +31,10 @@ public class NovelService {
 	private final EpisodeRepository episodeRepository;
 
 	// 소설 작성
-	public Long writeNovel(NovelRequestDTO novelRequestDTO) {
-		User user = userRepository.findById(novelRequestDTO.getUserId())
-			.orElseThrow(() -> new RuntimeException("User not found"));
-
+	public Long writeNovel(NovelRequestDTO novelRequestDTO, Long userId) {
 		Novel novel = Novel.builder()
-			.user(user)
+			.user(userRepository.findById(userId)
+				.orElseThrow(() -> new RuntimeException("User not found")))
 			.title(novelRequestDTO.getTitle())
 			.description(novelRequestDTO.getDescription())
 			.plan(novelRequestDTO.getPlan())
@@ -53,9 +50,13 @@ public class NovelService {
 
 	// 소설 수정
 	@Transactional
-	public void updateNovel(Long novelId, NovelRequestDTO novelRequestDTO) {
+	public void updateNovel(Long novelId, NovelRequestDTO novelRequestDTO, Long userId) {
 		Novel novel = novelRepository.findById(novelId)
 			.orElseThrow(() -> new RuntimeException("Novel not found"));
+
+		if (!novel.getUser().getUserId().equals(userId)) {
+			throw new RuntimeException("Unauthorized user");
+		}
 
 		novel.update(
 			novelRequestDTO.getTitle(),
@@ -69,19 +70,22 @@ public class NovelService {
 	}
 
 	// 소설 상세 조회
-	public NovelDetailResponseDTO readNovel(Long novelId, String sort, Integer page, Pageable pageable) {
+	public NovelDetailResponseDTO readNovel(Long novelId, Sort sort, Pageable pageable) {
 		Novel novel = novelRepository.findById(novelId)
 			.orElseThrow(() -> new RuntimeException("Novel not found"));
 
-		final int getItemCount = 4;
-
-		if (pageable == null) {
-			pageable = PageRequest.of(page - 1, getItemCount);
+		Page<Episode> episodes;
+		switch (sort) {
+			case RECOMMENDATION:
+				episodes = episodeRepository.findEpisodesByNovelIdOrderByLikeCount(novelId, pageable);
+				break;
+			case OLD_TO_NEW:
+				episodes = episodeRepository.findEpisodesByNovelIdOrderByPublishedAtAsc(novelId, pageable);
+				break;
+			default:
+				episodes = episodeRepository.findEpisodesByNovelIdOrderByPublishedAtDesc(novelId, pageable);
+				break;
 		}
-
-		Page<Episode> episodes = "recommendations".equals(sort)
-			? episodeRepository.findEpisodesByNovelIdOrderByLikeCount(novelId, pageable)
-			: episodeRepository.findEpisodesByNovelIdOrderByPublishedAt(novelId, pageable);
 
 		List<EpisodeResponseDTO> episodeDTOs = episodes.getContent().stream()
 			.map(episode -> EpisodeResponseDTO.builder()
@@ -118,11 +122,11 @@ public class NovelService {
 		String author,
 		Boolean monetized,
 		MainTag tag,
-		String sort,
+		Sort sort,
 		Pageable pageable
 	) {
 		Page<Novel> novels = novelRepository.findAllWithDynamicSort(
-			userId, status, title, author, monetized, tag, sort, pageable
+			userId, status, title, author, monetized, tag, sort.name(), pageable
 		);
 
 		return novels.map(novel -> NovelResponseDTO.builder()
@@ -138,9 +142,13 @@ public class NovelService {
 
 	// 소설 삭제
 	@Transactional
-	public void deleteNovel(Long novelId) {
+	public void deleteNovel(Long novelId, Long userId) {
 		Novel novel = novelRepository.findById(novelId)
 			.orElseThrow(() -> new RuntimeException("Novel not found with id: " + novelId));
+
+		if (!novel.getUser().getUserId().equals(userId)) {
+			throw new RuntimeException("Unauthorized user");
+		}
 
 		if (novel.getStatus() == NovelStatus.DELETED) {
 			throw new RuntimeException("Novel is already deleted.");

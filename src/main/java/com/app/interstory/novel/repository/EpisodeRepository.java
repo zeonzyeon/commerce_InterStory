@@ -45,7 +45,18 @@ public interface EpisodeRepository extends JpaRepository<Episode, Long> {
 		    WHERE e.novel.novelId = :novelId
 		    ORDER BY e.publishedAt DESC
 		""")
-	Page<Episode> findEpisodesByNovelIdOrderByPublishedAt(
+	Page<Episode> findEpisodesByNovelIdOrderByPublishedAtDesc(
+		@Param("novelId") Long novelId,
+		Pageable pageable
+	);
+
+	@Query("""
+		    SELECT e
+		    FROM Episode e
+		    WHERE e.novel.novelId = :novelId
+		    ORDER BY e.publishedAt ASC
+		""")
+	Page<Episode> findEpisodesByNovelIdOrderByPublishedAtAsc(
 		@Param("novelId") Long novelId,
 		Pageable pageable
 	);

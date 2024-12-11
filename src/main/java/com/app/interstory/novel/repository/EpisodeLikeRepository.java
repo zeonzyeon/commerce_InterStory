@@ -8,13 +8,12 @@ import org.springframework.stereotype.Repository;
 
 import com.app.interstory.novel.domain.entity.Episode;
 import com.app.interstory.novel.domain.entity.EpisodeLike;
-import com.app.interstory.user.domain.entity.User;
 
 @Repository
 public interface EpisodeLikeRepository extends JpaRepository<EpisodeLike, Long> {
-	boolean existsByUserAndEpisode(User user, Episode episode);
+	boolean existsByUser_UserIdAndEpisode(Long userId, Episode episode);
 
 	@Modifying
-	@Query("DELETE FROM EpisodeLike el WHERE el.user = :user AND el.episode = :episode")
-	void deleteByUserAndEpisode(@Param("user") User user, @Param("episode") Episode episode);
+	@Query("DELETE FROM EpisodeLike el WHERE el.user.userId = :userId AND el.episode = :episode")
+	void deleteByUserIdAndEpisode(@Param("userId") Long userId, @Param("episode") Episode episode);
 }

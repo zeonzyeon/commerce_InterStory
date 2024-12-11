@@ -5,6 +5,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -15,12 +16,13 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.app.interstory.novel.domain.enumtypes.MainTag;
-import com.app.interstory.novel.domain.enumtypes.NovelStatus;
+import com.app.interstory.novel.domain.enumtypes.Sort;
 import com.app.interstory.novel.dto.request.NovelRequestDTO;
+import com.app.interstory.novel.dto.request.NovelSearchRequestDTO;
 import com.app.interstory.novel.dto.response.NovelDetailResponseDTO;
 import com.app.interstory.novel.dto.response.NovelResponseDTO;
 import com.app.interstory.novel.service.NovelService;
+import com.app.interstory.user.domain.CustomUserDetails;
 
 import lombok.RequiredArgsConstructor;
 
@@ -33,8 +35,12 @@ public class NovelController {
 
 	// 소설 작성
 	@PostMapping
-	public ResponseEntity<Long> writeNovel(@RequestBody NovelRequestDTO novelRequestDTO) {
-		Long novelId = novelService.writeNovel(novelRequestDTO);
+	public ResponseEntity<Long> writeNovel(
+		@RequestBody NovelRequestDTO novelRequestDTO,
+		@AuthenticationPrincipal CustomUserDetails userDetails
+	) {
+		Long userId = userDetails.getUser().getUserId();
+		Long novelId = novelService.writeNovel(novelRequestDTO, userId);
 		return ResponseEntity.status(HttpStatus.CREATED).body(novelId);
 	}
 
@@ -42,9 +48,11 @@ public class NovelController {
 	@PutMapping("/{novelId}")
 	public ResponseEntity<String> updateNovel(
 		@PathVariable("novelId") Long novelId,
-		@RequestBody NovelRequestDTO novelRequestDTO
+		@RequestBody NovelRequestDTO novelRequestDTO,
+		@AuthenticationPrincipal CustomUserDetails userDetails
 	) {
-		novelService.updateNovel(novelId, novelRequestDTO);
+		Long userId = userDetails.getUser().getUserId();
+		novelService.updateNovel(novelId, novelRequestDTO, userId);
 		return ResponseEntity.ok("Novel updated successfully");
 	}
 
@@ -52,43 +60,36 @@ public class NovelController {
 	@GetMapping("/{novelId}")
 	public ResponseEntity<NovelDetailResponseDTO> readNovel(
 		@PathVariable("novelId") Long novelId,
-		@RequestParam(name = "sort", defaultValue = "latest") String sort,
+		@RequestParam(name = "sort", defaultValue = "NEW_TO_OLD") Sort sort,
 		@RequestParam(name = "page", defaultValue = "1") int page
 	) {
-		NovelDetailResponseDTO response = novelService.readNovel(novelId, sort, page, null);
+		Pageable pageable = PageRequest.of(page - 1, 4);
+
+		NovelDetailResponseDTO response = novelService.readNovel(novelId, sort, pageable);
 		return ResponseEntity.ok(response);
 	}
 
 	// 소설 목록 조회
 	@GetMapping
 	public ResponseEntity<Page<NovelResponseDTO>> getNovelList(
-		@RequestParam(name = "userId", required = false) Long userId,
-		@RequestParam(name = "status", required = false) NovelStatus status,
-		@RequestParam(name = "title", required = false) String title,
-		@RequestParam(name = "author", required = false) String author,
-		@RequestParam(name = "monetized", required = false) Boolean monetized,
-		@RequestParam(name = "tag", required = false) String tag,
-		@RequestParam(name = "sort", defaultValue = "latest") String sort,
-		@RequestParam(name = "page", defaultValue = "1") int page,
-		@RequestParam(name = "size", defaultValue = "10") int size
+		@RequestBody NovelSearchRequestDTO searchRequestDTO,
+		@AuthenticationPrincipal CustomUserDetails userDetails
 	) {
-		if (!"latest".equals(sort) && !"recommendations".equals(sort)) {
-			throw new IllegalArgumentException("Invalid sort parameter: " + sort);
-		}
-
-		MainTag mainTag = null;
-		if (tag != null) {
-			try {
-				mainTag = MainTag.valueOf(tag.toUpperCase());
-			} catch (IllegalArgumentException e) {
-				throw new IllegalArgumentException("Invalid tag parameter: " + tag);
-			}
-		}
+		Sort sort = searchRequestDTO.getSort() != null ? searchRequestDTO.getSort() : Sort.NEW_TO_OLD;
+		int page = searchRequestDTO.getPage() > 0 ? searchRequestDTO.getPage() : 1;
+		int size = searchRequestDTO.getSize() > 0 ? searchRequestDTO.getSize() : 10; // ?
 
 		Pageable pageable = PageRequest.of(page - 1, size);
 
 		Page<NovelResponseDTO> novels = novelService.getNovelList(
-			userId, status, title, author, monetized, mainTag, sort, pageable
+			userDetails.getUser().getUserId(),
+			searchRequestDTO.getStatus(),
+			searchRequestDTO.getTitle(),
+			searchRequestDTO.getAuthor(),
+			searchRequestDTO.getMonetized(),
+			searchRequestDTO.getMainTag(),
+			sort,
+			pageable
 		);
 
 		return ResponseEntity.ok(novels);
@@ -96,9 +97,12 @@ public class NovelController {
 
 	// 소설 삭제
 	@DeleteMapping("/{novelId}")
-	public ResponseEntity<Void> deleteNovel(@PathVariable("novelId") Long id) {
-		novelService.deleteNovel(id);
+	public ResponseEntity<Void> deleteNovel(
+		@PathVariable("novelId") Long novelId,
+		@AuthenticationPrincipal CustomUserDetails userDetails
+	) {
+		Long userId = userDetails.getUser().getUserId();
+		novelService.deleteNovel(novelId, userId);
 		return ResponseEntity.noContent().build();
 	}
 }
-
