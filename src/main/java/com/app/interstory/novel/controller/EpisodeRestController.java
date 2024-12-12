@@ -24,7 +24,7 @@ import lombok.RequiredArgsConstructor;
 @RestController
 @RequestMapping("/api/novels/{novelId}/episodes")
 @RequiredArgsConstructor
-public class EpisodeController {
+public class EpisodeRestController {
 
 	private final EpisodeService episodeService;
 

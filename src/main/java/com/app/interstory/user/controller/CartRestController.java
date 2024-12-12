@@ -17,11 +17,11 @@ import com.app.interstory.user.service.CartService;
 
 @RestController
 @RequestMapping("/api/cart")
-public class CartController {
+public class CartRestController {
 
 	private final CartService cartService;
 
-	public CartController(CartService cartService) {
+	public CartRestController(CartService cartService) {
 		this.cartService = cartService;
 	}
 
