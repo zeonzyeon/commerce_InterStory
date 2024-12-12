@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>프로필 수정</title>
+    <style>
+        .profile-edit-container {
+            max-width: 1700px;
+            max-height: 950px;
+            padding: 20px;
+            background-color: white;
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+            border-radius: 10px;
+        }
+
+        .profile-edit-container h2 {
+            text-align: center;
+            margin-bottom: 30px;
+            font-size: 20px;
+        }
+
+        .profile-content {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .profile-image {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin-right: 40px;
+        }
+
+        .image-circle {
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            background-color: #f2f2f2;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+
+        .image-btn {
+            background-color: rgba(51, 51, 51, 0.8);
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        .form-group {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .form-group label {
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+
+        .form-group input {
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            margin-bottom: 20px;
+        }
+
+        .btn-group {
+            display: flex;
+            justify-content: center;
+            margin-top: 30px;
+        }
+
+        .btn-group button {
+            margin: 0 10px;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        .save-btn {
+            background-color: rgba(51, 51, 51, 0.8);
+            color: white;
+        }
+
+        .cancel-btn {
+            background-color: #f2f2f2;
+        }
+    </style>
+</head>
+<body>
+<section class="profile-edit-container">
+    <h2>내 정보</h2>
+    <div class="profile-content">
+        <div class="profile-image">
+            <div class="image-circle" id="imagePreview"></div>
+            <input id="imageInput" onchange="previewImage(event)" style="display: none;"
+                   th:attr="data-image-url=${profileImageUrl}" type="file">
+            <button class="image-btn" onclick="document.getElementById('imageInput').click()">프로필 변경</button>
+        </div>
+        <div class="form-group">
+            <label>
+                <span>닉네임</span>
+                <input id="username" name="username" placeholder="Enter your username" type="text">
+            </label>
+            <label>
+                <span>내 계정</span>
+                <input id="email" name="email" placeholder="Enter your email" type="email">
+            </label>
+            <label>
+                <span>비밀번호</span>
+                <input id="password" name="password" placeholder="Enter your password" type="password">
+            </label>
+        </div>
+        <div class="btn-group">
+            <button class="save-btn" onclick="submitProfileEditForm()">저장</button>
+            <button class="cancel-btn" onclick="cancelProfileEdit()">취소</button>
+        </div>
+    </div>
+</section>
+</body>
+</html>
