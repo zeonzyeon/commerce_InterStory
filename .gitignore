@@ -14,7 +14,6 @@
 .mtj.tmp/
 
 # Package Files #
-*.jar
 *.war
 *.nar
 *.ear
@@ -524,7 +523,6 @@ FodyWeavers.xsd
 *.lvw
 *.dca
 *.exe
-*.bat
 *.bak
 *.old
 *.enc
