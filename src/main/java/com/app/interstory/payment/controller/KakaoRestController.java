@@ -9,7 +9,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.app.interstory.config.globalExeption.customException.PaymentException;
 import com.app.interstory.payment.domain.enumtypes.PaymentType;
 import com.app.interstory.payment.dto.request.PaymentRequestDTO;
 import com.app.interstory.payment.dto.response.PaymentAproveResponseDTO;
@@ -31,22 +30,20 @@ public class KakaoRestController {
 		Long userId = userDetails.getUser().getUserId();
 		Long couponId = paymentRequestDTO.getCouponId();
 
-		if (paymentRequestDTO.getPaymentType() == PaymentType.NORMAL_FIRST) {
-			return ResponseEntity.ok(kakaoService.kakaoPayReady(userId, PaymentType.NORMAL_FIRST, couponId));
-		} else if (paymentRequestDTO.getPaymentType() == PaymentType.NORMAL_SECOND) {
-			return ResponseEntity.ok(kakaoService.kakaoPayReady(userId, PaymentType.NORMAL_SECOND, couponId));
-		} else if (paymentRequestDTO.getPaymentType() == PaymentType.NORMAL_THIRD) {
-			return ResponseEntity.ok(kakaoService.kakaoPayReady(userId, PaymentType.NORMAL_THIRD, couponId));
-		} else if (kakaoService.checkSid(userId)) {
-			if (paymentRequestDTO.getPaymentType() == PaymentType.SEQUENCE)
-				return ResponseEntity.ok(kakaoService.kakaoPayPayment(userId, PaymentType.SEQUENCE));
-			else
-				return ResponseEntity.ok(kakaoService.kakaoPayPayment(userId, PaymentType.AUTO));
-		} else {
-			if (paymentRequestDTO.getPaymentType() == PaymentType.SEQUENCE)
-				return ResponseEntity.ok(kakaoService.kakaoPayReady(userId, PaymentType.SEQUENCE, couponId));
-			else
-				return ResponseEntity.ok(kakaoService.kakaoPayReady(userId, PaymentType.AUTO, couponId));
+		PaymentType paymentType = paymentRequestDTO.getPaymentType();
+		switch (paymentType) {
+			case NORMAL_FIRST:
+			case NORMAL_SECOND:
+			case NORMAL_THIRD:
+			case NORMAL_FOURTH:
+			case NORMAL_FIFTH:
+				return ResponseEntity.ok(kakaoService.kakaoPayReady(userId, paymentRequestDTO.getPaymentType(), couponId));
+			default:
+				if (kakaoService.checkSid(userId)) {
+					return ResponseEntity.ok(kakaoService.kakaoPayPayment(userId, paymentType));
+				} else {
+					return ResponseEntity.ok(kakaoService.kakaoPayReady(userId, paymentType, couponId));
+				}
 		}
 	}
 
