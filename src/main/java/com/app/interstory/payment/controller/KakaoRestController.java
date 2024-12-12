@@ -26,16 +26,17 @@ import lombok.RequiredArgsConstructor;
 public class KakaoRestController {
 	private final KakaoService kakaoService;
 
-	@PostMapping("/ready")
-	public ResponseEntity<PaymentResponseDTO> readyPayment(@AuthenticationPrincipal CustomUserDetails userDetails, @RequestBody PaymentRequestDTO paymentRequestDTO) {
+	@PostMapping("/establish")
+	public ResponseEntity<PaymentResponseDTO> establishPayment(@AuthenticationPrincipal CustomUserDetails userDetails, @RequestBody PaymentRequestDTO paymentRequestDTO) {
 		Long userId = userDetails.getUser().getUserId();
+		Long couponId = paymentRequestDTO.getCouponId();
 
 		if (paymentRequestDTO.getPaymentType() == PaymentType.NORMAL_FIRST) {
-			return ResponseEntity.ok(kakaoService.kakaoPayReady(userId, PaymentType.NORMAL_FIRST));
+			return ResponseEntity.ok(kakaoService.kakaoPayReady(userId, PaymentType.NORMAL_FIRST, couponId));
 		} else if (paymentRequestDTO.getPaymentType() == PaymentType.NORMAL_SECOND) {
-			return ResponseEntity.ok(kakaoService.kakaoPayReady(userId, PaymentType.NORMAL_SECOND));
+			return ResponseEntity.ok(kakaoService.kakaoPayReady(userId, PaymentType.NORMAL_SECOND, couponId));
 		} else if (paymentRequestDTO.getPaymentType() == PaymentType.NORMAL_THIRD) {
-			return ResponseEntity.ok(kakaoService.kakaoPayReady(userId, PaymentType.NORMAL_THIRD));
+			return ResponseEntity.ok(kakaoService.kakaoPayReady(userId, PaymentType.NORMAL_THIRD, couponId));
 		} else if (kakaoService.checkSid(userId)) {
 			if (paymentRequestDTO.getPaymentType() == PaymentType.SEQUENCE)
 				return ResponseEntity.ok(kakaoService.kakaoPayPayment(userId, PaymentType.SEQUENCE));
@@ -43,25 +44,25 @@ public class KakaoRestController {
 				return ResponseEntity.ok(kakaoService.kakaoPayPayment(userId, PaymentType.AUTO));
 		} else {
 			if (paymentRequestDTO.getPaymentType() == PaymentType.SEQUENCE)
-				return ResponseEntity.ok(kakaoService.kakaoPayReady(userId, PaymentType.SEQUENCE));
+				return ResponseEntity.ok(kakaoService.kakaoPayReady(userId, PaymentType.SEQUENCE, couponId));
 			else
-				return ResponseEntity.ok(kakaoService.kakaoPayReady(userId, PaymentType.AUTO));
+				return ResponseEntity.ok(kakaoService.kakaoPayReady(userId, PaymentType.AUTO, couponId));
 		}
 	}
 
-	@GetMapping("/success")
-	public ResponseEntity<PaymentAproveResponseDTO> afterPayment(@AuthenticationPrincipal CustomUserDetails userDetails, @RequestParam("pg_token") String pgToken) {
+	@GetMapping("/request")
+	public ResponseEntity<PaymentAproveResponseDTO> requestPayment(@AuthenticationPrincipal CustomUserDetails userDetails, @RequestParam("pg_token") String pgToken) {
 		return ResponseEntity.ok(kakaoService.kakaoPayApprove(userDetails.getUser().getUserId(), pgToken));
 	}
 
 	@GetMapping("/cancel")
-	public void cancelPayment() {
-		throw new PaymentException("결제가 취소되었습니다.");
+	public ResponseEntity<String> cancelPayment() {
+		return ResponseEntity.ok(kakaoService.kakaoPayCancel());
 	}
 
 	@GetMapping("/fail")
-	public void failPayment() {
-		throw new PaymentException("결제에 실패하였습니다.");
+	public ResponseEntity<String> failPayment() {
+		return ResponseEntity.ok(kakaoService.kakaoPayFail());
 	}
 
 	@PostMapping("/inactive")
