@@ -107,6 +107,7 @@ public class NovelService {
                 novel.getTitle(),
                 novel.getDescription(),
                 novel.getThumbnailUrl(),
+                novel.getPlan(),
                 novel.getStatus(),
                 novel.getTag(),
                 episodeDTOs,
