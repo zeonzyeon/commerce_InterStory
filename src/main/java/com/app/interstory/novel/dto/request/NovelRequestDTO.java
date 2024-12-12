@@ -15,4 +15,5 @@ public class NovelRequestDTO {
 	private String thumbnailUrl;
 	private MainTag tag;
 	private NovelStatus status;
+	private Boolean isFree;
 }
