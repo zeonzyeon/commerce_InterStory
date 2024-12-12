@@ -4,27 +4,22 @@ import com.app.interstory.novel.domain.enumtypes.MainTag;
 import com.app.interstory.novel.domain.enumtypes.NovelStatus;
 import com.app.interstory.user.domain.entity.User;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.EnumType;
-import jakarta.persistence.Enumerated;
-import jakarta.persistence.FetchType;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
+
+import java.sql.Timestamp;
 
 @Getter
 @Entity
 @Table(name = "novel")
 @NoArgsConstructor
 @AllArgsConstructor
+@EntityListeners(AuditingEntityListener.class)
 @Builder
 public class Novel {
 	private static final NovelStatus DEFAULT_STATUS = NovelStatus.DRAFT;
@@ -77,6 +72,10 @@ public class Novel {
 	@Enumerated(EnumType.STRING)
 	private MainTag tag;
 
+	@Column(name = "published_at", nullable = false)
+	@CreatedDate
+	private Timestamp publishedAt;
+
 	public void update(
 		String title,
 		String description,
@@ -84,7 +83,8 @@ public class Novel {
 		String thumbnailRenamedFilename,
 		String thumbnailUrl,
 		MainTag tag,
-		NovelStatus status
+		NovelStatus status,
+		Boolean isFree
 	) {
 		this.title = title;
 		this.description = description;
@@ -93,6 +93,7 @@ public class Novel {
 		this.thumbnailUrl = thumbnailUrl;
 		this.tag = tag;
 		this.status = status;
+		this.isFree = isFree;
 	}
 
 	public void markAsDeleted() {

@@ -72,8 +72,7 @@ public class NovelRestController {
 	// 소설 목록 조회
 	@GetMapping
 	public ResponseEntity<Page<NovelResponseDTO>> getNovelList(
-		@RequestBody NovelSearchRequestDTO searchRequestDTO,
-		@AuthenticationPrincipal CustomUserDetails userDetails
+		@RequestBody NovelSearchRequestDTO searchRequestDTO
 	) {
 		Sort sort = searchRequestDTO.getSort() != null ? searchRequestDTO.getSort() : Sort.NEW_TO_OLD;
 		int page = searchRequestDTO.getPage() > 0 ? searchRequestDTO.getPage() : 1;
@@ -82,7 +81,6 @@ public class NovelRestController {
 		Pageable pageable = PageRequest.of(page - 1, size);
 
 		Page<NovelResponseDTO> novels = novelService.getNovelList(
-			userDetails.getUser().getUserId(),
 			searchRequestDTO.getStatus(),
 			searchRequestDTO.getTitle(),
 			searchRequestDTO.getAuthor(),

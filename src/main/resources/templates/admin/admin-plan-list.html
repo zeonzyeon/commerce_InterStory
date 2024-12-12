@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <meta content="width=device-width, initial-scale=1.0" name="viewport">
+  <title>기획서 목록 | InterStory</title>
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+  <style>
+    .header-menu {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 1rem;
+      background: white;
+      border-bottom: 1px solid #dee2e6;
+      margin-bottom: 2rem;
+    }
+
+    .menu-items {
+      display: flex;
+      gap: 2rem;
+      align-items: center;
+    }
+
+    .menu-item {
+      text-decoration: none;
+      color: #666;
+      padding: 0.5rem 1rem;
+    }
+
+    .menu-item.active {
+      color: #111;
+      font-weight: bold;
+    }
+  </style>
+</head>
+<body>
+<header class="header-menu">
+  <div class="menu-items">
+    <a href="#" class="menu-item">로고</a>
+    <a href="#" class="menu-item">무료</a>
+    <a href="#" class="menu-item">유료</a>
+    <a href="#" class="menu-item">장바구니</a>
+    <a href="#" class="menu-item">검색</a>
+    <a href="#" class="menu-item">마이페이지</a>
+  </div>
+</header>
+
+<div class="container my-5">
+  <table class="table table-striped">
+    <thead>
+    <tr>
+      <th>작가</th>
+      <th>작품명</th>
+      <th>작성일</th>
+      <th>작품소개</th>
+      <th>승인 여부</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr th:each="plan : ${planList.content}">
+      <td th:text="${plan.title}"></td>
+      <td th:text="${plan.description}"></td>
+      <td>-</td>
+      <td th:text="${plan.description}"></td>
+      <td>
+                        <span th:text="${plan.status == T(com.app.interstory.novel.domain.enumtypes.NovelStatus).PUBLISHED ? 'O' : 'X'}"
+                              th:class="${plan.status == T(com.app.interstory.novel.domain.enumtypes.NovelStatus).PUBLISHED ? 'text-success' : 'text-danger'}">
+                        </span>
+        <a th:href="@{/admin/plans/{id}(id=${plan.novelId})}"
+           class="btn btn-primary btn-sm ml-2">상세보기</a>
+      </td>
+    </tr>
+    <tr th:if="${planList == null || planList.content.empty}">
+      <td colspan="5" class="text-center">등록된 기획서가 없습니다.</td>
+    </tr>
+    </tbody>
+  </table>
+
+  <nav th:if="${planList != null && planList.totalPages > 1}">
+    <ul class="pagination justify-content-center">
+      <li class="page-item" th:classappend="${currentPage == 1 ? 'disabled' : ''}">
+        <a class="page-link" th:href="@{/admin/plans(page=${currentPage - 1})}">&laquo;</a>
+      </li>
+      <li class="page-item"
+          th:each="pageNum : ${#numbers.sequence(1, planList.totalPages)}"
+          th:classappend="${pageNum == currentPage ? 'active' : ''}">
+        <a class="page-link" th:href="@{/admin/plans(page=${pageNum})}" th:text="${pageNum}"></a>
+      </li>
+      <li class="page-item" th:classappend="${currentPage == planList.totalPages ? 'disabled' : ''}">
+        <a class="page-link" th:href="@{/admin/plans(page=${currentPage + 1})}">&raquo;</a>
+      </li>
+    </ul>
+  </nav>
+</div>
+
+<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+</body>
+</html>

@@ -6,6 +6,8 @@ import com.app.interstory.novel.domain.enumtypes.NovelStatus;
 import lombok.Builder;
 import lombok.Getter;
 
+import java.sql.Timestamp;
+
 @Getter
 @Builder
 public class NovelResponseDTO {
@@ -16,4 +18,5 @@ public class NovelResponseDTO {
 	private Integer likeCount;
 	private NovelStatus status;
 	private MainTag tag;
+	private Timestamp createdAt;
 }
