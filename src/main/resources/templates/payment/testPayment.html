@@ -29,11 +29,12 @@
     $(function () {
         $("#btn-kakao-first").click(function () {
             $.ajax({
-                url: '/api/cash/ready',
+                url: '/api/cash/establish',
                 type: 'post',
                 contentType: 'application/json',
                 data: JSON.stringify({
-                    paymentType: "NORMAL_FIRST"
+                    paymentType: "NORMAL_FIRST",
+                    couponId: 0
                 }),
                 success: function (response) {
                     if (response.next_redirect_pc_url != null)
@@ -48,11 +49,12 @@
         });
         $("#btn-kakao-second").click(function () {
             $.ajax({
-                url: '/api/cash/ready',
+                url: '/api/cash/establish',
                 type: 'post',
                 contentType: 'application/json',
                 data: JSON.stringify({
-                    paymentType: "NORMAL_SECOND"
+                    paymentType: "NORMAL_SECOND",
+                    couponId: 1
                 }),
                 success: function (response) {
                     if (response.next_redirect_pc_url != null)
@@ -67,11 +69,12 @@
         });
         $("#btn-kakao-third").click(function () {
             $.ajax({
-                url: '/api/cash/ready',
+                url: '/api/cash/establish',
                 type: 'post',
                 contentType: 'application/json',
                 data: JSON.stringify({
-                    paymentType: "NORMAL_THIRD"
+                    paymentType: "NORMAL_THIRD",
+                    couponId: 1
                 }),
                 success: function (response) {
                     if (response.next_redirect_pc_url != null)
@@ -86,11 +89,12 @@
         });
         $("#btn-kakao-sequence").click(function () {
             $.ajax({
-                url: '/api/cash/ready',
+                url: '/api/cash/establish',
                 type: 'post',
                 contentType: 'application/json',
                 data: JSON.stringify({
-                    paymentType: "SEQUENCE"
+                    paymentType: "SEQUENCE",
+                    couponId: 0
                 }),
                 success: function (response) {
                     if (response.next_redirect_pc_url != null)
@@ -105,11 +109,12 @@
         });
         $("#btn-kakao-auto").click(function () {
             $.ajax({
-                url: '/api/cash/ready',
+                url: '/api/cash/establish',
                 type: 'post',
                 contentType: 'application/json',
                 data: JSON.stringify({
-                    paymentType: "AUTO"
+                    paymentType: "AUTO",
+                    couponId: 0
                 }),
                 success: function (response) {
                     if (response.next_redirect_pc_url != null)

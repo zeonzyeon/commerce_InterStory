@@ -10,12 +10,14 @@ import lombok.Getter;
 @Getter
 @Builder
 public class UserCouponResponseDTO {
+	private Long userCouponId;
 	private String expiredAt;
 	private String name;
 	private String effect;
 
 	public static UserCouponResponseDTO from(UserCoupon coupon) {
 		return UserCouponResponseDTO.builder()
+			.userCouponId(coupon.getUserCouponId())
 			.expiredAt(formatTimestamp(coupon.getCoupon().getExpiredAt()))
 			.name(coupon.getCoupon().getName())
 			.effect("포인트 " + coupon.getCoupon().getCouponEffect().getDiscountAmount() + "원 할인 (최소 " + coupon.getCoupon().getCouponEffect()
