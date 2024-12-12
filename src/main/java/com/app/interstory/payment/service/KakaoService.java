@@ -170,13 +170,18 @@ public class KakaoService {
 		payment.updateDate(timestamp);
 		payment.updateStatus(PaymentStatus.COMPLETED);
 
-		UserCoupon userCoupon = userCouponRepository.findById(orderUserCouponId)
-			.orElseThrow(() -> new IllegalArgumentException("해당 유저쿠폰 정보가 없습니다. id : " + orderUserCouponId));
-		Coupon coupon = couponRepository.findById(userCoupon.getCoupon().getCouponId())
-			.orElseThrow(() -> new IllegalArgumentException("해당 쿠폰 정보가 없습니다. id : " + userCoupon.getCoupon().getCouponId()));
+		Integer discount = 0;
+
+		if (orderUserCouponId != null) {
+			UserCoupon userCoupon = userCouponRepository.findById(orderUserCouponId)
+				.orElseThrow(() -> new IllegalArgumentException("해당 유저쿠폰 정보가 없습니다. id : " + orderUserCouponId));
+			Coupon coupon = couponRepository.findById(userCoupon.getCoupon().getCouponId())
+				.orElseThrow(() -> new IllegalArgumentException("해당 쿠폰 정보가 없습니다. id : " + userCoupon.getCoupon().getCouponId()));
+
+			discount = coupon.getCouponEffect().getDiscountAmount();
+		}
 
 		Integer amount = response.getAmount().getTotal();
-		Integer discount = coupon.getCouponEffect().getDiscountAmount();
 		int totalAmount = amount + discount;
 		if (totalAmount == POINT_AUTO_PRICE.intValue()) {
 			Point point = Point.builder()
