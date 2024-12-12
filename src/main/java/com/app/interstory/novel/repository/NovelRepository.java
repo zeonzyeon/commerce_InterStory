@@ -39,7 +39,6 @@ public interface NovelRepository extends JpaRepository<Novel, Long>, NovelReposi
 		        CASE WHEN :sort = 'latest' THEN MAX(e.publishedAt) END DESC
 		""")
 	Page<Novel> findAllWithDynamicSort(
-		@Param("userId") Long userId,
 		@Param("status") NovelStatus status,
 		@Param("title") String title,
 		@Param("author") String author,

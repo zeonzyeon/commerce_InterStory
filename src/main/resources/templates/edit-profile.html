@@ -11,12 +11,15 @@
             background-color: white;
             box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
             border-radius: 10px;
+            display: flex;
+            flex-direction: column;
         }
 
         .profile-edit-container h2 {
-            text-align: center;
-            margin-bottom: 30px;
+            text-align: left;
             font-size: 20px;
+            margin: 0;
+            padding: 0;
         }
 
         .profile-content {
@@ -24,106 +27,327 @@
             flex-wrap: wrap;
             justify-content: center;
             align-items: center;
+            flex-direction: column;
+            /*background-color: rgba(51, 51, 51, 0.3);*/
+            border-radius: 10px;
+            margin: 20px 0;
+            padding: 20px;
         }
 
         .profile-image {
             display: flex;
             flex-direction: column;
             align-items: center;
-            margin-right: 40px;
+            margin: 20px 0 0 0;
         }
 
         .image-circle {
-            width: 120px;
-            height: 120px;
+            width: 140px;
+            height: 140px;
             border-radius: 50%;
             background-color: #f2f2f2;
             display: flex;
             justify-content: center;
             align-items: center;
-            margin-bottom: 10px;
+            margin-bottom: 20px;
         }
 
         .image-btn {
             background-color: rgba(51, 51, 51, 0.8);
             color: white;
             border: none;
-            padding: 8px 16px;
-            border-radius: 5px;
+            padding: 7px 20px;
+            border-radius: 10px;
             cursor: pointer;
         }
 
         .form-group {
-            flex: 1;
+            width: 90%;
             display: flex;
             flex-direction: column;
+            padding: 20px 0px;
+            gap: 20px;
         }
 
         .form-group label {
             font-weight: bold;
-            margin-bottom: 5px;
+            gap: 20px;
         }
 
         .form-group input {
             padding: 10px;
             border: 1px solid #ccc;
             border-radius: 5px;
-            margin-bottom: 20px;
+            margin: 20px 0 0 0;
+        }
+
+        input[type="text"],
+        input[type="email"],
+        input[type="password"] {
+            width: 100%;
+            padding: 8px;
+            border: none;
+            font-size: 14px;
+            box-sizing: border-box;
+            outline: none;
+        }
+
+        .check-btn {
+            height: 30px;
+            padding: 5px 20px;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            color: white;
+            background-color: rgba(51, 51, 51, 0.8);
+            margin-top: 35px;
+        }
+
+        .nickname-form .check-btn {
+            margin-right: 10px;
+        }
+
+        .password-form .check-btn {
+            margin-left: 450px;
         }
 
         .btn-group {
             display: flex;
             justify-content: center;
-            margin-top: 30px;
+            margin: 20px 0 0 0;
         }
 
         .btn-group button {
             margin: 0 10px;
-            padding: 10px 20px;
+            padding: 7px 20px;
             border: none;
-            border-radius: 5px;
+            border-radius: 10px;
             cursor: pointer;
         }
 
+        .nickname-form, .password-form {
+            display: flex;
+            flex-direction: row;
+            justify-content: space-between;
+            border-bottom: 1px solid rgba(51, 51, 51);
+        }
+
+        .email-form {
+            border-bottom: 1px solid rgba(51, 51, 51);
+        }
+
         .save-btn {
-            background-color: rgba(51, 51, 51, 0.8);
             color: white;
+            background-color: rgba(51, 51, 51, 0.8);
         }
 
         .cancel-btn {
             background-color: #f2f2f2;
+        }
+
+        .withdrawal-content {
+            background-color: rgba(51, 51, 51, 0.8);
+            display: flex;
+            align-items: center;
+            flex-direction: column;
+            padding: 20px;
+            border-radius: 10px;
+            margin-top: 20px;
+        }
+
+        .withdrawal-content p {
+            text-align: center;
+            font-size: 14px;
+        }
+
+        .withdrawal-btn {
+            padding: 5px 20px;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            margin: 20px 0 0 0;
         }
     </style>
 </head>
 <body>
 <section class="profile-edit-container">
     <h2>내 정보</h2>
+    <div class="profile-image">
+        <div class="image-circle" id="imagePreview"></div>
+        <input id="imageInput" onchange="previewImage(event)" style="display: none;"
+               th:attr="data-image-url=${profileImageUrl}" type="file">
+        <button class="image-btn" onclick="document.getElementById('imageInput').click()">프로필 변경</button>
+    </div>
     <div class="profile-content">
-        <div class="profile-image">
-            <div class="image-circle" id="imagePreview"></div>
-            <input id="imageInput" onchange="previewImage(event)" style="display: none;"
-                   th:attr="data-image-url=${profileImageUrl}" type="file">
-            <button class="image-btn" onclick="document.getElementById('imageInput').click()">프로필 변경</button>
-        </div>
         <div class="form-group">
-            <label>
-                <span>닉네임</span>
-                <input id="username" name="username" placeholder="Enter your username" type="text">
-            </label>
-            <label>
-                <span>내 계정</span>
-                <input id="email" name="email" placeholder="Enter your email" type="email">
-            </label>
-            <label>
-                <span>비밀번호</span>
-                <input id="password" name="password" placeholder="Enter your password" type="password">
-            </label>
+            <div class="nickname-form">
+                <label>
+                    <span>닉네임</span>
+                    <input id="username" name="username" th:placeholder="${nickname}" th:value="${nickname}"
+                           type="text">
+                </label>
+                <button class="check-btn" onclick="checkNickname()">중복 확인</button>
+            </div>
+            <div class="email-form">
+                <label>
+                    <span>내 계정</span>
+                    <input id="email" readonly th:value="${email}" type="email">
+                </label>
+            </div>
+            <div class="password-form">
+                <label>
+                    <span>비밀번호</span>
+                    <input id="password" name="password" th:placeholder="${password}" th:value="${password}"
+                           type="password">
+                </label>
+                <button class="check-btn" onclick="checkPassword()">비밀번호 확인</button>
+                <span></span>
+            </div>
         </div>
         <div class="btn-group">
             <button class="save-btn" onclick="submitProfileEditForm()">저장</button>
             <button class="cancel-btn" onclick="cancelProfileEdit()">취소</button>
         </div>
     </div>
+    <div class="withdrawal-content">
+        <span><strong>InterStory 탈퇴 주의사항</strong></span>
+        <p>
+            탈퇴 시 구매 이력 등 모든 이용 기록이 즉시 삭제되며 복구할 수 없습니다.<br>
+            탈퇴 후 사용하지 않은 포인트는 소멸됩니다.
+        </p>
+        <button class="withdrawal-btn" onclick="profileDeleteUser()">서비스 탈퇴</button>
+    </div>
 </section>
+<script>
+    function checkNickname() {
+        const nickname = document.getElementById('nickname').value;
+        $.ajax({
+            url: '/api/auth/nickname-verification',
+            type: 'GET',
+            data: {
+                nickname: encodeURIComponent(nickname)
+            },
+            dataType: 'json',
+            success: function (data) {
+                if (data.isAvailable) {
+                    alert("사용 가능한 닉네임입니다.");
+                } else {
+                    alert("이미 사용 중인 닉네임입니다.");
+                }
+            },
+            error: function (xhr, status, error) {
+                console.error('Error:', error);
+                alert("닉네임 확인 중 오류가 발생했습니다.");
+            }
+        });
+    }
+
+    function checkPassword(password) {
+        const minLength = 8;
+        const hasUpperCase = /[A-Z]/.test(password);
+        const hasLowerCase = /[a-z]/.test(password);
+        const hasNumber = /[0-9]/.test(password);
+        const hasSpecialChar = /[!@#$%^&*(),.?":{}|<>]/.test(password);
+
+        return password.length >= minLength && hasUpperCase && hasLowerCase && hasNumber && hasSpecialChar;
+    }
+
+    $(document).ready(function () {
+        $('#password').on('keyup', function () {
+            const password = $(this).val();
+            if (isPasswordValid(password)) {
+                $('#passwordValidationMessage').text('안전한 비밀번호입니다.').css('color', 'green');
+            } else {
+                $('#passwordValidationMessage').text('비밀번호는 최소 8자 이상이며, 대문자, 소문자, 숫자, 특수 문자를 포함해야 합니다.').css('color', 'red');
+            }
+        });
+    });
+
+    window.onload = function () {
+        const profileImageUrl = /*[[${profileImageUrl}]]*/'';
+        const imagePreview = document.getElementById('imagePreview');
+        if (profileImageUrl) {
+            imagePreview.style.backgroundImage = `url(${profileImageUrl})`;
+            imagePreview.style.backgroundSize = 'cover';
+        }
+    }
+
+    function previewImage(event) {
+        const reader = new FileReader();
+        reader.onload = function () {
+            const imagePreview = document.getElementById('imagePreview');
+            imagePreview.style.backgroundImage = `url(${reader.result})`;
+            imagePreview.style.backgroundSize = 'cover';
+        };
+        reader.readAsDataURL(event.target.files[0]);
+
+        uploadImage(event.target.files[0]);
+    }
+
+    function uploadImage(file) {
+        const formData = new FormData();
+        formData.append('file', file);
+
+        $.ajax({
+            type: 'POST',
+            url: '/api/image/upload',
+            data: formData,
+            processData: false,
+            contentType: false,
+            success: function (response) {
+                $("#imageInput").attr('data-image-url', response.imageUrl);
+            },
+            error: function (error) {
+                console.error('Error uploading image:', error);
+                alert('이미지 업로드 중 오류가 발생했습니다.');
+            }
+        });
+    }
+
+    function submitProfileEditForm() {
+        const userId = document.querySelector('.profile-edit-container').dataset.userId;
+        const nickname = document.getElementById('username').value;
+        const password = document.getElementById('password').value;
+        const profileImageUrl = document.getElementById('imageInput').dataset.imageUrl;
+
+        if (!isPasswordValid(password)) {
+            alert('비밀번호는 최소 8자 이상이며, 대문자, 소문자, 숫자, 특수 문자를 포함해야 합니다.');
+            return;
+        }
+
+        const data = {
+            nickname: nickname,
+            password: password,
+            profileImageUrl: profileImageUrl
+        };
+
+        $.ajax({
+            type: 'PUT',
+            url: `api/users`,
+            contentType: 'application/json',
+            data: JSON.stringify(data),
+            success: function () {
+                alert('수정이 완료되었습니다!');
+                window.location.href = `/api/users`;
+            },
+            error: function (error) {
+                console.error('Error:', error);
+                alert('오류가 발생했습니다.');
+            }
+        });
+    }
+
+    function cancelProfileEdit() {
+        window.location.href = 'api/users';
+    }
+
+    function profileDeleteUser(message = "정말로 탈퇴하시겠습니까?") {
+        let userId = document.getElementById('edit-profile').getAttribute('data-user-id');
+
+        if (confirm(message)) {
+            window.location.href = '/withdrawal/' + userId;
+        }
+    }
+</script>
 </body>
 </html>

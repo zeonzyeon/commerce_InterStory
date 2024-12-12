@@ -116,7 +116,6 @@ public class NovelService {
 
 	// 소설 목록 조회
 	public Page<NovelResponseDTO> getNovelList(
-		Long userId,
 		NovelStatus status,
 		String title,
 		String author,
@@ -126,7 +125,7 @@ public class NovelService {
 		Pageable pageable
 	) {
 		Page<Novel> novels = novelRepository.findAllWithDynamicSort(
-			userId, status, title, author, monetized, tag, sort.name(), pageable
+			status, title, author, monetized, tag, sort.name(), pageable
 		);
 
 		return novels.map(novel -> NovelResponseDTO.builder()
