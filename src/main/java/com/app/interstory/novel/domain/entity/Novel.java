@@ -4,7 +4,17 @@ import com.app.interstory.novel.domain.enumtypes.MainTag;
 import com.app.interstory.novel.domain.enumtypes.NovelStatus;
 import com.app.interstory.user.domain.entity.User;
 
-import jakarta.persistence.*;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
+import jakarta.persistence.FetchType;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -66,4 +76,26 @@ public class Novel {
 	@Column(name = "tag", nullable = false)
 	@Enumerated(EnumType.STRING)
 	private MainTag tag;
+
+	public void update(
+		String title,
+		String description,
+		String plan,
+		String thumbnailRenamedFilename,
+		String thumbnailUrl,
+		MainTag tag,
+		NovelStatus status
+	) {
+		this.title = title;
+		this.description = description;
+		this.plan = plan;
+		this.thumbnailRenamedFilename = thumbnailRenamedFilename;
+		this.thumbnailUrl = thumbnailUrl;
+		this.tag = tag;
+		this.status = status;
+	}
+
+	public void markAsDeleted() {
+		this.status = NovelStatus.DELETED;
+	}
 }

@@ -1,7 +1,10 @@
 package com.app.interstory.novel.controller;
 
+import java.util.Map;
+
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -9,22 +12,21 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.app.interstory.novel.dto.request.EpisodeRequestDTO;
 import com.app.interstory.novel.dto.response.EpisodeResponseDTO;
 import com.app.interstory.novel.service.EpisodeService;
+import com.app.interstory.user.domain.CustomUserDetails;
+
+import lombok.RequiredArgsConstructor;
 
 @RestController
 @RequestMapping("/api/novels/{novelId}/episodes")
+@RequiredArgsConstructor
 public class EpisodeController {
 
 	private final EpisodeService episodeService;
-
-	public EpisodeController(EpisodeService episodeService) {
-		this.episodeService = episodeService;
-	}
 
 	// 회차 작성
 	@PostMapping
@@ -59,7 +61,7 @@ public class EpisodeController {
 		@PathVariable Long novelId,
 		@PathVariable Long episodeId) {
 		episodeService.deleteEpisode(novelId, episodeId);
-		return ResponseEntity.ok("Episode deleted successfully");
+		return ResponseEntity.noContent().build();
 	}
 
 	// 회차 구매
@@ -67,28 +69,32 @@ public class EpisodeController {
 	public ResponseEntity<String> purchaseEpisode(
 		@PathVariable Long novelId,
 		@PathVariable Long episodeId,
-		@RequestParam Long userId
+		@AuthenticationPrincipal CustomUserDetails userDetails
 	) {
+		Long userId = userDetails.getUser().getUserId();
 		episodeService.purchaseEpisode(userId, novelId, episodeId);
-		return ResponseEntity.ok("Episode purchased successfully!");
+		return ResponseEntity.ok("Purchase successful!");
 	}
 
 	// 장바구니 담기
 	@PostMapping("/cart")
-	public ResponseEntity<String> addItemToCart(
-		@RequestParam Long userId,
-		@RequestParam Long episodeId
+	public ResponseEntity<String> addToCart(
+		@AuthenticationPrincipal CustomUserDetails userDetails,
+		@RequestBody Map<String, Long> request
 	) {
-		String message = episodeService.addItemToCart(userId, episodeId);
-		return ResponseEntity.ok(message);
+		Long userId = userDetails.getUser().getUserId();
+		String result = episodeService.addItemToCart(userId, request.get("episodeId"));
+		return ResponseEntity.ok(result);
 	}
 
 	// 회차 추천
 	@PostMapping("/{episodeId}/like")
 	public ResponseEntity<String> likeEpisode(
 		@PathVariable Long episodeId,
-		@RequestParam Long userId) {
-		String result = episodeService.likeEpisode(userId, episodeId);
-		return ResponseEntity.ok(result);
+		@AuthenticationPrincipal CustomUserDetails userDetails
+	) {
+		Long userId = userDetails.getUser().getUserId();
+		String message = episodeService.likeEpisode(userId, episodeId);
+		return ResponseEntity.ok(message);
 	}
 }
