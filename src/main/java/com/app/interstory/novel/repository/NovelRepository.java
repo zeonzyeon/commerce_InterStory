@@ -27,7 +27,6 @@ public interface NovelRepository extends JpaRepository<Novel, Long>, NovelReposi
 		    SELECT n
 		    FROM Novel n
 		    LEFT JOIN Episode e ON n.novelId = e.novel.novelId
-		    WHERE (:userId IS NULL OR n.user.userId = :userId)
 		    AND (:status IS NULL OR n.status = :status)
 		    AND (:title IS NULL OR n.title LIKE %:title%)
 		    AND (:author IS NULL OR n.user.nickname LIKE %:author%)

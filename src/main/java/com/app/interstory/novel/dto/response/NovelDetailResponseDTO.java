@@ -14,6 +14,7 @@ public class NovelDetailResponseDTO {
 	private Long novelId;
 	private String title;
 	private String description;
+	private String plan;
 	private String thumbnailUrl;
 	private NovelStatus status;
 	private MainTag tag;

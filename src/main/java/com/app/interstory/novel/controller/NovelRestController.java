@@ -29,7 +29,8 @@ import lombok.RequiredArgsConstructor;
 @RestController
 @RequestMapping("/api/novels")
 @RequiredArgsConstructor
-public class NovelController {
+public class NovelRestController {
+
 	private final NovelService novelService;
 
 	// 소설 작성

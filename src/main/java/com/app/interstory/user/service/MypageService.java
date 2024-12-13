@@ -23,12 +23,15 @@ import com.app.interstory.novel.repository.TagRepository;
 import com.app.interstory.payment.domain.entity.Subscribe;
 import com.app.interstory.payment.domain.repository.SubscribeRepository;
 import com.app.interstory.user.domain.CustomUserDetails;
+import com.app.interstory.user.domain.entity.Coupon;
 import com.app.interstory.user.domain.entity.Point;
 import com.app.interstory.user.domain.entity.Settlement;
 import com.app.interstory.user.domain.entity.User;
+import com.app.interstory.user.domain.entity.UserCoupon;
 import com.app.interstory.user.dto.request.AccountRequestDTO;
 import com.app.interstory.user.dto.request.UpdateUserRequestDTO;
 import com.app.interstory.user.dto.response.AccountResponseDTO;
+import com.app.interstory.user.dto.response.CouponResponseDTO;
 import com.app.interstory.user.dto.response.FavoriteNovelResponseDTO;
 import com.app.interstory.user.dto.response.MyCommentResponseDTO;
 import com.app.interstory.user.dto.response.MyNovelResponseDTO;
@@ -38,8 +41,11 @@ import com.app.interstory.user.dto.response.ReadNovelResponseDTO;
 import com.app.interstory.user.dto.response.SettlementResponseDTO;
 import com.app.interstory.user.dto.response.SubscriptionResponseDTO;
 import com.app.interstory.user.dto.response.UpdateUserResponseDTO;
+import com.app.interstory.user.dto.response.UserCouponResponseDTO;
+import com.app.interstory.user.repository.CouponRepository;
 import com.app.interstory.user.repository.PointRepository;
 import com.app.interstory.user.repository.SettlementRepository;
+import com.app.interstory.user.repository.UserCouponRepository;
 import com.app.interstory.user.repository.UserRepository;
 
 import lombok.RequiredArgsConstructor;
@@ -60,6 +66,8 @@ public class MypageService {
 	private final SettlementRepository settlementRepository;
 	private final CommentRepository commentRepository;
 	private final SubscribeRepository subscribeRepository;
+	private final UserCouponRepository userCouponRepository;
+	private final CouponRepository couponRepository;
 
 	public MypageResponseDTO getUser(CustomUserDetails userDetails) {
 		Long userId = userDetails.getUser().getUserId();
@@ -276,6 +284,33 @@ public class MypageService {
 		return AccountResponseDTO.builder()
 			.accountNumber(settlement.getAccountNumber())
 			.build();
+	}
+
+	public Page<UserCouponResponseDTO> getCoupons(CustomUserDetails userDetails, Pageable pageable) {
+		Long userId = userDetails.getUser().getUserId();
+
+		Page<UserCoupon> couponPage = userCouponRepository.findByUser_UserId(userId, pageable);
+
+		return couponPage.map(UserCouponResponseDTO::from);
+	}
+
+	public UserCouponResponseDTO saveCoupon(CustomUserDetails userDetails, String couponCode) {
+		Long userId = userDetails.getUser().getUserId();
+
+		User user = userRepository.findById(userId)
+			.orElseThrow(() -> new IllegalArgumentException(NOT_FOUND_USER_ID + userId));
+
+		Coupon coupon = couponRepository.findByCode(couponCode)
+			.orElseThrow(() -> new IllegalArgumentException("해당 쿠폰이 존재하지 않습니다."));
+
+		UserCoupon userCoupon = UserCoupon.builder()
+			.user(user)
+			.coupon(coupon)
+			.build();
+
+		userCouponRepository.save(userCoupon);
+
+		return UserCouponResponseDTO.from(userCoupon);
 	}
 
 	public SubscriptionResponseDTO getSubscription(CustomUserDetails userDetails) {

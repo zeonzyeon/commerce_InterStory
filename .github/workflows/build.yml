@@ -1,9 +1,9 @@
 name: github-action-workflow
 on:
   push:
-    branches: [ "develop" ]
+    branches: [ "feat/cicd" ]
   pull_request:
-    branches: [ "develop" ]
+    branches: [ "feat/cicd" ]
   workflow_dispatch:
 
 env:

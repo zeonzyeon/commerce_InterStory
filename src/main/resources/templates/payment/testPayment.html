@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <title>카카오 결제</title>
+    <link crossorigin="anonymous" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css"
+          integrity="sha512-z3gLpd7yknf1YoNbCzqRKc4qyor8gaKU1qmn+CShxbuBusANI9QpRohGBreCFkKxLhei6S9CQXFEbbKuqLg0DA==" referrerpolicy="no-referrer" rel="stylesheet"/>
+    <style>
+        button {
+            background-color: #FAE300;
+            color: #3C1E1E;
+            font-weight: 800;
+            border: none;
+            border-radius: 12px;
+            padding: 10px 20px;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+<button id="btn-kakao-first">kakao pay first<i class="fa-solid fa-comment"></i></button>
+<button id="btn-kakao-second">kakao pay second<i class="fa-solid fa-comment"></i></button>
+<button id="btn-kakao-third">kakao pay third<i class="fa-solid fa-comment"></i></button>
+<button id="btn-kakao-sequence">kakao pay sequence<i class="fa-solid fa-comment"></i></button>
+<button id="btn-kakao-auto">kakao pay auto<i class="fa-solid fa-comment"></i></button>
+<button id="btn-kakao-inactive">kakao pay inactive<i class="fa-solid fa-comment"></i></button>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.3/jquery.min.js"></script>
+<script>
+    $(function () {
+        $("#btn-kakao-first").click(function () {
+            $.ajax({
+                url: '/api/cash/establish',
+                type: 'post',
+                contentType: 'application/json',
+                data: JSON.stringify({
+                    paymentType: "NORMAL_FIRST",
+                    couponId: 0
+                }),
+                success: function (response) {
+                    if (response.next_redirect_pc_url != null)
+                        location.href = response.next_redirect_pc_url;
+                    else
+                        console.log(response);
+                },
+                error: function (xhr, err, status) {
+                    alert(err + "이(가) 발생했습니다: " + status);
+                }
+            });
+        });
+        $("#btn-kakao-second").click(function () {
+            $.ajax({
+                url: '/api/cash/establish',
+                type: 'post',
+                contentType: 'application/json',
+                data: JSON.stringify({
+                    paymentType: "NORMAL_SECOND",
+                    couponId: 1
+                }),
+                success: function (response) {
+                    if (response.next_redirect_pc_url != null)
+                        location.href = response.next_redirect_pc_url;
+                    else
+                        console.log(response);
+                },
+                error: function (xhr, err, status) {
+                    alert(err + "이(가) 발생했습니다: " + status);
+                }
+            });
+        });
+        $("#btn-kakao-third").click(function () {
+            $.ajax({
+                url: '/api/cash/establish',
+                type: 'post',
+                contentType: 'application/json',
+                data: JSON.stringify({
+                    paymentType: "NORMAL_THIRD",
+                    couponId: 1
+                }),
+                success: function (response) {
+                    if (response.next_redirect_pc_url != null)
+                        location.href = response.next_redirect_pc_url;
+                    else
+                        console.log(response);
+                },
+                error: function (xhr, err, status) {
+                    alert(err + "이(가) 발생했습니다: " + status);
+                }
+            });
+        });
+        $("#btn-kakao-sequence").click(function () {
+            $.ajax({
+                url: '/api/cash/establish',
+                type: 'post',
+                contentType: 'application/json',
+                data: JSON.stringify({
+                    paymentType: "SEQUENCE",
+                    couponId: 0
+                }),
+                success: function (response) {
+                    if (response.next_redirect_pc_url != null)
+                        location.href = response.next_redirect_pc_url;
+                    else
+                        console.log(response);
+                },
+                error: function (xhr, err, status) {
+                    alert(err + "이(가) 발생했습니다: " + status);
+                }
+            });
+        });
+        $("#btn-kakao-auto").click(function () {
+            $.ajax({
+                url: '/api/cash/establish',
+                type: 'post',
+                contentType: 'application/json',
+                data: JSON.stringify({
+                    paymentType: "AUTO",
+                    couponId: 0
+                }),
+                success: function (response) {
+                    if (response.next_redirect_pc_url != null)
+                        location.href = response.next_redirect_pc_url;
+                    else
+                        console.log(response);
+                },
+                error: function (xhr, err, status) {
+                    alert(err + "이(가) 발생했습니다: " + status);
+                }
+            });
+        });
+        $("#btn-kakao-inactive").click(function () {
+            $.ajax({
+                url: '/api/cash/inactive',
+                type: 'post',
+                contentType: 'application/json',
+                success: function (response) {
+                    console.log(response);
+                },
+                error: function (xhr, err, status) {
+                    alert(err + "이(가) 발생했습니다: " + status);
+                }
+            });
+        });
+    });
+</script>
+</body>
+</html>

@@ -1,5 +1,6 @@
 package com.app.interstory.payment.domain.entity;
 
+import com.app.interstory.payment.domain.enumtypes.PaymentStatus;
 import com.app.interstory.user.domain.entity.User;
 
 import jakarta.persistence.*;
@@ -7,9 +8,6 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-
-import org.springframework.data.annotation.CreatedDate;
-import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import java.sql.Timestamp;
 
@@ -19,7 +17,6 @@ import java.sql.Timestamp;
 @AllArgsConstructor
 @Getter
 @Builder
-@EntityListeners(AuditingEntityListener.class)
 public class Payment {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -30,8 +27,7 @@ public class Payment {
 	@JoinColumn(name = "user_id", nullable = false)
 	private User user;
 
-	@CreatedDate
-	@Column(name = "date", nullable = false, updatable = false)
+	@Column(name = "date", nullable = false)
 	private Timestamp date;
 
 	@Column(name = "amount", nullable = false)
@@ -39,4 +35,16 @@ public class Payment {
 
 	@Column(name = "description", nullable = false)
 	private String description;
+
+	@Enumerated(EnumType.STRING)
+	@Column(name = "status", nullable = false)
+	private PaymentStatus status;
+
+	public void updateDate(Timestamp date) {
+		this.date = date;
+	}
+
+	public void updateStatus(PaymentStatus status) {
+		this.status = status;
+	}
 }
