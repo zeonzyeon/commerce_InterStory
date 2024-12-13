@@ -2,8 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Edit Profile</title>
-    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <title>My Coupons</title>
     <style>
         /* 헤더 스타일 */
         .header {
@@ -138,7 +137,7 @@
         }
 
         /*메인 스타일*/
-        .point-history-container {
+        .my-coupons-container {
             /*max-height: 950px;*/
             padding: 20px 360px;
             background-color: #eeeeee;
@@ -146,13 +145,52 @@
             box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
         }
 
-        .point-history-container h2 {
+        .coupon-register {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            border: 1px solid #ccc;
+            padding: 10px 20px;
+            width: 500px;
+            margin: 30px auto;
+            gap: 20px;
+        }
+
+        .coupon-register label {
+            font-size: 14px;
+            margin-right: 10px;
+        }
+
+        .coupon-register input {
+            flex-grow: 1;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            padding: 5px 10px;
+            font-size: 14px;
+            width: auto;
+        }
+
+        .coupon-register button {
+            height: 30px;
+            padding: 5px 20px;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            color: white;
+            background-color: rgba(51, 51, 51, 0.8);
+        }
+
+        .coupon-register button:hover {
+            background-color: #333;
+        }
+
+        .my-coupons-container h2 {
             text-align: left;
             font-size: 20px;
             margin-top: 40px;
         }
 
-        .no-point-history {
+        .no-coupon {
             display: flex;
             justify-content: center;
             align-items: center;
@@ -160,38 +198,33 @@
             text-align: center;
         }
 
-        .point-history-table {
+        .coupon-table {
             margin: 20px 0;
             width: 100%;
             border-collapse: collapse;
             table-layout: fixed;
         }
 
-        .point-history-table col {
-            width: 33.33%;
-        }
-
-        .point-history-table tr {
+        .coupon-table tr {
             border-bottom: 1px solid #ccc;
         }
 
-        .point-history-table td {
+        .coupon-table td {
             padding: 15px;
         }
 
-        .point {
+        .coupon-name {
             font-weight: bold;
             font-size: 16px;
         }
 
-        .point-usage {
-            text-align: right;
+        .coupon-effect {
             margin-left: 20px;
             color: #999;
             font-size: 90%;
         }
 
-        .point-history-table td:last-child {
+        .coupon-table td:last-child {
             color: #888;
             font-size: 14px;
             text-align: right;
@@ -215,7 +248,7 @@
         </div>
     </div>
 </header>
-<main class="point-history-container">
+<main class="my-coupons-container">
     <!-- 마이페이지 메뉴 -->
     <div class="user-menu">
         <div class="menu-items">
@@ -226,45 +259,28 @@
             <a class="menu-item" href="">회원 정보 관리</a>
         </div>
     </div>
-    <h2>포인트 내역</h2>
-    <div class="no-point-history" th:if="${#lists.isEmpty(pointHistoryList)}">
-        <p>포인트 충전 / 이용 내역이 없습니다.</p>
+    <div class="coupon-register">
+        <label for="coupon">쿠폰</label>
+        <input id="coupon" placeholder="쿠폰 코드" type="text">
+        <button type="button">등록</button>
     </div>
-    <table class="point-history-table" th:if="${!#lists.isEmpty(pointHistoryList)}">
+    <h2>보유 쿠폰</h2>
+    <div class="no-coupon" th:if="${#lists.isEmpty(couponList)}">
+        <p>보유한 쿠폰이 없습니다.</p>
+    </div>
+    <table class="coupon-table" th:if="${!#lists.isEmpty(couponList)}">
         <tbody>
-        <tr th:each="history : ${pointHistoryList}">
+        <tr th:each="history : ${couponList}">
             <td>
-                <span class="point"
-                      th:classappend="${history.isPlus} ? 'plus' : 'minus'"
-                      th:text="${history.isPlus} ? ${history.pointAmount} + 'P 충전' : ${history.pointAmount} + 'P 사용'">
-                    100P 사용
-                </span>
-                <span class="point-usage"
-                      th:text="${history.isPlus} ? ${history.pointAmount / 100 * 2000} + '원 결제' : ${history.usageDescription}">
-                    포인트 사용처
-                </span>
+                <span class="coupon-name" th:text="${coupon.name}">쿠폰 이름</span>
+                <span class="coupon-effect" th:text="${coupon.couponEffect}">쿠폰 효과</span>
             </td>
-            <td th:text="${#dates.format(history.createdAt, 'yyyy-MM-dd HH:mm:ss')}">
-                2024.11.27 14:58
+            <td th:text="${#dates.format(coupon.expiredAt, 'yyyy-MM-dd')}">
+                2025.11.27
             </td>
         </tr>
         </tbody>
     </table>
-    <nav th:if="${planList != null && planList.totalPages > 1}">
-        <ul class="pagination justify-content-center">
-            <li class="page-item" th:classappend="${currentPage == 1 ? 'disabled' : ''}">
-                <a class="page-link" th:href="@{/admin/plans(page=${currentPage - 1})}">&laquo;</a>
-            </li>
-            <li class="page-item"
-                th:classappend="${pageNum == currentPage ? 'active' : ''}"
-                th:each="pageNum : ${#numbers.sequence(1, planList.totalPages)}">
-                <a class="page-link" th:href="@{/admin/plans(page=${pageNum})}" th:text="${pageNum}"></a>
-            </li>
-            <li class="page-item" th:classappend="${currentPage == planList.totalPages ? 'disabled' : ''}">
-                <a class="page-link" th:href="@{/admin/plans(page=${currentPage + 1})}">&raquo;</a>
-            </li>
-        </ul>
-    </nav>
 </main>
 </body>
 </html>

@@ -4,10 +4,142 @@
     <meta charset="UTF-8">
     <title>프로필 수정</title>
     <style>
-        .profile-edit-container {
+        /* 헤더 스타일 */
+        .header {
+            background: #fff;
+            padding: 1rem 2rem;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .header-content {
             max-width: 1200px;
-            max-height: 950px;
-            padding: 20px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 2rem;
+        }
+
+        .logo-area {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            min-width: 150px;
+        }
+
+        .logo-image {
+            width: 32px;
+            height: 32px;
+            object-fit: cover;
+        }
+
+        .logo-text {
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: #111;
+        }
+
+        .search-bar {
+            flex: 1;
+            max-width: 400px;
+            position: relative;
+        }
+
+        /* 반응형 처리 */
+        @media (max-width: 768px) {
+            .header-content {
+                gap: 1rem;
+            }
+
+            .logo-area {
+                min-width: auto;
+            }
+
+            .logo-text {
+                font-size: 1.1rem;
+            }
+
+            .search-bar {
+                max-width: 200px;
+            }
+        }
+
+        .search-bar {
+            flex: 0 1 400px;
+            position: relative;
+        }
+
+        .search-bar input {
+            width: 100%;
+            padding: 0.75rem 1rem;
+            border: 1px solid #ddd;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            background: #f8f9fa;
+        }
+
+        .search-bar input:focus {
+            outline: none;
+            border-color: #333;
+            background: #fff;
+        }
+
+        .user-profile {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .user-profile img {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            object-fit: cover;
+        }
+
+        /* 마이페이지 메뉴 */
+        .user-menu {
+            padding: 1rem;
+            background: #fff;
+            border-radius: 8px;
+            margin-bottom: 1rem;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .menu-items {
+            display: flex;
+            gap: 2rem;
+        }
+
+        .menu-item {
+            text-decoration: none;
+            color: #666;
+            padding: 0.5rem 1rem;
+            border-radius: 4px;
+            transition: all 0.2s;
+            cursor: pointer;
+        }
+
+        .menu-item:hover {
+            background: #f8f9fa;
+            color: #111;
+        }
+
+        .menu-item.active {
+            color: #111;
+            font-weight: 600;
+        }
+
+        /*메인 스타일*/
+        .profile-edit-container {
+            /*max-height: 950px;*/
+            padding: 20px 360px;
             background-color: #eeeeee;
             box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
             border-radius: 10px;
@@ -16,9 +148,9 @@
         }
 
         .profile-edit-container h2 {
+            margin-top: 40px;
             text-align: left;
             font-size: 20px;
-            margin: 0;
             padding: 0;
         }
 
@@ -30,7 +162,6 @@
             flex-direction: column;
             border-radius: 10px;
             margin: 20px 0;
-            padding: 20px;
         }
 
         .profile-image {
@@ -64,7 +195,7 @@
             width: 90%;
             display: flex;
             flex-direction: column;
-            padding: 20px 0px;
+            padding: 20px 0;
             gap: 20px;
         }
 
@@ -173,7 +304,33 @@
     </style>
 </head>
 <body>
-<section class="profile-edit-container">
+<!-- 헤더 -->
+<header class="header">
+    <div class="header-content">
+        <div class="logo-area">
+            <img alt="로고" class="logo-image" th:src="@{/images/logo.png}">
+            <span class="logo-text">InterStory</span>
+        </div>
+        <div class="search-bar">
+            <input placeholder="제목/작가로 검색" type="text">
+        </div>
+        <div class="user-profile">
+            <span th:text="${userNickname}">닉네임</span>
+            <img alt="프로필" src="/images/default-profile.png" th:src="${userProfileImage}">
+        </div>
+    </div>
+</header>
+<main class="profile-edit-container">
+    <!-- 마이페이지 메뉴 -->
+    <div class="user-menu">
+        <div class="menu-items">
+            <a class="menu-item" href="">프로필</a>
+            <a class="menu-item" href="">관심 작품</a>
+            <a class="menu-item" href="">열람 작품</a>
+            <a class="menu-item" href="/users/point-history">포인트 내역</a>
+            <a class="menu-item active" href="">회원 정보 관리</a>
+        </div>
+    </div>
     <h2>내 정보</h2>
     <div class="profile-image">
         <div class="image-circle" id="imagePreview"></div>
@@ -220,7 +377,7 @@
         </p>
         <button class="withdrawal-btn" onclick="profileDeleteUser()">서비스 탈퇴</button>
     </div>
-</section>
+</main>
 <script>
     function checkNickname() {
         const nickname = document.getElementById('nickname').value;
