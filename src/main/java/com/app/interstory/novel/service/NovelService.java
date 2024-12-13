@@ -2,18 +2,22 @@ package com.app.interstory.novel.service;
 
 import com.app.interstory.novel.domain.entity.Episode;
 import com.app.interstory.novel.domain.entity.Novel;
+import com.app.interstory.novel.domain.entity.Tag;
 import com.app.interstory.novel.domain.enumtypes.MainTag;
 import com.app.interstory.novel.domain.enumtypes.NovelStatus;
 import com.app.interstory.novel.domain.enumtypes.Sort;
 import com.app.interstory.novel.dto.request.NovelRequestDTO;
 import com.app.interstory.novel.dto.response.EpisodeResponseDTO;
 import com.app.interstory.novel.dto.response.NovelDetailResponseDTO;
+import com.app.interstory.novel.dto.response.NovelListResponseDTO;
 import com.app.interstory.novel.dto.response.NovelResponseDTO;
 import com.app.interstory.novel.repository.EpisodeRepository;
 import com.app.interstory.novel.repository.NovelRepository;
+import com.app.interstory.novel.repository.TagRepository;
 import com.app.interstory.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -27,6 +31,7 @@ public class NovelService {
     private final NovelRepository novelRepository;
     private final UserRepository userRepository;
     private final EpisodeRepository episodeRepository;
+    private final TagRepository tagRepository;
 
     // 소설 작성
     public Long writeNovel(NovelRequestDTO novelRequestDTO, Long userId) {
@@ -106,8 +111,8 @@ public class NovelService {
                 novel.getNovelId(),
                 novel.getTitle(),
                 novel.getDescription(),
-                novel.getThumbnailUrl(),
                 novel.getPlan(),
+                novel.getThumbnailUrl(),
                 novel.getStatus(),
                 novel.getTag(),
                 episodeDTOs,
@@ -116,30 +121,40 @@ public class NovelService {
     }
 
     // 소설 목록 조회
-    public Page<NovelResponseDTO> getNovelList(
+    public NovelListResponseDTO getNovelList(
             NovelStatus status,
             String title,
             String author,
             Boolean monetized,
             MainTag tag,
             Sort sort,
-            Pageable pageable
+            Integer page
     ) {
-        Page<Novel> novels = novelRepository.findAllWithDynamicSort(
-                status, title, author, monetized, tag, sort.name(), pageable
+        final int getItemCount = 10;
+
+        Pageable pageable = PageRequest.of(page - 1, getItemCount);
+
+        Page<Novel> novelPages = novelRepository.findByFilterAndSort(
+                status, title, author, monetized, tag, sort.getDescription(), pageable
         );
 
-        return novels.map(novel -> NovelResponseDTO.builder()
-                .novelId(novel.getNovelId())
-                .title(novel.getTitle())
-                .description(novel.getDescription())
-                .thumbnailUrl(novel.getThumbnailUrl())
-                .likeCount(novel.getLikeCount())
-                .status(novel.getStatus())
-                .tag(novel.getTag())
-                .createdAt(novel.getPublishedAt())
-                .build());
+        if (page > novelPages.getTotalPages()) {
+            throw new RuntimeException("유효하지 않은 페이지입니다.");
+        }
+
+
+        List<NovelResponseDTO> novels = novelPages.stream()
+                .map(novel -> {
+                    List<String> customTags = tagRepository.findByNovel(novel).stream()
+                            .map(Tag::getTag)
+                            .toList();
+                    return NovelResponseDTO.from(novel, customTags);
+                })
+                .toList();
+
+        return NovelListResponseDTO.from(novels, novelPages.getTotalPages());
     }
+
 
     // 소설 삭제
     @Transactional
