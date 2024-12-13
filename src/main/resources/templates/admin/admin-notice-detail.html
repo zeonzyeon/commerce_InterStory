@@ -1,270 +1,269 @@
 <!DOCTYPE html>
 <html lang="ko" xmlns:th="http://www.thymeleaf.org">
 <head>
-  <meta charset="UTF-8">
-  <meta content="width=device-width, initial-scale=1.0" name="viewport">
-  <title>공지사항 상세 | InterStory</title>
-  <style>
-    /* 헤더 스타일 */
-    .header {
-      background: #fff;
-      padding: 1rem 2rem;
-      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-      position: sticky;
-      top: 0;
-      z-index: 100;
-    }
+    <meta charset="UTF-8">
+    <meta content="width=device-width, initial-scale=1.0" name="viewport">
+    <title>공지사항 상세 | InterStory</title>
+    <style>
+        /* 헤더 스타일 */
+        .header {
+            background: #fff;
+            padding: 1rem 2rem;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
 
-    .header-content {
-      max-width: 1200px;
-      margin: 0 auto;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      gap: 2rem;
-    }
+        .header-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 2rem;
+        }
 
-    .logo-area {
-      display: flex;
-      align-items: center;
-      gap: 0.5rem;
-      min-width: 150px;
-    }
+        .logo-area {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            min-width: 150px;
+        }
 
-    .logo-image {
-      width: 32px;
-      height: 32px;
-      object-fit: cover;
-    }
+        .logo-image {
+            width: 32px;
+            height: 32px;
+            object-fit: cover;
+        }
 
-    .logo-text {
-      font-size: 1.25rem;
-      font-weight: 700;
-      color: #111;
-    }
+        .logo-text {
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: #111;
+        }
 
-    .search-bar {
-      flex: 1;
-      max-width: 400px;
-      position: relative;
-    }
+        .search-bar {
+            flex: 1;
+            max-width: 400px;
+            position: relative;
+        }
 
-    .search-bar input {
-      width: 100%;
-      padding: 0.75rem 1rem;
-      border: 1px solid #ddd;
-      border-radius: 20px;
-      font-size: 0.9rem;
-      background: #f8f9fa;
-    }
+        .search-bar input {
+            width: 100%;
+            padding: 0.75rem 1rem;
+            border: 1px solid #ddd;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            background: #f8f9fa;
+        }
 
-    .search-bar input:focus {
-      outline: none;
-      border-color: #333;
-      background: #fff;
-    }
+        .search-bar input:focus {
+            outline: none;
+            border-color: #333;
+            background: #fff;
+        }
 
-    .user-profile {
-      display: flex;
-      align-items: center;
-      gap: 1rem;
-    }
+        .user-profile {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
 
-    .user-profile img {
-      width: 40px;
-      height: 40px;
-      border-radius: 50%;
-      object-fit: cover;
-    }
+        .user-profile img {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            object-fit: cover;
+        }
 
-    /* 메인 컨텐츠 영역 */
-    .admin-nav {
-      max-width: 1200px;
-      margin: 2rem auto;
-      padding: 1rem;
-    }
+        /* 메인 컨텐츠 영역 */
+        .admin-nav {
+            max-width: 1200px;
+            margin: 2rem auto;
+            padding: 1rem;
+        }
 
-    /* 관리자 메뉴 */
-    .notice-menu {
-      padding: 1rem;
-      background: #fff;
-      border-radius: 8px;
-      margin-bottom: 1rem;
-      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-    }
+        /* 관리자 메뉴 */
+        .notice-menu {
+            padding: 1rem;
+            background: #fff;
+            border-radius: 8px;
+            margin-bottom: 1rem;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
 
-    .menu-items {
-      display: flex;
-      gap: 2rem;
-    }
+        .menu-items {
+            display: flex;
+            gap: 2rem;
+        }
 
-    .menu-item {
-      text-decoration: none;
-      color: #666;
-      padding: 0.5rem 1rem;
-      border-radius: 4px;
-      transition: all 0.2s;
-      cursor: pointer;
-    }
+        .menu-item {
+            text-decoration: none;
+            color: #666;
+            padding: 0.5rem 1rem;
+            border-radius: 4px;
+            transition: all 0.2s;
+            cursor: pointer;
+        }
 
-    .menu-item:hover {
-      background: #f8f9fa;
-      color: #111;
-    }
+        .menu-item:hover {
+            background: #f8f9fa;
+            color: #111;
+        }
 
-    .menu-item.active {
-      color: #111;
-      font-weight: 600;
-    }
+        .menu-item.active {
+            color: #111;
+            font-weight: 600;
+        }
 
-    /* 공지사항 상세 스타일 */
-    .notice-detail-container {
-      background: #fff;
-      border-radius: 8px;
-      box-shadow: 0 2px 4px rgba(0,0,0,0.05);
-      padding: 2rem;
-      margin-top: 1rem;
-    }
+        /* 공지사항 상세 스타일 */
+        .notice-detail-container {
+            background: #fff;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+            padding: 2rem;
+            margin-top: 1rem;
+        }
 
-    .notice-title {
-      font-size: 1.5rem;
-      font-weight: 600;
-      margin-bottom: 1rem;
-      padding-bottom: 1rem;
-      border-bottom: 1px solid #eee;
-    }
+        .notice-title {
+            font-size: 1.5rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid #eee;
+        }
 
-    .notice-info {
-      display: flex;
-      justify-content: space-between;
-      color: #666;
-      font-size: 0.9rem;
-      margin-bottom: 2rem;
-      padding-bottom: 1rem;
-      border-bottom: 1px solid #eee;
-    }
+        .notice-info {
+            display: flex;
+            justify-content: space-between;
+            color: #666;
+            font-size: 0.9rem;
+            margin-bottom: 2rem;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid #eee;
+        }
 
-    .notice-content {
-      min-height: 300px;
-      line-height: 1.6;
-      margin-bottom: 2rem;
-    }
+        .notice-content {
+            min-height: 300px;
+            line-height: 1.6;
+            margin-bottom: 2rem;
+        }
 
-    .button-group {
-      display: flex;
-      justify-content: center;
-      gap: 1rem;
-      margin-top: 2rem;
-    }
+        .button-group {
+            display: flex;
+            justify-content: center;
+            gap: 1rem;
+            margin-top: 2rem;
+        }
 
-    .btn {
-      padding: 0.5rem 2rem;
-      border: none;
-      border-radius: 4px;
-      cursor: pointer;
-      font-size: 0.9rem;
-      transition: all 0.2s;
-    }
+        .btn {
+            padding: 0.5rem 2rem;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            transition: all 0.2s;
+        }
 
-    .btn-primary {
-      background: #111;
-      color: #fff;
-    }
+        .btn-primary {
+            background: #111;
+            color: #fff;
+        }
 
-    .btn-secondary {
-      background: #f8f9fa;
-      border: 1px solid #ddd;
-      color: #333;
-    }
+        .btn-secondary {
+            background: #f8f9fa;
+            border: 1px solid #ddd;
+            color: #333;
+        }
 
-    .btn:hover {
-      opacity: 0.9;
-    }
-  </style>
+        .btn:hover {
+            opacity: 0.9;
+        }
+    </style>
 </head>
 <body>
 <!-- 헤더는 동일하게 유지 -->
 <header class="header">
-  <div class="header-content">
-    <div class="logo-area">
-      <img alt="로고" class="logo-image" th:src="@{/images/logo.png}">
-      <span class="logo-text">InterStory</span>
+    <div class="header-content">
+        <div class="logo-area">
+            <img alt="로고" class="logo-image" th:src="@{/images/logo.png}">
+            <span class="logo-text">InterStory</span>
+        </div>
+        <div class="search-bar">
+            <input placeholder="제목/작가로 검색" type="text">
+        </div>
+        <div class="user-profile">
+            <span th:text="${userNickname}">닉네임</span>
+            <img alt="프로필" src="/images/default-profile.png" th:src="${userProfileImage}">
+        </div>
     </div>
-    <div class="search-bar">
-      <input placeholder="제목/작가로 검색" type="text">
-    </div>
-    <div class="user-profile">
-      <span th:text="${userNickname}">닉네임</span>
-      <img alt="프로필" src="/images/default-profile.png" th:src="${userProfileImage}">
-    </div>
-  </div>
 </header>
 
 <main class="admin-nav">
-  <!-- 관리자 메뉴는 동일하게 유지 -->
-  <div class="notice-menu">
-    <div class="menu-items">
-      <a href="/admin/users" class="menu-item">유저 조회</a>
-      <a href="/admin/seasonal-works" class="menu-item">삭제된 작품 조회</a>
-      <a href="/admin/plans" class="menu-item">기획서</a>
-      <a href="/admin/coupons" class="menu-item">쿠폰 관리</a>
-      <a href="/admin/notices" class="menu-item active">공지사항</a>
+    <!-- 관리자 메뉴는 동일하게 유지 -->
+    <div class="notice-menu">
+        <div class="menu-items">
+            <a href="/admin/users" class="menu-item">유저 조회</a>
+            <a href="/admin/novels" class="menu-item">작품 관리</a>
+            <a href="/admin/coupons" class="menu-item active">쿠폰 관리</a>
+            <a href="/admin/notices" class="menu-item">공지사항</a>
+        </div>
     </div>
 
-  </div>
 
-  <div class="notice-detail-container">
-    <h1 class="notice-title" th:text="${notice.title}">공지사항 제목</h1>
+    <div class="notice-detail-container">
+        <h1 class="notice-title" th:text="${notice.title}">공지사항 제목</h1>
 
-    <div class="notice-info">
-      <div>
-        <span>작성자: </span>
-        <span th:text="${notice.nickname}">관리자</span>
-      </div>
-      <div>
-        <span>작성일: </span>
-        <span th:text="${notice.createdAt}">2024.11.27</span>
-      </div>
+        <div class="notice-info">
+            <div>
+                <span>작성자: </span>
+                <span th:text="${notice.nickname}">관리자</span>
+            </div>
+            <div>
+                <span>작성일: </span>
+                <span th:text="${notice.createdAt}">2024.11.27</span>
+            </div>
+        </div>
+
+        <div class="notice-content" th:utext="${notice.content}">
+            공지사항 내용이 여기에 표시됩니다.
+        </div>
+
+        <div class="button-group">
+            <button class="btn btn-primary" onclick="location.href='/admin/notices'">목록</button>
+            <button class="btn btn-secondary" onclick="editNotice()">수정</button>
+            <button class="btn btn-secondary" onclick="deleteNotice()">삭제</button>
+        </div>
     </div>
-
-    <div class="notice-content" th:utext="${notice.content}">
-      공지사항 내용이 여기에 표시됩니다.
-    </div>
-
-    <div class="button-group">
-      <button class="btn btn-primary" onclick="location.href='/admin/notices'">목록</button>
-      <button class="btn btn-secondary" onclick="editNotice()">수정</button>
-      <button class="btn btn-secondary" onclick="deleteNotice()">삭제</button>
-    </div>
-  </div>
 </main>
 
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script th:inline="javascript">
-  const noticeId = /*[[${notice.noticeId}]]*/ '0';
+    const noticeId = /*[[${notice.noticeId}]]*/ '0';
 
-  function editNotice() {
-    location.href = `/admin/notices/${noticeId}/edit`;
-  }
-
-  function deleteNotice() {
-    if (confirm('정말 삭제하시겠습니까?')) {
-      $.ajax({
-        url: `/api/admin/notices/${noticeId}`,
-        type: 'DELETE',
-        success: function() {
-          alert('삭제되었습니다.');
-          window.location.href = '/admin/notices';
-        },
-        error: function() {
-          alert('삭제 중 오류가 발생했습니다.');
-        }
-      });
+    function editNotice() {
+        location.href = `/admin/notices/${noticeId}/edit`;
     }
-  }
+
+    function deleteNotice() {
+        if (confirm('정말 삭제하시겠습니까?')) {
+            $.ajax({
+                url: `/api/admin/notices/${noticeId}`,
+                type: 'DELETE',
+                success: function () {
+                    alert('삭제되었습니다.');
+                    window.location.href = '/admin/notices';
+                },
+                error: function () {
+                    alert('삭제 중 오류가 발생했습니다.');
+                }
+            });
+        }
+    }
 </script>
 </body>
 </html>

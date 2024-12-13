@@ -1,464 +1,589 @@
 <!DOCTYPE html>
 <html lang="ko" xmlns:th="http://www.thymeleaf.org">
 <head>
-  <meta charset="UTF-8">
-  <meta content="width=device-width, initial-scale=1.0" name="viewport">
-  <title>쿠폰 관리 | InterStory</title>
-  <style>
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
-      font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, system-ui, Roboto, sans-serif;
-    }
+    <meta charset="UTF-8">
+    <meta content="width=device-width, initial-scale=1.0" name="viewport">
+    <title>쿠폰 관리 | InterStory</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, system-ui, Roboto, sans-serif;
+        }
 
-    body {
-      background: #f8f9fa;
-      color: #333;
-    }
+        body {
+            background: #f8f9fa;
+            color: #333;
+        }
 
-    /* 헤더 스타일 */
-    .header {
-      background: #fff;
-      padding: 1rem 2rem;
-      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-      position: sticky;
-      top: 0;
-      z-index: 100;
-    }
+        /* 헤더 스타일 */
+        .header {
+            background: #fff;
+            padding: 1rem 2rem;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
 
-    .header-content {
-      max-width: 1200px;
-      margin: 0 auto;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      gap: 2rem;
-    }
+        .header-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 2rem;
+        }
 
-    /* 모달 스타일 */
-    .modal-backdrop {
-      display: none;
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      background: rgba(0, 0, 0, 0.5);
-      z-index: 999;
-    }
+        .logo-area {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            min-width: 150px;
+        }
 
-    .modal {
-      display: none;
-      position: fixed;
-      top: 50%;
-      left: 50%;
-      transform: translate(-50%, -50%);
-      width: 400px;
-      background: white;
-      border-radius: 8px;
-      box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-      z-index: 1000;
-    }
+        .logo-image {
+            width: 32px;
+            height: 32px;
+            object-fit: cover;
+        }
 
-    .modal-content {
-      padding: 2rem;
-    }
+        .logo-text {
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: #111;
+        }
 
-    .modal-header {
-      position: relative;
-      margin-bottom: 2rem;
-      padding-bottom: 1rem;
-      border-bottom: 1px solid #eee;
-    }
+        .search-bar {
+            flex: 1;
+            max-width: 400px;
+            position: relative;
+        }
 
-    .close {
-      position: absolute;
-      top: 0;
-      right: 0;
-      font-size: 1.5rem;
-      cursor: pointer;
-      color: #666;
-    }
+        .search-bar input {
+            width: 100%;
+            padding: 0.75rem 1rem;
+            border: 1px solid #ddd;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            background: #f8f9fa;
+        }
 
-    /* 쿠폰 리스트 스타일 */
-    .admin-nav {
-      max-width: 1200px;
-      margin: 2rem auto;
-      padding: 1rem;
-    }
+        .search-bar input:focus {
+            outline: none;
+            border-color: #333;
+            background: #fff;
+        }
 
-    .notice-menu {
-      padding: 1rem;
-      background: #fff;
-      border-radius: 8px;
-      margin-bottom: 1rem;
-      box-shadow: 0 2px 4px rgba(0,0,0,0.05);
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-    }
+        .user-profile {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
 
-    .menu-items {
-      display: flex;
-      gap: 2rem;
-    }
+        .user-profile img {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            object-fit: cover;
+        }
 
-    .menu-item {
-      text-decoration: none;
-      color: #666;
-      padding: 0.5rem 1rem;
-      border-radius: 4px;
-      transition: all 0.2s;
-      cursor: pointer;
-    }
+        /* 메인 컨텐츠 영역 */
+        .admin-nav {
+            max-width: 1200px;
+            margin: 2rem auto;
+            padding: 1rem;
+        }
 
-    .menu-item:hover {
-      background: #f8f9fa;
-      color: #111;
-    }
+        /* 관리자 메뉴 */
+        .notice-menu {
+            padding: 1rem;
+            background: #fff;
+            border-radius: 8px;
+            margin-bottom: 1rem;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
 
-    .menu-item.active {
-      color: #111;
-      font-weight: 600;
-    }
+        .menu-items {
+            display: flex;
+            gap: 2rem;
+        }
 
-    .write-btn-container {
-      text-align: right;
-      margin-bottom: 1rem;
-    }
+        .menu-item {
+            text-decoration: none;
+            color: #666;
+            padding: 0.5rem 1rem;
+            border-radius: 4px;
+            transition: all 0.2s;
+            cursor: pointer;
+        }
 
-    .write-btn {
-      padding: 0.5rem 1rem;
-      background: #111;
-      color: #fff;
-      border: none;
-      border-radius: 4px;
-      cursor: pointer;
-      font-size: 0.9rem;
-    }
+        .menu-item:hover {
+            background: #f8f9fa;
+            color: #111;
+        }
 
-    .coupon-table-container {
-      background: #fff;
-      border-radius: 8px;
-      box-shadow: 0 2px 4px rgba(0,0,0,0.05);
-      overflow: hidden;
-    }
+        .menu-item.active {
+            color: #111;
+            font-weight: 600;
+        }
 
-    .coupon-table {
-      width: 100%;
-      border-collapse: collapse;
-    }
+        /* 쿠폰 테이블 스타일 */
+        .write-btn-container {
+            text-align: right;
+            margin-bottom: 1rem;
+        }
 
-    .coupon-table th,
-    .coupon-table td {
-      padding: 1rem;
-      text-align: left;
-      border-bottom: 1px solid #eee;
-    }
+        .write-btn {
+            padding: 0.5rem 1rem;
+            background: #111;
+            color: #fff;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            transition: all 0.2s;
+        }
 
-    .coupon-table th {
-      background: #f8f9fa;
-      font-weight: 600;
-    }
+        .write-btn:hover {
+            background: #333;
+        }
 
-    /* 폼 스타일 */
-    .form-group {
-      margin-bottom: 1.5rem;
-    }
+        .coupon-table-container {
+            background: #fff;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+            overflow: hidden;
+        }
 
-    .form-group label {
-      display: block;
-      margin-bottom: 0.5rem;
-      font-weight: 500;
-      color: #333;
-    }
+        .coupon-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
 
-    .form-control {
-      width: 100%;
-      padding: 0.75rem;
-      border: 1px solid #ddd;
-      border-radius: 4px;
-      font-size: 0.9rem;
-    }
+        .coupon-table th,
+        .coupon-table td {
+            padding: 1rem;
+            text-align: left;
+            border-bottom: 1px solid #eee;
+        }
 
-    .form-control:focus {
-      outline: none;
-      border-color: #007bff;
-    }
+        .coupon-table th {
+            background: #f8f9fa;
+            font-weight: 600;
+            color: #111;
+        }
 
-    .btn {
-      padding: 0.5rem 1rem;
-      border: none;
-      border-radius: 4px;
-      cursor: pointer;
-    }
+        .coupon-table tr:hover {
+            background: #f8f9fa;
+        }
 
-    .btn-primary {
-      background: #007bff;
-      color: white;
-    }
+        /* 모달 스타일 */
+        .modal-backdrop {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 999;
+        }
 
-    .btn-danger {
-      background: #dc3545;
-      color: white;
-      font-size: 0.9rem;
-    }
+        .modal {
+            display: none;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 400px;
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+            z-index: 1000;
+        }
 
-    .load-more-btn {
-      display: block;
-      width: 100%;
-      padding: 1rem;
-      background: none;
-      border: none;
-      border-top: 1px solid #eee;
-      cursor: pointer;
-      color: #666;
-      font-size: 0.9rem;
-      transition: all 0.2s ease;
-    }
+        .modal-content {
+            padding: 2rem;
+        }
 
-    .load-more-btn:hover {
-      background: #f8f9fa;
-      color: #111;
-    }
+        .modal-header {
+            margin-bottom: 2rem;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid #eee;
+        }
 
-    /* 날짜 시간 선택기 스타일 */
-    .datetime-picker {
-      display: flex;
-      align-items: center;
-      gap: 0.5rem;
-    }
+        .modal-header h3 {
+            color: #111;
+            font-weight: 600;
+        }
 
-    .datetime-picker input[type="date"],
-    .datetime-picker input[type="time"] {
-      width: 50%;
-      padding: 0.75rem;
-      border: 1px solid #ddd;
-      border-radius: 4px;
-      font-size: 0.9rem;
-    }
-  </style>
+        .close {
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
+            font-size: 1.5rem;
+            cursor: pointer;
+            color: #666;
+            transition: color 0.2s;
+        }
+
+        .close:hover {
+            color: #111;
+        }
+
+        /* 폼 스타일 */
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 500;
+            color: #111;
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 0.75rem;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 0.9rem;
+            background: #f8f9fa;
+        }
+
+        .form-control:focus {
+            outline: none;
+            border-color: #111;
+            background: #fff;
+        }
+
+        /* 버튼 스타일 */
+        .btn {
+            padding: 0.75rem 1.5rem;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-weight: 500;
+            min-width: 120px;
+            transition: all 0.2s;
+        }
+
+        .btn-primary {
+            background: #111;
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: #333;
+        }
+
+        .btn-table-delete {
+            padding: 0.375rem 0.75rem;
+            background: #dc3545;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 0.875rem;
+            min-width: auto;
+            transition: all 0.2s;
+        }
+
+        .btn-table-delete:hover {
+            background: #c82333;
+        }
+
+        .load-more-btn {
+            display: block;
+            width: 100%;
+            padding: 1rem;
+            background: none;
+            border: none;
+            border-top: 1px solid #eee;
+            cursor: pointer;
+            color: #666;
+            font-size: 0.9rem;
+            transition: all 0.2s;
+        }
+
+        .load-more-btn:hover {
+            background: #f8f9fa;
+            color: #111;
+        }
+
+        .datetime-picker {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .datetime-picker input[type="date"],
+        .datetime-picker input[type="time"] {
+            width: 50%;
+            padding: 0.75rem;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 0.9rem;
+            background: #f8f9fa;
+        }
+
+        @media (max-width: 768px) {
+            .header {
+                padding: 1rem;
+            }
+
+            .search-bar {
+                max-width: 200px;
+            }
+
+            .admin-nav {
+                padding: 1rem;
+            }
+
+            .menu-items {
+                gap: 1rem;
+            }
+
+            .menu-item {
+                padding: 0.5rem;
+                font-size: 0.9rem;
+            }
+
+            .modal {
+                width: 90%;
+                margin: 0 1rem;
+            }
+
+            .datetime-picker {
+                flex-direction: column;
+            }
+
+            .datetime-picker input[type="date"],
+            .datetime-picker input[type="time"] {
+                width: 100%;
+            }
+        }
+    </style>
 </head>
 <body>
 <header class="header">
-  <div class="header-content">
-    <div class="logo-area">
-      <img alt="로고" class="logo-image" th:src="@{/images/logo.png}">
-      <span class="logo-text">InterStory</span>
+    <div class="header-content">
+        <div class="logo-area">
+            <img alt="로고" class="logo-image" th:src="@{/images/logo.png}">
+            <span class="logo-text">InterStory</span>
+        </div>
+        <div class="search-bar">
+            <input placeholder="제목/작가로 검색" type="text">
+        </div>
+        <div class="user-profile">
+            <span th:text="${userNickname}">닉네임</span>
+            <img alt="프로필" src="/images/default-profile.png" th:src="${userProfileImage}">
+        </div>
     </div>
-  </div>
 </header>
 
 <main class="admin-nav">
-  <!-- 관리자 메뉴 -->
-  <div class="notice-menu">
-    <div class="menu-items">
-      <a href="/admin/users" class="menu-item">유저 조회</a>
-      <a href="/admin/novels" class="menu-item">삭제된 작품 조회</a>
-      <a href="/admin/plans" class="menu-item">기획서</a>
-      <a href="/admin/coupons" class="menu-item active">쿠폰 관리</a>
-      <a href="/admin/notices" class="menu-item">공지사항</a>
+    <!-- 관리자 메뉴 -->
+    <div class="notice-menu">
+        <div class="menu-items">
+            <a href="/admin/users" class="menu-item">유저 조회</a>
+            <a href="/admin/novels" class="menu-item">작품 관리</a>
+            <a href="/admin/coupons" class="menu-item active">쿠폰 관리</a>
+            <a href="/admin/notices" class="menu-item">공지사항</a>
+        </div>
     </div>
-  </div>
 
-  <div class="write-btn-container">
-    <button class="write-btn" onclick="openModal()">쿠폰 발급</button>
-  </div>
-
-  <div class="coupon-table-container">
-    <table class="coupon-table">
-      <thead>
-      <tr>
-        <th>쿠폰명</th>
-        <th>쿠폰 코드</th>
-        <th>쿠폰 설명</th>
-        <th>유효일</th>
-        <th>관리</th>
-      </tr>
-      </thead>
-      <tbody id="couponTableBody">
-      <tr th:each="coupon : ${couponList.coupons}">
-        <td th:text="${coupon.name}">쿠폰명</td>
-        <td th:text="${coupon.code}">쿠폰코드</td>
-        <td th:text="${coupon.effect}">쿠폰설명</td>
-        <td th:text="${coupon.expiredAt}">유효일</td>
-        <td>
-          <button class="btn btn-danger" th:onclick="'deleteCoupon(' + ${coupon.couponId} + ')'">삭제</button>
-        </td>
-      </tr>
-      </tbody>
-    </table>
-    <button id="loadMoreBtn" class="load-more-btn">더보기</button>
-  </div>
-
-  <!-- 모달 백드롭 -->
-  <div id="modalBackdrop" class="modal-backdrop"></div>
-
-  <!-- 쿠폰 발급 모달 -->
-  <div id="couponModal" class="modal">
-    <div class="modal-content">
-      <span class="close" onclick="closeModal()">&times;</span>
-      <div class="modal-header">
-        <h3>쿠폰 발급</h3>
-      </div>
-      <form id="couponForm">
-        <div class="form-group">
-          <label>쿠폰명:</label>
-          <input type="text" name="name" class="form-control" required>
-        </div>
-        <div class="form-group datetime-picker">
-          <label>유효 기간:</label>
-          <input type="date" name="expiredDate" class="form-control" required>
-          <input type="time" name="expiredTime" class="form-control" required>
-        </div>
-        <div class="form-group">
-          <label>할인 효과:</label>
-          <select name="effect" class="form-control" required>
-            <option value="">쿠폰 효과</option>
-            <option value="POINT_1000_DISCOUNT">포인트 1000원 할인</option>
-            <option value="POINT_3000_DISCOUNT">포인트 3000원 할인</option>
-            <option value="POINT_5000_DISCOUNT">포인트 5000원 할인</option>
-          </select>
-        </div>
-        <button type="submit" class="btn btn-primary" style="width: 100%;">생성하기</button>
-      </form>
+    <div class="write-btn-container">
+        <button class="write-btn" onclick="openModal()">쿠폰 발급</button>
     </div>
-  </div>
+
+    <div class="coupon-table-container">
+        <table class="coupon-table">
+            <thead>
+            <tr>
+                <th>쿠폰명</th>
+                <th>쿠폰 코드</th>
+                <th>쿠폰 설명</th>
+                <th>유효일</th>
+                <th>관리</th>
+            </tr>
+            </thead>
+            <tbody id="couponTableBody">
+            <tr th:each="coupon : ${couponList.coupons}">
+                <td th:text="${coupon.name}">쿠폰명</td>
+                <td th:text="${coupon.code}">쿠폰코드</td>
+                <td th:text="${coupon.effect}">쿠폰설명</td>
+                <td th:text="${coupon.expiredAt}">유효일</td>
+                <td>
+                    <button class="btn-table-delete" th:onclick="'deleteCoupon(' + ${coupon.couponId} + ')'">삭제</button>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+        <button id="loadMoreBtn" class="load-more-btn">더보기</button>
+    </div>
+
+    <!-- 모달 백드롭 -->
+    <div id="modalBackdrop" class="modal-backdrop"></div>
+
+    <!-- 쿠폰 발급 모달 -->
+    <div id="couponModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeModal()">&times;</span>
+            <div class="modal-header">
+                <h3>쿠폰 발급</h3>
+            </div>
+            <form id="couponForm">
+                <div class="form-group">
+                    <label>쿠폰명:</label>
+                    <input type="text" name="name" class="form-control" required>
+                </div>
+                <div class="form-group">
+                    <label>유효 기간:</label>
+                    <div class="datetime-picker">
+                        <input type="date" name="expiredDate" class="form-control" required>
+                        <input type="time" name="expiredTime" class="form-control" required>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label>할인 효과:</label>
+                    <select name="effect" class="form-control" required>
+                        <option value="">쿠폰 효과</option>
+                        <option value="POINT_1000_DISCOUNT">포인트 1000원 할인</option>
+                        <option value="POINT_3000_DISCOUNT">포인트 3000원 할인</option>
+                        <option value="POINT_5000_DISCOUNT">포인트 5000원 할인</option>
+                    </select>
+                </div>
+                <button type="submit" class="btn btn-primary" style="width: 100%;">생성하기</button>
+            </form>
+        </div>
+    </div>
 </main>
 
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script th:inline="javascript">
-  $(document).ready(function() {
-    let currentPage = 1;
-    const totalPages = /*[[${couponList.totalPage}]]*/ 1;
+    $(document).ready(function () {
+        let currentPage = 1;
+        const totalPages = /*[[${couponList.totalPage}]]*/ 1;
 
-    // 더보기 버튼 클릭 이벤트
-    $('#loadMoreBtn').click(function() {
-      currentPage++;
-      loadMoreCoupons(currentPage);
-    });
+        $('#loadMoreBtn').click(function () {
+            currentPage++;
+            loadMoreCoupons(currentPage);
+        });
 
-    // 더보기 기능 구현
-    function loadMoreCoupons(page) {
-      $.ajax({
-        url: '/api/admin/coupons',
-        type: 'GET',
-        data: { page: page },
-        success: function(response) {
-          // 새로운 쿠폰 목록을 테이블에 추가
-          appendCoupons(response.coupons);
+        function loadMoreCoupons(page) {
+            $.ajax({
+                url: '/api/admin/coupons',
+                type: 'GET',
+                data: {page: page},
+                success: function (response) {
+                    appendCoupons(response.coupons);
+                    if (page >= response.totalPage) {
+                        $('#loadMoreBtn').hide();
+                    }
+                },
+                error: function (error) {
+                    console.error('쿠폰을 불러오는 중 오류가 발생했습니다:', error);
+                }
+            });
+        }
 
-          // 마지막 페이지인 경우 더보기 버튼 숨김
-          if (page >= response.totalPage) {
+        function appendCoupons(coupons) {
+            const tableBody = $('#couponTableBody');
+            coupons.forEach(function (coupon) {
+                const row = `
+                    <tr>
+                        <td>${coupon.name}</td>
+                        <td>${coupon.code}</td>
+                        <td>${coupon.effect}</td>
+                        <td>${coupon.expiredAt}</td>
+                        <td>
+                            <button class="btn-table-delete" onclick="deleteCoupon(${coupon.couponId})">삭제</button>
+                        </td>
+                    </tr>
+                `;
+                tableBody.append(row);
+            });
+        }
+
+        if (currentPage >= totalPages) {
             $('#loadMoreBtn').hide();
-          }
-        },
-        error: function(error) {
-          console.error('쿠폰을 불러오는 중 오류가 발생했습니다:', error);
         }
-      });
-    }
 
-    // 쿠폰 추가 함수
-    function appendCoupons(coupons) {
-      const tableBody = $('#couponTableBody');
+        $('#couponForm').on('submit', function (e) {
+            e.preventDefault();
 
-      coupons.forEach(function(coupon) {
-        const row = `
-                       <tr>
-                           <td>${coupon.name}</td>
-                           <td>${coupon.code}</td>
-                           <td>${coupon.effect}</td>
-                           <td>${coupon.expiredAt}</td>
-                           <td>
-                               <button class="btn btn-danger" onclick="deleteCoupon(${coupon.couponId})">삭제</button>
-                           </td>
-                       </tr>
-                   `;
-        tableBody.append(row);
-      });
-    }
+            const selectedDate = new Date($('input[name="expiredDate"]').val());
+            const selectedTime = $('input[name="expiredTime"]').val().split(':');
+            selectedDate.setHours(selectedTime[0], selectedTime[1], 0, 0);
+            const timestamp = selectedDate.getTime();
 
-    // 초기 페이지가 마지막 페이지인 경우 더보기 버튼 숨김
-    if (currentPage >= totalPages) {
-      $('#loadMoreBtn').hide();
-    }
+            const formData = {
+                name: $('input[name="name"]').val(),
+                expiredAt: timestamp,
+                effect: $('select[name="effect"]').val()
+            };
 
-    // 쿠폰 발급 폼 제출
-    $('#couponForm').on('submit', function(e) {
-      e.preventDefault();
-
-      // 날짜와 시간을 합쳐서 Timestamp로 변환
-      const selectedDate = new Date($('input[name="expiredDate"]').val());
-      const selectedTime = $('input[name="expiredTime"]').val().split(':');
-      selectedDate.setHours(selectedTime[0], selectedTime[1], 0, 0);
-      const timestamp = selectedDate.getTime();
-
-      const formData = {
-        name: $('input[name="name"]').val(),
-        expiredAt: timestamp,
-        effect: $('select[name="effect"]').val()
-      };
-
-      $.ajax({
-        url: '/api/admin/coupons',
-        type: 'POST',
-        contentType: 'application/json',
-        data: JSON.stringify(formData),
-        success: function(response) {
-          alert('쿠폰이 생성되었습니다.');
-          closeModal();
-          location.reload();
-        },
-        error: function() {
-          alert('쿠폰 생성 중 오류가 발생했습니다.');
-        }
-      });
+            $.ajax({
+                url: '/api/admin/coupons',
+                type: 'POST',
+                contentType: 'application/json',
+                data: JSON.stringify(formData),
+                success: function (response) {
+                    alert('쿠폰이 생성되었습니다.');
+                    closeModal();
+                    location.reload();
+                },
+                error: function () {
+                    alert('쿠폰 생성 중 오류가 발생했습니다.');
+                }
+            });
+        });
     });
-  });
 
-  // 모달 관련 함수
-  function openModal() {
-    document.getElementById('modalBackdrop').style.display = 'block';
-    document.getElementById('couponModal').style.display = 'block';
-  }
-
-  function closeModal() {
-    document.getElementById('modalBackdrop').style.display = 'none';
-    document.getElementById('couponModal').style.display = 'none';
-  }
-
-  // 모달 외부 클릭 시 닫기
-  document.getElementById('modalBackdrop').addEventListener('click', function(e) {
-    if (e.target === this) {
-      closeModal();
+    function openModal() {
+        document.getElementById('modalBackdrop').style.display = 'block';
+        document.getElementById('couponModal').style.display = 'block';
     }
-  });
 
-  // ESC 키 누를 때 모달 닫기
-  document.addEventListener('keydown', function(e) {
-    if (e.key === 'Escape') {
-      closeModal();
+    function closeModal() {
+        document.getElementById('modalBackdrop').style.display = 'none';
+        document.getElementById('couponModal').style.display = 'none';
     }
-  });
 
-  // 쿠폰 삭제 함수
-  function deleteCoupon(couponId) {
-    if (confirm('정말 삭제하시겠습니까?')) {
-      $.ajax({
-        url: `/api/admin/coupons/${couponId}`,
-        type: 'DELETE',
-        success: function() {
-          alert('삭제되었습니다.');
-          location.reload();
-        },
-        error: function() {
-          alert('삭제 중 오류가 발생했습니다.');
+    document.getElementById('modalBackdrop').addEventListener('click', function (e) {
+        if (e.target === this) {
+            closeModal();
         }
-      });
+    });
+
+    document.addEventListener('keydown', function (e) {
+        if (e.key === 'Escape') {
+            closeModal();
+        }
+    });
+
+    function deleteCoupon(couponId) {
+        if (confirm('정말 삭제하시겠습니까?')) {
+            $.ajax({
+                url: `/api/admin/coupons/${couponId}`,
+                type: 'DELETE',
+                success: function () {
+                    alert('삭제되었습니다.');
+                    location.reload();
+                },
+                error: function () {
+                    alert('삭제 중 오류가 발생했습니다.');
+                }
+            });
+        }
     }
-  }
 </script>
 </body>
 </html>

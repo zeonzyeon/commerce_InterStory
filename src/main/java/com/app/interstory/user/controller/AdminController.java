@@ -2,9 +2,8 @@ package com.app.interstory.user.controller;
 
 import com.app.interstory.novel.domain.enumtypes.NovelStatus;
 import com.app.interstory.novel.domain.enumtypes.Sort;
-import com.app.interstory.novel.dto.request.NovelSearchRequestDTO;
 import com.app.interstory.novel.dto.response.NovelDetailResponseDTO;
-import com.app.interstory.novel.dto.response.NovelResponseDTO;
+import com.app.interstory.novel.dto.response.NovelListResponseDTO;
 import com.app.interstory.novel.service.NovelService;
 import com.app.interstory.user.domain.CustomUserDetails;
 import com.app.interstory.user.dto.response.CouponListResponseDTO;
@@ -13,7 +12,6 @@ import com.app.interstory.user.dto.response.NoticeResponseDTO;
 import com.app.interstory.user.dto.response.UserListResponseDTO;
 import com.app.interstory.user.service.AdminService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
@@ -118,41 +116,47 @@ public class AdminController {
         }
     }
 
-    @GetMapping("/plans")
-    public String getPlanList(
+    // 작품 목록 조회
+    @GetMapping("/novels")
+    public String getNovelList(
             @RequestParam(defaultValue = "1") Integer page,
-            @AuthenticationPrincipal CustomUserDetails userDetails,
+            @RequestParam(required = false) String status,
             Model model) {
         try {
-            Page<NovelResponseDTO> plans = novelService.getNovelList(
-                    NovelStatus.DRAFT,
-                    null, null, null, null,
+            NovelStatus novelStatus = null;
+            if (status != null && !status.equals("ALL")) {
+                novelStatus = NovelStatus.valueOf(status);
+            }
+
+            NovelListResponseDTO novels = novelService.getNovelList(
+                    novelStatus, null, null, null, null,
                     Sort.NEW_TO_OLD,
-                    PageRequest.of(page - 1, 10)
+                    page
             );
 
-            model.addAttribute("planList", plans);
+            model.addAttribute("novelList", novels.getNovels());
             model.addAttribute("currentPage", page);
-            return "admin/admin-plan-list";
+            model.addAttribute("selectedStatus", status != null ? status : "ALL");
+            return "admin/admin-novel-list";
         } catch (IllegalStateException e) {
             model.addAttribute("error", e.getMessage());
             return "error";
         }
     }
 
-    // 기획서 상세 조회
-    @GetMapping("/plans/{novelId}")
-    public String getPlanDetail(
+    // 작품 상세 조회
+    @GetMapping("/novels/{novelId}")
+    public String getNovelDetail(
             @PathVariable Long novelId,
             Model model) {
         try {
-            NovelDetailResponseDTO plan = novelService.readNovel(
+            NovelDetailResponseDTO novel = novelService.readNovel(
                     novelId,
                     Sort.NEW_TO_OLD,
                     PageRequest.of(0, 1)
             );
-            model.addAttribute("plan", plan);
-            return "admin/admin-plan-detail";
+            model.addAttribute("novel", novel);
+            return "admin/admin-novel-detail";
         } catch (IllegalStateException e) {
             model.addAttribute("error", e.getMessage());
             return "error";

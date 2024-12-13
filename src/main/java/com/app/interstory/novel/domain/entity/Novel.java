@@ -96,6 +96,10 @@ public class Novel {
 		this.isFree = isFree;
 	}
 
+	public void updateStatus(NovelStatus status) {
+		this.status = status;
+	}
+
 	public void markAsDeleted() {
 		this.status = NovelStatus.DELETED;
 	}
