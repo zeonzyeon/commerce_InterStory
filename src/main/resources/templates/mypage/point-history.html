@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Point History</title>
+    <style>
+        .point-history-container {
+            max-width: 1200px;
+            max-height: 950px;
+            /*margin: 0 auto;*/
+            padding: 20px;
+            background-color: #eeeeee;
+            border-radius: 10px;
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+        }
+
+        .point-history-container h2 {
+            text-align: left;
+            font-size: 20px;
+            margin: 0;
+            padding: 0;
+        }
+
+        .no-point-history {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            text-align: center;
+        }
+
+        .point-history-table {
+            margin: 20px 0;
+            width: 100%;
+            border-collapse: collapse;
+            table-layout: fixed;
+        }
+
+        .point-history-table col {
+            width: 33.33%;
+        }
+
+        .point-history-table tr {
+            border-bottom: 1px solid #ccc;
+        }
+
+        .point-history-table td {
+            padding: 15px;
+        }
+
+        .point {
+            font-weight: bold;
+            font-size: 16px;
+        }
+
+        .point-usage {
+            font-size: 14px;
+            color: #303030;
+            text-align: right;
+        }
+
+        .point-history-table td:last-child {
+            color: #888;
+            font-size: 14px;
+            text-align: right;
+        }
+    </style>
+</head>
+<body>
+<section class="point-history-container">
+    <h2>포인트 내역</h2>
+    <div class="no-point-history" th:if="${#lists.isEmpty(pointHistoryList)}">
+        <p>포인트 충전 / 이용 내역이 없습니다.</p>
+    </div>
+    <table class="point-history-table" th:if="${!#lists.isEmpty(pointHistoryList)}">
+        <tbody>
+        <tr th:each="history : ${pointHistoryList}">
+            <td>
+                <span class="point"
+                      th:classappend="${history.isPlus} ? 'plus' : 'minus'"
+                      th:text="${history.isPlus} ? ${history.pointAmount} + 'P 충전' : ${history.pointAmount} + 'P 사용'">
+                    100P 사용
+                </span>
+            </td>
+            <td>
+                <span class="point-usage"
+                      th:text="${history.isPlus} ? ${history.pointAmount / 100 * 2000} + '원 결제' : ${history.usageDescription}">
+                    포인트 사용처
+                </span>
+            </td>
+            <td th:text="${#dates.format(history.createdAt, 'yyyy-MM-dd HH:mm:ss')}">
+                2024.11.27 14:58
+            </td>
+        </tr>
+        </tbody>
+    </table>
+</section>
+</body>
+</html>
