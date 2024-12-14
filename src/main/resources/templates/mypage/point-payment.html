@@ -2,7 +2,154 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Title</title>
+    <title>Point Payment</title>
+    <style>
+        /* 모달 백드롭 */
+        .modal-backdrop {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 1000;
+            display: none;
+        }
+
+        /* 모달 창 */
+        .modal {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 400px;
+            background: #fff;
+            border-radius: 8px;
+            z-index: 1001;
+            /*display: none;*/
+            border: 1px solid #ccc;
+        }
+
+        .modal-content {
+            padding: 2rem;
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid #eee;
+        }
+
+        .modal-header h3 {
+            margin: 0;
+            font-size: 18px;
+        }
+
+        .close {
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
+            font-size: 1.5rem;
+            cursor: pointer;
+            color: #666;
+            transition: color 0.2s;
+        }
+
+        .modal-body .current-points {
+            margin-bottom: 15px;
+            font-size: 16px;
+            margin-left: 200px;
+        }
+
+        .point-amount {
+            font-weight: bold;
+        }
+
+        .point-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 20px;
+            table-layout: fixed;
+            background-color: #f9f9f9;
+        }
+
+        .point-table th:first-child,
+        .point-table td:first-child {
+            width: 50%;
+        }
+
+        .point-table th:last-child,
+        .point-table td:last-child {
+            width: 50%;
+            text-align: center;
+        }
+
+        .point-table th,
+        .point-table td {
+            padding: 10px;
+            border: 1px solid #ccc;
+            text-align: center;
+        }
+
+        .point-table td:first-child {
+            text-align: left;
+            padding-left: 20px;
+        }
+
+        .point-table input {
+            margin-right: 10px;
+        }
+
+        .actions {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 20px;
+        }
+
+        .coupon-display {
+            margin-top: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            font-size: 14px;
+        }
+
+        .coupon-display select, .final-price-display span {
+            margin-left: 10px;
+            font-weight: bold;
+        }
+
+        #couponSelect {
+            padding: 5px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            width: 250px;
+        }
+
+        label {
+            font-size: 16px;
+        }
+
+        .actions .btn {
+            padding: 7px 15px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            text-align: center;
+        }
+
+        .btn-primary {
+            background: #007bff;
+            color: #fff;
+        }
+
+        .btn-primary:hover {
+            background-color: #0056b3;
+        }
+    </style>
 </head>
 <body>
 <main>
@@ -14,11 +161,13 @@
         <div class="modal-content">
             <span class="close" onclick="closeModal()">&times;</span>
             <div class="modal-header">
-                <h3>포인트 결제창</h3>
+                <h3>포인트 결제</h3>
             </div>
             <div class="modal-body">
                 <div class="current-points">
-                    <strong>현재 포인트:</strong> -----
+                    <span class="point-label"> 내 포인트:
+                        <span class="point-amount" th:text="${point.balance} + 'P'">200P</span>
+                    </span>
                 </div>
                 <form id="pointForm">
                     <table class="point-table">
@@ -30,30 +179,41 @@
                         </thead>
                         <tbody>
                         <tr>
-                            <td><input name="point" type="radio" value="10"> 10P</td>
-                            <td>1000</td>
+                            <td><input name="point" onclick="activateCoupon()" type="radio" value="10"> 10P</td>
+                            <td>1,000원</td>
                         </tr>
                         <tr>
-                            <td><input name="point" type="radio" value="30"> 30P</td>
-                            <td>3000</td>
+                            <td><input name="point" onclick="activateCoupon()" type="radio" value="30"> 30P</td>
+                            <td>3,000원</td>
                         </tr>
                         <tr>
-                            <td><input name="point" type="radio" value="50"> 50P</td>
-                            <td>5000</td>
+                            <td><input name="point" onclick="activateCoupon()" type="radio" value="50"> 50P</td>
+                            <td>5,000원</td>
                         </tr>
                         <tr>
-                            <td><input name="point" type="radio" value="100"> 100P</td>
-                            <td>10000</td>
+                            <td><input name="point" onclick="activateCoupon()" type="radio" value="100"> 100P</td>
+                            <td>10,000원</td>
                         </tr>
                         <tr>
-                            <td><input name="point" type="radio" value="500"> 500P</td>
-                            <td>50000</td>
+                            <td><input name="point" onclick="activateCoupon()" type="radio" value="500"> 500P</td>
+                            <td>50,000원</td>
                         </tr>
                         </tbody>
                     </table>
+                    <div class="coupon-display" id="couponDisplay">
+                        <label>쿠폰 적용</label>
+                        <select disabled id="couponSelect">
+                            <option value="">쿠폰를 선택하세요</option>
+                            <option value="1000">1000원 할인</option>
+                            <option value="3000">3000원 할인</option>
+                            <option value="5000">5000원 할인</option>
+                        </select>
+                    </div>
                     <div class="actions">
-                        <button class="btn btn-secondary" onclick="applyCoupon()" type="button">쿠폰 적용</button>
-                        <button class="btn btn-secondary" onclick="calculatePrice()" type="button">최종 가격</button>
+                        <div class="final-price-display">
+                            <label>최종 가격:</label>
+                            <span id="finalPrice">1,000원</span>
+                        </div>
                         <button class="btn btn-primary" type="submit">결제</button>
                     </div>
                 </form>
@@ -62,4 +222,47 @@
     </div>
 </main>
 </body>
+<script>
+    function openModal() {
+        document.getElementById('modalBackdrop').style.display = 'block';
+        document.getElementById('pointPaymentModal').style.display = 'block';
+    }
+
+    function closeModal() {
+        document.getElementById('modalBackdrop').style.display = 'none';
+        document.getElementById('pointPaymentModal').style.display = 'none';
+    }
+
+    function applyCoupon() {
+        alert('쿠폰이 적용되었습니다.');
+    }
+
+    function calculatePrice() {
+        alert('최종 가격이 계산되었습니다.');
+    }
+
+    function activateCoupon() {
+        document.getElementById('couponSelect').disabled = false;
+        calculateFinalPrice();
+    }
+
+    document.getElementById('couponSelect').addEventListener('change', calculateFinalPrice);
+
+    function calculateFinalPrice() {
+        const selectedPoint = document.querySelector('input[name="point"]:checked');
+        const selectedCoupon = document.getElementById('couponSelect').value;
+
+        if (!selectedPoint) {
+            document.getElementById('finalPrice').innerText = "0원";
+            return;
+        }
+
+        const pointPrice = parseInt(selectedPoint.nextSibling.nodeValue.trim().replace('P', '').replace(',', '')) || 0;
+        const discount = parseInt(selectedCoupon) || 0;
+        const finalPrice = Math.max(0, pointPrice - discount);
+
+        document.getElementById('finalPrice').innerText = `${finalPrice.toLocaleString()}원`;
+    }
+
+</script>
 </html>
