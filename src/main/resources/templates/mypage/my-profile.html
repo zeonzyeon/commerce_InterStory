@@ -1,0 +1,416 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Profile Page</title>
+    <style>
+        /* 헤더 스타일 */
+        .header {
+            background: #fff;
+            padding: 1rem 2rem;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .header-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 2rem;
+        }
+
+        .logo-area {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            min-width: 150px;
+        }
+
+        .logo-image {
+            width: 32px;
+            height: 32px;
+            object-fit: cover;
+        }
+
+        .logo-text {
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: #111;
+        }
+
+        .search-bar {
+            flex: 1;
+            max-width: 400px;
+            position: relative;
+        }
+
+        /* 반응형 처리 */
+        @media (max-width: 768px) {
+            .header-content {
+                gap: 1rem;
+            }
+
+            .logo-area {
+                min-width: auto;
+            }
+
+            .logo-text {
+                font-size: 1.1rem;
+            }
+
+            .search-bar {
+                max-width: 200px;
+            }
+        }
+
+        .search-bar {
+            flex: 0 1 400px;
+            position: relative;
+        }
+
+        .search-bar input {
+            width: 100%;
+            padding: 0.75rem 1rem;
+            border: 1px solid #ddd;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            background: #f8f9fa;
+        }
+
+        .search-bar input:focus {
+            outline: none;
+            border-color: #333;
+            background: #fff;
+        }
+
+        .user-profile {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .user-profile img {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            object-fit: cover;
+        }
+
+        /* 마이페이지 메뉴 */
+        .user-menu {
+            padding: 1rem;
+            background: #fff;
+            border-radius: 8px;
+            margin-bottom: 1rem;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .menu-items {
+            display: flex;
+            gap: 2rem;
+        }
+
+        .menu-item {
+            text-decoration: none;
+            color: #666;
+            padding: 0.5rem 1rem;
+            border-radius: 4px;
+            transition: all 0.2s;
+            cursor: pointer;
+        }
+
+        .menu-item:hover {
+            background: #f8f9fa;
+            color: #111;
+        }
+
+        .menu-item.active {
+            color: #111;
+            font-weight: 600;
+        }
+
+        /*메인 스타일*/
+        .my-profile-container {
+            /*max-height: 950px;*/
+            padding: 20px 180px;
+            background-color: #eeeeee;
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+            border-radius: 10px;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .profile-section {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px;
+            border: 1px solid #ccc;
+            border-radius: 10px;
+            background-color: #f9f9f9;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+
+        .profile-info {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .profile-picture {
+            width: 50px;
+            height: 50px;
+            background-color: #d3d3d3;
+            border-radius: 50%;
+            margin-right: 10px;
+        }
+
+        .profile-name {
+            font-size: 16px;
+            color: #333;
+        }
+
+        .nickname {
+            font-weight: bold;;
+            font-size: 16px;
+        }
+
+        .profile-buttons {
+            display: flex;
+            gap: 10px;
+        }
+
+        button {
+            display: inline-block;
+            padding: 5px 10px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            text-decoration: none;
+            font-size: 14px;
+            color: #333;
+            background-color: #fff;
+            text-align: center;
+        }
+
+        button:hover {
+            background-color: #f0f0f0;
+            border-color: #999;
+        }
+
+        /*결제 섹션 스타일*/
+        .payment-settings {
+            padding: 20px;
+            border: 1px solid #ccc;
+            border-radius: 8px;
+            background-color: #f9f9f9;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+
+        .payment-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px 0;
+            border-bottom: 1px solid #eee;
+        }
+
+        .payment-row:last-child {
+            border-bottom: none;
+        }
+
+        .payment-label {
+            font-size: 14px;
+            color: #333;
+        }
+
+        .point-amount {
+            font-weight: bold;
+            font-size: 16px;
+        }
+
+        .subscription-date {
+            font-weight: bold;
+            font-size: 16px;
+        }
+
+        .payment-action {
+            padding: 5px 10px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            background-color: rgba(51, 51, 51, 0.8);
+            color: white;
+            font-size: 14px;
+            cursor: pointer;
+            transition: background-color 0.2s, color 0.2s;
+        }
+
+        .payment-action:hover {
+            background-color: #333;
+        }
+
+        .payment-action:active {
+            background-color: #ddd;
+        }
+
+        /* 버튼 스타일별 색상 */
+        .payment-action.payment {
+            border: 1px solid #007bff;
+            background-color: #007bff;
+            color: #fff;
+        }
+
+        .payment-action.payment:hover {
+            background-color: #0056b3;
+        }
+
+        .payment-action.cancel {
+            border: 1px solid #dc3545;
+            background-color: #dc3545;
+            color: #fff;
+        }
+
+        .payment-action.cancel:hover {
+            background-color: #a71d2a;
+        }
+
+        .payment-action.change {
+            border: 1px solid #28a745;
+            background-color: #28a745;
+            color: #fff;
+        }
+
+        .payment-action.change:hover {
+            background-color: #1c7c31;
+        }
+
+        .content-section {
+            display: flex;
+            justify-content: space-between;
+            gap: 20px;
+            width: 100%;
+        }
+
+        .works, .comments {
+            flex: 1;
+            width: 45%;
+            border: 1px solid #ccc;
+            border-radius: 10px;
+            padding: 10px 20px;
+            background-color: #f9f9f9;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);a
+        }
+
+        .works h3, .comments h3 {
+            font-size: 17px;
+        }
+
+        ul {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        ul li {
+            margin-bottom: 10px;
+            font-size: 14px;
+            color: #333;
+        }
+
+    </style>
+</head>
+<body>
+<!-- 헤더 -->
+<header class="header">
+    <div class="header-content">
+        <div class="logo-area">
+            <img alt="로고" class="logo-image" th:src="@{/images/logo.png}">
+            <span class="logo-text">InterStory</span>
+        </div>
+        <div class="search-bar">
+            <input placeholder="제목/작가로 검색" type="text">
+        </div>
+        <div class="user-profile">
+            <span th:text="${userNickname}">닉네임</span>
+            <img alt="프로필" src="/images/default-profile.png" th:src="${userProfileImage}">
+        </div>
+    </div>
+</header>
+<main class="my-profile-container">
+    <!-- 마이페이지 메뉴 -->
+    <div class="user-menu">
+        <div class="menu-items">
+            <a class="menu-item active" href="">프로필</a>
+            <a class="menu-item" href="">관심 작품</a>
+            <a class="menu-item" href="">열람 작품</a>
+            <a class="menu-item" href="/users/point-history">포인트 내역</a>
+            <a class="menu-item" href="">쿠폰</a>
+            <a class="menu-item" href="">회원 정보 관리</a>
+        </div>
+    </div>
+    <div class="profile-section">
+        <div class="profile-info">
+            <div class="profile-picture"></div>
+            <span class="profile-name">
+                <span class="nickname" th:text="${user.nickname}">닉네임</span> 님의 프로필
+            </span>
+        </div>
+        <div class="profile-buttons">
+            <button href="/profile">프로필</button>
+            <button href="/works">연재 작품</button>
+            <button href="/comments">댓글</button>
+        </div>
+    </div>
+    <div class="payment-settings">
+        <div class="payment-row">
+            <span class="payment-label">내 포인트 :
+        <span class="point-amount" th:text="${point.balance} + 'P'">200P</span>
+            </span>
+            <button class="payment-action payment">결제</button>
+        </div>
+        <div class="payment-row">
+            <span class="payment-label">구독 만료일 :
+                <span class="subscription-date"
+                      th:text="${#dates.format(subscribe.endAt, 'yyyy-MM-dd')}">2025.11.27</span>
+            </span>
+            <button class="payment-action payment">결제</button>
+        </div>
+        <div class="payment-row">
+            <span class="payment-label">결제 수단 변경</span>
+            <button class="payment-action change">변경</button>
+        </div>
+        <div class="payment-row">
+            <span class="payment-label">포인트 자동 결제</span>
+            <button class="payment-action cancel">취소</button>
+        </div>
+        <div class="payment-row">
+            <span class="payment-label">정기 구독 서비스</span>
+            <button class="payment-action cancel">취소</button>
+        </div>
+    </div>
+    <div class="content-section">
+        <div class="works">
+            <h3>연재한 작품</h3>
+            <ul>
+                <li th:each="work : ${works}" th:text="${work.title}"></li>
+                <li th:if="${#lists.isEmpty(works)}">연재한 작품이 없습니다</li>
+            </ul>
+        </div>
+        <div class="comments">
+            <h3>작성한 댓글</h3>
+            <ul>
+                <li th:each="comment : ${comments}" th:text="${comment.content}"></li>
+                <li th:if="${#lists.isEmpty(comments)}">작성한 댓글이 없습니다</li>
+            </ul>
+        </div>
+    </div>
+</main>
+</body>
+</html>

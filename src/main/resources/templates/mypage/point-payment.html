@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+<main>
+    <!-- 모달 백드롭 -->
+    <div class="modal-backdrop" id="modalBackdrop" onclick="closeModal()"></div>
+
+    <!-- 포인트 결제 모달 -->
+    <div class="modal" id="pointPaymentModal">
+        <div class="modal-content">
+            <span class="close" onclick="closeModal()">&times;</span>
+            <div class="modal-header">
+                <h3>포인트 결제창</h3>
+            </div>
+            <div class="modal-body">
+                <div class="current-points">
+                    <strong>현재 포인트:</strong> -----
+                </div>
+                <form id="pointForm">
+                    <table class="point-table">
+                        <thead>
+                        <tr>
+                            <th>포인트</th>
+                            <th>가격</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr>
+                            <td><input name="point" type="radio" value="10"> 10P</td>
+                            <td>1000</td>
+                        </tr>
+                        <tr>
+                            <td><input name="point" type="radio" value="30"> 30P</td>
+                            <td>3000</td>
+                        </tr>
+                        <tr>
+                            <td><input name="point" type="radio" value="50"> 50P</td>
+                            <td>5000</td>
+                        </tr>
+                        <tr>
+                            <td><input name="point" type="radio" value="100"> 100P</td>
+                            <td>10000</td>
+                        </tr>
+                        <tr>
+                            <td><input name="point" type="radio" value="500"> 500P</td>
+                            <td>50000</td>
+                        </tr>
+                        </tbody>
+                    </table>
+                    <div class="actions">
+                        <button class="btn btn-secondary" onclick="applyCoupon()" type="button">쿠폰 적용</button>
+                        <button class="btn btn-secondary" onclick="calculatePrice()" type="button">최종 가격</button>
+                        <button class="btn btn-primary" type="submit">결제</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</main>
+</body>
+</html>

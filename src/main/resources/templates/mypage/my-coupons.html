@@ -3,6 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <title>My Coupons</title>
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
     <style>
         /* 헤더 스타일 */
         .header {
@@ -138,8 +139,7 @@
 
         /*메인 스타일*/
         .my-coupons-container {
-            /*max-height: 950px;*/
-            padding: 20px 360px;
+            padding: 20px 180px;
             background-color: #eeeeee;
             border-radius: 10px;
             box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
@@ -150,15 +150,18 @@
             align-items: center;
             justify-content: space-between;
             border: 1px solid #ccc;
-            padding: 10px 20px;
-            width: 500px;
-            margin: 30px auto;
+            padding: 15px 20px;
+            margin: 20px auto;
             gap: 20px;
+            border-radius: 10px;
+            max-width: 840px;
+            background-color: #f9f9f9;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
         }
 
         .coupon-register label {
             font-size: 14px;
-            margin-right: 10px;
+            margin-top: 8px;
         }
 
         .coupon-register input {
@@ -171,10 +174,12 @@
         }
 
         .coupon-register button {
-            height: 30px;
-            padding: 5px 20px;
-            border: none;
-            border-radius: 10px;
+            display: inline-block;
+            padding: 5px 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            font-size: 14px;
+            text-align: center;
             cursor: pointer;
             color: white;
             background-color: rgba(51, 51, 51, 0.8);
@@ -187,22 +192,37 @@
         .my-coupons-container h2 {
             text-align: left;
             font-size: 20px;
-            margin-top: 40px;
+            margin-top: 20px;
+            font-weight: bold;
         }
 
         .no-coupon {
             display: flex;
             justify-content: center;
             align-items: center;
-            height: 50vh;
+            height: 40vh;
             text-align: center;
+            background-color: #f9f9f9;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            border: 1px solid #ccc;
+            border-radius: 10px;
+            margin: 20px auto;
+        }
+
+        .my-coupons {
+            height: 60vh;
+            border: 1px solid #ccc;
+            border-radius: 10px;
+            background-color: #f9f9f9;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            margin-bottom: 20px;
+            padding: 0 20px;
         }
 
         .coupon-table {
             margin: 20px 0;
             width: 100%;
-            border-collapse: collapse;
-            table-layout: fixed;
+            table-layout: fixed
         }
 
         .coupon-table tr {
@@ -255,7 +275,8 @@
             <a class="menu-item" href="">프로필</a>
             <a class="menu-item" href="">관심 작품</a>
             <a class="menu-item" href="">열람 작품</a>
-            <a class="menu-item active" href="/users/point-history">포인트 내역</a>
+            <a class="menu-item" href="/users/point-history">포인트 내역</a>
+            <a class="menu-item active" href="">쿠폰</a>
             <a class="menu-item" href="">회원 정보 관리</a>
         </div>
     </div>
@@ -268,19 +289,36 @@
     <div class="no-coupon" th:if="${#lists.isEmpty(couponList)}">
         <p>보유한 쿠폰이 없습니다.</p>
     </div>
-    <table class="coupon-table" th:if="${!#lists.isEmpty(couponList)}">
-        <tbody>
-        <tr th:each="history : ${couponList}">
-            <td>
-                <span class="coupon-name" th:text="${coupon.name}">쿠폰 이름</span>
-                <span class="coupon-effect" th:text="${coupon.couponEffect}">쿠폰 효과</span>
-            </td>
-            <td th:text="${#dates.format(coupon.expiredAt, 'yyyy-MM-dd')}">
-                2025.11.27
-            </td>
-        </tr>
-        </tbody>
-    </table>
+    <div class="my-coupons">
+        <table class="coupon-table" th:if="${!#lists.isEmpty(couponList)}">
+            <tbody>
+            <tr th:each="history : ${couponList}">
+                <td>
+                    <span class="coupon-name" th:text="${coupon.name}">쿠폰 이름</span>
+                    <span class="coupon-effect" th:text="${coupon.couponEffect}">쿠폰 효과</span>
+                </td>
+                <td th:text="${#dates.format(coupon.expiredAt, 'yyyy-MM-dd')}">
+                    2025.11.27
+                </td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+    <nav th:if="${planList != null && planList.totalPages > 1}">
+        <ul class="pagination justify-content-center">
+            <li class="page-item" th:classappend="${currentPage == 1 ? 'disabled' : ''}">
+                <a class="page-link" th:href="@{/admin/plans(page=${currentPage - 1})}">&laquo;</a>
+            </li>
+            <li class="page-item"
+                th:classappend="${pageNum == currentPage ? 'active' : ''}"
+                th:each="pageNum : ${#numbers.sequence(1, planList.totalPages)}">
+                <a class="page-link" th:href="@{/admin/plans(page=${pageNum})}" th:text="${pageNum}"></a>
+            </li>
+            <li class="page-item" th:classappend="${currentPage == planList.totalPages ? 'disabled' : ''}">
+                <a class="page-link" th:href="@{/admin/plans(page=${currentPage + 1})}">&raquo;</a>
+            </li>
+        </ul>
+    </nav>
 </main>
 </body>
 </html>
