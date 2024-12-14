@@ -4,7 +4,7 @@ import java.util.Optional;
 
 import com.app.interstory.novel.domain.entity.Novel;
 
-public interface NovelRepositoryCustom {
+public interface NovelRepositoryQueryDslCustom {
 
 	Optional<Novel> findByNovelWithUser(Long novelId);
 

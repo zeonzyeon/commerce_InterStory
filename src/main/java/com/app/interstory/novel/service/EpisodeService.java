@@ -12,11 +12,11 @@ import com.app.interstory.novel.domain.entity.EpisodeLike;
 import com.app.interstory.novel.domain.entity.Novel;
 import com.app.interstory.novel.dto.request.EpisodeRequestDTO;
 import com.app.interstory.novel.dto.response.EpisodeResponseDTO;
-import com.app.interstory.novel.dto.response.NovelResponseDto;
+import com.app.interstory.novel.dto.response.MayPageNovelResponseDto;
 import com.app.interstory.novel.repository.CartItemRepository;
 import com.app.interstory.novel.repository.EpisodeLikeRepository;
 import com.app.interstory.novel.repository.EpisodeRepository;
-import com.app.interstory.novel.repository.NovelRepository;
+import com.app.interstory.novel.repository.NovelRepositoryQueryDsl;
 import com.app.interstory.user.domain.entity.CartItem;
 import com.app.interstory.user.domain.entity.Point;
 import com.app.interstory.user.domain.entity.User;
@@ -28,7 +28,7 @@ import lombok.RequiredArgsConstructor;
 @Service
 @RequiredArgsConstructor
 public class EpisodeService {
-	private final NovelRepository novelRepository;
+	private final NovelRepositoryQueryDsl novelRepository;
 	private final EpisodeRepository episodeRepository;
 	private final UserRepository userRepository;
 	private final PointRepository pointRepository;
@@ -225,7 +225,7 @@ public class EpisodeService {
 	}
 
 	//소설 정보 조회 - user(작가) fetch join
-	public NovelResponseDto findByNovelId(Long novelId) {
+	public MayPageNovelResponseDto findByNovelId(Long novelId) {
 
 		Novel novel = novelRepository.findByNovelWithUser(novelId)
 			.orElseThrow(() -> new IllegalArgumentException("소설 정보가 없습니다"));
@@ -235,8 +235,8 @@ public class EpisodeService {
 
 	//convert
 
-	private NovelResponseDto novelToResponseDto(Novel novel) {
-		return NovelResponseDto.builder()
+	private MayPageNovelResponseDto novelToResponseDto(Novel novel) {
+		return MayPageNovelResponseDto.builder()
 			.id(novel.getNovelId())
 			.tag(novel.getTag().name())
 			.title(novel.getTitle())

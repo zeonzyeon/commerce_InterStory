@@ -9,7 +9,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class NovelResponseDto {
+public class MayPageNovelResponseDto {
 	private Long id;
 	private String title;
 	private String author;
