@@ -11,7 +11,7 @@ import com.app.interstory.novel.domain.entity.Episode;
 import com.app.interstory.novel.domain.entity.Novel;
 
 @Repository
-public interface EpisodeRepository extends JpaRepository<Episode, Long> {
+public interface EpisodeRepository extends JpaRepository<Episode, Long>, EpisodeRepositoryCustom {
 	Integer countByNovel(Novel novel);
 
 	@Query(value = """
@@ -23,5 +23,7 @@ public interface EpisodeRepository extends JpaRepository<Episode, Long> {
 		        novel_id = :novelId
 		        AND episode_id = :episodeId
 		""", nativeQuery = true)
-	Map<String, Object> findRowNumberByNovelIdAndEpisodeId(@Param("novelId") Long novelId, @Param("episodeId") Long episodeId);
+	Map<String, Object> findRowNumberByNovelIdAndEpisodeId(@Param("novelId") Long novelId,
+		@Param("episodeId") Long episodeId);
+
 }

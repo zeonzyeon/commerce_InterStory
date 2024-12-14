@@ -10,7 +10,7 @@ import org.springframework.stereotype.Repository;
 import com.app.interstory.novel.domain.entity.Novel;
 
 @Repository
-public interface NovelRepository extends JpaRepository<Novel, Long> {
+public interface NovelRepository extends JpaRepository<Novel, Long>, NovelRepositoryCustom {
 	@Query("""
 		SELECT n
 		FROM Novel n
@@ -20,4 +20,5 @@ public interface NovelRepository extends JpaRepository<Novel, Long> {
 		ORDER BY MAX(e.publishedAt) DESC
 		""")
 	Page<Novel> findNovelsSortedByLatestEpisode(@Param("userId") Long userId, Pageable pageable);
+
 }
