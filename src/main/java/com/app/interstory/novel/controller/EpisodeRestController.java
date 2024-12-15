@@ -1,9 +1,9 @@
 package com.app.interstory.novel.controller;
 
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Sort;
 import java.util.Map;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.app.interstory.novel.dto.request.EpisodeRequestDTO;
@@ -23,12 +24,10 @@ import com.app.interstory.user.domain.CustomUserDetails;
 
 import lombok.RequiredArgsConstructor;
 
-import lombok.extern.slf4j.Slf4j;
-
 @RestController
 @RequestMapping("api/novels/{novelId}/episodes")
 @RequiredArgsConstructor
-public class EpisodeController {
+public class EpisodeRestController {
 
 	private final EpisodeService episodeService;
 
