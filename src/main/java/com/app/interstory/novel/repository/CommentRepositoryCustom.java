@@ -7,5 +7,7 @@ import org.springframework.data.domain.Pageable;
 import com.app.interstory.novel.domain.entity.Comment;
 
 public interface CommentRepositoryCustom {
+
 	List<Comment> findTopCommentsByEpisodeId(Long episodeId, Pageable pageable);
+
 }

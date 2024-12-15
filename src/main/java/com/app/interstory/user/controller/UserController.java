@@ -8,7 +8,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestParam;
 
-import com.app.interstory.novel.dto.response.MayPageNovelResponseDto;
+import com.app.interstory.novel.dto.response.MyPageNovelResponseDto;
 import com.app.interstory.novel.service.EpisodeService;
 import com.app.interstory.user.domain.CustomUserDetails;
 import com.app.interstory.user.domain.entity.User;
@@ -77,7 +77,7 @@ public class UserController {
 		@PathVariable Long novelId,
 		Model model
 	) {
-		MayPageNovelResponseDto novel = episodeService.findByNovelId(novelId);
+		MyPageNovelResponseDto novel = episodeService.findByNovelId(novelId);
 		model.addAttribute("novel", novel);
 
 		return "mypage/ai-reaction";

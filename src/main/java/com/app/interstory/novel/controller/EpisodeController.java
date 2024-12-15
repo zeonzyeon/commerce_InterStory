@@ -106,8 +106,6 @@ public class EpisodeController {
 	) {
 
 		Page<EpisodeResponseDTO> episodes = episodeService.getEpisodesByNovelId(novelId, page, direction);
-		log.info("episodes******* ::::{}", episodes.toString());
-		log.info("episodes******* ::::{}", episodes.getContent().toString());
 
 		return ResponseEntity.ok(episodes);
 	}

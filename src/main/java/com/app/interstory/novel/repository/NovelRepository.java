@@ -10,7 +10,7 @@ import org.springframework.stereotype.Repository;
 import com.app.interstory.novel.domain.entity.Novel;
 
 @Repository
-public interface NovelRepositoryQuery extends JpaRepository<Novel, Long>, NovelRepositoryQueryDslCustom {
+public interface NovelRepository extends JpaRepository<Novel, Long>, NovelRepositoryCustom {
 	@Query("""
 		SELECT n
 		FROM Novel n

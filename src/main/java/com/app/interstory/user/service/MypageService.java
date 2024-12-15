@@ -17,7 +17,7 @@ import com.app.interstory.novel.domain.entity.Tag;
 import com.app.interstory.novel.repository.CommentRepository;
 import com.app.interstory.novel.repository.EpisodeRepository;
 import com.app.interstory.novel.repository.FavoriteNovelRepository;
-import com.app.interstory.novel.repository.NovelRepositoryQueryDsl;
+import com.app.interstory.novel.repository.NovelRepository;
 import com.app.interstory.novel.repository.RecentNovelRepository;
 import com.app.interstory.novel.repository.TagRepository;
 import com.app.interstory.payment.domain.entity.Subscribe;
@@ -61,7 +61,7 @@ public class MypageService {
 	private final FavoriteNovelRepository favoriteNovelRepository;
 	private final RecentNovelRepository recentNovelRepository;
 	private final PointRepository pointRepository;
-	private final NovelRepositoryQueryDsl novelRepository;
+	private final NovelRepository novelRepository;
 	private final SettlementRepository settlementRepository;
 	private final CommentRepository commentRepository;
 	private final SubscribeRepository subscribeRepository;
