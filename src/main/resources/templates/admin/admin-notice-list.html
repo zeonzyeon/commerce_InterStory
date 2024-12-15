@@ -1,0 +1,370 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <meta content="width=device-width, initial-scale=1.0" name="viewport">
+  <title>공지사항 | InterStory</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, system-ui, Roboto, sans-serif;
+    }
+
+    body {
+      background: #f8f9fa;
+      color: #333;
+    }
+
+    /* 헤더 스타일 */
+    .header {
+      background: #fff;
+      padding: 1rem 2rem;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+
+    .header-content {
+      max-width: 1200px;
+      margin: 0 auto;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 2rem;
+    }
+
+    .logo-area {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      min-width: 150px;
+    }
+
+    .logo-image {
+      width: 32px;
+      height: 32px;
+      object-fit: cover;
+    }
+
+    .logo-text {
+      font-size: 1.25rem;
+      font-weight: 700;
+      color: #111;
+    }
+
+    .search-bar {
+      flex: 1;
+      max-width: 400px;
+      position: relative;
+    }
+
+    .search-bar input {
+      width: 100%;
+      padding: 0.75rem 1rem;
+      border: 1px solid #ddd;
+      border-radius: 20px;
+      font-size: 0.9rem;
+      background: #f8f9fa;
+    }
+
+    .search-bar input:focus {
+      outline: none;
+      border-color: #333;
+      background: #fff;
+    }
+
+    .user-profile {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+    }
+
+    .user-profile img {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      object-fit: cover;
+    }
+
+    /* 메인 컨텐츠 영역 */
+    .admin-nav {
+      max-width: 1200px;
+      margin: 2rem auto;
+      padding: 1rem;
+    }
+
+    /* 관리자 메뉴 */
+    .notice-menu {
+      padding: 1rem;
+      background: #fff;
+      border-radius: 8px;
+      margin-bottom: 1rem;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .menu-items {
+      display: flex;
+      gap: 2rem;
+    }
+
+    .menu-item {
+      text-decoration: none;
+      color: #666;
+      padding: 0.5rem 1rem;
+      border-radius: 4px;
+      transition: all 0.2s;
+      cursor: pointer;
+    }
+
+    .menu-item:hover {
+      background: #f8f9fa;
+      color: #111;
+    }
+
+    .menu-item.active {
+      color: #111;
+      font-weight: 600;
+    }
+
+    /* 공지사항 테이블 */
+    .notice-table-container {
+      background: #fff;
+      border-radius: 8px;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+      overflow: hidden;
+    }
+
+    .notice-table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+
+    .notice-table th,
+    .notice-table td {
+      padding: 1rem;
+      text-align: center;
+      border-bottom: 1px solid #eee;
+    }
+
+    .notice-table th:nth-child(1),
+    .notice-table td:nth-child(1) {
+      width: 15%;
+    }
+
+    .notice-table th:nth-child(2),
+    .notice-table td:nth-child(2) {
+      width: 70%;
+    }
+
+    .notice-table th:nth-child(3),
+    .notice-table td:nth-child(3) {
+      width: 15%;
+    }
+
+    .notice-table th {
+      background: #f8f9fa;
+      font-weight: 600;
+      color: #111;
+    }
+
+    .notice-table tr:hover {
+      background: #f8f9fa;
+    }
+
+    /* 버튼 스타일 */
+    .write-btn-container {
+      text-align: right;
+    }
+
+    .write-btn {
+      padding: 0.5rem 1rem;
+      background: #111;
+      color: #fff;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 0.9rem;
+    }
+
+    .write-btn:hover {
+      background: #333;
+    }
+
+    .load-more-btn {
+      display: block;
+      width: 100%;
+      padding: 1rem;
+      background: none;
+      border: none;
+      border-top: 1px solid #eee;
+      cursor: pointer;
+      color: #666;
+      font-size: 0.9rem;
+      transition: all 0.2s ease;
+    }
+
+    .load-more-btn:hover {
+      background: #f8f9fa;
+      color: #111;
+    }
+
+    /* 반응형 스타일 */
+    @media (max-width: 768px) {
+      .header {
+        padding: 1rem;
+      }
+
+      .search-bar {
+        max-width: 200px;
+      }
+
+      .admin-nav {
+        padding: 1rem;
+      }
+
+      .menu-items {
+        gap: 1rem;
+      }
+
+      .menu-item {
+        padding: 0.5rem;
+        font-size: 0.9rem;
+      }
+
+      .notice-table th,
+      .notice-table td {
+        padding: 0.75rem;
+        font-size: 0.9rem;
+      }
+    }
+  </style>
+</head>
+<body>
+<!-- 헤더 -->
+<header class="header">
+  <div class="header-content">
+    <div class="logo-area">
+      <img alt="로고" class="logo-image" th:src="@{/images/logo.png}">
+      <span class="logo-text">InterStory</span>
+    </div>
+    <div class="search-bar">
+      <input placeholder="제목/작가로 검색" type="text">
+    </div>
+    <div class="user-profile">
+      <span th:text="${userNickname}">닉네임</span>
+      <img alt="프로필" src="/images/default-profile.png" th:src="${userProfileImage}">
+    </div>
+  </div>
+</header>
+
+<!-- 메인 컨텐츠 -->
+<main class="admin-nav">
+  <!-- 관리자 메뉴 -->
+  <div class="notice-menu">
+    <div class="menu-items">
+      <a href="/admin/users" class="menu-item">유저 조회</a>
+      <a href="/admin/novels" class="menu-item">작품 관리</a>
+      <a href="/admin/coupons" class="menu-item">쿠폰 관리</a>
+      <a href="/admin/notices" class="menu-item active">공지사항</a>
+    </div>
+
+  </div>
+
+  <div class="write-btn-container">
+    <button class="write-btn">글쓰기</button>
+  </div>
+
+  <!-- 공지사항 테이블 -->
+  <div class="notice-table-container">
+    <table class="notice-table">
+      <thead>
+      <tr>
+        <th>제목</th>
+        <th>내용</th>
+        <th>작성일</th>
+      </tr>
+      </thead>
+      <tbody id="noticeTableBody">
+      <tr th:each="notice : ${noticeList.notices}"
+          class="notice-row"
+          th:onclick="|location.href='@{/admin/notices/{noticeId}(noticeId=${notice.noticeId})}'|"
+          style="cursor: pointer;">
+        <td>공지사항</td>
+        <td th:text="${notice.title}">공지사항 내용 길게길게...</td>
+        <td th:text="${notice.createdAt}">2024.11.27</td>
+      </tr>
+      </tbody>
+    </table>
+    <!-- 더보기 버튼 -->
+    <button id="loadMoreBtn" class="load-more-btn">더보기</button>
+  </div>
+</main>
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script th:inline="javascript">
+  $(document).ready(function () {
+    let currentPage = 1;
+    const totalPages = /*[[${noticeList.totalPage}]]*/ 1;
+
+    // 글쓰기 버튼 클릭 이벤트
+    $('.write-btn').click(function () {
+      window.location.href = '/admin/notice/write';
+    });
+
+    // 더보기 버튼 클릭 이벤트
+    $('#loadMoreBtn').click(function () {
+      currentPage++;
+      loadMoreNotices(currentPage);
+    });
+
+    // 더보기 기능 구현
+    function loadMoreNotices(page) {
+      $.ajax({
+        url: '/api/admin/notices',
+        type: 'GET',
+        data: {page: page},
+        success: function (response) {
+          // 새로운 공지사항을 테이블에 추가
+          appendNotices(response.notices);
+
+          // 마지막 페이지인 경우 더보기 버튼 숨김
+          if (page >= response.totalPage) {
+            $('#loadMoreBtn').hide();
+          }
+        },
+        error: function (error) {
+          console.error('공지사항을 불러오는 중 오류가 발생했습니다:', error);
+        }
+      });
+    }
+
+    // 공지사항 추가 함수
+    function appendNotices(notices) {
+      const tableBody = $('#noticeTableBody');
+
+      notices.forEach(function (notice) {
+        const row = `
+            <tr class="notice-row" onclick="location.href='/admin/notices/${notice.noticeId}'" style="cursor: pointer;">
+                <td>공지사항</td>
+                <td>${notice.title}</td>
+                <td>${notice.createdAt}</td>
+            </tr>
+        `;
+        tableBody.append(row);
+      });
+    }
+
+    // 초기 페이지가 마지막 페이지인 경우 더보기 버튼 숨김
+    if (currentPage >= totalPages) {
+      $('#loadMoreBtn').hide();
+    }
+  });
+</script>
+</body>
+</html>

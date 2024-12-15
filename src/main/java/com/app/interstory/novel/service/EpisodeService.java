@@ -12,6 +12,11 @@ import com.app.interstory.novel.domain.entity.EpisodeLike;
 import com.app.interstory.novel.domain.entity.Novel;
 import com.app.interstory.novel.dto.request.EpisodeRequestDTO;
 import com.app.interstory.novel.dto.response.EpisodeResponseDTO;
+import com.app.interstory.novel.domain.entity.Episode;
+import com.app.interstory.novel.domain.entity.EpisodeLike;
+import com.app.interstory.novel.domain.entity.Novel;
+import com.app.interstory.novel.dto.request.EpisodeRequestDTO;
+import com.app.interstory.novel.dto.response.EpisodeResponseDTO;
 import com.app.interstory.novel.dto.response.MyPageNovelResponseDto;
 import com.app.interstory.novel.repository.CartItemRepository;
 import com.app.interstory.novel.repository.EpisodeLikeRepository;
@@ -20,6 +25,7 @@ import com.app.interstory.novel.repository.NovelRepository;
 import com.app.interstory.user.domain.entity.CartItem;
 import com.app.interstory.user.domain.entity.Point;
 import com.app.interstory.user.domain.entity.User;
+import com.app.interstory.user.repository.CartItemRepository;
 import com.app.interstory.user.repository.PointRepository;
 import com.app.interstory.user.repository.UserRepository;
 
@@ -130,8 +136,7 @@ public class EpisodeService {
 			throw new RuntimeException("Invalid novel ID for the given episode.");
 		}
 
-		// 3. 에피소드 가격 정의
-		Long episodePrice = 500L; // 임시 포인트
+		Long episodePrice = 5L;
 
 		// 4. 포인트 차감
 		user.reducePointsForPurchase(episodePrice);
@@ -168,44 +173,30 @@ public class EpisodeService {
 	// 회차 추천
 	@Transactional
 	public String likeEpisode(Long userId, Long episodeId) {
-		// 사용자 조회
-		User user = userRepository.findById(userId)
-			.orElseThrow(() -> new RuntimeException("User not found"));
+		String afterLikeMessage;
 
 		// 에피소드 조회
 		Episode episode = episodeRepository.findById(episodeId)
 			.orElseThrow(() -> new RuntimeException("Episode not found"));
 
-		// 이미 추천했는지 확인
-		boolean exists = episodeLikeRepository.existsByUserAndEpisode(user, episode);
-		if (exists) {
-			return "이미 추천한 회차입니다.";
+		if (episodeLikeRepository.existsByUser_UserIdAndEpisode(userId, episode)) {
+			episodeLikeRepository.deleteByUserIdAndEpisode(userId, episode);
+			episode.decrementLikeCount();
+			afterLikeMessage = "회차 추천이 취소되었습니다.";
+		} else {
+			EpisodeLike episodeLike = EpisodeLike.builder()
+				.user(userRepository.findById(userId)
+					.orElseThrow(() -> new RuntimeException("User not found")))
+				.episode(episode)
+				.build();
+			episodeLikeRepository.save(episodeLike);
+			episode.incrementLikeCount();
+			afterLikeMessage = "회차를 추천했습니다.";
 		}
 
-		// 추천 추가
-		EpisodeLike episodeLike = EpisodeLike.builder()
-			.user(user)
-			.episode(episode)
-			.build();
-		episodeLikeRepository.save(episodeLike);
-
-		// 에피소드 추천 수 증가
-		episode = Episode.builder()
-			.episodeId(episode.getEpisodeId())
-			.novel(episode.getNovel())
-			.title(episode.getTitle())
-			.viewCount(episode.getViewCount())
-			.publishedAt(episode.getPublishedAt())
-			.thumbnailRenamedFilename(episode.getThumbnailRenamedFilename())
-			.thumbnailUrl(episode.getThumbnailUrl())
-			.likeCount(episode.getLikeCount() + 1) // 추천 수 증가
-			.content(episode.getContent())
-			.status(episode.getStatus())
-			.build();
 		episodeRepository.save(episode);
 
-		// 추천 취소 추가
-		return "회차를 추천했습니다.";
+		return afterLikeMessage;
 	}
 
 	//회차 목록

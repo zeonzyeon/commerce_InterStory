@@ -97,4 +97,15 @@ public class Episode {
 	public void markAsDeleted() {
 		this.status = false;
 	}
+
+	public void incrementLikeCount() {
+		this.likeCount++;
+	}
+
+	// 추천 감소
+	public void decrementLikeCount() {
+		if (this.likeCount > 0) {
+			this.likeCount--;
+		}
+	}
 }

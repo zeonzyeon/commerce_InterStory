@@ -85,7 +85,7 @@ tasks.withType(JavaCompile) {
 }
 
 sourceSets {
-    main.java.srcDirs += [ querydslSrcDir ]
+    main.java.srcDirs += [querydslSrcDir]
 }
 
 clean {

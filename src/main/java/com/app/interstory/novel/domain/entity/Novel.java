@@ -9,12 +9,17 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
+
+import java.sql.Timestamp;
 
 @Getter
 @Entity
 @Table(name = "novel")
 @NoArgsConstructor
 @AllArgsConstructor
+@EntityListeners(AuditingEntityListener.class)
 @Builder
 public class Novel {
 	private static final NovelStatus DEFAULT_STATUS = NovelStatus.DRAFT;
@@ -66,4 +71,36 @@ public class Novel {
 	@Column(name = "tag", nullable = false)
 	@Enumerated(EnumType.STRING)
 	private MainTag tag;
+
+	@Column(name = "published_at", nullable = false)
+	@CreatedDate
+	private Timestamp publishedAt;
+
+	public void update(
+		String title,
+		String description,
+		String plan,
+		String thumbnailRenamedFilename,
+		String thumbnailUrl,
+		MainTag tag,
+		NovelStatus status,
+		Boolean isFree
+	) {
+		this.title = title;
+		this.description = description;
+		this.plan = plan;
+		this.thumbnailRenamedFilename = thumbnailRenamedFilename;
+		this.thumbnailUrl = thumbnailUrl;
+		this.tag = tag;
+		this.status = status;
+		this.isFree = isFree;
+	}
+
+	public void updateStatus(NovelStatus status) {
+		this.status = status;
+	}
+
+	public void markAsDeleted() {
+		this.status = NovelStatus.DELETED;
+	}
 }

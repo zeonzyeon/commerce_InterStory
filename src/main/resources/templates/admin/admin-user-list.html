@@ -1,0 +1,648 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta content="width=device-width, initial-scale=1.0" name="viewport">
+    <title>유저 관리 | InterStory</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, system-ui, Roboto, sans-serif;
+        }
+
+        body {
+            background: #f8f9fa;
+            color: #333;
+        }
+
+        /* 헤더 스타일 */
+        .header {
+            background: #fff;
+            padding: 1rem 2rem;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .header-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 2rem;
+        }
+
+        .logo-area {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            min-width: 150px;
+        }
+
+        .logo-image {
+            width: 32px;
+            height: 32px;
+            object-fit: cover;
+        }
+
+        .logo-text {
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: #111;
+        }
+
+        .search-bar {
+            flex: 1;
+            max-width: 400px;
+            position: relative;
+        }
+
+        .search-bar input {
+            width: 100%;
+            padding: 0.75rem 1rem;
+            border: 1px solid #ddd;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            background: #f8f9fa;
+        }
+
+        .search-bar input:focus {
+            outline: none;
+            border-color: #333;
+            background: #fff;
+        }
+
+        .user-profile {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .user-profile img {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            object-fit: cover;
+        }
+
+        /* 관리자 메뉴 */
+        .admin-nav {
+            max-width: 1200px;
+            margin: 2rem auto;
+            padding: 1rem;
+        }
+
+        .notice-menu {
+            padding: 1rem;
+            background: #fff;
+            border-radius: 8px;
+            margin-bottom: 1rem;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .menu-items {
+            display: flex;
+            gap: 2rem;
+        }
+
+        .menu-item {
+            text-decoration: none;
+            color: #666;
+            padding: 0.5rem 1rem;
+            border-radius: 4px;
+            transition: all 0.2s;
+            cursor: pointer;
+        }
+
+        .menu-item:hover {
+            background: #f8f9fa;
+            color: #111;
+        }
+
+        .menu-item.active {
+            color: #111;
+            font-weight: 600;
+        }
+
+        /* 검색 컨테이너 */
+        .search-container {
+            background: #fff;
+            padding: 1rem;
+            border-radius: 8px;
+            margin-bottom: 1rem;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+        }
+
+        .search-form {
+            display: flex;
+            gap: 1rem;
+            align-items: center;
+        }
+
+        .form-select, .form-control {
+            padding: 0.75rem;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 0.9rem;
+            background: #f8f9fa;
+        }
+
+        .search-btn {
+            padding: 0.75rem 1.5rem;
+            background: #111;
+            color: #fff;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 0.9rem;
+        }
+
+        /* 유저 테이블 */
+        .user-table-container {
+            background: #fff;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+            overflow: hidden;
+        }
+
+        .user-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .user-table th,
+        .user-table td {
+            padding: 1rem;
+            text-align: center;
+            border-bottom: 1px solid #eee;
+        }
+
+        .user-table th {
+            background: #f8f9fa;
+            font-weight: 600;
+            color: #111;
+        }
+
+        .user-table tr:hover {
+            background: #f8f9fa;
+        }
+
+        /* 버튼 스타일 */
+        .btn {
+            padding: 0.5rem 1rem;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            transition: all 0.2s;
+        }
+
+        .btn-danger {
+            background: #dc3545;
+            color: white;
+        }
+
+        .btn-danger:hover {
+            background: #c82333;
+        }
+
+        .btn-success {
+            background: #28a745;
+            color: white;
+        }
+
+        .btn-success:hover {
+            background: #218838;
+        }
+
+        .btn-secondary {
+            background: #6c757d;
+            color: white;
+        }
+
+        .btn-secondary:hover {
+            background: #5a6268;
+        }
+
+        .load-more-btn {
+            display: block;
+            width: 100%;
+            padding: 1rem;
+            background: none;
+            border: none;
+            border-top: 1px solid #eee;
+            cursor: pointer;
+            color: #666;
+            font-size: 0.9rem;
+            transition: all 0.2s;
+        }
+
+        .load-more-btn:hover {
+            background: #f8f9fa;
+            color: #111;
+        }
+
+        /* 모달 스타일 */
+        .modal-backdrop {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 999;
+        }
+
+        .withdrawal-modal {
+            display: none;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 400px;
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+            z-index: 1000;
+        }
+
+        .withdrawal-modal-content {
+            padding: 2rem;
+        }
+
+        .withdrawal-modal-header {
+            margin-bottom: 2rem;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid #eee;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .withdrawal-modal-header h3 {
+            color: #111;
+            font-weight: 600;
+        }
+
+        .close {
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
+            font-size: 1.5rem;
+            cursor: pointer;
+            color: #666;
+            transition: color 0.2s;
+        }
+
+        .close:hover {
+            color: #111;
+        }
+
+        .withdrawal-textarea {
+            width: 100%;
+            min-height: 100px;
+            padding: 0.75rem;
+            margin: 0.5rem 0;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            resize: vertical;
+            font-size: 0.9rem;
+            background: #f8f9fa;
+        }
+
+        .withdrawal-textarea:focus {
+            outline: none;
+            border-color: #111;
+            background: #fff;
+        }
+
+        .withdrawal-modal-footer {
+            text-align: right;
+            display: flex;
+            gap: 0.5rem;
+            justify-content: flex-end;
+        }
+
+        /* 반응형 디자인 */
+        @media (max-width: 768px) {
+            .header {
+                padding: 1rem;
+            }
+
+            .menu-items {
+                gap: 1rem;
+            }
+
+            .menu-item {
+                padding: 0.5rem;
+                font-size: 0.9rem;
+            }
+
+            .withdrawal-modal {
+                width: 90%;
+                margin: 0 1rem;
+            }
+        }
+    </style>
+</head>
+<body>
+<!-- 헤더 -->
+<header class="header">
+    <div class="header-content">
+        <div class="logo-area">
+            <img alt="로고" class="logo-image" th:src="@{/images/logo.png}">
+            <span class="logo-text">InterStory</span>
+        </div>
+        <div class="search-bar">
+            <input placeholder="제목/작가로 검색" type="text">
+        </div>
+        <div class="user-profile">
+            <span th:text="${userNickname}">닉네임</span>
+            <img alt="프로필" src="/images/default-profile.png" th:src="${userProfileImage}">
+        </div>
+    </div>
+</header>
+
+<main class="admin-nav">
+    <!-- 관리자 메뉴 -->
+    <div class="notice-menu">
+        <div class="menu-items">
+            <a href="/admin/users" class="menu-item active">유저 조회</a>
+            <a href="/admin/novels" class="menu-item">작품 관리</a>
+            <a href="/admin/coupons" class="menu-item">쿠폰 관리</a>
+            <a href="/admin/notices" class="menu-item">공지사항</a>
+        </div>
+    </div>
+
+    <!-- 검색 폼 -->
+    <div class="search-container">
+        <form id="searchForm" class="search-form">
+            <select id="searchType" class="form-select">
+                <option value="nickname">닉네임</option>
+                <option value="email">이메일</option>
+            </select>
+            <input type="text"
+                   id="searchKeyword"
+                   class="form-control"
+                   style="flex: 1;"
+                   placeholder="검색어를 입력하세요">
+            <button type="submit" class="search-btn">검색</button>
+        </form>
+    </div>
+
+    <!-- 유저 목록 테이블 -->
+    <div class="user-table-container">
+        <table class="user-table">
+            <thead>
+            <tr>
+                <th>닉네임</th>
+                <th>이메일</th>
+                <th>포인트</th>
+                <th>상태</th>
+                <th>가입일</th>
+                <th>관리</th>
+            </tr>
+            </thead>
+            <tbody id="userTableBody">
+            <tr th:each="user : ${userList.users}">
+                <td th:text="${user.nickname}">닉네임</td>
+                <td th:text="${user.email}">이메일</td>
+                <td th:text="${user.point}">포인트</td>
+                <td>
+                   <span th:text="${user.isActivity ? '활성화' : '비활성화'}"
+                         th:class="${user.isActivity ? 'text-success' : 'text-danger'}">
+                   </span>
+                </td>
+                <td th:text="${user.createdAt}">가입일</td>
+                <td>
+                    <button th:if="${user.isActivity}"
+                            class="btn btn-danger"
+                            th:onclick="'openWithdrawalModal(' + ${user.userId} + ')'">
+                        비활성화
+                    </button>
+                    <button th:unless="${user.isActivity}"
+                            class="btn btn-success"
+                            th:onclick="'toggleUserStatus(' + ${user.userId} + ')'">
+                        활성화
+                    </button>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+        <button id="loadMoreBtn" class="load-more-btn">더보기</button>
+    </div>
+</main>
+
+<!-- 강퇴 모달 -->
+<div id="withdrawalModal" class="withdrawal-modal">
+    <div class="withdrawal-modal-content">
+        <div class="withdrawal-modal-header">
+            <h3>회원 강퇴</h3>
+            <span class="close" onclick="closeWithdrawalModal()">&times;</span>
+        </div>
+        <div class="withdrawal-modal-body">
+            <p>강퇴 사유를 입력해주세요.</p>
+            <textarea id="reasonDetail" class="withdrawal-textarea"
+                      placeholder="강퇴 사유를 상세히 입력해주세요."></textarea>
+        </div>
+        <div class="withdrawal-modal-footer">
+            <button class="btn btn-secondary" onclick="closeWithdrawalModal()">취소</button>
+            <button class="btn btn-danger" onclick="submitWithdrawal()">강퇴하기</button>
+        </div>
+    </div>
+</div>
+<div id="modalBackdrop" class="modal-backdrop"></div>
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script th:inline="javascript">
+    $(document).ready(function () {
+        let currentPage = 1;
+        const totalPages = /*[[${userList.totalPage}]]*/ 1;
+
+        // 더보기 버튼 클릭 이벤트
+        $('#loadMoreBtn').click(function () {
+            currentPage++;
+            loadMoreUsers(currentPage);
+        });
+
+        // 더보기 기능 구현
+        function loadMoreUsers(page) {
+            const searchType = $('#searchType').val();
+            const searchKeyword = $('#searchKeyword').val();
+
+            $.ajax({
+                url: '/api/admin/users/search',
+                type: 'GET',
+                data: {
+                    [searchType]: searchKeyword,
+                    page: page
+                },
+                success: function (response) {
+                    appendUsers(response.users);
+                    if (page >= response.totalPage) {
+                        $('#loadMoreBtn').hide();
+                    }
+                },
+                error: function () {
+                    console.error('유저 목록을 불러오는 중 오류가 발생했습니다.');
+                }
+            });
+        }
+
+        // 유저 목록 추가 함수
+        function appendUsers(users) {
+            const tableBody = $('#userTableBody');
+
+            users.forEach(function (user) {
+                const row = `
+                   <tr>
+                       <td>${user.nickname}</td>
+                       <td>${user.email}</td>
+                       <td>${user.point}</td>
+                       <td>
+                           <span class="${user.isActivity ? 'text-success' : 'text-danger'}">
+                               ${user.isActivity ? '활성화' : '비활성화'}
+                           </span>
+                       </td>
+                       <td>${user.createdAt}</td>
+                       <td>
+                           ${user.isActivity ?
+                    `<button class="btn btn-danger" onclick="openWithdrawalModal(${user.userId})">비활성화</button>` :
+                    `<button class="btn btn-success" onclick="toggleUserStatus(${user.userId})">활성화</button>`
+                }
+                       </td>
+                   </tr>
+               `;
+                tableBody.append(row);
+            });
+        }
+
+        // 초기 페이지가 마지막 페이지인 경우 더보기 버튼 숨김
+        if (currentPage >= totalPages) {
+            $('#loadMoreBtn').hide();
+        }
+
+        // 검색 폼 제출
+        $('#searchForm').on('submit', function (e) {
+            e.preventDefault();
+            const searchType = $('#searchType').val();
+            const searchKeyword = $('#searchKeyword').val();
+
+            if (!searchKeyword.trim()) {
+                alert('검색어를 입력해주세요.');
+                return;
+            }
+
+            currentPage = 1;
+            $.ajax({
+                url: '/api/admin/users/search',
+                type: 'GET',
+                data: {
+                    [searchType]: searchKeyword,
+                    page: currentPage
+                },
+                success: function (response) {
+                    $('#userTableBody').empty();
+                    appendUsers(response.users);
+                    if (response.totalPage > 1) {
+                        $('#loadMoreBtn').show();
+                    } else {
+                        $('#loadMoreBtn').hide();
+                    }
+                },
+                error: function () {
+                    alert('검색 중 오류가 발생했습니다.');
+                }
+            });
+        });
+    });
+
+    // 회원 활성화 토글 함수
+    function toggleUserStatus(userId) {
+        if (confirm('사용자의 상태를 변경하시겠습니까?')) {
+            $.ajax({
+                url: `/api/admin/users/${userId}/active`,
+                type: 'POST',
+                success: function () {
+                    alert('상태가 변경되었습니다.');
+                    location.reload();
+                },
+                error: function () {
+                    alert('상태 변경 중 오류가 발생했습니다.');
+                }
+            });
+        }
+    }
+
+    let currentUserId = null;
+
+    // 강퇴 모달 열기
+    function openWithdrawalModal(userId) {
+        currentUserId = userId;
+        document.getElementById('withdrawalModal').style.display = 'block';
+        document.getElementById('modalBackdrop').style.display = 'block';
+    }
+
+    // 강퇴 모달 닫기
+    function closeWithdrawalModal() {
+        document.getElementById('withdrawalModal').style.display = 'none';
+        document.getElementById('modalBackdrop').style.display = 'none';
+        document.getElementById('reasonDetail').value = '';
+        currentUserId = null;
+    }
+
+    // 강퇴 처리 함수
+    function submitWithdrawal() {
+        const reasonDetail = document.getElementById('reasonDetail').value;
+
+        if (!reasonDetail.trim()) {
+            alert('강퇴 사유를 입력해주세요.');
+            return;
+        }
+
+        const data = {
+            reason: "강퇴당한 회원",
+            reasonDetail: reasonDetail,
+            userId: currentUserId
+        };
+
+        $.ajax({
+            url: '/api/auth/withdrawal',
+            type: 'POST',
+            contentType: 'application/json',
+            data: JSON.stringify(data),
+            success: function () {
+                alert('회원이 강퇴되었습니다.');
+                closeWithdrawalModal();
+                location.reload();
+            },
+            error: function () {
+                alert('회원 강퇴 처리 중 오류가 발생했습니다.');
+            }
+        });
+    }
+
+    // ESC 키로 모달 닫기
+    document.addEventListener('keydown', function (e) {
+        if (e.key === 'Escape') {
+            closeWithdrawalModal();
+        }
+    });
+
+    // 모달 외부 클릭으로 닫기
+    document.getElementById('modalBackdrop').addEventListener('click', function (e) {
+        if (e.target === this) {
+            closeWithdrawalModal();
+        }
+    });
+</script>
+</body>
+</html>
