@@ -191,6 +191,27 @@
     function applySubscriptionCoupon() {
         alert("쿠폰이 적용되었습니다!");
     }
+
+    function updateFinalPrice() {
+        const selectedSubscription = document.querySelector('input[name="subscription"]:checked');
+        const selectedCoupon = document.getElementById('couponSelect').value;
+
+        let finalPrice = 0;
+
+        if (selectedSubscription) {
+            finalPrice = parseInt(selectedSubscription.value);
+        }
+
+        if (selectedCoupon) {
+            finalPrice -= parseInt(selectedCoupon);
+        }
+
+        document.getElementById('finalPrice').innerText = `${Math.max(0, finalPrice).toLocaleString()}원`;
+    }
+
+    function subscribe() {
+        alert("구독 신청이 완료되었습니다.");
+    }
 </script>
 </body>
 </html>

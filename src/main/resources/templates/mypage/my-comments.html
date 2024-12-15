@@ -2,7 +2,7 @@
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
-    <title>My Coupons</title>
+    <title>My Comments</title>
     <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
     <style>
         /* 헤더 스타일 */
@@ -138,117 +138,128 @@
         }
 
         /*메인 스타일*/
-        .my-coupons-container {
+        .written-comments-container {
             padding: 20px 180px;
             background-color: #eeeeee;
-            border-radius: 10px;
             box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
-        }
-
-        .coupon-register {
+            border-radius: 10px;
             display: flex;
-            align-items: center;
-            justify-content: space-between;
-            border: 1px solid #ccc;
-            padding: 15px 20px;
-            margin: 20px auto;
+            flex-direction: column;
             gap: 20px;
-            border-radius: 10px;
-            max-width: 840px;
-            background-color: #f9f9f9;
-            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
         }
 
-        .coupon-register label {
-            font-size: 14px;
-            margin-top: 8px;
-        }
-
-        .coupon-register input {
-            flex-grow: 1;
-            border: 1px solid #ccc;
-            border-radius: 4px;
-            padding: 5px 10px;
-            font-size: 14px;
-            width: auto;
-        }
-
-        .coupon-register button {
-            display: inline-block;
-            padding: 5px 15px;
-            border: 1px solid #ccc;
-            border-radius: 5px;
-            font-size: 14px;
-            text-align: center;
-            cursor: pointer;
-            color: white;
-            background-color: rgba(51, 51, 51, 0.8);
-        }
-
-        .coupon-register button:hover {
-            background-color: #333;
-        }
-
-        .my-coupons-container h2 {
-            text-align: left;
-            font-size: 20px;
-            margin-top: 20px;
-            font-weight: bold;
-        }
-
-        .no-coupon {
+        .profile-section {
             display: flex;
-            justify-content: center;
+            justify-content: space-between;
             align-items: center;
-            height: 40vh;
-            text-align: center;
-            background-color: #f9f9f9;
-            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-            border: 1px solid #ccc;
-            border-radius: 10px;
-            margin: 20px auto;
-        }
-
-        .my-coupons {
-            height: 60vh;
+            padding: 20px;
             border: 1px solid #ccc;
             border-radius: 10px;
             background-color: #f9f9f9;
             box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-            margin-bottom: 20px;
-            padding: 0 20px;
         }
 
-        .coupon-table {
-            margin: 20px 0;
-            width: 100%;
-            table-layout: fixed
+        .profile-info {
+            display: flex;
+            align-items: center;
+            gap: 10px;
         }
 
-        .coupon-table tr {
-            border-bottom: 1px solid #ccc;
+        .profile-picture {
+            width: 50px;
+            height: 50px;
+            background-color: #d3d3d3;
+            border-radius: 50%;
+            margin-right: 10px;
         }
 
-        .coupon-table td {
-            padding: 15px;
+        .profile-name {
+            font-size: 16px;
+            color: #333;
         }
 
-        .coupon-name {
-            font-weight: bold;
+        .nickname {
+            font-weight: bold;;
             font-size: 16px;
         }
 
-        .coupon-effect {
-            margin-left: 20px;
-            color: #999;
-            font-size: 90%;
+        .profile-buttons {
+            display: flex;
+            gap: 10px;
         }
 
-        .coupon-table td:last-child {
-            color: #888;
+        button {
+            display: inline-block;
+            padding: 5px 10px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            text-decoration: none;
             font-size: 14px;
-            text-align: right;
+            color: #333;
+            background-color: #fff;
+            text-align: center;
         }
+
+        button:hover {
+            background-color: #f0f0f0;
+            border-color: #999;
+        }
+
+        .written-comments {
+            padding: 20px;
+            border: 1px solid #ccc;
+            border-radius: 10px;
+            background-color: #f9f9f9;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+
+        h2 {
+            font-size: 20px;
+            text-align: left;
+            margin: 10px 0;
+            font-weight: bold;
+        }
+
+        .comment-card {
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            padding: 15px;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .comment-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 14px;
+            color: #666;
+        }
+
+        .comment-header span {
+            font-weight: bold;
+            color: #333;
+        }
+
+        .comment-content {
+            margin: 10px 0;
+            font-size: 16px;
+            color: #555;
+        }
+
+        .comment-footer {
+            display: flex;
+            justify-content: space-between;
+            font-size: 12px;
+            color: #888;
+        }
+
+        .comment-footer span {
+            font-weight: bold;
+        }
+
     </style>
 </head>
 <body>
@@ -268,41 +279,51 @@
         </div>
     </div>
 </header>
-<main class="my-coupons-container">
+<main class="written-comments-container">
     <!-- 마이페이지 메뉴 -->
     <div class="user-menu">
         <div class="menu-items">
-            <a class="menu-item" href="">프로필</a>
+            <a class="menu-item active" href="">프로필</a>
             <a class="menu-item" href="">관심 작품</a>
             <a class="menu-item" href="">열람 작품</a>
             <a class="menu-item" href="/users/point-history">포인트 내역</a>
-            <a class="menu-item active" href="">쿠폰</a>
+            <a class="menu-item" href="">쿠폰</a>
             <a class="menu-item" href="">회원 정보 관리</a>
         </div>
     </div>
-    <div class="coupon-register">
-        <label for="coupon">쿠폰</label>
-        <input id="coupon" placeholder="쿠폰 코드" type="text">
-        <button type="button">등록</button>
+    <div class="profile-section">
+        <div class="profile-info">
+            <div class="profile-picture"></div>
+            <span class="profile-name">
+                <span class="nickname" th:text="${user.nickname}">닉네임</span> 님의 프로필
+            </span>
+        </div>
+        <div class="profile-buttons">
+            <button href="/profile">프로필</button>
+            <button href="/works">연재 작품</button>
+            <button href="/comments">댓글</button>
+        </div>
     </div>
-    <h2>보유 쿠폰</h2>
-    <div class="no-coupon" th:if="${#lists.isEmpty(couponList)}">
-        <p>보유한 쿠폰이 없습니다.</p>
-    </div>
-    <div class="my-coupons">
-        <table class="coupon-table" th:if="${!#lists.isEmpty(couponList)}">
-            <tbody>
-            <tr th:each="history : ${couponList}">
-                <td>
-                    <span class="coupon-name" th:text="${coupon.name}">쿠폰 이름</span>
-                    <span class="coupon-effect" th:text="${coupon.couponEffect}">쿠폰 효과</span>
-                </td>
-                <td th:text="${#dates.format(coupon.expiredAt, 'yyyy-MM-dd')}">
-                    2025.11.27
-                </td>
-            </tr>
-            </tbody>
-        </table>
+    <h2>내 댓글</h2>
+    <div class="written-comments">
+        <div class="comment-card" th:each="comment : ${comments}">
+            <div class="comment-header">
+                <span th:text="${novel.title}">작품명</span>
+                <span th:text="${episode.title}">회차</span>
+            </div>
+            <div class="comment-content">
+                <span th:text="${comment.content}">댓글 내용</span>
+            </div>
+            <div class="comment-footer">
+                <span th:text="'작성일: ' + ${#dates.format(comment.createdAt, 'yyyy-MM-dd')}">작성일: 2024-12-15</span>
+                <span th:text="'좋아요: ' + ${comment.likeCount}">좋아요: 7</span>
+            </div>
+        </div>
+        <div class="comment-card" th:if="${#lists.isEmpty(comments)}">
+            <div class="comment-content" style="text-align: center;">
+                작성한 댓글이 없습니다.
+            </div>
+        </div>
     </div>
     <nav th:if="${planList != null && planList.totalPages > 1}">
         <ul class="pagination justify-content-center">
