@@ -21,7 +21,7 @@
         .header {
             background: #fff;
             padding: 1rem 2rem;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
             position: sticky;
             top: 0;
             z-index: 100;
@@ -182,7 +182,7 @@
             border-radius: 8px;
             overflow: hidden;
             transition: transform 0.2s;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
         }
 
         .novel-card:hover {
@@ -264,15 +264,16 @@
 <header class="header">
     <div class="header-content">
         <div class="logo-area">
-            <img alt="로고" class="logo-image" th:src="@{/images/logo.png}">
+            <img alt="로고" class="logo-image"
+                 th:src="@{https://est-team4-bucket.s3.ap-northeast-2.amazonaws.com/common/interstory_logo.jpg}">
             <span class="logo-text">InterStory</span>
         </div>
         <div class="search-bar">
             <input placeholder="제목/작가로 검색" type="text">
         </div>
         <div class="user-profile">
-            <span th:text="${userNickname}">닉네임</span>
-            <img alt="프로필" src="/images/default-profile.png" th:src="${userProfileImage}">
+            <span th:text="${user.nickname}">닉네임</span>
+            <img alt="프로필" th:src="${user.getProfile_url()}">
         </div>
     </div>
 </header>
@@ -335,7 +336,7 @@
 <script th:inline="javascript">
     // 정렬 버튼 클릭 이벤트
     document.querySelectorAll('.sort-options button').forEach(button => {
-        button.addEventListener('click', function() {
+        button.addEventListener('click', function () {
             // 현재 활성화된 버튼의 active 클래스 제거
             document.querySelector('.sort-options button.active').classList.remove('active');
             // 클릭된 버튼에 active 클래스 추가

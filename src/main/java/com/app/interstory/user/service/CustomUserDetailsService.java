@@ -35,7 +35,15 @@ public class CustomUserDetailsService implements UserDetailsService {
 
 	public CustomUserDetails loadUserBySocial(User socialUser) {
 
-		return createUserDetails(socialUser);
+		//권한 설정
+		Set<GrantedAuthority> authorities = Set.of(
+			new SimpleGrantedAuthority("ROLE_" + socialUser.getRole().name())
+		);
+
+		return CustomUserDetails.builder()
+			.authorities(authorities)
+			.user(createUserSessionVo(socialUser))
+			.build();
 	}
 
 	private CustomUserDetails createUserDetails(User currentUser) {
