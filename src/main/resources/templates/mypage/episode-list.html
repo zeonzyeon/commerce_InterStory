@@ -2,9 +2,8 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>My Novel List</title>
+    <title>Episode Reaction Analysis</title>
     <style>
-
         /* 헤더 스타일 */
         .header {
             background: #fff;
@@ -195,7 +194,8 @@
         }
 
         /* 메인 컨테이너 스타일 */
-        .my-novel-container {
+        .novel-analysis-container {
+            margin: 0 auto;
             padding: 20px 180px;
             background-color: #eeeeee;
         }
@@ -315,58 +315,69 @@
             border-color: #999;
         }
 
-        /*작품 섹션 스타일 */
-        .works-section {
+        .novel-analysis {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
             margin-top: 20px;
         }
 
-        .works-container {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
+        .wrapper-contents {
+            display: flex;
             gap: 20px;
-            padding: 0;
         }
 
-        .work-card {
-            padding: 15px;
+        .novels-list, .reaction-analysis {
+            flex: 1;
             border: 1px solid #ccc;
             border-radius: 10px;
             background-color: #f9f9f9;
+            padding: 20px;
             box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-            text-align: center;
-            cursor: pointer;
-            transition: all 0.3s ease;
         }
 
-        .work-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
-        }
-
-        .work-title {
-            font-size: 16px;
+        h3 {
+            font-size: 17px;
             font-weight: bold;
-            margin-bottom: 10px;
+            margin-bottom: 15px;
+            margin-top: 10px;
             color: #333;
         }
 
-        .work-status {
+        /* 연재 회차 목록 스타일 */
+        .novels-list ul {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .novels-list li {
+            gap: 20px;
+            margin-bottom: 20px;
             font-size: 14px;
-            color: #666;
-            margin-bottom: 5px;
         }
 
-        .work-date {
-            font-size: 12px;
-            color: #999;
+        .novels-list li span {
+            color: #333;
         }
 
-        .no-works {
+        /* 반응 분석 스타일 */
+        .reaction-analysis pre {
+            white-space: pre-wrap; /* 개행 유지 */
+            word-wrap: break-word; /* 너무 긴 단어 줄바꿈 */
+            font-size: 14px;
+            color: #444;
+            line-height: 1.5;
+            background-color: #f4f4f4;
+            border: 1px solid #ddd;
+            padding: 15px;
+            border-radius: 5px;
+        }
+
+        .no-data {
             text-align: center;
-            grid-column: span 3;
-            padding: 20px;
+            color: #999;
             font-size: 14px;
-            color: #777;
         }
     </style>
 </head>
@@ -387,7 +398,7 @@
         </div>
     </div>
 </header>
-<main class="my-novel-container">
+<main class="novel-analysis-container">
     <!-- 마이페이지 메뉴 -->
     <div class="user-menu">
         <div class="menu-items">
@@ -424,48 +435,46 @@
             <button class="settlement-button" onclick="calculateSettlement()">연재 작품 정산</button>
         </div>
     </div>
-    <!-- 등록된 작품 목록 -->
-    <div class="works-section">
+    <div class="novel-analysis">
         <div class="new-work-section">
-            <h2>연재한 작품</h2>
+            <h2>연재한 회차</h2>
             <button class="new-work-button" onclick="location.href='/novel/new'">신규 작품 등록</button>
         </div>
-        <div class="works-container">
-            <div class="work-card" onclick="showSettlementModal(this)"
-                 th:data-amount="${novel.estimatedAmount}"
-                 th:data-title="${novel.title}"
-                 th:each="novel : ${novels}">
-                <div class="work-title" th:text="${novel.title}">작품 제목</div>
-                <div class="work-status" th:text="${novel.status}">상태</div>
-                <div class="work-date" th:text="${#dates.format(work.createdAt, 'yyyy-MM-dd')}">2024-06-15</div>
+        <div class="wrapper-contents">
+            <!-- 연재한 회차 목록 -->
+            <div class="novels-list">
+                <h3>회차 목록</h3>
+                <ul>
+                    <li th:each="episode : ${episodes}">
+                        <span th:text="${episode.title}">회차 제목</span> |
+                        <span th:text="${#dates.format(episode.publishedAt, 'yyyy-MM-dd')}">2024-06-15</span><br>
+                        <span th:text="${episode.title}">회차 제목</span> |
+                        <span th:text="${#dates.format(episode.publishedAt, 'yyyy-MM-dd')}">2024-06-15</span>
+                    </li>
+                    <li class="no-data" th:if="${#lists.isEmpty(episodes)}">연재한 회차가 없습니다.</li>
+                </ul>
             </div>
-            <div class="no-works" th:if="${#lists.isEmpty(works)}">연재한 작품이 없습니다.</div>
+            <!-- 독자 반응 분석 -->
+            <div class="reaction-analysis">
+                <h3>독자 반응 분석</h3>
+                <pre th:text="${reactionAnalysis.aiAnalysis}">
+- 긍정 점수 (0~100): 75
+- 부정 점수 (0~100): 25
+- 핵심 키워드: 재미있어요, 전개, 유치, 두 주인공, 케미, 기대, 힐링, 성장, 필력
+- 반응 요약:
+  - 대부분의 댓글이 긍정적으로, 소설의 재미와 전개에 대한 기대감을 표현하고 있습니다.
+  - 두 주인공의 케미와 주인공의 성장에 대한 호평이 많습니다.
+  - 일부 댓글은 유치하다고 비판하며 부정적인 반응을 보였습니다.
+  - 전반적으로 작가의 필력을 칭찬하며 다음 화에 대한 기대감을 나타내고 있습니다.</pre>
+                <div class="no-data" th:if="${#lists.isEmpty(reactionAnalysis.aiAnalysis)}">
+                    분석된 반응이 없습니다.
+                </div>
+            </div>
         </div>
-
     </div>
 </main>
 <script>
-    function updateAccount() {
-        const accountNumber = document.getElementById('accountNumber').value;
-        if (accountNumber) {
-            alert(`계좌번호가 수정되었습니다: ${accountNumber}`);
-        } else {
-            alert("계좌번호를 입력하세요.");
-        }
-    }
 
-    function calculateSettlement() {
-        const expectedAmount = "100,000원"; // 정산 금액 예시
-        document.getElementById('expectedAmount').innerText = expectedAmount;
-        alert("정산이 완료되었습니다.");
-    }
-
-    function registerNewWork() {
-        alert("신규 작품 등록 페이지로 이동합니다.");
-        // 신규 작품 등록 페이지로 이동
-        window.location.href = "/works/new";
-    }
 </script>
-
 </body>
 </html>
