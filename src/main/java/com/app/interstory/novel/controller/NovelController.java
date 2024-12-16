@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
-import com.app.interstory.novel.domain.enumtypes.Sort;
+import com.app.interstory.novel.domain.enumtypes.SortType;
 import com.app.interstory.novel.dto.response.NovelDetailResponseDTO;
 import com.app.interstory.novel.service.CommentService;
 import com.app.interstory.novel.service.EpisodeService;
@@ -32,10 +32,10 @@ public class NovelController {
 	@GetMapping("/{novelId}")
 	public String getNovel(Model model, @PathVariable("novelId") Long novelId,
 		@AuthenticationPrincipal CustomUserDetails userDetails,
-		@RequestParam(name = "sort", defaultValue = "NEW_TO_OLD") Sort sort,
+		@RequestParam(name = "sort", defaultValue = "NEW_TO_OLD") SortType sort,
 		@RequestParam(name = "page", defaultValue = "0") int page,
 		@RequestParam(name = "showAll", defaultValue = "false") boolean showAll,
-		@RequestParam(name = "commentSort", defaultValue = "RECOMMENDATION") Sort commentSort,
+		@RequestParam(name = "commentSort", defaultValue = "RECOMMENDATION") SortType commentSort,
 		@RequestParam(name = "commentPage", defaultValue = "0") Integer commentPage) {
 		Long userId = userDetails.getUser().getUserId();
 		NovelDetailResponseDTO novel = novelService.readNovel(novelId, userDetails);

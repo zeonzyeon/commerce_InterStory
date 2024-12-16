@@ -1,7 +1,7 @@
 package com.app.interstory.user.controller;
 
 import com.app.interstory.novel.domain.enumtypes.NovelStatus;
-import com.app.interstory.novel.domain.enumtypes.Sort;
+import com.app.interstory.novel.domain.enumtypes.SortType;
 import com.app.interstory.novel.dto.response.NovelDetailResponseDTO;
 import com.app.interstory.novel.dto.response.NovelListResponseDTO;
 import com.app.interstory.novel.service.NovelService;
@@ -131,7 +131,7 @@ public class AdminController {
 
 			NovelListResponseDTO novels = novelService.getNovelList(
 				novelStatus, null, null, null, null,
-				Sort.NEW_TO_OLD,
+				SortType.NEW_TO_OLD,
 				page
 			);
 

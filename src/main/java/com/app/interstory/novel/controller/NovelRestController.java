@@ -18,7 +18,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.app.interstory.novel.domain.enumtypes.Sort;
+import com.app.interstory.novel.domain.enumtypes.SortType;
 import com.app.interstory.novel.dto.request.NovelRequestDTO;
 import com.app.interstory.novel.dto.response.NovelDetailResponseDTO;
 import com.app.interstory.novel.service.NovelService;
@@ -75,7 +75,7 @@ public class NovelRestController {
 		@RequestParam(name = "author", required = false) String author,
 		@RequestParam(name = "monetized", required = false) Boolean monetized,
 		@RequestParam(name = "tag", required = false) MainTag tag,
-		@RequestParam(name = "sort", defaultValue = "NEW_TO_OLD") Sort sort,
+		@RequestParam(name = "sort", defaultValue = "NEW_TO_OLD") SortType sort,
 		@RequestParam(defaultValue = "1") Integer page
 	) {
 		NovelListResponseDTO novels = novelService.getNovelList(status, title, author, monetized, tag, sort, page);

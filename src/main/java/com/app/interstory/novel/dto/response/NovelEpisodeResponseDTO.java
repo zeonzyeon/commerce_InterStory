@@ -22,4 +22,5 @@ public class NovelEpisodeResponseDTO {
 	private Boolean status;
 	private Boolean isPurchased;
 	private Boolean isFree;
+	private Integer commentCount;
 }

@@ -14,3 +14,32 @@ function novelFavorite() {
         }
     });
 }
+
+document.getElementById('btn-novel-share').addEventListener('click', () => {
+    const currentUrl = window.location.href;
+    navigator.clipboard.writeText(currentUrl)
+        .then(() => {
+            alert('URL이 복사되었습니다.');
+        })
+        .catch(err => {
+            console.error('복사에 실패했습니다.', err);
+        });
+});
+
+document.getElementById('episode-sort-recent').addEventListener('click', () => {
+    const currentUrl = new URL(window.location.href);
+    currentUrl.searchParams.set('sort', 'NEW_TO_OLD');
+    window.history.pushState({}, '', currentUrl);
+    location.reload();
+});
+
+document.getElementById('episode-sort-old').addEventListener('click', () => {
+    const currentUrl = new URL(window.location.href);
+    currentUrl.searchParams.set('sort', 'OLD_TO_NEW');
+    window.history.pushState({}, '', currentUrl);
+    location.reload();
+});
+
+function viewEpisode(episodeId) {
+    console.log(episodeId);
+}

@@ -4,14 +4,17 @@ import java.util.Comparator;
 import java.util.List;
 
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.app.interstory.novel.domain.entity.Episode;
 import com.app.interstory.novel.domain.entity.EpisodeLike;
 import com.app.interstory.novel.domain.entity.Novel;
-import com.app.interstory.novel.domain.enumtypes.Sort;
+import com.app.interstory.novel.domain.enumtypes.SortType;
 import com.app.interstory.novel.dto.request.EpisodeRequestDTO;
 import com.app.interstory.novel.dto.response.EpisodeListResponseDTO;
 import com.app.interstory.novel.dto.response.EpisodeResponseDTO;
@@ -200,11 +203,11 @@ public class EpisodeService {
 		return afterLikeMessage;
 	}
 
-	public EpisodeListResponseDTO getEpisodeList(CustomUserDetails userDetails, Long novelId, Sort sort, Pageable pageable, boolean showAll) {
+	public EpisodeListResponseDTO getEpisodeList(CustomUserDetails userDetails, Long novelId, SortType sort, Pageable pageable, boolean showAll) {
 		Long userId = userDetails.getUser().getUserId();
 
 		Page<Episode> episodes;
-		if (sort == Sort.OLD_TO_NEW) {
+		if (sort == SortType.OLD_TO_NEW) {
 			episodes = episodeRepository.findEpisodesByNovelIdOrderByPublishedAtAsc(novelId, pageable);
 		} else {
 			episodes = episodeRepository.findEpisodesByNovelIdOrderByPublishedAtDesc(novelId, pageable);
@@ -229,6 +232,7 @@ public class EpisodeService {
 						.sorted(Comparator.comparing(Episode::getPublishedAt))
 						.toList()
 						.indexOf(episode) < 5)
+					.commentCount(episode.getCommentCount())
 					.build();
 			})
 			.toList();
@@ -240,7 +244,7 @@ public class EpisodeService {
 			.build();
 	}
 
-	/*//회차 목록
+	//회차 목록
 	public Page<EpisodeResponseDTO> getEpisodesByNovelId(Long novelId, int page, Sort.Direction direction) {
 
 		PageRequest pageRequest = PageRequest.of(page, 10, Sort.by(direction, "episodeId"));
@@ -254,7 +258,7 @@ public class EpisodeService {
 			pageRequest,
 			episodePage.getTotalElements()
 		);
-	}*/
+	}
 
 	//소설 정보 조회 - user(작가) fetch join
 	public MyPageNovelResponseDto findByNovelId(Long novelId) {

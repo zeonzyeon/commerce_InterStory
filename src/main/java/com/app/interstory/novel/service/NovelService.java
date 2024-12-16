@@ -9,13 +9,12 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.app.interstory.novel.domain.entity.Episode;
-import com.app.interstory.novel.domain.entity.EpisodeLike;
 import com.app.interstory.novel.domain.entity.FavoriteNovel;
 import com.app.interstory.novel.domain.entity.Novel;
 import com.app.interstory.novel.domain.entity.Tag;
 import com.app.interstory.novel.domain.enumtypes.MainTag;
 import com.app.interstory.novel.domain.enumtypes.NovelStatus;
-import com.app.interstory.novel.domain.enumtypes.Sort;
+import com.app.interstory.novel.domain.enumtypes.SortType;
 import com.app.interstory.novel.dto.request.NovelRequestDTO;
 import com.app.interstory.novel.dto.response.NovelDetailResponseDTO;
 import com.app.interstory.novel.dto.response.NovelListResponseDTO;
@@ -112,7 +111,7 @@ public class NovelService {
 		String author,
 		Boolean monetized,
 		MainTag tag,
-		Sort sort,
+		SortType sort,
 		Integer page
 	) {
 		final int getItemCount = 10;

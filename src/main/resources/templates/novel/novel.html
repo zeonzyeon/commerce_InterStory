@@ -50,14 +50,14 @@
                         </button>
                         <span th:text="${novel.favoriteCount < 1000 ? novel.favoriteCount : #numbers.formatInteger(novel.favoriteCount, 3)}">12345</span>
                     </div>
-                    <button class="btn-share"><img alt="" th:src="@{/img/share.png}"></button>
+                    <button class="btn-share" id="btn-novel-share"><img alt="" th:src="@{/img/share.png}"></button>
                 </div>
             </div>
             <div class="novel-info-bottom">
                 <p th:text="${novel.getDescription()}">작품 설명(줄거리)</p>
             </div>
             <div class="novel-info-modify">
-                <a class="btn-novel-info-modify" th:if="${isAuthor}">수정하기</a>
+                <a class="btn-novel-info-modify" href="/" th:if="${isAuthor}">수정하기</a>
             </div>
         </div>
     </section>
@@ -70,15 +70,15 @@
             <div class="episode-info">
                 <span th:text="|총 ${novel.episodeCount}화|">총 100화</span>
                 <div>
-                    <button class="btn-episode-sort-recent">최신화부터</button>
+                    <button class="btn-episode-sort-recent" id="episode-sort-recent">최신화부터</button>
                     <span>|</span>
-                    <button class="btn-episode-sort-old">1화부터</button>
+                    <button class="btn-episode-sort-old" id="episode-sort-old">1화부터</button>
                 </div>
             </div>
             <div class="episode-item" th:attr="isFree=${episode.isFree}, isPurchased=${episode.isPurchased}" th:each="episode, iter : ${episodes.episodeList}">
                 <img alt="" class="episode-thumbnail" th:src="${episode.thumbnailUrl}">
                 <div class="episode-content">
-                    <button class="episode-title" th:text="${episode.title}">회차 제목</button>
+                    <button class="episode-title" th:onclick="'viewEpisode(' + ${episode.episodeId} + ')'" th:text="${episode.title}">회차 제목</button>
                     <span class="episode-published-at" th:text="${#dates.format(episode.publishedAt, 'yyyy.MM.dd HH:mm:ss')}">연재 시간</span>
                     <span class="episode-is-free" th:if="${episode.isFree}">무료</span>
                     <span class="episode-is-free" th:if="${!episode.isFree && !episode.isPurchased}">유료</span>
@@ -94,7 +94,7 @@
                     </div>
                     <div class="episode-comment-count">
                         <img alt="" th:src="@{/img/comment.png}">
-                        <!--                        <span th:text="${episode.commentCount}">댓글 수</span>-->
+                        <span th:text="${episode.commentCount}">댓글 수</span>
                     </div>
                 </div>
             </div>

@@ -14,7 +14,7 @@ import org.springframework.transaction.annotation.Transactional;
 import com.app.interstory.novel.domain.entity.Comment;
 import com.app.interstory.novel.domain.entity.CommentLike;
 import com.app.interstory.novel.domain.entity.Episode;
-import com.app.interstory.novel.domain.enumtypes.Sort;
+import com.app.interstory.novel.domain.enumtypes.SortType;
 import com.app.interstory.novel.dto.request.CommentRequestDto;
 import com.app.interstory.novel.dto.response.CommentListResponseDto;
 import com.app.interstory.novel.dto.response.CommentResponseDto;
@@ -55,7 +55,7 @@ public class CommentService {
 	}
 
 	@Transactional
-	public CommentListResponseDto getEpisodeComment(Long episodeId, Sort sort, Integer page,
+	public CommentListResponseDto getEpisodeComment(Long episodeId, SortType sort, Integer page,
 		CustomUserDetails userDetails) {
 
 		final int getItemCount = 4;
@@ -107,7 +107,7 @@ public class CommentService {
 	}
 
 	@Transactional
-	public CommentListResponseDto getNovelComment(Long novelId, Sort sort, Integer page,
+	public CommentListResponseDto getNovelComment(Long novelId, SortType sort, Integer page,
 		CustomUserDetails userDetails) {
 
 		final int getItemCount = 4;
