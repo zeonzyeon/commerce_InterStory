@@ -13,7 +13,7 @@ import com.app.interstory.novel.domain.entity.Episode;
 import com.app.interstory.novel.domain.entity.Novel;
 
 @Repository
-public interface EpisodeRepository extends JpaRepository<Episode, Long> {
+public interface EpisodeRepository extends JpaRepository<Episode, Long>, EpisodeRepositoryCustom {
 	Integer countByNovel(Novel novel);
 
 	@Query(value = """

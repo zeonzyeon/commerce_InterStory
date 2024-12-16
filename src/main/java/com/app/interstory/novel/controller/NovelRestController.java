@@ -1,6 +1,9 @@
 package com.app.interstory.novel.controller;
 
-import org.springframework.data.domain.Page;
+import com.app.interstory.novel.domain.enumtypes.MainTag;
+import com.app.interstory.novel.domain.enumtypes.NovelStatus;
+import com.app.interstory.novel.dto.response.NovelListResponseDTO;
+import com.app.interstory.novel.repository.NovelRepository;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
@@ -17,9 +20,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.app.interstory.novel.domain.enumtypes.Sort;
 import com.app.interstory.novel.dto.request.NovelRequestDTO;
-import com.app.interstory.novel.dto.request.NovelSearchRequestDTO;
 import com.app.interstory.novel.dto.response.NovelDetailResponseDTO;
-import com.app.interstory.novel.dto.response.NovelResponseDTO;
 import com.app.interstory.novel.service.NovelService;
 import com.app.interstory.user.domain.CustomUserDetails;
 
@@ -31,6 +32,7 @@ import lombok.RequiredArgsConstructor;
 public class NovelRestController {
 
 	private final NovelService novelService;
+	private final NovelRepository novelRepository;
 
 	// 소설 작성
 	@PostMapping
@@ -66,27 +68,16 @@ public class NovelRestController {
 
 	// 소설 목록 조회
 	@GetMapping
-	public ResponseEntity<Page<NovelResponseDTO>> getNovelList(
-		@RequestBody NovelSearchRequestDTO searchRequestDTO,
-		@AuthenticationPrincipal CustomUserDetails userDetails
+	public ResponseEntity<NovelListResponseDTO> getNovelList(
+			@RequestParam(name = "status", required = false) NovelStatus status,
+			@RequestParam(name = "title", required = false) String title,
+			@RequestParam(name = "author", required = false) String author,
+			@RequestParam(name = "monetized", required = false) Boolean monetized,
+			@RequestParam(name = "tag", required = false) MainTag tag,
+			@RequestParam(name = "sort", defaultValue = "NEW_TO_OLD") Sort sort,
+			@RequestParam(defaultValue = "1") Integer page
 	) {
-		Sort sort = searchRequestDTO.getSort() != null ? searchRequestDTO.getSort() : Sort.NEW_TO_OLD;
-		int page = searchRequestDTO.getPage() > 0 ? searchRequestDTO.getPage() : 1;
-		int size = searchRequestDTO.getSize() > 0 ? searchRequestDTO.getSize() : 10; // ?
-
-		Pageable pageable = PageRequest.of(page - 1, size);
-
-		Page<NovelResponseDTO> novels = novelService.getNovelList(
-			userDetails.getUser().getUserId(),
-			searchRequestDTO.getStatus(),
-			searchRequestDTO.getTitle(),
-			searchRequestDTO.getAuthor(),
-			searchRequestDTO.getMonetized(),
-			searchRequestDTO.getMainTag(),
-			sort,
-			pageable
-		);
-
+		NovelListResponseDTO novels = novelService.getNovelList(status, title, author, monetized, tag, sort, page);
 		return ResponseEntity.ok(novels);
 	}
 

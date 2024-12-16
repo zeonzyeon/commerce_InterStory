@@ -2,6 +2,9 @@ package com.app.interstory.user.service;
 
 import java.util.List;
 
+import com.app.interstory.novel.domain.entity.Novel;
+import com.app.interstory.novel.domain.enumtypes.NovelStatus;
+import com.app.interstory.novel.repository.NovelRepository;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -37,6 +40,7 @@ public class AdminService {
 	private final UserRepository userRepository;
 	private final NoticeRepository noticeRepository;
 	private final CouponRepository couponRepository;
+	private final NovelRepository novelRepository;
 
 	@Transactional
 	public UserListResponseDTO getUsers(@RequestParam(defaultValue = "1") Integer page, CustomUserDetails userDetails) {
@@ -214,5 +218,34 @@ public class AdminService {
 			.orElseThrow(() -> new RuntimeException("해당 Id의 쿠폰이 없습니다."));
 
 		couponRepository.delete(coupon);
+	}
+
+	@Transactional
+	public void handlePlanApproval(Long novelId, Boolean approve, CustomUserDetails userDetails) {
+		if (userDetails == null || userDetails.getUser().getRole() != Roles.ADMIN) {
+			throw new IllegalStateException("기획서 승인/거절 권한이 없습니다.");
+		}
+
+		Novel novel = novelRepository.findById(novelId)
+				.orElseThrow(() -> new RuntimeException("해당 Id의 소설이 없습니다."));
+
+		if(approve) {
+			novel.updateStatus(NovelStatus.PUBLISHED);
+		}
+		else {
+			novel.updateStatus(NovelStatus.REJECTED);
+		}
+	}
+
+	@Transactional
+	public void restoreDeletedNovel(Long novelId, CustomUserDetails userDetails) {
+		if (userDetails == null || userDetails.getUser().getRole() != Roles.ADMIN) {
+			throw new IllegalStateException("삭제된 작품 복구 권한이 없습니다.");
+		}
+
+		Novel novel = novelRepository.findById(novelId)
+				.orElseThrow(() -> new RuntimeException("해당 Id의 소설이 없습니다."));
+
+		novel.updateStatus(NovelStatus.PUBLISHED);
 	}
 }

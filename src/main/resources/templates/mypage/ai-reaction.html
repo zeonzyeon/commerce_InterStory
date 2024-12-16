@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>에피소드 목록</title>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <link rel="stylesheet" th:href="@{/css/mypage/ai-reaction.css}">
+</head>
+<body>
+<div class="container">
+    <div class="episode-list">
+        <h2 th:text="${novel.title}">소설 제목</h2>
+
+        <div class="sort-section">
+            <button class="sort-btn active" data-direction="DESC">최신순</button>
+            <button class="sort-btn" data-direction="ASC">오래된순</button>
+        </div>
+
+        <div id="episodeContainer"></div>
+
+        <div class="pagination">
+            <button class="page-prev">&lt;</button>
+            <button class="page-next">&gt;</button>
+        </div>
+    </div>
+
+    <div class="analysis-section">
+        <h2>독자 반응 분석</h2>
+        <div class="loader"></div>
+        <div class="analysis-result" style="display: none;"></div>
+    </div>
+</div>
+
+<script th:inline="javascript">
+
+    const novelId = "[[${novelId}]]";
+
+
+    let currentPage = 0;
+    let currentDirection = 'DESC';
+    let totalPages = 0;
+
+    function loadEpisodes(page, direction) {
+        const $container = $('#episodeContainer');
+        const $loader = $('.loader');
+
+        $loader.show();
+        console.log(direction);
+        $.ajax({
+            url: `/api/novels/${novelId}/episodes`,
+            method: 'GET',
+            data: {
+                page: page,
+                direction: direction
+            },
+            success: function (response) {
+                totalPages = response.totalPages;
+                updatePagination(page, totalPages);
+
+                const episodesHtml = response.content.map(episode => `
+                       <div class="episode-item">
+                           <div class="episode-title">${episode.title}</div>
+                           <div class="episode-stats">
+                               <span>조회수: ${episode.viewCount}</span>
+                               <span>좋아요: ${episode.likeCount}</span>
+                               <span>댓글수: ${episode.commentCount}</span>
+                           </div>
+                           <button class="analyze-btn"
+                                   data-id="${episode.episodeId}"
+                                   ${episode.commentCount < 5 ? 'disabled' : ''}>
+                               독자 반응 분석
+                           </button>
+                           ${episode.commentCount < 5 ?
+                    '<div class="btn-info">댓글 5개 이상부터 분석 가능합니다.</div>' : ''}
+                           ${episode.commentCount >= 5 ?
+                    '<div class="btn-info">새로운 분석은 1일 후 가능합니다.</div>' : ''}
+                       </div>
+                   `).join('');
+
+                $container.html(episodesHtml);
+            },
+            error: function () {
+                alert('에피소드를 불러오는 데 실패했습니다.');
+            },
+            complete: function () {
+                $loader.hide();
+            }
+        });
+    }
+
+    function updatePagination(currentPage, totalPages) {
+        const $pagination = $('.pagination');
+        let pagesHtml = `
+               <button class="page-prev" ${currentPage === 0 ? 'disabled' : ''}>&lt;</button>
+           `;
+
+        for (let i = 0; i < totalPages; i++) {
+            pagesHtml += `
+                   <button class="page-num ${currentPage === i ? 'active' : ''}"
+                           data-page="${i}">
+                       ${i + 1}
+                   </button>
+               `;
+        }
+
+        pagesHtml += `
+               <button class="page-next" ${currentPage === totalPages - 1 ? 'disabled' : ''}>&gt;</button>
+           `;
+
+        $pagination.html(pagesHtml);
+    }
+
+    $(document).ready(function () {
+        loadEpisodes(currentPage, currentDirection);
+
+        // 정렬 버튼 클릭
+        $('.sort-btn').on('click', function () {
+            const $btn = $(this);
+            if (!$btn.hasClass('active')) {
+                $('.sort-btn').removeClass('active');
+                $btn.addClass('active');
+                currentDirection = $btn.data('direction');
+                currentPage = 0;
+                loadEpisodes(currentPage, currentDirection);
+            }
+        });
+
+        // 페이지네이션 이벤트
+        $('.pagination').on('click', '.page-num', function () {
+            currentPage = $(this).data('page');
+            loadEpisodes(currentPage, currentDirection);
+        });
+
+        $('.pagination').on('click', '.page-prev', function () {
+            if (currentPage > 0) {
+                currentPage--;
+                loadEpisodes(currentPage, currentDirection);
+            }
+        });
+
+        $('.pagination').on('click', '.page-next', function () {
+            if (currentPage < totalPages - 1) {
+                currentPage++;
+                loadEpisodes(currentPage, currentDirection);
+            }
+        });
+
+        // 분석 버튼 클릭
+        $('#episodeContainer').on('click', '.analyze-btn', function () {
+            const $btn = $(this);
+            const episodeId = $btn.data('id');
+            const $loader = $('.loader');
+            const $result = $('.analysis-result');
+
+            $loader.show();
+            $result.hide();
+
+            $.ajax({
+                url: `/api/ai/${episodeId}/reaction`,
+                method: 'POST',
+                success: function (response) {
+                    const analysisDate = new Date(response.analyzedAt).toLocaleString();
+                    const analysisDiv = document.createElement('div');
+                    analysisDiv.className = 'analysis-content';
+                    analysisDiv.innerText = response.aiAnalysis;  // innerText로 텍스트 설정
+
+                    $result.empty()  // 기존 내용 삭제
+                        .append(analysisDiv)
+                        .append(`<div class="analysis-timestamp">분석 시간: ${analysisDate}</div>`)
+                        .show();
+                },
+                error: function () {
+                    alert('분석 중 오류가 발생했습니다.');
+                },
+                complete: function () {
+                    $loader.hide();
+                }
+            });
+        });
+    });
+</script>
+</body>
+</html>

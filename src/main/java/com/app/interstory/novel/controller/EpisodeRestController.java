@@ -4,6 +4,8 @@ import java.util.Map;
 
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -28,7 +30,7 @@ import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 
 @RestController
-@RequestMapping("/api/novels/{novelId}/episodes")
+@RequestMapping("api/novels/{novelId}/episodes")
 @RequiredArgsConstructor
 public class EpisodeRestController {
 
@@ -122,5 +124,18 @@ public class EpisodeRestController {
 		EpisodeListResponseDTO responseDTO = episodeService.getEpisodeList(userDetails, novelId, sort, pageable, showAll);
 
 		return ResponseEntity.ok(responseDTO);
+	}
+
+	//에피소드 목록 갖고오기
+	@GetMapping
+	public ResponseEntity<Page<EpisodeResponseDTO>> getEpisodes(
+		@PathVariable Long novelId,
+		@RequestParam(defaultValue = "0") int page,
+		@RequestParam(defaultValue = "DESC") Sort.Direction direction
+	) {
+
+		Page<EpisodeResponseDTO> episodes = episodeService.getEpisodesByNovelId(novelId, page, direction);
+
+		return ResponseEntity.ok(episodes);
 	}
 }

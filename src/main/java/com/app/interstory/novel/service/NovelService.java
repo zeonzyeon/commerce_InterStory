@@ -4,12 +4,14 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.app.interstory.novel.domain.entity.Episode;
 import com.app.interstory.novel.domain.entity.Novel;
+import com.app.interstory.novel.domain.entity.Tag;
 import com.app.interstory.novel.domain.enumtypes.MainTag;
 import com.app.interstory.novel.domain.enumtypes.NovelStatus;
 import com.app.interstory.novel.domain.enumtypes.Sort;
@@ -17,6 +19,7 @@ import com.app.interstory.novel.dto.request.NovelRequestDTO;
 import com.app.interstory.novel.dto.response.EpisodeResponseDTO;
 import com.app.interstory.novel.dto.response.NovelDetailResponseDTO;
 import com.app.interstory.novel.dto.response.NovelEpisodeResponseDTO;
+import com.app.interstory.novel.dto.response.NovelListResponseDTO;
 import com.app.interstory.novel.dto.response.NovelResponseDTO;
 import com.app.interstory.novel.repository.CollectionRepository;
 import com.app.interstory.novel.repository.CommentRepository;
@@ -24,8 +27,8 @@ import com.app.interstory.novel.repository.EpisodeRepository;
 import com.app.interstory.novel.repository.NovelRepository;
 import com.app.interstory.novel.repository.TagRepository;
 import com.app.interstory.user.domain.CustomUserDetails;
+import com.app.interstory.novel.repository.TagRepository;
 import com.app.interstory.user.repository.UserRepository;
-
 import lombok.RequiredArgsConstructor;
 
 @Service
@@ -48,6 +51,7 @@ public class NovelService {
 			.thumbnailRenamedFilename(novelRequestDTO.getThumbnailRenamedFilename())
 			.thumbnailUrl(novelRequestDTO.getThumbnailUrl())
 			.tag(novelRequestDTO.getTag())
+			.isFree(novelRequestDTO.getIsFree())
 			.build();
 
 		novelRepository.save(novel);
@@ -71,7 +75,8 @@ public class NovelService {
 			novelRequestDTO.getThumbnailRenamedFilename(),
 			novelRequestDTO.getThumbnailUrl(),
 			novelRequestDTO.getTag(),
-			novelRequestDTO.getStatus()
+			novelRequestDTO.getStatus(),
+                novelRequestDTO.getIsFree()
 		);
 	}
 
@@ -98,31 +103,41 @@ public class NovelService {
 		);
 	}
 
-	// 소설 목록 조회
-	public Page<NovelResponseDTO> getNovelList(
-		Long userId,
-		NovelStatus status,
-		String title,
-		String author,
-		Boolean monetized,
-		MainTag tag,
-		Sort sort,
-		Pageable pageable
-	) {
-		Page<Novel> novels = novelRepository.findAllWithDynamicSort(
-			userId, status, title, author, monetized, tag, sort.name(), pageable
-		);
+    // 소설 목록 조회
+    public NovelListResponseDTO getNovelList(
+            NovelStatus status,
+            String title,
+            String author,
+            Boolean monetized,
+            MainTag tag,
+            Sort sort,
+            Integer page
+    ) {
+        final int getItemCount = 10;
 
-		return novels.map(novel -> NovelResponseDTO.builder()
-			.novelId(novel.getNovelId())
-			.title(novel.getTitle())
-			.description(novel.getDescription())
-			.thumbnailUrl(novel.getThumbnailUrl())
-			.likeCount(novel.getLikeCount())
-			.status(novel.getStatus())
-			.tag(novel.getTag())
-			.build());
-	}
+        Pageable pageable = PageRequest.of(page - 1, getItemCount);
+
+        Page<Novel> novelPages = novelRepository.findByFilterAndSort(
+                status, title, author, monetized, tag, sort.getDescription(), pageable
+        );
+
+        if (page > novelPages.getTotalPages()) {
+            throw new RuntimeException("유효하지 않은 페이지입니다.");
+        }
+
+
+        List<NovelResponseDTO> novels = novelPages.stream()
+                .map(novel -> {
+                    List<String> customTags = tagRepository.findByNovel(novel).stream()
+                            .map(Tag::getTag)
+                            .toList();
+                    return NovelResponseDTO.from(novel, customTags);
+                })
+                .toList();
+
+        return NovelListResponseDTO.from(novels, novelPages.getTotalPages());
+    }
+
 
 	// 소설 삭제
 	@Transactional
