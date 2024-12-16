@@ -16,11 +16,9 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.app.interstory.user.domain.CustomUserDetails;
 import com.app.interstory.user.dto.request.AccountRequestDTO;
-import com.app.interstory.user.dto.request.CouponRequestDTO;
 import com.app.interstory.user.dto.request.SaveCouponRequestDTO;
 import com.app.interstory.user.dto.request.UpdateUserRequestDTO;
 import com.app.interstory.user.dto.response.AccountResponseDTO;
-import com.app.interstory.user.dto.response.CouponResponseDTO;
 import com.app.interstory.user.dto.response.FavoriteNovelResponseDTO;
 import com.app.interstory.user.dto.response.MyCommentResponseDTO;
 import com.app.interstory.user.dto.response.MyNovelResponseDTO;
@@ -49,30 +47,35 @@ public class MypageRestController {
 	}
 
 	@PutMapping
-	public ResponseEntity<UpdateUserResponseDTO> updateUser(@AuthenticationPrincipal CustomUserDetails userDetails, @RequestBody UpdateUserRequestDTO updateUserRequestDTO) {
+	public ResponseEntity<UpdateUserResponseDTO> updateUser(@AuthenticationPrincipal CustomUserDetails userDetails,
+		@RequestBody UpdateUserRequestDTO updateUserRequestDTO) {
 		return ResponseEntity.ok(mypageService.updateUser(userDetails, updateUserRequestDTO));
 	}
 
 	@GetMapping("/favorite-novels")
-	public ResponseEntity<Page<FavoriteNovelResponseDTO>> getFavoriteNovel(@AuthenticationPrincipal CustomUserDetails userDetails) {
+	public ResponseEntity<Page<FavoriteNovelResponseDTO>> getFavoriteNovel(
+		@AuthenticationPrincipal CustomUserDetails userDetails) {
 		Pageable pageable = PageRequest.of(0, 10, Sort.unsorted());
 		return ResponseEntity.ok(mypageService.getFavoriteNovels(userDetails, pageable));
 	}
 
 	@GetMapping("/read-novels")
-	public ResponseEntity<Page<ReadNovelResponseDTO>> getReadNovel(@AuthenticationPrincipal CustomUserDetails userDetails,
+	public ResponseEntity<Page<ReadNovelResponseDTO>> getReadNovel(
+		@AuthenticationPrincipal CustomUserDetails userDetails,
 		@PageableDefault(size = 10, sort = "updatedAt", direction = Sort.Direction.DESC) Pageable pageable) {
 		return ResponseEntity.ok(mypageService.getReadNovels(userDetails, pageable));
 	}
 
 	@GetMapping("/point-history")
-	public ResponseEntity<Page<PointHistoryResponseDTO>> getPointHistory(@AuthenticationPrincipal CustomUserDetails userDetails,
+	public ResponseEntity<Page<PointHistoryResponseDTO>> getPointHistory(
+		@AuthenticationPrincipal CustomUserDetails userDetails,
 		@PageableDefault(size = 10, sort = "usedAt", direction = Sort.Direction.DESC) Pageable pageable) {
 		return ResponseEntity.ok(mypageService.getPointHistory(userDetails, pageable));
 	}
 
 	@GetMapping("/my-novels")
-	public ResponseEntity<Page<MyNovelResponseDTO>> getMyNovel(@AuthenticationPrincipal CustomUserDetails userDetails, @PageableDefault(size = 10) Pageable pageable) {
+	public ResponseEntity<Page<MyNovelResponseDTO>> getMyNovel(@AuthenticationPrincipal CustomUserDetails userDetails,
+		@PageableDefault(size = 10) Pageable pageable) {
 		return ResponseEntity.ok(mypageService.getMyNovels(userDetails, pageable));
 	}
 
@@ -88,7 +91,8 @@ public class MypageRestController {
 	}
 
 	@GetMapping("/my-comments")
-	public ResponseEntity<Page<MyCommentResponseDTO>> getMyComments(@AuthenticationPrincipal CustomUserDetails userDetails,
+	public ResponseEntity<Page<MyCommentResponseDTO>> getMyComments(
+		@AuthenticationPrincipal CustomUserDetails userDetails,
 		@PageableDefault(size = 10, sort = "createdAt", direction = Sort.Direction.DESC) Pageable pageable) {
 		return ResponseEntity.ok(mypageService.getMyComments(userDetails, pageable));
 	}
@@ -99,22 +103,26 @@ public class MypageRestController {
 	}
 
 	@PutMapping("/account")
-	public ResponseEntity<AccountResponseDTO> updateAccount(@AuthenticationPrincipal CustomUserDetails userDetails, @RequestBody AccountRequestDTO accountRequestDTO) {
+	public ResponseEntity<AccountResponseDTO> updateAccount(@AuthenticationPrincipal CustomUserDetails userDetails,
+		@RequestBody AccountRequestDTO accountRequestDTO) {
 		return ResponseEntity.ok(mypageService.updateAccount(userDetails, accountRequestDTO));
 	}
 
 	@GetMapping("/coupons")
-	public ResponseEntity<Page<UserCouponResponseDTO>> getCoupons(@AuthenticationPrincipal CustomUserDetails userDetails, Pageable pageable) {
+	public ResponseEntity<Page<UserCouponResponseDTO>> getCoupons(
+		@AuthenticationPrincipal CustomUserDetails userDetails, Pageable pageable) {
 		return ResponseEntity.ok(mypageService.getCoupons(userDetails, pageable));
 	}
 
 	@PostMapping("/coupons")
-	public ResponseEntity<UserCouponResponseDTO> saveCoupon(@AuthenticationPrincipal CustomUserDetails userDetails, @RequestBody SaveCouponRequestDTO saveCouponRequestDTO) {
+	public ResponseEntity<UserCouponResponseDTO> saveCoupon(@AuthenticationPrincipal CustomUserDetails userDetails,
+		@RequestBody SaveCouponRequestDTO saveCouponRequestDTO) {
 		return ResponseEntity.ok(mypageService.saveCoupon(userDetails, saveCouponRequestDTO.getCouponCode()));
 	}
 
 	@GetMapping("/subscription")
-	public ResponseEntity<SubscriptionResponseDTO> getSubscription(@AuthenticationPrincipal CustomUserDetails userDetails) {
+	public ResponseEntity<SubscriptionResponseDTO> getSubscription(
+		@AuthenticationPrincipal CustomUserDetails userDetails) {
 		return ResponseEntity.ok(mypageService.getSubscription(userDetails));
 	}
 }

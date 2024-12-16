@@ -21,6 +21,7 @@ public class HomeController {
 		@AuthenticationPrincipal CustomUserDetails customUserDetails
 	) {
 		if (customUserDetails != null) {
+			log.info("CurrentUser :::{}", customUserDetails.getUser());
 			model.addAttribute("user", customUserDetails.getUser());
 			log.info("user: {}", customUserDetails.getUser());
 		}
