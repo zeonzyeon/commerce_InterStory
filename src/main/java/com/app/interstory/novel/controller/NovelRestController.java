@@ -4,8 +4,7 @@ import com.app.interstory.novel.domain.enumtypes.MainTag;
 import com.app.interstory.novel.domain.enumtypes.NovelStatus;
 import com.app.interstory.novel.dto.response.NovelListResponseDTO;
 import com.app.interstory.novel.repository.NovelRepository;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
+
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -16,6 +15,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.app.interstory.novel.domain.enumtypes.Sort;
@@ -69,13 +69,13 @@ public class NovelRestController {
 	// 소설 목록 조회
 	@GetMapping
 	public ResponseEntity<NovelListResponseDTO> getNovelList(
-			@RequestParam(name = "status", required = false) NovelStatus status,
-			@RequestParam(name = "title", required = false) String title,
-			@RequestParam(name = "author", required = false) String author,
-			@RequestParam(name = "monetized", required = false) Boolean monetized,
-			@RequestParam(name = "tag", required = false) MainTag tag,
-			@RequestParam(name = "sort", defaultValue = "NEW_TO_OLD") Sort sort,
-			@RequestParam(defaultValue = "1") Integer page
+		@RequestParam(name = "status", required = false) NovelStatus status,
+		@RequestParam(name = "title", required = false) String title,
+		@RequestParam(name = "author", required = false) String author,
+		@RequestParam(name = "monetized", required = false) Boolean monetized,
+		@RequestParam(name = "tag", required = false) MainTag tag,
+		@RequestParam(name = "sort", defaultValue = "NEW_TO_OLD") Sort sort,
+		@RequestParam(defaultValue = "1") Integer page
 	) {
 		NovelListResponseDTO novels = novelService.getNovelList(status, title, author, monetized, tag, sort, page);
 		return ResponseEntity.ok(novels);

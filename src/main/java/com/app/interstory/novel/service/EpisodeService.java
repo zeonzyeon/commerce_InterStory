@@ -5,10 +5,6 @@ import java.util.List;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageImpl;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -19,9 +15,9 @@ import com.app.interstory.novel.domain.enumtypes.Sort;
 import com.app.interstory.novel.dto.request.EpisodeRequestDTO;
 import com.app.interstory.novel.dto.response.EpisodeListResponseDTO;
 import com.app.interstory.novel.dto.response.EpisodeResponseDTO;
+import com.app.interstory.novel.dto.response.MyPageNovelResponseDto;
 import com.app.interstory.novel.dto.response.NovelEpisodeResponseDTO;
 import com.app.interstory.novel.repository.CollectionRepository;
-import com.app.interstory.novel.dto.response.MyPageNovelResponseDto;
 import com.app.interstory.novel.repository.EpisodeLikeRepository;
 import com.app.interstory.novel.repository.EpisodeRepository;
 import com.app.interstory.novel.repository.NovelRepository;
@@ -258,7 +254,7 @@ public class EpisodeService {
 			pageRequest,
 			episodePage.getTotalElements()
 		);
-	}
+	}*/
 
 	//소설 정보 조회 - user(작가) fetch join
 	public MyPageNovelResponseDto findByNovelId(Long novelId) {
@@ -270,7 +266,6 @@ public class EpisodeService {
 	}
 
 	//convert
-
 	private MyPageNovelResponseDto novelToResponseDto(Novel novel) {
 		return MyPageNovelResponseDto.builder()
 			.id(novel.getNovelId())
@@ -298,6 +293,6 @@ public class EpisodeService {
 			.commentCount(episode.getCommentCount())
 			.likeCount(episode.getLikeCount())
 			.build();
-	}*/
+	}
 
 }

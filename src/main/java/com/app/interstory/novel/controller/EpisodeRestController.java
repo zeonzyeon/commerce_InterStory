@@ -4,8 +4,6 @@ import java.util.Map;
 
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -126,7 +124,7 @@ public class EpisodeRestController {
 		return ResponseEntity.ok(responseDTO);
 	}
 
-	//에피소드 목록 갖고오기
+	/*//에피소드 목록 갖고오기
 	@GetMapping
 	public ResponseEntity<Page<EpisodeResponseDTO>> getEpisodes(
 		@PathVariable Long novelId,
@@ -137,5 +135,5 @@ public class EpisodeRestController {
 		Page<EpisodeResponseDTO> episodes = episodeService.getEpisodesByNovelId(novelId, page, direction);
 
 		return ResponseEntity.ok(episodes);
-	}
+	}*/
 }
