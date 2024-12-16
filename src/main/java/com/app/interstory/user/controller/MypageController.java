@@ -22,7 +22,7 @@ public class MypageController {
 	private final MypageService mypageService;
 	private final NovelService novelService;
 
-	// 회원 정보 수정
+	// 회원 정보 수정 페이지
 
 	// 포인트 내역 페이지
 	@GetMapping("/point-history")
@@ -46,4 +46,17 @@ public class MypageController {
 	// 	return "episodes/episode-list";
 	// }
 
+	// 관심 작품 페이지
+	// @GetMapping("/favorite-novels")
+	// public String showFavoriteNovels(Model model) {
+	// 	// 관심 작품 리스트 예시
+	// 	List<FavoriteWorkDto> favoriteWorks = List.of(
+	// 		new FavoriteWorkDto("작품명1", "작가명1", "/images/work1.jpg", 1200, 35, 300, "힐링, 성장"),
+	// 		new FavoriteWorkDto("작품명2", "작가명2", "/images/work2.jpg", 800, 20, 200, "로맨스, 감성"),
+	// 		new FavoriteWorkDto("작품명3", "작가명3", "/images/work3.jpg", 1500, 50, 450, "액션, 판타지")
+	// 	);
+	//
+	// 	model.addAttribute("favoriteWorks", favoriteWorks);
+	// 	return "favoriteWorks";
+	// }
 }

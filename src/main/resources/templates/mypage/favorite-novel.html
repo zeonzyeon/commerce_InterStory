@@ -2,8 +2,7 @@
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
-    <title>My Point History</title>
-    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <title>Favorite Novels</title>
     <style>
         /* 헤더 스타일 */
         .header {
@@ -137,80 +136,94 @@
             font-weight: 600;
         }
 
-        /*메인 스타일*/
-        .point-history-container {
-            /*max-height: 950px;*/
+        /* 메인 컨테이너 스타일 */
+        .favorite-novel-container {
+            margin: 0 auto;
             padding: 20px 180px;
             background-color: #eeeeee;
             border-radius: 10px;
-            box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
         }
 
-        .point-history-container h2 {
-            text-align: left;
-            font-size: 20px;
+        h2 {
             margin-top: 40px;
-            font-weight: bold;
+            font-size: 20px;
+            color: #333;
+            text-align: left;
         }
 
-        .no-point-history {
+        .favorite-novel {
+            background-color: #f9f9f9;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            padding: 20px;
+            border: 1px solid #ccc;
+            border-radius: 10px;
+        }
+
+        /* 작품 리스트 스타일 */
+        .novel-item {
             display: flex;
-            justify-content: center;
             align-items: center;
-            height: 40vh;
-            text-align: center;
-            background-color: #f9f9f9;
-            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-            border: 1px solid #ccc;
-            border-radius: 10px;
-            margin: 20px auto;
+            gap: 40px;
+            padding: 15px 0;
+            cursor: pointer;
+            transition: background-color 0.2s ease;
+            border-bottom: 1px solid #ddd;
         }
 
-        .point-history {
-            height: 60vh;
-            border: 1px solid #ccc;
-            border-radius: 10px;
-            background-color: #f9f9f9;
-            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-            margin-bottom: 20px;
-            padding: 0 20px;
+        .novel-item:hover {
+            background-color: #f3f3f3;
         }
 
-        .point-history-table {
-            margin: 20px 0;
-            width: 100%;
-            border-collapse: collapse;
-            table-layout: fixed;
+        .novel-cover img {
+            width: 80px;
+            height: 100px;
+            border-radius: 5px;
+            object-fit: cover;
+            background-color: #eaeaea;
         }
 
-        .point-history-table col {
-            width: 33.33%;
+        .novel-details {
+            flex: 1;
         }
 
-        .point-history-table tr {
-            border-bottom: 1px solid #ccc;
+        .novel-details h3 {
+            margin: 0;
+            font-size: 18px;
+            color: #333;
+            margin-bottom: 10px;
         }
 
-        .point-history-table td {
-            padding: 15px;
-        }
-
-        .point {
-            font-weight: bold;
-            font-size: 16px;
-        }
-
-        .point-usage {
-            text-align: right;
-            margin-left: 20px;
-            color: #999;
-            font-size: 90%;
-        }
-
-        .point-history-table td:last-child {
-            color: #888;
+        .novel-details p {
+            margin: 5px 0;
             font-size: 14px;
-            text-align: right;
+            color: #555;
+        }
+
+        .novel-data span {
+            margin-right: 5px;
+            display: inline-block;
+        }
+
+        .custom-tags {
+            font-size: 12px;
+            color: #777;
+            margin-top: 5px;
+            background-color: #eeeeee;
+            display: inline-block;
+            padding: 2px 5px;
+            border-radius: 5px;
+        }
+
+        .novel-item:last-child {
+            border-bottom: none;
+        }
+
+        .no-novels {
+            text-align: center;
+            color: #999;
+            font-size: 16px;
+            padding: 20px;
         }
     </style>
 </head>
@@ -231,59 +244,47 @@
         </div>
     </div>
 </header>
-<main class="point-history-container">
+<main class="favorite-novel-container">
     <!-- 마이페이지 메뉴 -->
     <div class="user-menu">
         <div class="menu-items">
-            <a class="menu-item" href="">프로필</a>
+            <a class="menu-item active" href="">프로필</a>
             <a class="menu-item" href="">관심 작품</a>
             <a class="menu-item" href="">열람 작품</a>
-            <a class="menu-item active" href="/users/point-history">포인트 내역</a>
+            <a class="menu-item" href="/users/point-history">포인트 내역</a>
             <a class="menu-item" href="">쿠폰</a>
-            <a class="menu-item" href="">회원정보 관리</a>
+            <a class="menu-item" href="">회원 정보 관리</a>
         </div>
     </div>
-    <h2>포인트 내역</h2>
-    <div class="no-point-history" th:if="${#lists.isEmpty(pointHistoryList)}">
-        <p>포인트 충전 / 이용 내역이 없습니다.</p>
+    <h2>관심 작품</h2>
+    <div class="favorite-novel">
+        <!-- 관심 작품 리스트 -->
+        <div th:if="${not #lists.isEmpty(favoriteNovels)}">
+            <div class="novel-item" th:each="novel : ${favoriteNovels}"
+                 th:onclick="|location.href='@{/novels/{id}(id=${novel.id})}'|">
+                <!-- 작품 커버 이미지 -->
+                <div class="novel-cover">
+                    <img alt="작품 커버 이미지" src="/images/default-cover.png" th:src="${novel.thumbnailUrl}">
+                </div>
+                <!-- 작품 상세 정보 -->
+                <div class="novel-details">
+                    <h3 th:text="${novel.title}">작품명</h3>
+                    <p><strong>작가:</strong> <span th:text="${novel.author}">작가명</span></p>
+                    <p class="novel-data">
+                        <span>총 회차: <strong th:text="${novel.totalEpisodes}">999</strong></span>
+                        <span>조회수: <strong th:text="${novel.viewCount}">999</strong></span>
+                        <span>좋아요: <strong th:text="${novel.likeCount}">333</strong></span>
+                    </p>
+                    <div class="custom-tags" th:text="${novel.customTags}">커스텀 태그들</div>
+                </div>
+            </div>
+        </div>
     </div>
-    <div class="point-history">
-        <table class="point-history-table" th:if="${!#lists.isEmpty(pointHistoryList)}">
-            <tbody>
-            <tr th:each="history : ${pointHistoryList}">
-                <td>
-                <span class="point"
-                      th:classappend="${history.isPlus} ? 'plus' : 'minus'"
-                      th:text="${history.isPlus} ? ${history.pointAmount} + 'P 충전' : ${history.pointAmount} + 'P 사용'">
-                    100P 사용
-                </span>
-                    <span class="point-usage"
-                          th:text="${history.isPlus} ? ${history.pointAmount / 100 * 2000} + '원 결제' : ${history.usageDescription}">
-                    포인트 사용처
-                </span>
-                </td>
-                <td th:text="${#dates.format(history.createdAt, 'yyyy-MM-dd HH:mm:ss')}">
-                    2024.11.27 14:58
-                </td>
-            </tr>
-            </tbody>
-        </table>
+
+    <!-- 관심 작품이 없을 경우 -->
+    <div class="no-novels" th:if="${#lists.isEmpty(favoriteNovels)}">
+        관심 작품이 없습니다.
     </div>
-    <nav th:if="${planList != null && planList.totalPages > 1}">
-        <ul class="pagination justify-content-center">
-            <li class="page-item" th:classappend="${currentPage == 1 ? 'disabled' : ''}">
-                <a class="page-link" th:href="@{/admin/plans(page=${currentPage - 1})}">&laquo;</a>
-            </li>
-            <li class="page-item"
-                th:classappend="${pageNum == currentPage ? 'active' : ''}"
-                th:each="pageNum : ${#numbers.sequence(1, planList.totalPages)}">
-                <a class="page-link" th:href="@{/admin/plans(page=${pageNum})}" th:text="${pageNum}"></a>
-            </li>
-            <li class="page-item" th:classappend="${currentPage == planList.totalPages ? 'disabled' : ''}">
-                <a class="page-link" th:href="@{/admin/plans(page=${currentPage + 1})}">&raquo;</a>
-            </li>
-        </ul>
-    </nav>
 </main>
 </body>
 </html>
