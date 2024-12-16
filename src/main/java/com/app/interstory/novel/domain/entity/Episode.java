@@ -7,7 +7,16 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import com.app.interstory.novel.dto.request.EpisodeRequestDTO;
 
-import jakarta.persistence.*;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.EntityListeners;
+import jakarta.persistence.FetchType;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -23,6 +32,7 @@ import lombok.NoArgsConstructor;
 public class Episode {
 	private static final Integer DEFAULT_VIEW_COUNT = 0;
 	private static final Integer DEFAULT_LIKE_COUNT = 0;
+	private static final Integer DEFAULT_COMMENT_COUNT = 0;
 	private static final Boolean DEFAULT_STATUS = true;
 
 	@Id
@@ -57,6 +67,10 @@ public class Episode {
 
 	@Column(name = "content", columnDefinition = "TEXT", nullable = false)
 	private String content;
+
+	@Builder.Default
+	@Column(name = "comment_count", nullable = false)
+	private Integer commentCount = DEFAULT_COMMENT_COUNT;
 
 	@Builder.Default
 	@Column(name = "status", nullable = false)

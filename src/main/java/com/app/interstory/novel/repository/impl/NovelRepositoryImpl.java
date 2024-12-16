@@ -1,21 +1,23 @@
-package com.app.interstory.novel.repository;
+package com.app.interstory.novel.repository.impl;
+
+import static com.app.interstory.novel.domain.entity.QNovel.*;
 
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
-import org.springframework.stereotype.Repository;
 
 import com.app.interstory.novel.domain.entity.Novel;
 import com.app.interstory.novel.domain.entity.QNovel;
+import com.app.interstory.novel.repository.NovelRepositoryCustom;
 import com.querydsl.core.BooleanBuilder;
 import com.querydsl.core.types.OrderSpecifier;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 
 import lombok.RequiredArgsConstructor;
 
-@Repository
 @RequiredArgsConstructor
 public class NovelRepositoryImpl implements NovelRepositoryCustom {
 
@@ -79,6 +81,15 @@ public class NovelRepositoryImpl implements NovelRepositoryCustom {
 
 		return new PageImpl<>(results, pageable, total);
 	}
+
+	@Override
+	public Optional<Novel> findByNovelWithUser(Long novelId) {
+		return Optional.ofNullable(
+			queryFactory
+				.selectFrom(novel)
+				.leftJoin(novel.user).fetchJoin()
+				.where(novel.novelId.eq(novelId))
+				.fetchOne()
+		);
+	}
 }
-
-

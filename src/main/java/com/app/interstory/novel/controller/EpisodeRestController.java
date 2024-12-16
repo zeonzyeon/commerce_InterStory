@@ -2,6 +2,8 @@ package com.app.interstory.novel.controller;
 
 import java.util.Map;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -12,6 +14,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.app.interstory.novel.dto.request.EpisodeRequestDTO;
@@ -22,7 +25,7 @@ import com.app.interstory.user.domain.CustomUserDetails;
 import lombok.RequiredArgsConstructor;
 
 @RestController
-@RequestMapping("/api/novels/{novelId}/episodes")
+@RequestMapping("api/novels/{novelId}/episodes")
 @RequiredArgsConstructor
 public class EpisodeRestController {
 
@@ -96,5 +99,18 @@ public class EpisodeRestController {
 		Long userId = userDetails.getUser().getUserId();
 		String message = episodeService.likeEpisode(userId, episodeId);
 		return ResponseEntity.ok(message);
+	}
+
+	//에피소드 목록 갖고오기
+	@GetMapping
+	public ResponseEntity<Page<EpisodeResponseDTO>> getEpisodes(
+		@PathVariable Long novelId,
+		@RequestParam(defaultValue = "0") int page,
+		@RequestParam(defaultValue = "DESC") Sort.Direction direction
+	) {
+
+		Page<EpisodeResponseDTO> episodes = episodeService.getEpisodesByNovelId(novelId, page, direction);
+
+		return ResponseEntity.ok(episodes);
 	}
 }
