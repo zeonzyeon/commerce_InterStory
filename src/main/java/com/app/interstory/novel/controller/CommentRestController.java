@@ -37,7 +37,7 @@ public class CommentRestController {
 	// 회차 댓글 조회
 	@GetMapping("/novels/episodes/{episodeId}/comments")
 	public ResponseEntity<CommentListResponseDto> getEpisodeComment(@PathVariable Long episodeId,
-		@RequestParam(defaultValue = "NEW_TO_OLD") Sort sort, @RequestParam(defaultValue = "1") Integer page,
+		@RequestParam(defaultValue = "NEW_TO_OLD") Sort sort, @RequestParam(defaultValue = "0") Integer page,
 		@AuthenticationPrincipal CustomUserDetails userDetails) {
 		CommentListResponseDto commentList = commentService.getEpisodeComment(episodeId, sort, page, userDetails);
 		return ResponseEntity.status(HttpStatus.OK).body(commentList);
@@ -46,7 +46,7 @@ public class CommentRestController {
 	// 소설 댓글 조회
 	@GetMapping("/novels/{novelId}/comments/list")
 	public ResponseEntity<CommentListResponseDto> getNovelComment(@PathVariable Long novelId,
-		@RequestParam(defaultValue = "NEW_TO_OLD") Sort sort, @RequestParam(defaultValue = "1") Integer page,
+		@RequestParam(defaultValue = "NEW_TO_OLD") Sort sort, @RequestParam(defaultValue = "0") Integer page,
 		@AuthenticationPrincipal CustomUserDetails userDetails) {
 		CommentListResponseDto commentList = commentService.getNovelComment(novelId, sort, page, userDetails);
 		return ResponseEntity.status(HttpStatus.OK).body(commentList);

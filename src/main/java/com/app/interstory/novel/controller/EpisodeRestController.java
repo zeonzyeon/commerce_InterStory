@@ -2,6 +2,8 @@ package com.app.interstory.novel.controller;
 
 import java.util.Map;
 
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -12,13 +14,17 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.app.interstory.novel.domain.enumtypes.Sort;
 import com.app.interstory.novel.dto.request.EpisodeRequestDTO;
+import com.app.interstory.novel.dto.response.EpisodeListResponseDTO;
 import com.app.interstory.novel.dto.response.EpisodeResponseDTO;
 import com.app.interstory.novel.service.EpisodeService;
 import com.app.interstory.user.domain.CustomUserDetails;
 
+import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 
 @RestController
@@ -96,5 +102,25 @@ public class EpisodeRestController {
 		Long userId = userDetails.getUser().getUserId();
 		String message = episodeService.likeEpisode(userId, episodeId);
 		return ResponseEntity.ok(message);
+	}
+
+	// 회차 목록 조회
+	@GetMapping
+	public ResponseEntity<EpisodeListResponseDTO> getEpisodeList(
+		@PathVariable(name = "novelId") Long novelId,
+		@AuthenticationPrincipal CustomUserDetails userDetails,
+		@RequestParam(name = "sort", defaultValue = "NEW_TO_OLD") Sort sort,
+		@RequestParam(name = "page", defaultValue = "0") int page,
+		@RequestParam(name = "showAll", defaultValue = "false") boolean showAll
+	) {
+		int pageSize = 4;
+		if (showAll)
+			pageSize = 10000;
+
+		Pageable pageable = PageRequest.of(page, pageSize);
+
+		EpisodeListResponseDTO responseDTO = episodeService.getEpisodeList(userDetails, novelId, sort, pageable, showAll);
+
+		return ResponseEntity.ok(responseDTO);
 	}
 }

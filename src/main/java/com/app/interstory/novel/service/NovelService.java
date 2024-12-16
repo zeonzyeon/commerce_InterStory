@@ -16,9 +16,14 @@ import com.app.interstory.novel.domain.enumtypes.Sort;
 import com.app.interstory.novel.dto.request.NovelRequestDTO;
 import com.app.interstory.novel.dto.response.EpisodeResponseDTO;
 import com.app.interstory.novel.dto.response.NovelDetailResponseDTO;
+import com.app.interstory.novel.dto.response.NovelEpisodeResponseDTO;
 import com.app.interstory.novel.dto.response.NovelResponseDTO;
+import com.app.interstory.novel.repository.CollectionRepository;
+import com.app.interstory.novel.repository.CommentRepository;
 import com.app.interstory.novel.repository.EpisodeRepository;
 import com.app.interstory.novel.repository.NovelRepository;
+import com.app.interstory.novel.repository.TagRepository;
+import com.app.interstory.user.domain.CustomUserDetails;
 import com.app.interstory.user.repository.UserRepository;
 
 import lombok.RequiredArgsConstructor;
@@ -29,6 +34,7 @@ public class NovelService {
 	private final NovelRepository novelRepository;
 	private final UserRepository userRepository;
 	private final EpisodeRepository episodeRepository;
+	private final TagRepository tagRepository;
 
 	// 소설 작성
 	public Long writeNovel(NovelRequestDTO novelRequestDTO, Long userId) {
@@ -70,47 +76,25 @@ public class NovelService {
 	}
 
 	// 소설 상세 조회
-	public NovelDetailResponseDTO readNovel(Long novelId, Sort sort, Pageable pageable) {
+	public NovelDetailResponseDTO readNovel(Long novelId) {
 		Novel novel = novelRepository.findById(novelId)
 			.orElseThrow(() -> new RuntimeException("Novel not found"));
 
-		Page<Episode> episodes;
-		switch (sort) {
-			case RECOMMENDATION:
-				episodes = episodeRepository.findEpisodesByNovelIdOrderByLikeCount(novelId, pageable);
-				break;
-			case OLD_TO_NEW:
-				episodes = episodeRepository.findEpisodesByNovelIdOrderByPublishedAtAsc(novelId, pageable);
-				break;
-			default:
-				episodes = episodeRepository.findEpisodesByNovelIdOrderByPublishedAtDesc(novelId, pageable);
-				break;
-		}
-
-		List<EpisodeResponseDTO> episodeDTOs = episodes.getContent().stream()
-			.map(episode -> EpisodeResponseDTO.builder()
-				.episodeId(episode.getEpisodeId())
-				.novelId(novelId)
-				.title(episode.getTitle())
-				.viewCount(episode.getViewCount())
-				.publishedAt(episode.getPublishedAt())
-				.thumbnailUrl(episode.getThumbnailUrl())
-				.likeCount(episode.getLikeCount())
-				.content(null)
-				.status(episode.getStatus())
-				.build()
-			)
-			.collect(Collectors.toList());
-
 		return new NovelDetailResponseDTO(
 			novel.getNovelId(),
+			novel.getUser().getUserId(),
 			novel.getTitle(),
 			novel.getDescription(),
 			novel.getThumbnailUrl(),
 			novel.getStatus(),
 			novel.getTag(),
-			episodeDTOs,
-			episodes.getTotalPages()
+			tagRepository.findByNovel(novel),
+			novel.getIsFree(),
+			novel.getFavoriteCount(),
+			novel.getLikeCount(),
+			episodeRepository.countByNovel(novel),
+			// novel.getComments().size()
+			1
 		);
 	}
 

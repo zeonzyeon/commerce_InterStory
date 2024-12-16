@@ -13,7 +13,6 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.app.interstory.novel.domain.enumtypes.Sort;
@@ -59,13 +58,9 @@ public class NovelRestController {
 	// 소설 상세 조회
 	@GetMapping("/{novelId}")
 	public ResponseEntity<NovelDetailResponseDTO> readNovel(
-		@PathVariable("novelId") Long novelId,
-		@RequestParam(name = "sort", defaultValue = "NEW_TO_OLD") Sort sort,
-		@RequestParam(name = "page", defaultValue = "1") int page
+		@PathVariable("novelId") Long novelId
 	) {
-		Pageable pageable = PageRequest.of(page - 1, 4);
-
-		NovelDetailResponseDTO response = novelService.readNovel(novelId, sort, pageable);
+		NovelDetailResponseDTO response = novelService.readNovel(novelId);
 		return ResponseEntity.ok(response);
 	}
 

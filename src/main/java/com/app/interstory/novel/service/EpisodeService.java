@@ -1,16 +1,26 @@
 package com.app.interstory.novel.service;
 
+import java.util.Comparator;
+import java.util.List;
+
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.app.interstory.novel.domain.entity.Episode;
 import com.app.interstory.novel.domain.entity.EpisodeLike;
 import com.app.interstory.novel.domain.entity.Novel;
+import com.app.interstory.novel.domain.enumtypes.Sort;
 import com.app.interstory.novel.dto.request.EpisodeRequestDTO;
+import com.app.interstory.novel.dto.response.EpisodeListResponseDTO;
 import com.app.interstory.novel.dto.response.EpisodeResponseDTO;
+import com.app.interstory.novel.dto.response.NovelEpisodeResponseDTO;
+import com.app.interstory.novel.repository.CollectionRepository;
 import com.app.interstory.novel.repository.EpisodeLikeRepository;
 import com.app.interstory.novel.repository.EpisodeRepository;
 import com.app.interstory.novel.repository.NovelRepository;
+import com.app.interstory.user.domain.CustomUserDetails;
 import com.app.interstory.user.domain.entity.CartItem;
 import com.app.interstory.user.domain.entity.Point;
 import com.app.interstory.user.domain.entity.User;
@@ -29,6 +39,7 @@ public class EpisodeService {
 	private final PointRepository pointRepository;
 	private final CartItemRepository cartItemRepository;
 	private final EpisodeLikeRepository episodeLikeRepository;
+	private final CollectionRepository collectionRepository;
 
 	// 회차 작성
 	@Transactional
@@ -180,5 +191,45 @@ public class EpisodeService {
 		episodeRepository.save(episode);
 
 		return afterLikeMessage;
+	}
+
+	public EpisodeListResponseDTO getEpisodeList(CustomUserDetails userDetails, Long novelId, Sort sort, Pageable pageable, boolean showAll) {
+		Long userId = userDetails.getUser().getUserId();
+
+		Page<Episode> episodes;
+		if (sort == Sort.OLD_TO_NEW) {
+			episodes = episodeRepository.findEpisodesByNovelIdOrderByPublishedAtAsc(novelId, pageable);
+		} else {
+			episodes = episodeRepository.findEpisodesByNovelIdOrderByPublishedAtDesc(novelId, pageable);
+		}
+
+		List<NovelEpisodeResponseDTO> episodeDTOs = episodes.getContent().stream()
+			.map(episode -> {
+				Long episodeId = episode.getEpisodeId();
+				boolean isFree = novelRepository.findById(novelId).orElseThrow(() -> new RuntimeException("Novel not found")).getIsFree();
+
+				return NovelEpisodeResponseDTO.builder()
+					.episodeId(episodeId)
+					.novelId(novelId)
+					.title(episode.getTitle())
+					.viewCount(episode.getViewCount())
+					.publishedAt(episode.getPublishedAt())
+					.thumbnailUrl(episode.getThumbnailUrl())
+					.likeCount(episode.getLikeCount())
+					.status(episode.getStatus())
+					.isPurchased(collectionRepository.existsByUser_UserIdAndEpisode_EpisodeId(userId, episodeId))
+					.isFree(isFree || episodes.getContent().stream()
+						.sorted(Comparator.comparing(Episode::getPublishedAt))
+						.toList()
+						.indexOf(episode) < 5)
+					.build();
+			})
+			.toList();
+
+		return EpisodeListResponseDTO.builder()
+			.episodeList(episodeDTOs)
+			.totalPage(episodes.getTotalPages())
+			.showAll(showAll)
+			.build();
 	}
 }
