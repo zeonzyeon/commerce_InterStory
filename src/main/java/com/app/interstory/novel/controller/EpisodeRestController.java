@@ -106,7 +106,7 @@ public class EpisodeRestController {
 	}
 
 	// 회차 목록 조회
-	@GetMapping
+	@GetMapping("/list")
 	public ResponseEntity<EpisodeListResponseDTO> getEpisodeList(
 		@PathVariable(name = "novelId") Long novelId,
 		@AuthenticationPrincipal CustomUserDetails userDetails,
@@ -125,7 +125,7 @@ public class EpisodeRestController {
 		return ResponseEntity.ok(responseDTO);
 	}
 
-	/*//에피소드 목록 갖고오기
+	//에피소드 목록 갖고오기
 	@GetMapping
 	public ResponseEntity<Page<EpisodeResponseDTO>> getEpisodes(
 		@PathVariable Long novelId,
@@ -136,5 +136,5 @@ public class EpisodeRestController {
 		Page<EpisodeResponseDTO> episodes = episodeService.getEpisodesByNovelId(novelId, page, direction);
 
 		return ResponseEntity.ok(episodes);
-	}*/
+	}
 }
