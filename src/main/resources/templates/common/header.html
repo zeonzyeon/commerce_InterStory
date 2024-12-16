@@ -1,0 +1,15 @@
+<!-- fragments/header.html -->
+<header class="header" th:fragment="header">
+    <div class="header-content">
+        <div class="logo-area">...</div>
+        <div class="search-bar">...</div>
+        <div class="user-area">
+            <!-- 로그인 상태에 따른 조건부 렌더링 -->
+            <div class="user-profile" th:if="${user}">
+                <span th:text="${user.nickname}">닉네임</span>
+                <img alt="프로필" th:src="${user.profileUrl}">
+            </div>
+            <a class="login-btn" href="auth/login" th:unless="${user}">로그인</a>
+        </div>
+    </div>
+</header>
