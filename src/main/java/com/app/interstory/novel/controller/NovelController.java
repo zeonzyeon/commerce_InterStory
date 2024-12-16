@@ -38,7 +38,7 @@ public class NovelController {
 		@RequestParam(name = "commentSort", defaultValue = "RECOMMENDATION") Sort commentSort,
 		@RequestParam(name = "commentPage", defaultValue = "0") Integer commentPage) {
 		Long userId = userDetails.getUser().getUserId();
-		NovelDetailResponseDTO novel = novelService.readNovel(novelId);
+		NovelDetailResponseDTO novel = novelService.readNovel(novelId, userDetails);
 		String nickname = userService.findById(novel.getAuthorId()).getNickname();
 
 		int pageSize = 4;

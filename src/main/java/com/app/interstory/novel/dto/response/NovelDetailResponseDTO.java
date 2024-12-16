@@ -26,5 +26,6 @@ public class NovelDetailResponseDTO {
 	private Integer likeCount;
 	private Integer episodeCount;
 	private Integer commentCount;
+	private boolean isFavorite;
 }
 

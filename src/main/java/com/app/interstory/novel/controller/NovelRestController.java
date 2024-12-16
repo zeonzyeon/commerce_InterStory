@@ -60,9 +60,10 @@ public class NovelRestController {
 	// 소설 상세 조회
 	@GetMapping("/{novelId}")
 	public ResponseEntity<NovelDetailResponseDTO> readNovel(
-		@PathVariable("novelId") Long novelId
+		@PathVariable("novelId") Long novelId,
+		@AuthenticationPrincipal CustomUserDetails userDetails
 	) {
-		NovelDetailResponseDTO response = novelService.readNovel(novelId);
+		NovelDetailResponseDTO response = novelService.readNovel(novelId, userDetails);
 		return ResponseEntity.ok(response);
 	}
 
@@ -90,5 +91,15 @@ public class NovelRestController {
 		Long userId = userDetails.getUser().getUserId();
 		novelService.deleteNovel(novelId, userId);
 		return ResponseEntity.noContent().build();
+	}
+
+	// 관심작품 등록
+	@PostMapping("/{novelId}/favorite")
+	public ResponseEntity<String> likeEpisode(@PathVariable("novelId") Long novelId, @AuthenticationPrincipal CustomUserDetails userDetails) {
+		Long userId = userDetails.getUser().getUserId();
+
+		String message = novelService.likeNovel(userId, novelId);
+
+		return ResponseEntity.ok(message);
 	}
 }

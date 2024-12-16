@@ -9,6 +9,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
@@ -102,5 +103,9 @@ public class Novel {
 
 	public void markAsDeleted() {
 		this.status = NovelStatus.DELETED;
+	}
+
+	public void updateFavoriteCount(Integer favoriteCount) {
+		this.favoriteCount = favoriteCount;
 	}
 }

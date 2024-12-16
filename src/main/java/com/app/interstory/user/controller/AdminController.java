@@ -149,11 +149,10 @@ public class AdminController {
 	@GetMapping("/novels/{novelId}")
 	public String getNovelDetail(
 		@PathVariable("novelId") Long novelId,
+		@AuthenticationPrincipal CustomUserDetails userDetails,
 		Model model) {
 		try {
-			NovelDetailResponseDTO novel = novelService.readNovel(
-				novelId
-			);
+			NovelDetailResponseDTO novel = novelService.readNovel(novelId, userDetails);
 			model.addAttribute("novel", novel);
 			return "admin/admin-novel-detail";
 		} catch (IllegalStateException e) {

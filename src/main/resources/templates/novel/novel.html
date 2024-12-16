@@ -6,6 +6,7 @@
     <title th:text="${novel.title}"></title>
     <link href="/static/css/novel/novel.css" rel="stylesheet" th:href="@{/css/reset.css}">
     <link href="/static/css/reset.css" rel="stylesheet" th:href="@{/css/novel/novel.css}">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 </head>
 <body>
 <header>
@@ -24,7 +25,7 @@
 </header>
 
 <main>
-    <section class="novel-profile">
+    <section class="novel-profile" id="novel-profile" th:attr="data-novel-id=${novel.novelId}">
         <div class="novel-image">
             <img alt="작품 섬네일 이미지" class="novel-image" th:src="${novel.getThumbnailUrl()}">
         </div>
@@ -43,7 +44,10 @@
                 </div>
                 <div class="novel-info-top-right">
                     <div class="novel-info-favorite">
-                        <button class="btn-favorite"><img alt="" th:src="@{/img/empty_heart.png}"></button>
+                        <button class="btn-favorite" id="btn-favorite" onclick="novelFavorite()" th:attr="data-favorite=${novel.isFavorite}">
+                            <img alt="" th:if="${novel.isFavorite}" th:src="@{/img/full_heart.png}">
+                            <img alt="" th:if="${!novel.isFavorite}" th:src="@{/img/empty_heart.png}">
+                        </button>
                         <span th:text="${novel.favoriteCount < 1000 ? novel.favoriteCount : #numbers.formatInteger(novel.favoriteCount, 3)}">12345</span>
                     </div>
                     <button class="btn-share"><img alt="" th:src="@{/img/share.png}"></button>
@@ -134,6 +138,6 @@
     </div>
 </footer>
 
-<!--<script src="script.js"></script>-->
+<script th:src="@{/js/novel/novel.js}"></script>
 </body>
 </html>
