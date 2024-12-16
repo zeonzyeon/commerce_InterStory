@@ -1,10 +1,10 @@
 <!DOCTYPE html>
-<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>My Comments</title>
-    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <title>My Novel List</title>
     <style>
+
         /* 헤더 스타일 */
         .header {
             background: #fff;
@@ -137,17 +137,6 @@
             font-weight: 600;
         }
 
-        /*메인 스타일*/
-        .written-comments-container {
-            padding: 20px 180px;
-            background-color: #eeeeee;
-            box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
-            border-radius: 10px;
-            display: flex;
-            flex-direction: column;
-            gap: 20px;
-        }
-
         .profile-section {
             display: flex;
             justify-content: space-between;
@@ -205,65 +194,180 @@
             border-color: #999;
         }
 
-        .written-comments {
-            padding: 20px;
-            border: 1px solid #ccc;
-            border-radius: 10px;
-            background-color: #f9f9f9;
-            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        /* 메인 컨테이너 스타일 */
+        .my-novel-container {
+            padding: 20px 180px;
+            background-color: #eeeeee;
         }
 
-        h2 {
-            font-size: 20px;
-            text-align: left;
-            margin: 10px 0;
-            font-weight: bold;
-        }
-
-        .comment-card {
-            border: 1px solid #ddd;
-            border-radius: 8px;
-            margin-bottom: 20px;
-            padding: 15px;
-            display: flex;
-            flex-direction: column;
-            gap: 10px;
-        }
-
-        .no-comment-card {
-            border: none;
-        }
-
-        .comment-header {
+        /* 수정된 계좌, 정산 섹션 */
+        .account-settlement-row {
             display: flex;
             justify-content: space-between;
             align-items: center;
+            gap: 150px;
+            background-color: #f9f9f9;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            padding: 20px;
+            border: 1px solid #ccc;
+            border-radius: 10px;
+            flex: 2;
+            margin-top: 15px;
+        }
+
+        .account-edit {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .account-edit label {
+            margin-bottom: 3px;
+        }
+
+        .account-edit input {
+            padding: 5px 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            font-size: 14px;
+            flex: 1;
+            width: 300px;
+        }
+
+        .account-edit button {
+            padding: 5px 15px;
+            background-color: rgba(51, 51, 51, 0.8);
+            color: #fff;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 14px;
+        }
+
+        .account-edit button:hover {
+            background-color: #333;
+        }
+
+        .expected-amount {
+            display: flex;
+            align-items: center;
+            justify-content: flex-end;
+            gap: 10px;
+            flex: 1;
+            margin-left: auto;
+        }
+
+        .expected-amount .label {
             font-size: 14px;
             color: #666;
         }
 
-        .comment-header span {
+        .expected-amount .value {
+            font-weight: bold;
+            color: #333;
+            margin-bottom: 2px;
+        }
+
+        .settlement-button {
+            padding: 5px 15px;
+            background-color: rgba(51, 51, 51, 0.8);
+            color: #fff;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 14px;
+            flex: 0.5;
+            margin-left: 100px;
+        }
+
+        .settlement-button:hover {
+            background-color: #333;
+        }
+
+        h2 {
+            font-size: 20px;
             font-weight: bold;
             color: #333;
         }
 
-        .comment-content {
-            margin: 10px 0;
-            font-size: 16px;
-            color: #555;
-        }
-
-        .comment-footer {
+        .new-work-section {
             display: flex;
+            flex-direction: row;
             justify-content: space-between;
-            font-size: 12px;
-            color: #888;
         }
 
-        .comment-footer span {
+        .new-work-button {
+            padding: 5px 10px;
+            font-size: 14px;
+            color: #333;
+            background-color: #fff;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: background-color 0.2s, box-shadow 0.2s;
+            text-align: center;
+            height: 30px;
+            margin-top: 15px;
+        }
+
+        .new-work-button:hover {
+            background-color: #f9f9f9;
+            border-color: #999;
+        }
+
+        /*작품 섹션 스타일 */
+        .works-section {
+            margin-top: 20px;
+        }
+
+        .works-container {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 20px;
+            padding: 0;
+        }
+
+        .work-card {
+            padding: 15px;
+            border: 1px solid #ccc;
+            border-radius: 10px;
+            background-color: #f9f9f9;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .work-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+        }
+
+        .work-title {
+            font-size: 16px;
             font-weight: bold;
+            margin-bottom: 10px;
+            color: #333;
         }
 
+        .work-status {
+            font-size: 14px;
+            color: #666;
+            margin-bottom: 5px;
+        }
+
+        .work-date {
+            font-size: 12px;
+            color: #999;
+        }
+
+        .no-works {
+            text-align: center;
+            grid-column: span 3;
+            padding: 20px;
+            font-size: 14px;
+            color: #777;
+        }
     </style>
 </head>
 <body>
@@ -283,7 +387,7 @@
         </div>
     </div>
 </header>
-<main class="written-comments-container">
+<main class="my-novel-container">
     <!-- 마이페이지 메뉴 -->
     <div class="user-menu">
         <div class="menu-items">
@@ -308,42 +412,60 @@
             <button href="/comments">댓글</button>
         </div>
     </div>
-    <h2>내 댓글</h2>
-    <div class="written-comments">
-        <div class="comment-card" th:each="comment : ${comments}">
-            <div class="comment-header">
-                <span th:text="${novel.title}">작품명</span>
-                <span th:text="${episode.title}">회차</span>
-            </div>
-            <div class="comment-content">
-                <span th:text="${comment.content}">댓글 내용</span>
-            </div>
-            <div class="comment-footer">
-                <span th:text="'작성일: ' + ${#dates.format(comment.createdAt, 'yyyy-MM-dd')}">작성일: 2024-12-15</span>
-                <span th:text="'좋아요: ' + ${comment.likeCount}">좋아요: 7</span>
-            </div>
+    <div class="account-settlement-row">
+        <div class="account-edit">
+            <label for="accountNumber">계좌번호</label>
+            <input id="accountNumber" placeholder="계좌번호를 입력하세요" type="text">
+            <button onclick="updateAccount()" type="button">수정</button>
         </div>
-        <div class="no-comment-card" th:if="${#lists.isEmpty(comments)}">
-            <div class="comment-content" style="text-align: center;">
-                작성한 댓글이 없습니다.
-            </div>
+        <div class="expected-amount">
+            <span class="label">예상 정산 금액:</span>
+            <span class="value" id="expectedAmount">0원</span>
+            <button class="settlement-button" onclick="calculateSettlement()">연재 작품 정산</button>
         </div>
     </div>
-    <nav th:if="${planList != null && planList.totalPages > 1}">
-        <ul class="pagination justify-content-center">
-            <li class="page-item" th:classappend="${currentPage == 1 ? 'disabled' : ''}">
-                <a class="page-link" th:href="@{/admin/plans(page=${currentPage - 1})}">&laquo;</a>
-            </li>
-            <li class="page-item"
-                th:classappend="${pageNum == currentPage ? 'active' : ''}"
-                th:each="pageNum : ${#numbers.sequence(1, planList.totalPages)}">
-                <a class="page-link" th:href="@{/admin/plans(page=${pageNum})}" th:text="${pageNum}"></a>
-            </li>
-            <li class="page-item" th:classappend="${currentPage == planList.totalPages ? 'disabled' : ''}">
-                <a class="page-link" th:href="@{/admin/plans(page=${currentPage + 1})}">&raquo;</a>
-            </li>
-        </ul>
-    </nav>
+    <!-- 등록된 작품 목록 -->
+    <div class="works-section">
+        <div class="new-work-section">
+            <h2>연재한 작품</h2>
+            <button class="new-work-button" onclick="location.href='/novel/new'">신규 작품 등록</button>
+        </div>
+        <div class="works-container">
+            <div class="work-card" onclick="showSettlementModal(this)"
+                 th:data-amount="${novel.estimatedAmount}"
+                 th:data-title="${novel.title}"
+                 th:each="novel : ${novels}">
+                <div class="work-title" th:text="${novel.title}">작품 제목</div>
+                <div class="work-status" th:text="${novel.status}">상태</div>
+                <div class="work-date" th:text="${#dates.format(work.createdAt, 'yyyy-MM-dd')}">2024-06-15</div>
+            </div>
+            <div class="no-works" th:if="${#lists.isEmpty(works)}">연재한 작품이 없습니다.</div>
+        </div>
+
+    </div>
 </main>
+<script>
+    function updateAccount() {
+        const accountNumber = document.getElementById('accountNumber').value;
+        if (accountNumber) {
+            alert(`계좌번호가 수정되었습니다: ${accountNumber}`);
+        } else {
+            alert("계좌번호를 입력하세요.");
+        }
+    }
+
+    function calculateSettlement() {
+        const expectedAmount = "100,000원"; // 정산 금액 예시
+        document.getElementById('expectedAmount').innerText = expectedAmount;
+        alert("정산이 완료되었습니다.");
+    }
+
+    function registerNewWork() {
+        alert("신규 작품 등록 페이지로 이동합니다.");
+        // 신규 작품 등록 페이지로 이동
+        window.location.href = "/works/new";
+    }
+</script>
+
 </body>
 </html>

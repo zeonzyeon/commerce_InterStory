@@ -323,6 +323,244 @@
             color: #333;
         }
 
+        /* 모달 백드롭 */
+        .modal-backdrop {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 1000;
+            display: none;
+        }
+
+        /* 포인트 결제 모달 */
+        .modal {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 450px;
+            background: #fff;
+            border-radius: 8px;
+            z-index: 1001;
+            display: none;
+            border: 1px solid #ccc;
+        }
+
+        .modal-content {
+            padding: 2rem 2rem 1.5rem 2rem;
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid #eee;
+        }
+
+        .modal-header h3 {
+            margin: 0;
+            font-size: 18px;
+        }
+
+        .close {
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
+            font-size: 1.5rem;
+            cursor: pointer;
+            color: #666;
+            transition: color 0.2s;
+        }
+
+        .modal-body .current-points {
+            margin-bottom: 15px;
+            font-size: 16px;
+            margin-left: 200px;
+        }
+
+        .point-amount {
+            font-weight: bold;
+        }
+
+        .point-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 20px;
+            table-layout: fixed;
+            background-color: #f9f9f9;
+        }
+
+        .point-table th:first-child,
+        .point-table td:first-child {
+            width: 50%;
+        }
+
+        .point-table th:last-child,
+        .point-table td:last-child {
+            width: 50%;
+            text-align: center;
+        }
+
+        .point-table th,
+        .point-table td {
+            padding: 10px;
+            border: 1px solid #ccc;
+            text-align: center;
+        }
+
+        .point-table td:first-child {
+            text-align: left;
+            padding-left: 20px;
+        }
+
+        .point-table input {
+            margin-right: 10px;
+        }
+
+        .actions {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 20px;
+        }
+
+        .coupon-display {
+            margin-top: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            font-size: 14px;
+        }
+
+        .coupon-display select, .final-price-display span {
+            margin-left: 10px;
+        }
+
+        .couponSelect {
+            padding: 5px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            width: 250px;
+            margin-top: 3px;
+        }
+
+        label {
+            font-size: 16px;
+        }
+
+        .actions .btn {
+            padding: 7px 15px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            text-align: center;
+        }
+
+        .btn-primary {
+            background: #007bff;
+            color: #fff;
+            margin: 5px;
+        }
+
+        .btn-primary:hover {
+            background-color: #0056b3;
+        }
+
+        /*구독 결제 모달*/
+        .modal2 {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 600px;
+            background: #fff;
+            border-radius: 8px;
+            z-index: 1001;
+            border: 1px solid #ccc;
+            display: none;
+        }
+
+        .modal-content2 {
+            padding: 2rem;
+        }
+
+        .subscription-options {
+            display: flex;
+            justify-content: space-around;
+            gap: 20px;
+        }
+
+        .subscription-item {
+            width: 45%;
+            padding: 15px;
+            border: 1px solid #ccc;
+            border-radius: 10px;
+            background-color: #f9f9f9;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            text-align: center;
+        }
+
+        .subscription-item h4 {
+            margin-bottom: 10px;
+            font-size: 18px;
+            font-weight: bold;
+        }
+
+        .subscription-item .benefits {
+            font-size: 14px;
+            margin-bottom: 5px;
+        }
+
+        .subscription-item .price {
+            font-size: 14px;
+            margin-bottom: 10px;
+        }
+
+        .coupon-apply {
+            margin-top: 20px;
+            text-align: center;
+        }
+
+        .coupon-apply label {
+            margin-right: 10px;
+            font-size: 14px;
+        }
+
+        .couponSelect2 {
+            padding: 5px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            width: 250px;
+        }
+
+        .actions2 {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 20px;
+        }
+
+        .final-price-display2 span {
+            font-size: 16px;
+            font-weight: bold;
+            margin-left: 10px;
+        }
+
+        .btn-primary2 {
+            padding: 7px 15px;
+            background-color: #007bff;
+            color: #fff;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        .btn-primary2:hover {
+            background-color: #0056b3;
+        }
     </style>
 </head>
 <body>
@@ -372,14 +610,14 @@
             <span class="payment-label">내 포인트 :
         <span class="point-amount" th:text="${point.balance} + 'P'">200P</span>
             </span>
-            <button class="payment-action payment">결제</button>
+            <button class="payment-action payment" onclick="openPointPaymentModal()">결제</button>
         </div>
         <div class="payment-row">
             <span class="payment-label">구독 만료일 :
                 <span class="subscription-date"
                       th:text="${#dates.format(subscribe.endAt, 'yyyy-MM-dd')}">2025.11.27</span>
             </span>
-            <button class="payment-action payment">결제</button>
+            <button class="payment-action payment" onclick="openSubscriptionModal()">결제</button>
         </div>
         <div class="payment-row">
             <span class="payment-label">결제 수단 변경</span>
@@ -411,5 +649,172 @@
         </div>
     </div>
 </main>
+
+<!-- 모달 백드롭 -->
+<div class="modal-backdrop" id="modalBackdrop" onclick="closePointPaymentModal()"></div>
+
+<!-- 포인트 결제 모달 -->
+<div class="modal" id="pointPaymentModal">
+    <div class="modal-content">
+        <span class="close" onclick="closePointPaymentModal()">&times;</span>
+        <div class="modal-header">
+            <h3>포인트 결제</h3>
+        </div>
+        <div class="modal-body">
+            <div class="current-points">
+                    <span class="point-label"> 내 포인트:
+                        <span class="point-amount" th:text="${point.balance} + 'P'">200P</span>
+                    </span>
+            </div>
+            <form id="pointForm">
+                <table class="point-table">
+                    <thead>
+                    <tr>
+                        <th>포인트</th>
+                        <th>가격</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr>
+                        <td><input name="point" onclick="activateCoupon()" type="radio" value="10"> 10P</td>
+                        <td>1,000원</td>
+                    </tr>
+                    <tr>
+                        <td><input name="point" onclick="activateCoupon()" type="radio" value="30"> 30P</td>
+                        <td>3,000원</td>
+                    </tr>
+                    <tr>
+                        <td><input name="point" onclick="activateCoupon()" type="radio" value="50"> 50P</td>
+                        <td>5,000원</td>
+                    </tr>
+                    <tr>
+                        <td><input name="point" onclick="activateCoupon()" type="radio" value="100"> 100P</td>
+                        <td>10,000원</td>
+                    </tr>
+                    <tr>
+                        <td><input name="point" onclick="activateCoupon()" type="radio" value="500"> 500P</td>
+                        <td>50,000원</td>
+                    </tr>
+                    </tbody>
+                </table>
+                <div class="coupon-display">
+                    <label>쿠폰 적용</label>
+                    <select class="couponSelect" onchange="updateFinalPrice()">
+                        <option value="0">쿠폰을 선택하세요</option>
+                        <option value="1000">1000원 할인</option>
+                        <option value="3000">3000원 할인</option>
+                        <option value="5000">5000원 할인</option>
+                    </select>
+                </div>
+                <div class="actions">
+                    <div class="final-price-display">
+                        <label>최종 가격:</label>
+                        <span class="finalPrice">1,000원</span>
+                    </div>
+                    <button class="btn btn-primary" type="submit">결제</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- 모달 백드롭 -->
+<div class="modal-backdrop" id="subscriptionModalBackdrop" onclick="closeSubscriptionModal()"></div>
+
+<!-- 구독 모달 -->
+<div class="modal2" id="subscriptionModal">
+    <div class="modal-content2">
+        <span class="close" onclick="closeSubscriptionModal()">&times;</span>
+        <div class="modal-header">
+            <h3>구독 결제</h3>
+        </div>
+        <div class="modal-body">
+            <div class="subscription-options">
+                <div class="subscription-item">
+                    <h4>정기 구독권</h4>
+                    <div class="benefits">혜택</div>
+                    <div class="price">가격: <span>9,900원</span></div>
+                    <input name="subscription" onclick="updateFinalPrice()" type="radio" value="9900">
+                </div>
+                <div class="subscription-item">
+                    <h4>구독권</h4>
+                    <div class="benefits">혜택</div>
+                    <div class="price">가격: <span>14,900원</span></div>
+                    <input name="subscription" onclick="updateFinalPrice()" type="radio" value="14900">
+                </div>
+            </div>
+            <div class="coupon-apply">
+                <label>쿠폰 적용</label>
+                <select class="couponSelect2" onchange="updateFinalPrice()">
+                    <option value="0">쿠폰을 선택하세요</option>
+                    <option value="1000">1000원 할인</option>
+                    <option value="3000">3000원 할인</option>
+                    <option value="5000">5000원 할인</option>
+                </select>
+            </div>
+            <div class="actions2">
+                <div class="final-price-display2">
+                    <label>최종 가격:</label>
+                    <span class="finalPrice">0원</span>
+                </div>
+                <button class="btn-primary2" onclick="subscribe()">구독 신청</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    function openPointPaymentModal() {
+        document.getElementById('modalBackdrop').style.display = 'block';
+        document.getElementById('pointPaymentModal').style.display = 'block';
+    }
+
+    function closePointPaymentModal() {
+        document.getElementById('modalBackdrop').style.display = 'none';
+        document.getElementById('pointPaymentModal').style.display = 'none';
+    }
+
+    function openSubscriptionModal() {
+        document.getElementById('subscriptionModalBackdrop').style.display = 'block';
+        document.getElementById('subscriptionModal').style.display = 'block';
+    }
+
+    function closeSubscriptionModal() {
+        document.getElementById('subscriptionModalBackdrop').style.display = 'none';
+        document.getElementById('subscriptionModal').style.display = 'none';
+    }
+
+    function updateFinalPrice(scope) {
+        let selectedSubscription, selectedCoupon, finalPrice;
+
+        if (scope === 'point') {
+            // 포인트 모달 선택 요소
+            selectedSubscription = document.querySelector('#pointPaymentModal input[name="point"]:checked');
+            selectedCoupon = document.querySelector('#pointPaymentModal .couponSelect').value;
+            finalPrice = document.querySelector('#pointPaymentModal .finalPrice');
+        } else if (scope === 'subscription') {
+            // 구독 모달 선택 요소
+            selectedSubscription = document.querySelector('#subscriptionModal input[name="subscription"]:checked');
+            selectedCoupon = document.querySelector('#subscriptionModal .couponSelect').value;
+            finalPrice = document.querySelector('#subscriptionModal .finalPrice');
+        }
+
+        let totalPrice = 0;
+
+        if (selectedSubscription) {
+            totalPrice = parseInt(selectedSubscription.value);
+        }
+
+        if (selectedCoupon) {
+            totalPrice -= parseInt(selectedCoupon);
+        }
+
+        finalPrice.innerText = `${Math.max(0, totalPrice).toLocaleString()}원`;
+    }
+
+    function subscribe() {
+        alert("구독 신청이 완료되었습니다.");
+    }
+</script>
 </body>
 </html>
