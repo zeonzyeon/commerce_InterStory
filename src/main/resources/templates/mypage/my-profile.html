@@ -935,7 +935,6 @@
             success: function (response) {
                 if (response.next_redirect_pc_url != null)
                     location.href = response.next_redirect_pc_url;
-                alert("결제 수단 변경이 완료되었습니다.");
             },
             error: function (xhr, err, status) {
                 alert(err + "이(가) 발생했습니다: " + status);
