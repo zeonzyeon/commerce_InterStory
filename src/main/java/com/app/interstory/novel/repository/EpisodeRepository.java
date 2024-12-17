@@ -20,7 +20,7 @@ public interface EpisodeRepository extends JpaRepository<Episode, Long>, Episode
 
 	@Query(value = """
 		    SELECT 
-		        ROW_NUMBER() OVER (PARTITION BY novel_id ORDER BY episode_id) AS row_number
+		        ROW_NUMBER() OVER (PARTITION BY novel_id ORDER BY episode_id) AS `row_number`
 		    FROM 
 		        episode
 		    WHERE 

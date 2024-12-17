@@ -4,8 +4,15 @@ import java.util.List;
 
 import com.app.interstory.novel.domain.enumtypes.MainTag;
 import com.app.interstory.novel.domain.enumtypes.NovelStatus;
+import com.app.interstory.novel.dto.request.EpisodeRequestDTO;
+import com.app.interstory.novel.dto.response.EpisodeListResponseDTO;
+import com.app.interstory.novel.dto.response.EpisodeResponseDTO;
 import com.app.interstory.novel.dto.response.NovelListResponseDTO;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import com.app.interstory.novel.service.RecommendationService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -25,6 +32,7 @@ import com.app.interstory.novel.dto.request.NovelRequestDTO;
 import com.app.interstory.novel.dto.request.NovelSortRequestDTO;
 import com.app.interstory.novel.dto.response.NovelDetailResponseDTO;
 import com.app.interstory.novel.dto.response.NovelResponseDTO;
+import com.app.interstory.novel.service.EpisodeService;
 import com.app.interstory.novel.service.NovelService;
 import com.app.interstory.user.domain.CustomUserDetails;
 
@@ -38,6 +46,7 @@ import lombok.extern.slf4j.Slf4j;
 public class NovelRestController {
 
 	private final NovelService novelService;
+	private final EpisodeService episodeService;
 	private final RecommendationService recommendationService;
 
 	// 소설 작성
@@ -135,5 +144,46 @@ public class NovelRestController {
 	public ResponseEntity<List<NovelResponseDTO>> getRecommendedNovelList(@AuthenticationPrincipal CustomUserDetails userDetails) {
 		List<NovelResponseDTO> novels = recommendationService.getRecommendedNovels(userDetails);
 		return ResponseEntity.ok(novels);
+	}
+
+	// 회차 작성
+	@PostMapping("/{novelId}/episodes")
+	public ResponseEntity<EpisodeResponseDTO> createEpisode(@PathVariable Long novelId,
+		@RequestBody EpisodeRequestDTO requestDTO) {
+		EpisodeResponseDTO responseDTO = episodeService.writeEpisode(novelId, requestDTO);
+		return ResponseEntity.ok(responseDTO);
+	}
+
+	// 회차 목록 조회
+	@GetMapping("/{novelId}/episodes/list")
+	public ResponseEntity<EpisodeListResponseDTO> getEpisodeList(
+		@PathVariable(name = "novelId") Long novelId,
+		@AuthenticationPrincipal CustomUserDetails userDetails,
+		@RequestParam(name = "sort", defaultValue = "NEW_TO_OLD") SortType sort,
+		@RequestParam(name = "page", defaultValue = "0") int page,
+		@RequestParam(name = "showAll", defaultValue = "false") boolean showAll
+	) {
+		int pageSize = 4;
+		if (showAll)
+			pageSize = 10000;
+
+		Pageable pageable = PageRequest.of(page, pageSize);
+
+		EpisodeListResponseDTO responseDTO = episodeService.getEpisodeList(userDetails, novelId, sort, pageable, showAll);
+
+		return ResponseEntity.ok(responseDTO);
+	}
+
+	//에피소드 목록 갖고오기
+	@GetMapping("/{novelId}/episodes")
+	public ResponseEntity<Page<EpisodeResponseDTO>> getEpisodes(
+		@PathVariable Long novelId,
+		@RequestParam(defaultValue = "0") int page,
+		@RequestParam(defaultValue = "DESC") Sort.Direction direction
+	) {
+
+		Page<EpisodeResponseDTO> episodes = episodeService.getEpisodesByNovelId(novelId, page, direction);
+
+		return ResponseEntity.ok(episodes);
 	}
 }
