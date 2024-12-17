@@ -1,5 +1,6 @@
 package com.app.interstory.user.service;
 
+import java.sql.Timestamp;
 import java.util.List;
 import java.util.Map;
 
@@ -320,8 +321,16 @@ public class MypageService {
 
 		Subscribe subscribe = subscribeRepository.findByUser_UserId(userId);
 
+		Timestamp endAt;
+
+		if (subscribe == null) {
+			endAt = null;
+		} else {
+			endAt = subscribe.getEndAt();
+		}
+
 		return SubscriptionResponseDTO.builder()
-			.endAt(subscribe.getEndAt())
+			.endAt(endAt)
 			.build();
 	}
 }

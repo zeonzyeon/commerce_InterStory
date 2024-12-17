@@ -13,10 +13,12 @@ import org.springframework.web.client.RestTemplate;
 
 import com.app.interstory.payment.domain.entity.Payment;
 import com.app.interstory.payment.domain.entity.Sid;
+import com.app.interstory.payment.domain.entity.Subscribe;
 import com.app.interstory.payment.domain.enumtypes.PaymentStatus;
 import com.app.interstory.payment.domain.enumtypes.PaymentType;
 import com.app.interstory.payment.domain.repository.PaymentRepository;
 import com.app.interstory.payment.domain.repository.SidRepository;
+import com.app.interstory.payment.domain.repository.SubscribeRepository;
 import com.app.interstory.payment.dto.response.PaymentAproveResponseDTO;
 import com.app.interstory.payment.dto.response.PaymentInactiveResponseDTO;
 import com.app.interstory.payment.dto.response.PaymentReadyResponseDTO;
@@ -53,6 +55,7 @@ public class KakaoService {
 	private final PointRepository pointRepository;
 	private final CouponRepository couponRepository;
 	private final UserCouponRepository userCouponRepository;
+	private final SubscribeRepository subscribeRepository;
 	private PaymentReadyResponseDTO paymentReadyResponseDTO;
 	private Long partnerOrderId;
 	private Long orderUserCouponId;
@@ -192,7 +195,22 @@ public class KakaoService {
 				.build();
 
 			pointRepository.save(point);
-		} else if (totalAmount != POINT_SEQUENCE_PRICE.intValue()) {
+
+			user.updateIsAutoPayment(true);
+		} else if (totalAmount == POINT_SEQUENCE_PRICE.intValue()) {
+			user.updateIsSubscribe(true);
+
+			Subscribe subscribe = subscribeRepository.findByUser_UserId(userId);
+			if (subscribe == null) {
+				subscribe = Subscribe.builder()
+					.user(user)
+					.endAt(Timestamp.valueOf(LocalDateTime.now().plusMonths(1)))
+					.build();
+				subscribeRepository.save(subscribe);
+			} else {
+				subscribe.updateEndAt(Timestamp.valueOf(subscribe.getEndAt().toLocalDateTime().plusMonths(1)));
+			}
+		} else {
 			Long price;
 			int pointPriceFirst = POINT_PRICE_FIRST.intValue();
 			int pointPriceSecond = POINT_PRICE_SECOND.intValue();
@@ -218,11 +236,6 @@ public class KakaoService {
 			pointRepository.save(point);
 		}
 
-		if (orderUserCouponId != null) {
-			userCouponRepository.delete(userCouponRepository.findById(orderUserCouponId)
-				.orElseThrow(() -> new IllegalArgumentException("해당 유저쿠폰 정보가 없습니다. id : " + orderUserCouponId)));
-		}
-
 		paymentRepository.save(payment);
 
 		return response;
@@ -231,8 +244,10 @@ public class KakaoService {
 	public PaymentAproveResponseDTO kakaoPayPayment(Long userId, PaymentType type) {
 		User user = userRepository.findById(userId)
 			.orElseThrow(() -> new IllegalArgumentException(NOT_FOUND_USER_ID + userId));
-		Sid sid = sidRepository.findByUser_UserId(userId)
-			.orElseThrow(() -> new IllegalArgumentException(NOT_FOUND_USER_ID + userId));
+		Sid sid = sidRepository.findByUser_UserId(userId);
+		if (sid == null) {
+			throw new IllegalArgumentException(NOT_FOUND_USER_ID + userId);
+		}
 
 		String name;
 		Long totalPrice = calcTotalPrice(type, 0L);
@@ -277,6 +292,23 @@ public class KakaoService {
 		savedPayment.updateStatus(PaymentStatus.COMPLETED);
 		savedPayment.updateDate(timestamp);
 
+		if (type == PaymentType.SEQUENCE) {
+			user.updateIsSubscribe(true);
+
+			Subscribe subscribe = subscribeRepository.findByUser_UserId(userId);
+			if (subscribe == null) {
+				subscribe = Subscribe.builder()
+					.user(user)
+					.endAt(Timestamp.valueOf(LocalDateTime.now().plusMonths(1)))
+					.build();
+				subscribeRepository.save(subscribe);
+			} else {
+				subscribe.updateEndAt(Timestamp.valueOf(subscribe.getEndAt().toLocalDateTime().plusMonths(1)));
+			}
+		} else if (type == PaymentType.AUTO) {
+			user.updateIsAutoPayment(true);
+		}
+
 		if (response.getAmount().getTotal() == POINT_AUTO_PRICE.intValue()) {
 			Point point = Point.builder()
 				.user(user)
@@ -292,8 +324,10 @@ public class KakaoService {
 	}
 
 	public PaymentInactiveResponseDTO kakaoPayInactive(Long userId) {
-		Sid sid = sidRepository.findByUser_UserId(userId)
-			.orElseThrow(() -> new IllegalArgumentException(NOT_FOUND_USER_ID + userId));
+		Sid sid = sidRepository.findByUser_UserId(userId);
+		if (sid == null) {
+			throw new IllegalArgumentException(NOT_FOUND_USER_ID + userId);
+		}
 
 		Map<String, String> parameters = new HashMap<>();
 
@@ -329,6 +363,53 @@ public class KakaoService {
 		return "결제가 실패하였습니다";
 	}
 
+	public PaymentReadyResponseDTO kakaoPayChangePayment(Long userId) {
+		User user = userRepository.findById(userId)
+			.orElseThrow(() -> new IllegalArgumentException(NOT_FOUND_USER_ID + userId));
+
+		Sid sid = sidRepository.findByUser_UserId(userId);
+		if (sid != null)
+			sidRepository.delete(sid);
+
+		String cid = kakaoPayProperties.getSequenceCid();
+		String name = "결제 수단 변경";
+		Long totalPrice = 0L;
+
+		Payment pendingPayment = Payment.builder()
+			.user(user)
+			.date(Timestamp.valueOf(LocalDateTime.now()))
+			.amount(totalPrice)
+			.description(name)
+			.status(PaymentStatus.PENDING)
+			.build();
+
+		Payment savedPayment = paymentRepository.save(pendingPayment);
+
+		Map<String, Object> parameters = new HashMap<>();
+
+		parameters.put("cid", cid);                                                        // 가맹점 코드(테스트용)
+		parameters.put("partner_order_id", savedPayment.getPaymentId().toString());        // 주문번호(테이블과 매칭 필요)
+		parameters.put("partner_user_id", userId.toString());                              // 회원 아이디
+		parameters.put("item_name", name);                                                 // 상품명
+		parameters.put("quantity", "1");                                                   // 상품 수량
+		parameters.put("total_amount", totalPrice.toString());                             // 상품 총액
+		parameters.put("tax_free_amount", "0");                                            // 상품 비과세 금액
+		parameters.put("approval_url", "http://localhost:8080/api/cash/request");          // 결제 성공 시 URL
+		parameters.put("cancel_url", "http://localhost:8080/api/cash/cancel");             // 결제 취소 시 URL
+		parameters.put("fail_url", "http://localhost:8080/api/cash/fail");                 // 결제 실패 시 URL
+
+		HttpEntity<Map<String, Object>> requestEntity = new HttpEntity<>(parameters, this.getHeaders());
+
+		RestTemplate template = new RestTemplate();
+
+		String url = "https://open-api.kakaopay.com/online/v1/payment/ready";
+
+		paymentReadyResponseDTO = template.postForObject(url, requestEntity, PaymentReadyResponseDTO.class);
+		partnerOrderId = savedPayment.getPaymentId();
+
+		return paymentReadyResponseDTO;
+	}
+
 	public Boolean checkSid(Long userId) {
 		return sidRepository.existsByUser_UserId(userId);
 	}
@@ -341,7 +422,8 @@ public class KakaoService {
 			case NORMAL_FOURTH -> POINT_PRICE_FOURTH - discount;
 			case NORMAL_FIFTH -> POINT_PRICE_FIFTH - discount;
 			case SEQUENCE -> POINT_SEQUENCE_PRICE;
-			default -> POINT_AUTO_PRICE;
+			case AUTO -> POINT_AUTO_PRICE;
+			default -> 0L;
 		};
 	}
 }

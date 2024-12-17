@@ -38,6 +38,8 @@ public class KakaoRestController {
 			case NORMAL_FOURTH:
 			case NORMAL_FIFTH:
 				return ResponseEntity.ok(kakaoService.kakaoPayReady(userId, paymentRequestDTO.getPaymentType(), couponId));
+			case CHANGE_PAYMENT:
+				return ResponseEntity.ok(kakaoService.kakaoPayChangePayment(userId));
 			default:
 				if (kakaoService.checkSid(userId)) {
 					return ResponseEntity.ok(kakaoService.kakaoPayPayment(userId, paymentType));

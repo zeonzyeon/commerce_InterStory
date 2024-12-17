@@ -24,6 +24,7 @@
 <button id="btn-kakao-sequence">kakao pay sequence<i class="fa-solid fa-comment"></i></button>
 <button id="btn-kakao-auto">kakao pay auto<i class="fa-solid fa-comment"></i></button>
 <button id="btn-kakao-inactive">kakao pay inactive<i class="fa-solid fa-comment"></i></button>
+<button id="btn-kakao-change-payment">kakao pay change payment<i class="fa-solid fa-comment"></i></button>
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.3/jquery.min.js"></script>
 <script>
     $(function () {
@@ -134,6 +135,26 @@
                 contentType: 'application/json',
                 success: function (response) {
                     console.log(response);
+                },
+                error: function (xhr, err, status) {
+                    alert(err + "이(가) 발생했습니다: " + status);
+                }
+            });
+        });
+        $("#btn-kakao-change-payment").click(function () {
+            $.ajax({
+                url: '/api/cash/establish',
+                type: 'post',
+                contentType: 'application/json',
+                data: JSON.stringify({
+                    paymentType: "CHANGE_PAYMENT",
+                    couponId: 0
+                }),
+                success: function (response) {
+                    if (response.next_redirect_pc_url != null)
+                        location.href = response.next_redirect_pc_url;
+                    else
+                        console.log(response);
                 },
                 error: function (xhr, err, status) {
                     alert(err + "이(가) 발생했습니다: " + status);

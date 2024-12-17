@@ -130,4 +130,12 @@ public class User {
 	public void active() {
 		this.isActivity = true;
 	}
+
+	public void updateIsSubscribe(Boolean isSubscribe) {
+		this.isSubscribe = isSubscribe;
+	}
+
+	public void updateIsAutoPayment(Boolean isAutoPayment) {
+		this.isAutoPayment = isAutoPayment;
+	}
 }

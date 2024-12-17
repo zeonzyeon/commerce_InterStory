@@ -7,5 +7,6 @@ public enum PaymentType {
 	NORMAL_FOURTH,
 	NORMAL_FIFTH,
 	SEQUENCE,
-	AUTO
+	AUTO,
+	CHANGE_PAYMENT,
 }
