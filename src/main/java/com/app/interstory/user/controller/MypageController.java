@@ -3,6 +3,7 @@ package com.app.interstory.user.controller;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
@@ -15,7 +16,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-import com.app.interstory.novel.domain.enumtypes.Sort;
+import com.app.interstory.novel.domain.enumtypes.SortType;
 import com.app.interstory.novel.dto.response.NovelDetailResponseDTO;
 import com.app.interstory.novel.service.NovelService;
 import com.app.interstory.user.domain.CustomUserDetails;
@@ -54,22 +55,27 @@ public class MypageController {
 	public String getFavoriteNovels(@AuthenticationPrincipal CustomUserDetails userDetails, Model model) {
 		Page<FavoriteNovelResponseDTO> favoriteNovels = mypageService.getFavoriteNovels(userDetails,
 			Pageable.unpaged());
-		model.addAttribute("favoriteNovels", favoriteNovels.getContent());
+		model.addAttribute("favoriteNovels", favoriteNovels);
 		return "mypage/favorite-novel";
 	}
 
 	// 열람 작품 페이지
 	@GetMapping("/recent-novels")
 	public String getRecentNovels(@AuthenticationPrincipal CustomUserDetails userDetails,
+		@RequestParam(name = "sort", defaultValue = "NEW_TO_OLD") SortType sort,
 		@PageableDefault(size = 10) Pageable pageable,
 		Model model) {
-		Page<ReadNovelResponseDTO> recentNovels = mypageService.getReadNovels(
-			userDetails,
-			PageRequest.of(pageable.getPageNumber(), pageable.getPageSize(),
-				org.springframework.data.domain.Sort.by(Sort.NEW_TO_OLD.name()))
+
+		Pageable sortedPageable = PageRequest.of(
+			pageable.getPageNumber(),
+			pageable.getPageSize(),
+			mapSort(sort)
 		);
 
-		model.addAttribute("recentNovels", recentNovels.getContent());
+		Page<ReadNovelResponseDTO> recentNovels = mypageService.getReadNovels(userDetails, sortedPageable);
+		model.addAttribute("recentNovels", recentNovels);
+		model.addAttribute("currentSort", sort);
+
 		return "mypage/recent-novel";
 	}
 
@@ -123,16 +129,20 @@ public class MypageController {
 	// 댓글 페이지
 	@GetMapping("/my-comments")
 	public String getMyComments(@AuthenticationPrincipal CustomUserDetails userDetails,
+		@RequestParam(name = "sort", defaultValue = "NEW_TO_OLD") SortType sort,
 		@PageableDefault(size = 10) Pageable pageable,
 		Model model) {
-		Page<MyCommentResponseDTO> myComments = mypageService.getMyComments(
-			userDetails,
-			PageRequest.of(pageable.getPageNumber(), pageable.getPageSize(),
-				org.springframework.data.domain.Sort.by(Sort.NEW_TO_OLD.name()))
+
+		Pageable sortedPageable = PageRequest.of(
+			pageable.getPageNumber(),
+			pageable.getPageSize(),
+			mapSort(sort)
 		);
-		model.addAttribute("myComments", myComments.getContent());
-		model.addAttribute("currentPage", pageable.getPageNumber() + 1);
-		model.addAttribute("totalPages", myComments.getTotalPages());
+
+		Page<MyCommentResponseDTO> myComments = mypageService.getMyComments(userDetails, sortedPageable);
+		model.addAttribute("myComments", myComments);
+		model.addAttribute("currentSort", sort);
+
 		return "mypage/my-comments";
 	}
 
@@ -156,10 +166,32 @@ public class MypageController {
 
 	// 회차 리스트와 반응 분석 페이지
 	@GetMapping("/novels/{novelId}")
-	public String getEpisodeListAndReaction(@PathVariable Long novelId, Model model) {
-		NovelDetailResponseDTO novelDetail = novelService.readNovel(novelId, Sort.NEW_TO_OLD, PageRequest.of(0, 10));
+	public String getEpisodeListAndReaction(@PathVariable Long novelId,
+		@RequestParam(name = "sort", defaultValue = "NEW_TO_OLD") SortType sort,
+		@RequestParam(name = "page", defaultValue = "0") int page,
+		@RequestParam(name = "size", defaultValue = "10") int size,
+		@AuthenticationPrincipal CustomUserDetails userDetails,
+		Model model) {
+
+		Sort sortOrder = mapSort(sort);
+		Pageable pageable = PageRequest.of(page, size, sortOrder);
+		NovelDetailResponseDTO novelDetail = novelService.readNovel(novelId, userDetails);
 
 		model.addAttribute("novelDetail", novelDetail);
+		model.addAttribute("currentSort", sort);
 		return "mypage/episode-list";
+	}
+
+	// 정렬 변환 메서드
+	private Sort mapSort(SortType sort) {
+		switch (sort) {
+			case OLD_TO_NEW:
+				return Sort.by(Sort.Direction.ASC, "createdAt");
+			case RECOMMENDATION:
+				return Sort.by(Sort.Direction.DESC, "likeCount");
+			case NEW_TO_OLD:
+			default:
+				return Sort.by(Sort.Direction.DESC, "createdAt");
+		}
 	}
 }

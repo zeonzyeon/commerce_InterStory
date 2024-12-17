@@ -3,6 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <title>Favorite Novels</title>
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
     <style>
         /* 헤더 스타일 */
         .header {
@@ -265,19 +266,19 @@
     <!-- 마이페이지 메뉴 -->
     <div class="user-menu">
         <div class="menu-items">
-            <a class="menu-item active" href="">프로필</a>
-            <a class="menu-item" href="">관심 작품</a>
-            <a class="menu-item" href="">열람 작품</a>
+            <a class="menu-item active" href="users/profile">프로필</a>
+            <a class="menu-item" href="users/favorite-novels">관심 작품</a>
+            <a class="menu-item" href="users/recent-novels">열람 작품</a>
             <a class="menu-item" href="/users/point-history">포인트 내역</a>
-            <a class="menu-item" href="">쿠폰</a>
-            <a class="menu-item" href="">회원 정보 관리</a>
+            <a class="menu-item" href="users/my-coupons">쿠폰</a>
+            <a class="menu-item" href="users/edit-profile">회원 정보 관리</a>
         </div>
     </div>
     <h2>관심 작품</h2>
     <div class="favorite-novel">
         <!-- 관심 작품 리스트 -->
-        <div th:if="${not #lists.isEmpty(favoriteNovels)}">
-            <div class="novel-item" th:each="novel : ${favoriteNovels}"
+        <div th:if="${favoriteNovels.content.size() > 0}">
+            <div class="novel-item" th:each="novel : ${favoriteNovels.content}"
                  th:onclick="|location.href='@{/novels/{id}(id=${novel.id})}'|">
                 <button aria-label="Remove Favorite Novel"
                         class="delete-button"
@@ -302,31 +303,48 @@
             </div>
         </div>
     </div>
-
     <!-- 관심 작품이 없을 경우 -->
-    <div class="no-novels" th:if="${#lists.isEmpty(favoriteNovels)}">
+    <div class="no-novels" th:if="${favoriteNovels.content.size() == 0}">
         관심 작품이 없습니다.
     </div>
+    <nav th:if="${favoriteNovels.totalPages > 1}">
+        <ul class="pagination justify-content-center">
+            <li class="page-item" th:classappend="${favoriteNovels.first} ? 'disabled' : ''">
+                <a class="page-link" th:href="@{/favorite-novels(page=${favoriteNovels.number - 1})}">&laquo;</a>
+            </li>
+            <li class="page-item" th:classappend="${pageNum == favoriteNovels.number} ? 'active' : ''"
+                th:each="pageNum : ${#numbers.sequence(0, favoriteNovels.totalPages - 1)}">
+                <a class="page-link" th:href="@{/favorite-novels(page=${pageNum})}" th:text="${pageNum + 1}"></a>
+            </li>
+            <li class="page-item" th:classappend="${favoriteNovels.last} ? 'disabled' : ''">
+                <a class="page-link" th:href="@{/favorite-novels(page=${favoriteNovels.number + 1})}">&raquo;</a>
+            </li>
+        </ul>
+    </nav>
 </main>
 <script>
     function deleteFavoriteNovel(novelId) {
-        if (confirm("이 작품을 관심 작품에서 삭제하시겠습니까?")) {
-            fetch(`/favorite-novels/delete/${novelId}`, {
-                method: 'DELETE'
-            }).then(response => {
-                if (response.ok) {
-                    alert("삭제되었습니다.");
-                    location.reload(); // 페이지 새로고침
-                } else {
-                    alert("삭제 실패. 다시 시도해 주세요.");
-                }
-            }).catch(error => {
-                console.error("Error:", error);
-                alert("오류가 발생했습니다.");
-            });
+        if (!confirm("정말로 이 작품을 관심 목록에서 삭제하시겠습니까?")) {
+            return;
         }
-    }
 
+        fetch(`/api/favorite-novels/${novelId}`, {
+            method: 'DELETE',
+            headers: {'Content-Type': 'application/json'}
+        })
+            .then(response => {
+                if (response.ok) {
+                    alert("관심 작품이 삭제되었습니다.");
+                    location.reload();
+                } else {
+                    alert("삭제에 실패했습니다. 다시 시도해주세요.");
+                }
+            })
+            .catch(error => {
+                console.error("Error:", error);
+                alert("서버 오류가 발생했습니다.");
+            });
+    }
 </script>
 </body>
 </html>
