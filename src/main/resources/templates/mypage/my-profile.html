@@ -235,6 +235,11 @@
             font-size: 16px;
         }
 
+        .is-auto-payment {
+            font-weight: bold;
+            font-size: 16px;
+        }
+
         .subscription-date {
             font-weight: bold;
             font-size: 16px;
@@ -613,22 +618,30 @@
             <button class="payment-action payment" onclick="openPointPaymentModal()">결제</button>
         </div>
         <div class="payment-row">
-            <span class="payment-label">구독 만료일 :
-                <span class="subscription-date" th:if="${user.isSubscribed}" th:text="${#dates.format(subscribe.endAt, 'yyyy-MM-dd HH:mm:ss')}">2025.11.27</span>
+            <span class="payment-label">포인트 자동 결제 :
+                <span class="is-auto-payment" th:if="${user.isAutoPayment}" th:text="사용중">사용중</span>
+                <span class="is-auto-payment" th:if="${!user.isAutoPayment}">사용하지 않음</span>
             </span>
-            <button class="payment-action payment" onclick="openSubscriptionModal()">결제</button>
+            <button class="payment-action payment" onclick="autoPayment()" th:if="${!user.isAutoPayment}">자동 결제 등록</button>
+        </div>
+        <div class="payment-row">
+            <span class="payment-label">구독 만료일 :
+                <span class="subscription-date" th:if="${user.isSubscribed}" th:text="${#dates.format(endAt, 'yyyy-MM-dd HH:mm:ss')}">2025.11.27</span>
+                <span class="subscription-date" th:if="${!user.isSubscribed}">사용하지 않음</span>
+            </span>
+            <button class="payment-action payment" onclick="openSubscriptionModal()" th:if="${!user.isSubscribed}">구독 서비스 가입</button>
         </div>
         <div class="payment-row">
             <span class="payment-label">결제 수단 변경</span>
-            <button class="payment-action change">변경</button>
+            <button class="payment-action change" onclick="changePayment()">변경</button>
         </div>
-        <div class="payment-row">
+        <div class="payment-row" th:if="${user.isAutoPayment}">
             <span class="payment-label">포인트 자동 결제</span>
-            <button class="payment-action cancel">취소</button>
+            <button class="payment-action cancel" onclick="inactiveAutoPayment()">자동 결제 취소</button>
         </div>
-        <div class="payment-row">
+        <div class="payment-row" th:if="${user.isSubscribed}">
             <span class="payment-label">정기 구독 서비스</span>
-            <button class="payment-action cancel">취소</button>
+            <button class="payment-action cancel" onclick="inactiveSubscription()">구독 취소</button>
         </div>
     </div>
     <div class="content-section">
@@ -837,10 +850,6 @@
         });
     }
 
-    function subscribe() {
-        alert("구독 신청이 완료되었습니다.");
-    }
-
     // 정산 요청
     function requestSettlement() {
         fetch('/api/users/settlement', {
@@ -866,6 +875,102 @@
                 alert('계좌번호가 수정되었습니다.');
                 location.reload();
             }).catch(error => console.error('Error:', error));
+    }
+
+    function autoPayment() {
+        $.ajax({
+            url: '/api/cash/establish',
+            type: 'post',
+            contentType: 'application/json',
+            data: JSON.stringify({
+                paymentType: 'AUTO',
+                couponId: 0
+            }),
+            success: function (response) {
+                console.log(response);
+                if (response.next_redirect_pc_url != null)
+                    location.href = response.next_redirect_pc_url;
+            },
+            error: function (xhr, err, status) {
+                alert(err + "이(가) 발생했습니다: " + status);
+            }
+        });
+    }
+
+    function subscribe() {
+        const subscription = document.querySelector('#subscriptionModal input[name="subscription"]:checked').value;
+
+        let type;
+        if (subscription === '9900') type = 'SEQUENCE';
+        else if (subscription === '14900') type = 'SUB_ONCE';
+
+        $.ajax({
+            url: '/api/cash/establish',
+            type: 'post',
+            contentType: 'application/json',
+            data: JSON.stringify({
+                paymentType: type,
+                couponId: 0
+            }),
+            success: function (response) {
+                console.log(response);
+                if (response.next_redirect_pc_url != null)
+                    location.href = response.next_redirect_pc_url;
+            },
+            error: function (xhr, err, status) {
+                alert(err + "이(가) 발생했습니다: " + status);
+            }
+        });
+    }
+
+    function changePayment() {
+        $.ajax({
+            url: '/api/cash/establish',
+            type: 'post',
+            contentType: 'application/json',
+            data: JSON.stringify({
+                paymentType: 'CHANGE_PAYMENT',
+                couponId: 0
+            }),
+            success: function (response) {
+                if (response.next_redirect_pc_url != null)
+                    location.href = response.next_redirect_pc_url;
+                alert("결제 수단 변경이 완료되었습니다.");
+            },
+            error: function (xhr, err, status) {
+                alert(err + "이(가) 발생했습니다: " + status);
+            }
+        });
+    }
+
+    function inactiveAutoPayment() {
+        $.ajax({
+            url: '/api/cash/inactive-auto-payment',
+            type: 'post',
+            contentType: 'application/json',
+            success: function (response) {
+                alert("자동 결제가 취소되었습니다.");
+                location.reload();
+            },
+            error: function (xhr, err, status) {
+                alert(err + "이(가) 발생했습니다: " + status);
+            }
+        });
+    }
+
+    function inactiveSubscription() {
+        $.ajax({
+            url: '/api/cash/inactive-subscription',
+            type: 'post',
+            contentType: 'application/json',
+            success: function (response) {
+                alert("정기 구독이 취소되었습니다.");
+                location.reload();
+            },
+            error: function (xhr, err, status) {
+                alert(err + "이(가) 발생했습니다: " + status);
+            }
+        });
     }
 </script>
 </body>
