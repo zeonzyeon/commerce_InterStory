@@ -235,12 +235,12 @@
     <!-- 마이페이지 메뉴 -->
     <div class="user-menu">
         <div class="menu-items">
-            <a class="menu-item" href="">프로필</a>
-            <a class="menu-item" href="">관심 작품</a>
-            <a class="menu-item" href="">열람 작품</a>
+            <a class="menu-item" href="users/profile">프로필</a>
+            <a class="menu-item" href="users/favorite-novels">관심 작품</a>
+            <a class="menu-item" href="users/recent-novels">열람 작품</a>
             <a class="menu-item active" href="/users/point-history">포인트 내역</a>
-            <a class="menu-item" href="">쿠폰</a>
-            <a class="menu-item" href="">회원정보 관리</a>
+            <a class="menu-item" href="users/my-coupons">쿠폰</a>
+            <a class="menu-item" href="users/edit-profile">회원 정보 관리</a>
         </div>
     </div>
     <h2>포인트 내역</h2>
@@ -285,5 +285,34 @@
         </ul>
     </nav>
 </main>
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const pointHistoryContainer = document.querySelector('.point-history-container');
+
+        document.querySelectorAll('.page-link').forEach(link => {
+            link.addEventListener('click', function (event) {
+                event.preventDefault();
+                const url = this.getAttribute('href');
+                loadPage(url);
+            });
+        });
+
+        function loadPage(url) {
+            fetch(url, {method: 'GET'})
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Failed to load point history data');
+                    }
+                    return response.text();
+                })
+                .then(html => {
+                    pointHistoryContainer.innerHTML = html;
+                })
+                .catch(error => {
+                    console.error('Error loading page:', error);
+                });
+        }
+    });
+</script>
 </body>
 </html>

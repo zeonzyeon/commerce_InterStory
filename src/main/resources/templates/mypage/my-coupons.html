@@ -210,13 +210,14 @@
         }
 
         .my-coupons {
-            height: 60vh;
+            height: 50vh;
             border: 1px solid #ccc;
             border-radius: 10px;
             background-color: #f9f9f9;
             box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
             margin-bottom: 20px;
             padding: 0 20px;
+            margin-top: 20px;
         }
 
         .coupon-table {
@@ -272,12 +273,12 @@
     <!-- 마이페이지 메뉴 -->
     <div class="user-menu">
         <div class="menu-items">
-            <a class="menu-item" href="">프로필</a>
-            <a class="menu-item" href="">관심 작품</a>
-            <a class="menu-item" href="">열람 작품</a>
-            <a class="menu-item" href="/users/point-history">포인트 내역</a>
-            <a class="menu-item active" href="">쿠폰</a>
-            <a class="menu-item" href="">회원 정보 관리</a>
+            <a class="menu-item" href="users/profile">프로필</a>
+            <a class="menu-item" href="users/favorite-novels">관심 작품</a>
+            <a class="menu-item" href="users/recent-novels">열람 작품</a>
+            <a class="menu-item active" href="/users/point-history">포인트 내역</a>
+            <a class="menu-item" href="users/my-coupons">쿠폰</a>
+            <a class="menu-item" href="users/edit-profile">회원 정보 관리</a>
         </div>
     </div>
     <div class="coupon-register">
@@ -286,7 +287,7 @@
         <button type="button">등록</button>
     </div>
     <h2>보유 쿠폰</h2>
-    <div class="no-coupon" th:if="${#lists.isEmpty(couponList)}">
+    <div class="no-coupon" id="no-coupon" style="display:none;" th:if="${#lists.isEmpty(couponList)}">
         <p>보유한 쿠폰이 없습니다.</p>
     </div>
     <div class="my-coupons">
@@ -320,5 +321,52 @@
         </ul>
     </nav>
 </main>
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        fetchCoupons(0); // 페이지 로드 시 첫 페이지 데이터 호출
+
+        function fetchCoupons(page) {
+            fetch(`/api/users/coupons?page=${page}&size=5`) // size: 한 페이지당 항목 개수
+                .then(response => response.json())
+                .then(data => {
+                    renderCoupons(data.content); // 쿠폰 데이터를 렌더링
+                    renderPagination(data); // 페이지네이션 렌더링
+                })
+                .catch(error => console.error("Error fetching coupons:", error));
+        }
+
+        function renderCoupons(coupons) {
+            const tableBody = document.querySelector(".coupon-table tbody");
+            tableBody.innerHTML = ""; // 기존 데이터 초기화
+
+            coupons.forEach(coupon => {
+                const row = `
+                <tr>
+                    <td>
+                        <span class="coupon-name">${coupon.name}</span>
+                        <span class="coupon-effect">${coupon.couponEffect}</span>
+                    </td>
+                    <td>${coupon.expiredAt}</td>
+                </tr>
+            `;
+                tableBody.insertAdjacentHTML("beforeend", row);
+            });
+        }
+
+        function renderPagination(data) {
+            const pagination = document.querySelector(".pagination");
+            pagination.innerHTML = "";
+
+            for (let i = 0; i < data.totalPages; i++) {
+                const pageItem = `
+                <li class="page-item ${data.number === i ? 'active' : ''}">
+                    <a class="page-link" href="#" onclick="fetchCoupons(${i})">${i + 1}</a>
+                </li>
+            `;
+                pagination.insertAdjacentHTML("beforeend", pageItem);
+            }
+        }
+    });
+</script>
 </body>
 </html>

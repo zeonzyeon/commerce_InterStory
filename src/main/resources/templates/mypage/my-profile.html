@@ -815,6 +815,33 @@
     function subscribe() {
         alert("구독 신청이 완료되었습니다.");
     }
+
+    // 정산 요청
+    function requestSettlement() {
+        fetch('/api/users/settlement', {
+            method: 'POST',
+            headers: {'Content-Type': 'application/json'}
+        }).then(response => {
+            if (response.ok) {
+                alert('정산 요청이 완료되었습니다.');
+                location.reload();
+            }
+        }).catch(error => console.error('Error:', error));
+    }
+
+    // 계좌번호 수정
+    function updateAccount() {
+        const accountNumber = document.getElementById('accountNumber').value;
+        fetch('/api/users/account', {
+            method: 'PUT',
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify({accountNumber})
+        }).then(response => response.json())
+            .then(data => {
+                alert('계좌번호가 수정되었습니다.');
+                location.reload();
+            }).catch(error => console.error('Error:', error));
+    }
 </script>
 </body>
 </html>

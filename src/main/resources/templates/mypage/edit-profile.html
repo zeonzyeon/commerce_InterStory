@@ -374,56 +374,62 @@
     <!-- 마이페이지 메뉴 -->
     <div class="user-menu">
         <div class="menu-items">
-            <a class="menu-item" href="">프로필</a>
-            <a class="menu-item" href="">관심 작품</a>
-            <a class="menu-item" href="">열람 작품</a>
-            <a class="menu-item" href="/users/point-history">포인트 내역</a>
-            <a class="menu-item" href="">쿠폰</a>
-            <a class="menu-item active" href="">회원 정보 관리</a>
+            <a class="menu-item" href="users/profile">프로필</a>
+            <a class="menu-item" href="users/favorite-novels">관심 작품</a>
+            <a class="menu-item" href="users/recent-novels">열람 작품</a>
+            <a class="menu-item active" href="/users/point-history">포인트 내역</a>
+            <a class="menu-item" href="users/my-coupons">쿠폰</a>
+            <a class="menu-item" href="users/edit-profile">회원 정보 관리</a>
         </div>
     </div>
     <h2>내 정보</h2>
-    <div class="profile-edit">
-        <div class="profile-edit-content">
-            <div class="profile-image">
-                <div class="image-circle" id="imagePreview"></div>
-                <input id="imageInput" onchange="previewImage(event)" style="display: none;"
-                       th:attr="data-image-url=${profileImageUrl}" type="file">
-                <button class="image-btn" onclick="document.getElementById('imageInput').click()">프로필 변경</button>
-            </div>
-            <div class="profile-content">
-                <div class="form-group">
-                    <div class="nickname-form">
-                        <label>
-                            <span>닉네임</span>
-                            <input id="username" name="username" th:placeholder="${nickname}" th:value="${nickname}"
-                                   type="text">
-                        </label>
-                        <button class="check-btn" onclick="checkNickname()">중복 확인</button>
-                    </div>
-                    <div class="email-form">
-                        <label>
-                            <span>내 계정</span>
-                            <input id="email" readonly th:value="${email}" type="email">
-                        </label>
-                    </div>
-                    <div class="password-form">
-                        <label>
-                            <span>비밀번호</span>
-                            <input id="password" name="password" th:placeholder="${password}" th:value="${password}"
-                                   type="password">
-                        </label>
-                        <button class="check-btn" onclick="checkPassword()">비밀번호 확인</button>
-                        <span></span>
+    <form enctype="multipart/form-data" id="profileEditForm" method="post" onsubmit="submitProfileEditForm(event)"
+          th:action="@{/users/edit-profile}">
+        <div class="profile-edit">
+            <div class="profile-edit-content">
+                <div class="profile-image">
+                    <div class="image-circle" id="imagePreview"></div>
+                    <input id="imageInput" name="profileImage" onchange="previewImage(event)" style="display: none;"
+                           th:attr="data-image-url=${profileImageUrl}" type="file">
+                    <button class="image-btn" onclick="document.getElementById('imageInput').click()" type="button">프로필
+                        변경
+                    </button>
+                </div>
+                <div class="profile-content">
+                    <div class="form-group">
+                        <div class="nickname-form">
+                            <label>
+                                <span>닉네임</span>
+                                <input id="nickname" name="nickname" required th:placeholder="${nickname}"
+                                       th:value="${nickname}" type="text">
+                            </label>
+                            <button class="check-btn" onclick="checkNickname()" type="button">중복 확인</button>
+                        </div>
+                        <div class="email-form">
+                            <label>
+                                <span>내 계정</span>
+                                <input id="email" name="email" readonly th:value="${email}" type="email">
+                            </label>
+                        </div>
+                        <div class="password-form">
+                            <label>
+                                <span>비밀번호</span>
+                                <input id="password" name="password" placeholder="비밀번호를 입력해주세요" type="password">
+                            </label>
+                            <span id="passwordValidationMessage"></span>
+                            <button class="check-btn" onclick="checkPassword()" type="button">비밀번호 확인</button>
+                        </div>
                     </div>
                 </div>
             </div>
+            <!-- 버튼 그룹 -->
+            <div class="btn-group">
+                <button class="save-btn" type="submit">저장</button>
+                <button class="cancel-btn" onclick="cancelProfileEdit()" type="button">취소</button>
+            </div>
         </div>
-        <div class="btn-group">
-            <button class="save-btn" onclick="submitProfileEditForm()">저장</button>
-            <button class="cancel-btn" onclick="cancelProfileEdit()">취소</button>
-        </div>
-    </div>
+    </form>
+
     <div class="withdrawal-content">
         <span><strong>InterStory 탈퇴 주의사항</strong></span>
         <p>
@@ -433,16 +439,19 @@
         <button class="withdrawal-btn" onclick="profileDeleteUser()">서비스 탈퇴</button>
     </div>
 </main>
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script>
     function checkNickname() {
-        const nickname = document.getElementById('nickname').value;
+        const nickname = $('#nickname').val();
+        if (!nickname.trim()) {
+            alert("닉네임을 입력해주세요.");
+            return;
+        }
+
         $.ajax({
             url: '/api/auth/nickname-verification',
             type: 'GET',
-            data: {
-                nickname: encodeURIComponent(nickname)
-            },
-            dataType: 'json',
+            data: {nickname: nickname},
             success: function (data) {
                 if (data.isAvailable) {
                     alert("사용 가능한 닉네임입니다.");
@@ -450,8 +459,7 @@
                     alert("이미 사용 중인 닉네임입니다.");
                 }
             },
-            error: function (xhr, status, error) {
-                console.error('Error:', error);
+            error: function () {
                 alert("닉네임 확인 중 오류가 발생했습니다.");
             }
         });
@@ -467,15 +475,15 @@
         return password.length >= minLength && hasUpperCase && hasLowerCase && hasNumber && hasSpecialChar;
     }
 
-    $(document).ready(function () {
-        $('#password').on('keyup', function () {
-            const password = $(this).val();
-            if (isPasswordValid(password)) {
-                $('#passwordValidationMessage').text('안전한 비밀번호입니다.').css('color', 'green');
-            } else {
-                $('#passwordValidationMessage').text('비밀번호는 최소 8자 이상이며, 대문자, 소문자, 숫자, 특수 문자를 포함해야 합니다.').css('color', 'red');
-            }
-        });
+    $('#password').on('keyup', function () {
+        const password = $(this).val();
+        const message = $('#passwordValidationMessage');
+
+        if (isPasswordValid(password)) {
+            message.text('안전한 비밀번호입니다.').css('color', 'green');
+        } else {
+            message.text('비밀번호는 최소 8자 이상, 대/소문자, 숫자, 특수문자를 포함해야 합니다.').css('color', 'red');
+        }
     });
 
     window.onload = function () {
@@ -519,9 +527,11 @@
         });
     }
 
-    function submitProfileEditForm() {
+    function submitProfileEditForm(event) {
+        event.preventDefault(); // 기본 폼 제출 방지
+
         const userId = document.querySelector('.profile-edit-container').dataset.userId;
-        const nickname = document.getElementById('username').value;
+        const nickname = document.getElementById('nickname').value;
         const password = document.getElementById('password').value;
         const profileImageUrl = document.getElementById('imageInput').dataset.imageUrl;
 
@@ -538,29 +548,40 @@
 
         $.ajax({
             type: 'PUT',
-            url: `api/users`,
+            url: `/api/users/${userId}`,
             contentType: 'application/json',
             data: JSON.stringify(data),
             success: function () {
                 alert('수정이 완료되었습니다!');
-                window.location.href = `/api/users`;
+                window.location.href = '/users/edit-profile';
             },
             error: function (error) {
                 console.error('Error:', error);
-                alert('오류가 발생했습니다.');
+                alert('회원 정보 수정 중 오류가 발생했습니다.');
             }
         });
     }
 
     function cancelProfileEdit() {
-        window.location.href = 'api/users';
+        if (confirm("수정을 취소하시겠습니까? 변경 사항이 저장되지 않습니다.")) {
+            window.location.href = '/mypage/edit-profile';
+        }
     }
 
-    function profileDeleteUser(message = "정말로 탈퇴하시겠습니까?") {
-        let userId = document.getElementById('edit-profile').getAttribute('data-user-id');
-
-        if (confirm(message)) {
-            window.location.href = '/withdrawal/' + userId;
+    function profileDeleteUser() {
+        if (confirm("정말로 탈퇴하시겠습니까?")) {
+            $.ajax({
+                type: 'DELETE',
+                url: '/api/users/withdrawal',
+                success: function () {
+                    alert("회원 탈퇴가 완료되었습니다.");
+                    window.location.href = '/login';
+                },
+                error: function (error) {
+                    console.error('Error:', error);
+                    alert("탈퇴 처리 중 오류가 발생했습니다.");
+                }
+            });
         }
     }
 </script>
