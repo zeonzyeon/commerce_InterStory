@@ -323,11 +323,14 @@ public class KakaoService {
 		return response;
 	}
 
-	public PaymentInactiveResponseDTO kakaoPayInactive(Long userId) {
+	public PaymentInactiveResponseDTO kakaoPayInactiveSubscription(Long userId) {
 		Sid sid = sidRepository.findByUser_UserId(userId);
 		if (sid == null) {
 			throw new IllegalArgumentException(NOT_FOUND_USER_ID + userId);
 		}
+
+		User user = userRepository.findById(userId)
+			.orElseThrow(() -> new IllegalArgumentException(NOT_FOUND_USER_ID + userId));
 
 		Map<String, String> parameters = new HashMap<>();
 
@@ -340,7 +343,38 @@ public class KakaoService {
 
 		String url = "https://open-api.kakaopay.com/online/v1/payment/manage/subscription/inactive";
 
-		sidRepository.delete(sid);
+		if (!user.getIsAutoPayment())
+			sidRepository.delete(sid);
+
+		user.updateIsSubscribe(false);
+
+		return template.postForObject(url, requestEntity, PaymentInactiveResponseDTO.class);
+	}
+
+	public PaymentInactiveResponseDTO kakaoPayInactiveAutoPayment(Long userId) {
+		Sid sid = sidRepository.findByUser_UserId(userId);
+		if (sid == null) {
+			throw new IllegalArgumentException(NOT_FOUND_USER_ID + userId);
+		}
+
+		User user = userRepository.findById(userId)
+			.orElseThrow(() -> new IllegalArgumentException(NOT_FOUND_USER_ID + userId));
+
+		Map<String, String> parameters = new HashMap<>();
+
+		parameters.put("cid", kakaoPayProperties.getSubscriptionCid());
+		parameters.put("sid", sid.getSid());
+
+		HttpEntity<Map<String, String>> requestEntity = new HttpEntity<>(parameters, this.getHeaders());
+
+		RestTemplate template = new RestTemplate();
+
+		String url = "https://open-api.kakaopay.com/online/v1/payment/manage/subscription/inactive";
+
+		if (!user.getIsSubscribe())
+			sidRepository.delete(sid);
+
+		user.updateIsAutoPayment(false);
 
 		return template.postForObject(url, requestEntity, PaymentInactiveResponseDTO.class);
 	}

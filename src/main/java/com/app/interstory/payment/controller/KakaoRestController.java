@@ -64,8 +64,13 @@ public class KakaoRestController {
 		return ResponseEntity.ok(kakaoService.kakaoPayFail());
 	}
 
-	@PostMapping("/inactive")
-	public ResponseEntity<PaymentInactiveResponseDTO> inactivePayment(@AuthenticationPrincipal CustomUserDetails userDetails) {
-		return ResponseEntity.ok(kakaoService.kakaoPayInactive(userDetails.getUser().getUserId()));
+	@PostMapping("/inactive-subscription")
+	public ResponseEntity<PaymentInactiveResponseDTO> inactiveSubscription(@AuthenticationPrincipal CustomUserDetails userDetails) {
+		return ResponseEntity.ok(kakaoService.kakaoPayInactiveSubscription(userDetails.getUser().getUserId()));
+	}
+
+	@PostMapping("/inactive-quto-payment")
+	public ResponseEntity<PaymentInactiveResponseDTO> inactiveAutoPayment(@AuthenticationPrincipal CustomUserDetails userDetails) {
+		return ResponseEntity.ok(kakaoService.kakaoPayInactiveAutoPayment(userDetails.getUser().getUserId()));
 	}
 }
