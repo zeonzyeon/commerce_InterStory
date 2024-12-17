@@ -11,7 +11,10 @@ import org.springframework.data.domain.Pageable;
 
 import com.app.interstory.novel.domain.entity.Novel;
 import com.app.interstory.novel.domain.entity.QNovel;
+import com.app.interstory.novel.domain.enumtypes.NovelStatus;
+import com.app.interstory.novel.dto.request.NovelSortRequestDTO;
 import com.app.interstory.novel.repository.NovelRepositoryCustom;
+import com.app.interstory.user.domain.enumtypes.NovelSortType;
 import com.querydsl.core.BooleanBuilder;
 import com.querydsl.core.types.OrderSpecifier;
 import com.querydsl.jpa.impl.JPAQueryFactory;
@@ -92,4 +95,54 @@ public class NovelRepositoryImpl implements NovelRepositoryCustom {
 				.fetchOne()
 		);
 	}
+
+	//연재중인 작품 인기순 정렬 -  (졸아요 즐겨찾기 + 댓글)top 50
+	@Override
+	public List<Novel> findPopularNovelsByTag(NovelSortRequestDTO request) {
+
+		return queryFactory
+			.selectFrom(novel)
+			.leftJoin(novel.user).fetchJoin()
+			.where(
+				novel.tag.eq(request.getMainTag()),
+				novel.status.eq(NovelStatus.PUBLISHED)
+			)
+			.orderBy(
+				getOrderSpecifier(request.getType())
+			)
+			.fetch();
+
+	}
+
+	@Override
+	public List<Novel> findNovelByOrder(NovelSortType novelSortType) {
+
+		return queryFactory
+			.selectFrom(novel)
+			.leftJoin(novel.user).fetchJoin()
+			.where(novel.status.eq(NovelStatus.PUBLISHED))
+			.orderBy(getOrderSpecifier(novelSortType))
+			.limit(10)
+			.fetch();
+	}
+
+	private OrderSpecifier[] getOrderSpecifier(NovelSortType sortType) {
+
+		return switch (sortType) {
+
+			case LATEST -> new OrderSpecifier[] {
+				novel.episodeUpdatedAt.desc()
+			};
+
+			case NAME -> new OrderSpecifier[] {
+				novel.title.asc()
+			};
+
+			case POPULARITY -> new OrderSpecifier[] {
+				novel.likeCount.add(novel.favoriteCount).desc(),  // 좋아요+즐겨찾기 합산
+				novel.episodeUpdatedAt.desc()  // 같은 인기도일 경우 최신순
+			};
+		};
+	}
+
 }

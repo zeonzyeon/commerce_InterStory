@@ -1,5 +1,10 @@
 package com.app.interstory.novel.domain.entity;
 
+import java.sql.Timestamp;
+
+import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
+
 import com.app.interstory.novel.domain.enumtypes.MainTag;
 import com.app.interstory.novel.domain.enumtypes.NovelStatus;
 import com.app.interstory.user.domain.entity.User;
@@ -76,6 +81,9 @@ public class Novel {
 	@Column(name = "published_at", nullable = false)
 	@CreatedDate
 	private Timestamp publishedAt;
+
+	@Column(name = "episode_updated_at")
+	private Timestamp episodeUpdatedAt;
 
 	public void update(
 		String title,

@@ -66,5 +66,5 @@ public interface NovelRepository extends JpaRepository<Novel, Long>, NovelReposi
 		@Param("sort") String sort,
 		Pageable pageable
 	);
-
+	
 }
