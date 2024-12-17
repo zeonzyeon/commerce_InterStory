@@ -14,7 +14,7 @@ import org.springframework.transaction.annotation.Transactional;
 import com.app.interstory.novel.domain.entity.Comment;
 import com.app.interstory.novel.domain.entity.CommentLike;
 import com.app.interstory.novel.domain.entity.Episode;
-import com.app.interstory.novel.domain.enumtypes.Sort;
+import com.app.interstory.novel.domain.enumtypes.SortType;
 import com.app.interstory.novel.dto.request.CommentRequestDto;
 import com.app.interstory.novel.dto.response.CommentListResponseDto;
 import com.app.interstory.novel.dto.response.CommentResponseDto;
@@ -55,12 +55,12 @@ public class CommentService {
 	}
 
 	@Transactional
-	public CommentListResponseDto getEpisodeComment(Long episodeId, Sort sort, Integer page,
+	public CommentListResponseDto getEpisodeComment(Long episodeId, SortType sort, Integer page,
 		CustomUserDetails userDetails) {
 
 		final int getItemCount = 4;
 
-		Pageable pageable = PageRequest.of(page - 1, getItemCount);
+		Pageable pageable = PageRequest.of(page, getItemCount);
 
 		Page<Comment> comments = commentRepository.findCommentsByEpisodeId(episodeId, sort.getDescription(), pageable);
 
@@ -107,17 +107,17 @@ public class CommentService {
 	}
 
 	@Transactional
-	public CommentListResponseDto getNovelComment(Long novelId, Sort sort, Integer page,
+	public CommentListResponseDto getNovelComment(Long novelId, SortType sort, Integer page,
 		CustomUserDetails userDetails) {
 
 		final int getItemCount = 4;
 
-		Pageable pageable = PageRequest.of(page - 1, getItemCount);
+		Pageable pageable = PageRequest.of(page, getItemCount);
 
 		Page<Comment> comments = commentRepository.findCommentsByNovelId(novelId, sort.getDescription(), pageable);
 
 		if (page > comments.getTotalPages()) {
-			throw new RuntimeException("유효하지 않은 사용자입니다.");
+			throw new RuntimeException("유효하지 않은 페이지입니다.");
 		}
 
 		User user;
@@ -135,6 +135,7 @@ public class CommentService {
 					.nickname(comment.getUser().getNickname())
 					.profileUrl(comment.getUser().getProfileUrl())
 					.content("삭제된 댓글입니다.")
+					.episodeTitle(comment.getEpisode().getTitle())
 					.createdAt(formatTimestamp(comment.getCreatedAt()))
 					.likeCount(comment.getLikeCount())
 					.isLiked(false)
@@ -146,6 +147,7 @@ public class CommentService {
 					.nickname(comment.getUser().getNickname())
 					.profileUrl(comment.getUser().getProfileUrl())
 					.content(comment.getContent())
+					.episodeTitle(comment.getEpisode().getTitle())
 					.createdAt(formatTimestamp(comment.getCreatedAt()))
 					.likeCount(comment.getLikeCount())
 					.isLiked(commentLikeRepository.existsByCommentAndUser(comment, user))
