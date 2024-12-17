@@ -9,21 +9,6 @@
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 </head>
 <body>
-<header>
-    <nav>
-        <ul>
-            <li>목록</li>
-            <li>무료</li>
-            <li>유료</li>
-        </ul>
-        <ul>
-            <li>장바구니</li>
-            <li>검색</li>
-            <li>마이페이지</li>
-        </ul>
-    </nav>
-</header>
-
 <main>
     <section class="novel-profile" id="novel-profile" th:attr="data-novel-id=${novel.novelId}">
         <div class="novel-image">
@@ -99,7 +84,8 @@
                 </div>
             </div>
             <div class="episode-show-all">
-                <button class="btn-episode-show-all" th:if="${!episodes.showAll}">더보기</button>
+                <button class="btn-episode-show-all" id="btn-episode-show-all" th:if="${!episodes.showAll}" th:onclick="showAllEpisodes()">더보기</button>
+                <button class="btn-episode-show-all" id="btn-episode-show-min" th:if="${episodes.showAll}" th:onclick="showMinEpisodes()">줄이기</button>
             </div>
         </div>
     </section>
@@ -108,9 +94,9 @@
         <div class="comment-info">
             <span th:text="|총 ${novel.commentCount}개|">총 100개</span>
             <div>
-                <button class="btn-comment-sort-popular">인기순</button>
+                <button class="btn-comment-sort-popular" id="btn-comment-sort-popular">인기순</button>
                 <span>|</span>
-                <button class="btn-comment-sort-recent">최신순</button>
+                <button class="btn-comment-sort-recent" id="btn-comment-sort-recent">최신순</button>
             </div>
         </div>
         <div class="comment-item" th:each="comment : ${comments.comments}">
@@ -130,14 +116,6 @@
         </div>
     </section>
 </main>
-
-<footer>
-    <div class="footer-content">
-        <p>© 2023 UI Design. All rights reserved.</p>
-        <p>문의사항: 1234-5678</p>
-    </div>
-</footer>
-
 <script th:src="@{/js/novel/novel.js}"></script>
 </body>
 </html>

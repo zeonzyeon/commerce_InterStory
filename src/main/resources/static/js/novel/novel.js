@@ -43,3 +43,32 @@ document.getElementById('episode-sort-old').addEventListener('click', () => {
 function viewEpisode(episodeId) {
     console.log(episodeId);
 }
+
+function showAllEpisodes() {
+    const currentUrl = new URL(window.location.href);
+    currentUrl.searchParams.set('showAll', 'true');
+    window.history.pushState({}, '', currentUrl);
+    location.reload();
+}
+
+function showMinEpisodes() {
+    const currentUrl = new URL(window.location.href);
+    currentUrl.searchParams.set('showAll', 'false');
+    window.history.pushState({}, '', currentUrl);
+    location.reload();
+}
+
+
+document.getElementById('btn-comment-sort-recent').addEventListener('click', () => {
+    const currentUrl = new URL(window.location.href);
+    currentUrl.searchParams.set('commentSort', 'NEW_TO_OLD');
+    window.history.pushState({}, '', currentUrl);
+    location.reload();
+});
+
+document.getElementById('btn-comment-sort-popular').addEventListener('click', () => {
+    const currentUrl = new URL(window.location.href);
+    currentUrl.searchParams.set('commentSort', 'RECOMMENDATION');
+    window.history.pushState({}, '', currentUrl);
+    location.reload();
+});
