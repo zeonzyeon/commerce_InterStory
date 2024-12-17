@@ -1,0 +1,107 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, system-ui, Roboto, sans-serif;
+}
+
+body {
+    background: #f8f9fa;
+    color: #333;
+}
+
+/* 헤더 스타일 */
+.header {
+    background: #fff;
+    padding: 1rem 2rem;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    position: sticky;
+    top: 0;
+    z-index: 100;
+}
+
+.header-content {
+    max-width: 1200px;
+    margin: 0 auto;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 2rem;
+}
+
+.logo-area {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    min-width: 150px;
+}
+
+.logo-image {
+    width: 32px;
+    height: 32px;
+    object-fit: cover;
+}
+
+.logo-text {
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: #111;
+}
+
+.search-bar {
+    flex: 1;
+    max-width: 400px;
+    position: relative;
+}
+
+/* 반응형 처리 */
+@media (max-width: 768px) {
+    .header-content {
+        gap: 1rem;
+    }
+
+    .logo-area {
+        min-width: auto;
+    }
+
+    .logo-text {
+        font-size: 1.1rem;
+    }
+
+    .search-bar {
+        max-width: 200px;
+    }
+}
+
+.search-bar {
+    flex: 0 1 400px;
+    position: relative;
+}
+
+.search-bar input {
+    width: 100%;
+    padding: 0.75rem 1rem;
+    border: 1px solid #ddd;
+    border-radius: 20px;
+    font-size: 0.9rem;
+    background: #f8f9fa;
+}
+
+.search-bar input:focus {
+    outline: none;
+    border-color: #333;
+    background: #fff;
+}
+
+.user-profile {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
+.user-profile img {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    object-fit: cover;
+}

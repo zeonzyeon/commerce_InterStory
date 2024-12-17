@@ -1,5 +1,10 @@
 package com.app.interstory.novel.domain.entity;
 
+import java.sql.Timestamp;
+
+import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
+
 import com.app.interstory.novel.domain.enumtypes.MainTag;
 import com.app.interstory.novel.domain.enumtypes.NovelStatus;
 import com.app.interstory.user.domain.entity.User;
@@ -9,6 +14,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
@@ -76,6 +82,9 @@ public class Novel {
 	@CreatedDate
 	private Timestamp publishedAt;
 
+	@Column(name = "episode_updated_at")
+	private Timestamp episodeUpdatedAt;
+
 	public void update(
 		String title,
 		String description,
@@ -102,5 +111,9 @@ public class Novel {
 
 	public void markAsDeleted() {
 		this.status = NovelStatus.DELETED;
+	}
+
+	public void updateFavoriteCount(Integer favoriteCount) {
+		this.favoriteCount = favoriteCount;
 	}
 }

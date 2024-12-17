@@ -1,0 +1,21 @@
+<!-- fragments/header.html -->
+<header class="header" th:fragment="header">
+    <div class="header-content">
+        <div class="logo-area">
+            <img alt="로고" class="logo-image"
+                 th:src="@{https://est-team4-bucket.s3.ap-northeast-2.amazonaws.com/common/interstory_logo.png}">
+            <span class="logo-text">InterStory</span>
+        </div>
+        <div class="search-bar">
+            <input placeholder="제목/작가로 검색" type="text">
+        </div>
+        <div class="user-area">
+            <!-- 로그인 상태에 따른 조건부 렌더링 -->
+            <div class="user-profile" th:if="${user}">
+                <span th:text="${user.nickname}">닉네임</span>
+                <img alt="프로필" th:src="${user.profileUrl}">
+            </div>
+            <a class="login-btn" href="/auth/login" th:unless="${user}">로그인</a>
+        </div>
+    </div>
+</header>

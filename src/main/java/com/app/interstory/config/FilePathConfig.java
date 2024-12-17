@@ -9,18 +9,24 @@ import lombok.Getter;
 @Getter
 public class FilePathConfig {
 
-	@Value("${cloud.aws.s3.bucket}")
-	private String bucketName;
-	@Value("${cloud.aws.region.static}")
-	private String region;
+	private final String bucketName;
+	private final String region;
+	private final String basePath;
+	private final String userProfilePath;
+	private final String userDefaultProfilePath;
+	private final String thumbnailPath;
+	private final String common;
 
-	//https://est-team4-bucket.s3.ap-northeast-2.amazonaws.com/profile/user.png
-	private final String basePath = String.format("https://%s.s3.%s.amazonaws.com", bucketName, region);
-
-	private final String userProfilePath = basePath + "/user/";
-	// 기본이미지 저장
-	private final String userDefaultProfilePath = userProfilePath + "user.png";
-	private final String thumbnailPath = basePath + "/thumbnail/";
-	private final String common = basePath + "/common/";
+	public FilePathConfig(
+		@Value("${cloud.aws.s3.bucket}") String bucketName,
+		@Value("${cloud.aws.region.static}") String region) {
+		this.bucketName = bucketName;
+		this.region = region;
+		this.basePath = String.format("https://%s.s3.%s.amazonaws.com", bucketName, region);
+		this.userProfilePath = basePath + "/profile/";
+		this.userDefaultProfilePath = userProfilePath + "user.png";
+		this.thumbnailPath = basePath + "/thumbnail/";
+		this.common = basePath + "/common/";
+	}
 
 }
