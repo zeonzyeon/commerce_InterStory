@@ -83,4 +83,10 @@ public class UserController {
 		return "mypage/ai-reaction";
 	}
 
+//	// 내 장바구니 페이지
+//	@GetMapping("{userId}/cart")
+//	public String myCart(@PathVariable Long userId, Model model) {
+//		return ""
+//	}
+
 }

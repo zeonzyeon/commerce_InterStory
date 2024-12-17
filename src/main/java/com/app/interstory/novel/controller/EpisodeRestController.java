@@ -29,7 +29,7 @@ import com.app.interstory.user.domain.CustomUserDetails;
 import lombok.RequiredArgsConstructor;
 
 @RestController
-@RequestMapping("api/novels/{novelId}/episodes")
+@RequestMapping("api/novels/episodes")
 @RequiredArgsConstructor
 public class EpisodeRestController {
 
@@ -56,35 +56,32 @@ public class EpisodeRestController {
 	// 회차 상세 조회
 	@GetMapping("/{episodeId}")
 	public ResponseEntity<EpisodeResponseDTO> readEpisode(
-		@PathVariable Long novelId,
 		@PathVariable Long episodeId) {
-		EpisodeResponseDTO responseDTO = episodeService.readEpisode(novelId, episodeId);
+		EpisodeResponseDTO responseDTO = episodeService.readEpisode(episodeId);
 		return ResponseEntity.ok(responseDTO);
 	}
 
 	// 회차 삭제
 	@DeleteMapping("/{episodeId}")
 	public ResponseEntity<String> deleteEpisode(
-		@PathVariable Long novelId,
 		@PathVariable Long episodeId) {
-		episodeService.deleteEpisode(novelId, episodeId);
+		episodeService.deleteEpisode(episodeId);
 		return ResponseEntity.noContent().build();
 	}
 
 	// 회차 구매
 	@PostMapping("/{episodeId}/purchase")
 	public ResponseEntity<String> purchaseEpisode(
-		@PathVariable Long novelId,
 		@PathVariable Long episodeId,
 		@AuthenticationPrincipal CustomUserDetails userDetails
 	) {
 		Long userId = userDetails.getUser().getUserId();
-		episodeService.purchaseEpisode(userId, novelId, episodeId);
+		episodeService.purchaseEpisode(userId, episodeId);
 		return ResponseEntity.ok("Purchase successful!");
 	}
 
 	// 장바구니 담기
-	@PostMapping("/cart")
+	@PostMapping("/{episodeId}/cart")
 	public ResponseEntity<String> addToCart(
 		@AuthenticationPrincipal CustomUserDetails userDetails,
 		@RequestBody Map<String, Long> request

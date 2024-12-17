@@ -15,7 +15,6 @@ import lombok.ToString;
 @ToString
 public class EpisodeResponseDTO {
 	private Long episodeId;
-	private Long novelId;
 	private String title;
 	private Integer viewCount;
 	private Integer commentCount;

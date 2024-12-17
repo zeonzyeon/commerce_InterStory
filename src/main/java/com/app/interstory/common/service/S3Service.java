@@ -26,15 +26,17 @@ public class S3Service {
     }
 
     //파일 업로드
-    public String uploadFile(MultipartFile file) {
+    public String uploadFile(MultipartFile file, String dirPath) {
         try {
             String fileName = Utils.getRenameFilename(Objects.requireNonNull(file.getOriginalFilename()));
+            dirPath += fileName;
+            System.out.println("**************경로 확인 ::" + dirPath);
             ObjectMetadata metadata = new ObjectMetadata();
             metadata.setContentType(file.getContentType());
             metadata.setContentLength(file.getSize());
 
             amazonS3Client.putObject(
-                    new PutObjectRequest(bucket, fileName, file.getInputStream(), metadata)
+                    new PutObjectRequest(bucket, dirPath, file.getInputStream(), metadata)
             );
 
             return amazonS3Client.getUrl(bucket, fileName).toString();
@@ -53,7 +55,6 @@ public class S3Service {
             throw new RuntimeException("파일 삭제 실패", e);
         }
     }
-
 
     private String extractFileNameFromUrl(String fileUrl) {
         return fileUrl.substring(fileUrl.lastIndexOf("/") + 1);

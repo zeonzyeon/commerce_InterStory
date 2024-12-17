@@ -3,6 +3,7 @@ package com.app.interstory.novel.service;
 import java.util.Comparator;
 import java.util.List;
 
+import com.app.interstory.novel.domain.entity.Collection;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
@@ -87,13 +88,9 @@ public class EpisodeService {
 	}
 
 	// 회차 상세 조회
-	public EpisodeResponseDTO readEpisode(Long novelId, Long episodeId) {
+	public EpisodeResponseDTO readEpisode(Long episodeId) {
 		Episode episode = episodeRepository.findById(episodeId)
 			.orElseThrow(() -> new RuntimeException("Episode not found"));
-
-		if (!episode.getNovel().getNovelId().equals(novelId)) {
-			throw new RuntimeException("Episode does not belong to the specified novel");
-		}
 
 		return convertToDTO(episode);
 	}
@@ -101,7 +98,6 @@ public class EpisodeService {
 	private EpisodeResponseDTO convertToDTO(Episode episode) {
 		return EpisodeResponseDTO.builder()
 			.episodeId(episode.getEpisodeId())
-			.novelId(episode.getNovel().getNovelId())
 			.title(episode.getTitle())
 			.viewCount(episode.getViewCount())
 			.publishedAt(episode.getPublishedAt())
@@ -114,20 +110,16 @@ public class EpisodeService {
 
 	// 회차 삭제
 	@Transactional
-	public void deleteEpisode(Long novelId, Long episodeId) {
+	public void deleteEpisode(Long episodeId) {
 		Episode episode = episodeRepository.findById(episodeId)
 			.orElseThrow(() -> new RuntimeException("Episode not found"));
-
-		if (!episode.getNovel().getNovelId().equals(novelId)) {
-			throw new RuntimeException("Episode does not belong to the specified novel");
-		}
 
 		episode.markAsDeleted();
 	}
 
 	// 회차 구매
 	@Transactional
-	public void purchaseEpisode(Long userId, Long novelId, Long episodeId) {
+	public void purchaseEpisode(Long userId, Long episodeId) {
 		// 1. 사용자 조회
 		User user = userRepository.findById(userId)
 			.orElseThrow(() -> new RuntimeException("User not found"));
@@ -135,10 +127,6 @@ public class EpisodeService {
 		// 2. 에피소드 조회 및 검증
 		Episode episode = episodeRepository.findById(episodeId)
 			.orElseThrow(() -> new RuntimeException("Episode not found"));
-
-		if (!episode.getNovel().getNovelId().equals(novelId)) {
-			throw new RuntimeException("Invalid novel ID for the given episode.");
-		}
 
 		Long episodePrice = 5L;
 
@@ -152,6 +140,10 @@ public class EpisodeService {
 			.description("Episode purchase - ID: " + episodeId)
 			.build();
 		pointRepository.save(point);
+
+		Collection collection = new Collection(user, episode);
+
+		collectionRepository.save(collection);
 	}
 
 	// 장바구니 담기
