@@ -1,5 +1,9 @@
 package com.app.interstory.payment.controller;
 
+import java.net.URI;
+
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -51,7 +55,13 @@ public class KakaoRestController {
 
 	@GetMapping("/request")
 	public ResponseEntity<PaymentAproveResponseDTO> requestPayment(@AuthenticationPrincipal CustomUserDetails userDetails, @RequestParam("pg_token") String pgToken) {
-		return ResponseEntity.ok(kakaoService.kakaoPayApprove(userDetails.getUser().getUserId(), pgToken));
+		PaymentAproveResponseDTO result = kakaoService.kakaoPayApprove(userDetails.getUser().getUserId(), pgToken);
+
+		String redirectUrl = "/";
+		HttpHeaders headers = new HttpHeaders();
+		headers.setLocation(URI.create(redirectUrl));
+
+		return new ResponseEntity<>(result, headers, HttpStatus.SEE_OTHER);
 	}
 
 	@GetMapping("/cancel")
@@ -69,7 +79,7 @@ public class KakaoRestController {
 		return ResponseEntity.ok(kakaoService.kakaoPayInactiveSubscription(userDetails.getUser().getUserId()));
 	}
 
-	@PostMapping("/inactive-quto-payment")
+	@PostMapping("/inactive-auto-payment")
 	public ResponseEntity<PaymentInactiveResponseDTO> inactiveAutoPayment(@AuthenticationPrincipal CustomUserDetails userDetails) {
 		return ResponseEntity.ok(kakaoService.kakaoPayInactiveAutoPayment(userDetails.getUser().getUserId()));
 	}

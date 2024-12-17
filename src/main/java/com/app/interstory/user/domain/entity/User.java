@@ -138,4 +138,8 @@ public class User {
 	public void updateIsAutoPayment(Boolean isAutoPayment) {
 		this.isAutoPayment = isAutoPayment;
 	}
+
+	public void updatePoint(Long point) {
+		this.point = point;
+	}
 }

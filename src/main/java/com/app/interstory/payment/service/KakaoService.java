@@ -46,8 +46,9 @@ public class KakaoService {
 	private static final Long POINT_PRICE_THIRD = 5_000L;
 	private static final Long POINT_PRICE_FOURTH = 10_000L;
 	private static final Long POINT_PRICE_FIFTH = 50_000L;
-	private static final Long POINT_SEQUENCE_PRICE = 14_999L;
-	private static final Long POINT_AUTO_PRICE = 9_999L;
+	private static final Long POINT_SEQUENCE_PRICE = 9_999L;
+	private static final Long SUBSCRIBE_ONCE = 14_999L;
+	private static final Long POINT_AUTO_PRICE = 100_000L;
 	private final KakaoPayProperties kakaoPayProperties;
 	private final SidRepository sidRepository;
 	private final UserRepository userRepository;
@@ -95,10 +96,12 @@ public class KakaoService {
 
 		if (type == PaymentType.SEQUENCE) {
 			cid = kakaoPayProperties.getSequenceCid();
-			name = "포인트 정기 결제";
+			name = "구독 정기 결제";
 		} else if (type == PaymentType.AUTO) {
 			cid = kakaoPayProperties.getSubscriptionCid();
 			name = "포인트 자동 결제";
+		} else if (type == PaymentType.SUB_ONCE) {
+			name = "구독 1회 결제";
 		}
 
 		Payment pendingPayment = Payment.builder()
@@ -182,6 +185,7 @@ public class KakaoService {
 				.orElseThrow(() -> new IllegalArgumentException("해당 쿠폰 정보가 없습니다. id : " + userCoupon.getCoupon().getCouponId()));
 
 			discount = coupon.getCouponEffect().getDiscountAmount();
+			userCouponRepository.delete(userCoupon);
 		}
 
 		Integer amount = response.getAmount().getTotal();
@@ -219,21 +223,23 @@ public class KakaoService {
 			int pointPriceFifth = POINT_PRICE_FIFTH.intValue();
 
 			price = switch (totalAmount) {
-				case 1_000 -> (long)(pointPriceFirst / 20);
-				case 3_000 -> (long)(pointPriceSecond / 20);
-				case 5_000 -> (long)(pointPriceThird / 20);
-				case 10_000 -> (long)(pointPriceFourth / 20);
-				default -> (long)(pointPriceFifth / 20);
+				case 1_000 -> (long)(pointPriceFirst);
+				case 3_000 -> (long)(pointPriceSecond);
+				case 5_000 -> (long)(pointPriceThird);
+				case 10_000 -> (long)(pointPriceFourth);
+				default -> (long)(pointPriceFifth);
 			};
 
 			Point point = Point.builder()
 				.user(user)
 				.usedAt(timestamp)
 				.balance(price)
-				.description(price + " 포인트 충전")
+				.description((price / 20) + " 포인트 충전")
 				.build();
 
 			pointRepository.save(point);
+
+			user.updatePoint(user.getPoint() + (price / 20));
 		}
 
 		paymentRepository.save(payment);
@@ -318,6 +324,8 @@ public class KakaoService {
 				.build();
 
 			pointRepository.save(point);
+
+			user.updatePoint(user.getPoint() + (POINT_AUTO_PRICE / 20));
 		}
 
 		return response;
@@ -455,6 +463,7 @@ public class KakaoService {
 			case NORMAL_THIRD -> POINT_PRICE_THIRD - discount;
 			case NORMAL_FOURTH -> POINT_PRICE_FOURTH - discount;
 			case NORMAL_FIFTH -> POINT_PRICE_FIFTH - discount;
+			case SUB_ONCE -> SUBSCRIBE_ONCE;
 			case SEQUENCE -> POINT_SEQUENCE_PRICE;
 			case AUTO -> POINT_AUTO_PRICE;
 			default -> 0L;

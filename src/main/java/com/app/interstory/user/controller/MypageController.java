@@ -50,11 +50,13 @@ public class MypageController {
 		SubscriptionResponseDTO endAt = mypageService.getSubscription(userDetails);
 
 		Pageable pageable = PageRequest.of(0, 5);
+		Pageable pageable2 = PageRequest.of(0, 100000);
 
 		model.addAttribute("user", userProfile);
 		model.addAttribute("endAt", endAt.getEndAt());
 		model.addAttribute("novels", mypageService.getMyNovels(userDetails, pageable));
 		model.addAttribute("comments", mypageService.getMyComments(userDetails, pageable));
+		model.addAttribute("myCoupons", mypageService.getCoupons(userDetails, pageable2));
 		return "mypage/my-profile";
 	}
 
