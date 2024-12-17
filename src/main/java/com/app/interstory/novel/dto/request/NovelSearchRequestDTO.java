@@ -2,7 +2,7 @@ package com.app.interstory.novel.dto.request;
 
 import com.app.interstory.novel.domain.enumtypes.MainTag;
 import com.app.interstory.novel.domain.enumtypes.NovelStatus;
-import com.app.interstory.novel.domain.enumtypes.Sort;
+import com.app.interstory.novel.domain.enumtypes.SortType;
 
 import lombok.Getter;
 
@@ -13,7 +13,7 @@ public class NovelSearchRequestDTO {
 	private String author;
 	private Boolean monetized;
 	private MainTag mainTag;
-	private Sort sort;
+	private SortType sort;
 	private int page;
 	private int size;
 }

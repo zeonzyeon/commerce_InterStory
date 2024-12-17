@@ -5,7 +5,7 @@ import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor
 @Getter
-public enum Sort {
+public enum SortType {
 	OLD_TO_NEW("오래된순"),
 	NEW_TO_OLD("최신순"),
 	RECOMMENDATION("추천순");

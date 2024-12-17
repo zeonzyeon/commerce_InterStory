@@ -14,6 +14,7 @@ public class CommentResponseDto {
 	private final String nickname;
 	private final String profileUrl;
 	private final String content;
+	private final String episodeTitle;
 	private final String createdAt;
 	private final Integer likeCount;
 	private final Boolean isLiked;

@@ -12,12 +12,21 @@ import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
+
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
 import com.app.interstory.novel.domain.entity.Episode;
+import com.app.interstory.novel.domain.entity.FavoriteNovel;
 import com.app.interstory.novel.domain.entity.Novel;
 import com.app.interstory.novel.domain.entity.Tag;
 import com.app.interstory.novel.domain.enumtypes.MainTag;
 import com.app.interstory.novel.domain.enumtypes.NovelStatus;
-import com.app.interstory.novel.domain.enumtypes.Sort;
+import com.app.interstory.novel.domain.enumtypes.SortType;
 import com.app.interstory.novel.dto.request.NovelRequestDTO;
 import com.app.interstory.novel.dto.request.NovelSortRequestDTO;
 import com.app.interstory.novel.dto.response.EpisodeResponseDTO;
@@ -25,8 +34,10 @@ import com.app.interstory.novel.dto.response.NovelDetailResponseDTO;
 import com.app.interstory.novel.dto.response.NovelListResponseDTO;
 import com.app.interstory.novel.dto.response.NovelResponseDTO;
 import com.app.interstory.novel.repository.EpisodeRepository;
+import com.app.interstory.novel.repository.FavoriteNovelRepository;
 import com.app.interstory.novel.repository.NovelRepository;
 import com.app.interstory.novel.repository.TagRepository;
+import com.app.interstory.user.domain.CustomUserDetails;
 import com.app.interstory.user.domain.enumtypes.NovelSortType;
 import com.app.interstory.user.repository.UserRepository;
 
@@ -43,6 +54,7 @@ public class NovelService {
 	private final TagRepository tagRepository;
 	@Qualifier("redisObjectTemplate")
 	private final RedisTemplate<String, Object> redisTemplate;
+	private final FavoriteNovelRepository favoriteNovelRepository;
 
 	// 소설 작성
 	public Long writeNovel(NovelRequestDTO novelRequestDTO, Long userId) {
@@ -86,48 +98,28 @@ public class NovelService {
 	}
 
 	// 소설 상세 조회
-	public NovelDetailResponseDTO readNovel(Long novelId, Sort sort, Pageable pageable) {
+	public NovelDetailResponseDTO readNovel(Long novelId, CustomUserDetails userDetails) {
 		Novel novel = novelRepository.findById(novelId)
 			.orElseThrow(() -> new RuntimeException("Novel not found"));
 
-		Page<Episode> episodes;
-		switch (sort) {
-			case RECOMMENDATION:
-				episodes = episodeRepository.findEpisodesByNovelIdOrderByLikeCount(novelId, pageable);
-				break;
-			case OLD_TO_NEW:
-				episodes = episodeRepository.findEpisodesByNovelIdOrderByPublishedAtAsc(novelId, pageable);
-				break;
-			default:
-				episodes = episodeRepository.findEpisodesByNovelIdOrderByPublishedAtDesc(novelId, pageable);
-				break;
-		}
-
-		List<EpisodeResponseDTO> episodeDTOs = episodes.getContent().stream()
-			.map(episode -> EpisodeResponseDTO.builder()
-				.episodeId(episode.getEpisodeId())
-				.novelId(novelId)
-				.title(episode.getTitle())
-				.viewCount(episode.getViewCount())
-				.publishedAt(episode.getPublishedAt())
-				.thumbnailUrl(episode.getThumbnailUrl())
-				.likeCount(episode.getLikeCount())
-				.content(null)
-				.status(episode.getStatus())
-				.build()
-			)
-			.collect(Collectors.toList());
-
 		return new NovelDetailResponseDTO(
 			novel.getNovelId(),
+			novel.getUser().getUserId(),
 			novel.getTitle(),
 			novel.getDescription(),
 			novel.getPlan(),
 			novel.getThumbnailUrl(),
 			novel.getStatus(),
 			novel.getTag(),
-			episodeDTOs,
-			episodes.getTotalPages()
+			tagRepository.findByNovel(novel),
+			novel.getIsFree(),
+			novel.getFavoriteCount(),
+			novel.getLikeCount(),
+			episodeRepository.countByNovel(novel),
+			episodeRepository.findByNovel(novel).stream()
+				.mapToInt(Episode::getCommentCount)
+				.sum(),
+			favoriteNovelRepository.existsByUser_UserId(userDetails.getUser().getUserId())
 		);
 	}
 
@@ -138,7 +130,7 @@ public class NovelService {
 		String author,
 		Boolean monetized,
 		MainTag tag,
-		Sort sort,
+		SortType sort,
 		Integer page
 	) {
 		final int getItemCount = 10;
@@ -183,6 +175,33 @@ public class NovelService {
 		novelRepository.save(novel);
 	}
 
+	// 관심작품 등록
+	@Transactional
+	public String likeNovel(Long userId, Long novelId) {
+		String afterLikeMessage;
+
+		// 에피소드 조회
+		Novel novel = novelRepository.findById(novelId)
+			.orElseThrow(() -> new RuntimeException("Novel not found"));
+
+		if (favoriteNovelRepository.existsByUser_UserId(userId)) {
+			favoriteNovelRepository.deleteByUser_UserId(userId);
+			novel.updateFavoriteCount(novel.getFavoriteCount() - 1);
+			afterLikeMessage = "관심 작품에서 제거되었습니다.";
+		} else {
+			FavoriteNovel favoriteNovel = FavoriteNovel.builder()
+				.user(userRepository.findById(userId)
+					.orElseThrow(() -> new RuntimeException("User not found")))
+				.novel(novel)
+				.build();
+			favoriteNovelRepository.save(favoriteNovel);
+			novel.updateFavoriteCount(novel.getFavoriteCount() + 1);
+			afterLikeMessage = "관심 작품으로 등록했습니다.";
+		}
+
+		return afterLikeMessage;
+	}
+
 	// 태그별 인기 작품 캐싱 (TTL: 3시간)
 	public List<NovelResponseDTO> getPopularNovelsByTag(NovelSortRequestDTO request) {
 
@@ -220,5 +239,4 @@ public class NovelService {
 
 		return cached;
 	}
-
 }

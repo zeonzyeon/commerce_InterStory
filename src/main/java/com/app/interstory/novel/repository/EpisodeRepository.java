@@ -1,5 +1,6 @@
 package com.app.interstory.novel.repository;
 
+import java.util.List;
 import java.util.Map;
 
 import org.springframework.data.domain.Page;
@@ -11,6 +12,7 @@ import org.springframework.stereotype.Repository;
 
 import com.app.interstory.novel.domain.entity.Episode;
 import com.app.interstory.novel.domain.entity.Novel;
+import com.app.interstory.novel.domain.entity.Tag;
 
 @Repository
 public interface EpisodeRepository extends JpaRepository<Episode, Long>, EpisodeRepositoryCustom {
@@ -60,4 +62,6 @@ public interface EpisodeRepository extends JpaRepository<Episode, Long>, Episode
 		@Param("novelId") Long novelId,
 		Pageable pageable
 	);
+
+	List<Episode> findByNovel(Novel novel);
 }
