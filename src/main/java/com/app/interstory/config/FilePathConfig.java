@@ -16,6 +16,7 @@ public class FilePathConfig {
 	private final String userDefaultProfilePath;
 	private final String thumbnailPath;
 	private final String common;
+	private final String profile;
 
 	public FilePathConfig(
 		@Value("${cloud.aws.s3.bucket}") String bucketName,
@@ -27,6 +28,7 @@ public class FilePathConfig {
 		this.userDefaultProfilePath = userProfilePath + "user.png";
 		this.thumbnailPath = basePath + "/thumbnail/";
 		this.common = basePath + "/common/";
+		this.profile = "profile/";
 	}
 
 }

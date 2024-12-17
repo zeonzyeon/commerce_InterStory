@@ -30,23 +30,30 @@ import com.app.interstory.user.dto.response.PointHistoryResponseDTO;
 import com.app.interstory.user.dto.response.ReadNovelResponseDTO;
 import com.app.interstory.user.dto.response.SettlementResponseDTO;
 import com.app.interstory.user.dto.response.UserCouponResponseDTO;
+import com.app.interstory.user.dto.response.UserResponseDTO;
 import com.app.interstory.user.service.MypageService;
+import com.app.interstory.user.service.UserService;
 
 import lombok.RequiredArgsConstructor;
 
 @Controller
-@RequestMapping("/users")
+@RequestMapping("users")
 @RequiredArgsConstructor
 public class MypageController {
 
 	private final MypageService mypageService;
 	private final NovelService novelService;
+	private final UserService userService;
 
 	// 회원 정보 페이지
 	@GetMapping("/profile")
-	public String getUserProfile(@AuthenticationPrincipal CustomUserDetails userDetails, Model model) {
-		MypageResponseDTO userProfile = mypageService.getUser(userDetails);
-		model.addAttribute("userProfile", userProfile);
+	public String getUserProfile(
+		@AuthenticationPrincipal CustomUserDetails userDetails,
+		Model model
+	) {
+		UserResponseDTO currentUser = userService.getCurrentUser(userDetails.getUser().getUserId());
+		model.addAttribute("user", currentUser);
+
 		return "mypage/my-profile";
 	}
 

@@ -130,4 +130,14 @@ public class User {
 	public void active() {
 		this.isActivity = true;
 	}
+
+	//프로필 정보 업데이트
+	public void updateProfile(String filePath) {
+		this.profileUrl = filePath;
+		this.profileRenamedFilename = filePath.substring(filePath.lastIndexOf("/") + 1);
+	}
+
+	public void updateNickname(String nickname) {
+		this.nickname = nickname;
+	}
 }
