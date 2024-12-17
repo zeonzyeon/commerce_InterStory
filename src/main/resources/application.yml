@@ -11,11 +11,17 @@ spring:
   #   username: ${DB_USERNAME}
   #   password: ${DB_PASSWORD}
 
+  #  datasource:
+  #    driver-class-name: org.h2.Driver
+  #    url: jdbc:h2:mem:testdb
+  #    username: sa
+  #    password:
+
   datasource:
-    driver-class-name: org.h2.Driver
-    url: jdbc:h2:mem:testdb
-    username: sa
-    password:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://${DB_HOST}.ap-northeast-2.rds.amazonaws.com:3306/interstory
+    username: ${DB_USERNAME}
+    password: ${DB_PASSWORD}
 
   h2:
     console:
@@ -27,20 +33,34 @@ spring:
     suffix: .html
     cache: false
 
+  #  jpa:
+  #    generate-ddl: true
+  #    hibernate:
+  #      ddl-auto: create
+  #    properties:
+  #      hibernate:
+  #        format_sql: true
+  #        use_sql_comments: true
+  #    defer-datasource-initialization: true
   jpa:
-    generate-ddl: true
+    database: mysql
+    database-platform: org.hibernate.dialect.MySQLDialect
+    generate-ddl: false
     hibernate:
-      ddl-auto: create
+      ddl-auto: update
     properties:
       hibernate:
         format_sql: true
         use_sql_comments: true
-    defer-datasource-initialization: true
+    defer-datasource-initialization: false
 
+  #  sql:
+  #    init:
+  #      mode: always
+  #      data-locations: classpath:data.sql
   sql:
     init:
-      mode: always
-      data-locations: classpath:sql/data.sql
+      mode: never
 
   servlet:
     multipart:
