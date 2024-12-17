@@ -201,7 +201,7 @@ public class NovelService {
 		return cached;
 	}
 
-	//인기순 최신순 이름순 캐싱
+	//인기순 최신순 이름순 캐싱 - 3시간
 	public List<NovelResponseDTO> getOrderedNovel(NovelSortType novelSortType) {
 
 		String cacheKey = "popular:novels:cache:" + novelSortType;
