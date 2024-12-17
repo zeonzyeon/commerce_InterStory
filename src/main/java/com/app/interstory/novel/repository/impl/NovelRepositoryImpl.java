@@ -110,7 +110,6 @@ public class NovelRepositoryImpl implements NovelRepositoryCustom {
 			.orderBy(
 				getOrderSpecifier(request.getType())
 			)
-			.limit(50)
 			.fetch();
 
 	}

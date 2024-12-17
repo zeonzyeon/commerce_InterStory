@@ -190,6 +190,7 @@ public class NovelService {
 		List<NovelResponseDTO> cached = (List<NovelResponseDTO>)redisTemplate.opsForValue().get(cacheKey);
 
 		if (cached == null) {
+			log.info("**********cache refresh check*******************");
 			cached = novelRepository.findPopularNovelsByTag(request).stream()
 				.map(NovelResponseDTO::from)
 				.toList();
