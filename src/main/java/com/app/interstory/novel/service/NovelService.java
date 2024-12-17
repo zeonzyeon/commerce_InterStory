@@ -1,6 +1,18 @@
 package com.app.interstory.novel.service;
 
 import java.util.List;
+import java.util.concurrent.TimeUnit;
+import java.util.stream.Collectors;
+
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -16,6 +28,8 @@ import com.app.interstory.novel.domain.enumtypes.MainTag;
 import com.app.interstory.novel.domain.enumtypes.NovelStatus;
 import com.app.interstory.novel.domain.enumtypes.SortType;
 import com.app.interstory.novel.dto.request.NovelRequestDTO;
+import com.app.interstory.novel.dto.request.NovelSortRequestDTO;
+import com.app.interstory.novel.dto.response.EpisodeResponseDTO;
 import com.app.interstory.novel.dto.response.NovelDetailResponseDTO;
 import com.app.interstory.novel.dto.response.NovelListResponseDTO;
 import com.app.interstory.novel.dto.response.NovelResponseDTO;
@@ -24,10 +38,13 @@ import com.app.interstory.novel.repository.FavoriteNovelRepository;
 import com.app.interstory.novel.repository.NovelRepository;
 import com.app.interstory.novel.repository.TagRepository;
 import com.app.interstory.user.domain.CustomUserDetails;
+import com.app.interstory.user.domain.enumtypes.NovelSortType;
 import com.app.interstory.user.repository.UserRepository;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class NovelService {
@@ -35,6 +52,8 @@ public class NovelService {
 	private final UserRepository userRepository;
 	private final EpisodeRepository episodeRepository;
 	private final TagRepository tagRepository;
+	@Qualifier("redisObjectTemplate")
+	private final RedisTemplate<String, Object> redisTemplate;
 	private final FavoriteNovelRepository favoriteNovelRepository;
 
 	// 소설 작성
@@ -181,5 +200,43 @@ public class NovelService {
 		}
 
 		return afterLikeMessage;
+	}
+
+	// 태그별 인기 작품 캐싱 (TTL: 3시간)
+	public List<NovelResponseDTO> getPopularNovelsByTag(NovelSortRequestDTO request) {
+
+		String cacheKey = "popular:novels:" + request.getMainTag() + request.getType();
+		List<NovelResponseDTO> cached = (List<NovelResponseDTO>)redisTemplate.opsForValue().get(cacheKey);
+
+		if (cached == null) {
+			log.info("**********cache refresh check*******************");
+			cached = novelRepository.findPopularNovelsByTag(request).stream()
+				.map(NovelResponseDTO::from)
+				.toList();
+
+			redisTemplate.opsForValue().set(cacheKey, cached, 3, TimeUnit.HOURS);
+		}
+
+		return cached;
+	}
+
+	//인기순 최신순 이름순 캐싱 - 3시간
+	public List<NovelResponseDTO> getOrderedNovel(NovelSortType novelSortType) {
+
+		String cacheKey = "popular:novels:cache:" + novelSortType;
+		log.info("cacheKey*****{}", cacheKey);
+		List<NovelResponseDTO> cached = (List<NovelResponseDTO>)redisTemplate.opsForValue().get(cacheKey);
+
+		if (cached == null) {
+			log.info("**********cache refresh check*******************");
+
+			cached = novelRepository.findNovelByOrder(novelSortType).stream()
+				.map(NovelResponseDTO::from)
+				.toList();
+
+			redisTemplate.opsForValue().set(cacheKey, cached, 3, TimeUnit.HOURS);
+		}
+
+		return cached;
 	}
 }

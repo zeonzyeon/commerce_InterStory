@@ -4,294 +4,29 @@
     <meta charset="UTF-8">
     <meta content="width=device-width, initial-scale=1.0" name="viewport">
     <title>InterStory</title>
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, system-ui, Roboto, sans-serif;
-        }
+    <link rel="stylesheet" th:href="@{/css/index.css}">
+    <link rel="stylesheet" th:href="@{/css/common/header.css}">
 
-        body {
-            background: #f8f9fa;
-            color: #333;
-        }
-
-        /* 헤더 스타일 */
-        .header {
-            background: #fff;
-            padding: 1rem 2rem;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-            position: sticky;
-            top: 0;
-            z-index: 100;
-        }
-
-        .header-content {
-            max-width: 1200px;
-            margin: 0 auto;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            gap: 2rem;
-        }
-
-        .logo-area {
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-            min-width: 150px;
-        }
-
-        .logo-image {
-            width: 32px;
-            height: 32px;
-            object-fit: cover;
-        }
-
-        .logo-text {
-            font-size: 1.25rem;
-            font-weight: 700;
-            color: #111;
-        }
-
-        .search-bar {
-            flex: 1;
-            max-width: 400px;
-            position: relative;
-        }
-
-        /* 반응형 처리 */
-        @media (max-width: 768px) {
-            .header-content {
-                gap: 1rem;
-            }
-
-            .logo-area {
-                min-width: auto;
-            }
-
-            .logo-text {
-                font-size: 1.1rem;
-            }
-
-            .search-bar {
-                max-width: 200px;
-            }
-        }
-
-        .search-bar {
-            flex: 0 1 400px;
-            position: relative;
-        }
-
-        .search-bar input {
-            width: 100%;
-            padding: 0.75rem 1rem;
-            border: 1px solid #ddd;
-            border-radius: 20px;
-            font-size: 0.9rem;
-            background: #f8f9fa;
-        }
-
-        .search-bar input:focus {
-            outline: none;
-            border-color: #333;
-            background: #fff;
-        }
-
-        .user-profile {
-            display: flex;
-            align-items: center;
-            gap: 1rem;
-        }
-
-        .user-profile img {
-            width: 40px;
-            height: 40px;
-            border-radius: 50%;
-            object-fit: cover;
-        }
-
-        /* 메인 컨텐츠 */
-        .main-content {
-            max-width: 1200px;
-            margin: 2rem auto;
-            padding: 0 1rem;
-        }
-
-        /* 카테고리 네비게이션 */
-        .category-nav {
-            display: flex;
-            gap: 1rem;
-            margin-bottom: 2rem;
-            overflow-x: auto;
-            padding-bottom: 0.5rem;
-        }
-
-        .category-nav button {
-            padding: 0.5rem 1rem;
-            border: none;
-            background: none;
-            cursor: pointer;
-            font-size: 0.9rem;
-            color: #666;
-            white-space: nowrap;
-        }
-
-        .category-nav button.active {
-            color: #111;
-            font-weight: 600;
-            position: relative;
-        }
-
-        .category-nav button.active::after {
-            content: '';
-            position: absolute;
-            bottom: -4px;
-            left: 0;
-            width: 100%;
-            height: 2px;
-            background: #111;
-        }
-
-        /* AI 추천 작품 섹션 */
-        .section-title {
-            font-size: 1.5rem;
-            margin-bottom: 1rem;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .section-title a {
-            font-size: 0.9rem;
-            color: #666;
-            text-decoration: none;
-        }
-
-        .ai-recommendations {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
-            gap: 1.5rem;
-            margin-bottom: 3rem;
-        }
-
-        .novel-card {
-            background: #fff;
-            border-radius: 8px;
-            overflow: hidden;
-            transition: transform 0.2s;
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-        }
-
-        .novel-card:hover {
-            transform: translateY(-4px);
-        }
-
-        .novel-card img {
-            width: 100%;
-            height: 240px;
-            object-fit: cover;
-        }
-
-        .novel-info {
-            padding: 1rem;
-        }
-
-        .novel-title {
-            font-weight: 600;
-            margin-bottom: 0.5rem;
-            font-size: 0.95rem;
-        }
-
-        .novel-author {
-            color: #666;
-            font-size: 0.85rem;
-        }
-
-        /* 인기/신작 목록 */
-        .novel-list {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
-            gap: 1.5rem;
-        }
-
-        .sort-options {
-            display: flex;
-            gap: 1rem;
-            margin-bottom: 1rem;
-        }
-
-        .sort-options button {
-            padding: 0.5rem 1rem;
-            border: 1px solid #ddd;
-            border-radius: 20px;
-            background: #fff;
-            cursor: pointer;
-            font-size: 0.9rem;
-        }
-
-        .sort-options button.active {
-            background: #111;
-            color: #fff;
-            border-color: #111;
-        }
-
-        @media (max-width: 768px) {
-            .header {
-                padding: 1rem;
-            }
-
-            .search-bar {
-                flex: 0 1 200px;
-            }
-
-            .ai-recommendations,
-            .novel-list {
-                grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
-                gap: 1rem;
-            }
-
-            .novel-card img {
-                height: 200px;
-            }
-        }
-    </style>
 </head>
 <body>
 <!-- 헤더 -->
-<header class="header">
-    <div class="header-content">
-        <div class="logo-area">
-            <img alt="로고" class="logo-image"
-                 th:src="@{https://est-team4-bucket.s3.ap-northeast-2.amazonaws.com/common/interstory_logo.png}">
-            <span class="logo-text">InterStory</span>
-        </div>
-        <div class="search-bar">
-            <input placeholder="제목/작가로 검색" type="text">
-        </div>
-        <div class="user-profile">
-            <span th:text="${user.nickname}">닉네임</span>
-            <img alt="프로필" th:src="${user.getProfile_url()}">
-        </div>
-    </div>
-</header>
+<div th:replace="~{common/header :: header}"></div>
 
 <!-- 메인 컨텐츠 -->
 <main class="main-content">
     <!-- 카테고리 네비게이션 -->
     <nav class="category-nav">
-        <button class="active">오늘신작</button>
-        <button>판타지</button>
-        <button>현대판타지</button>
-        <button>로맨스</button>
-        <button>로맨스판타지</button>
-        <button>무협</button>
-        <button>라이트노벨</button>
-        <button>SF</button>
-        <button>스포츠</button>
-        <button>기타</button>
+        <!--        <button class="active">오늘신작</button>-->
+        <button class="active" data-sort="FANTASY">판타지</button>
+        <button data-sort="ISEKAI">이세계</button>
+        <button data-sort="DRAMA">드라마</button>
+        <button data-sort="ROMANCE">로맨스</button>
+        <button data-sort="HAREM">하렘</button>
+        <button data-sort="WUXIA">무협</button>
+        <button data-sort="LIGHT_NOVEL">라이트노벨</button>
+        <button data-sort="SCIENCE_FICTION">SF</button>
+        <button data-sort="SPORTS">스포츠</button>
+        <button data-sort="MEDIEVAL">중세</button>
     </nav>
 
     <!-- AI 추천 작품 -->
@@ -314,26 +49,43 @@
 
     <!-- 인기/신작 목록 -->
     <section>
-        <h2 class="section-title">인기 작품</h2>
+        <h2 class="section-title">인기 작품순</h2>
         <div class="sort-options">
-            <button class="active">인기순</button>
-            <button>최신순</button>
-            <button>이름순</button>
+            <button class="active" data-sort="POPULARITY">인기순</button>
+            <button data-sort="LATEST">최신순</button>
+            <button data-sort="NAME">이름순</button>
         </div>
         <div class="novel-list">
-            <!-- 작품 카드 반복 -->
-            <div class="novel-card" th:each="novel : ${popularNovels}">
-                <img alt="작품 썸네일" th:src="${novel.coverImage}">
-                <div class="novel-info">
-                    <div class="novel-title" th:text="${novel.title}">작품 제목</div>
-                    <div class="novel-author" th:text="${novel.author}">작가명</div>
-                </div>
+            <!-- 작품 카드 반복 api 요청 시 양식 -->
+            <!--            <div class="novel-card" th:each="novel : ${popularNovels}">-->
+            <!--                <img alt="작품 썸네일" th:src="${novel.thumbnailUrl}">-->
+            <!--                <div class="novel-info">-->
+            <!--                    <div class="novel-title" th:text="${novel.title}">작품 제목</div>-->
+            <!--                    <div class="novel-author" th:text="${novel.author}">작가명</div>-->
+            <!--                </div>-->
+            <!--            </div>-->
+        </div>
+    </section>
+
+    <section id="tagNovelSection">
+        <div class="section-header">
+            <h2 class="section-title">
+                <span id="selectedTag">판타지</span>
+            </h2>
+            <div class="tag-sort-options">  <!-- 클래스명 변경 -->
+                <button class="active" data-sort="POPULARITY">인기순</button>
+                <button data-sort="LATEST">최신순</button>
+                <button data-sort="NAME">이름순</button>
             </div>
+        </div>
+        <div class="tag-novel-grid">
+            <!-- 작품 카드들이 동적으로 추가될 영역 -->
         </div>
     </section>
 </main>
 
 <script th:inline="javascript">
+
     // 정렬 버튼 클릭 이벤트
     document.querySelectorAll('.sort-options button').forEach(button => {
         button.addEventListener('click', function () {
@@ -343,20 +95,30 @@
             this.classList.add('active');
 
             // 정렬 방식에 따른 작품 목록 요청
-            const sortType = this.textContent;
+            const sortType = this.dataset.sort;
             fetchNovels(sortType);
         });
     });
 
     // 작품 목록 불러오기
     function fetchNovels(sortType) {
-        fetch(`/api/novels?sort=${sortType}`)
+
+        console.log(sortType);
+
+        fetch(`/api/novels/sortType`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({type: sortType})
+        })
             .then(response => response.json())
             .then(data => {
                 // 작품 목록 업데이트
                 updateNovelList(data);
             })
             .catch(error => console.error('Error:', error));
+
     }
 
     // 작품 목록 업데이트
@@ -364,7 +126,7 @@
         const novelList = document.querySelector('.novel-list');
         novelList.innerHTML = novels.map(novel => `
                 <div class="novel-card">
-                    <img src="${novel.coverImage}" alt="작품 썸네일">
+                    <img src="${novel.thumbnailUrl}" alt="작품 썸네일">
                     <div class="novel-info">
                         <div class="novel-title">${novel.title}</div>
                         <div class="novel-author">${novel.author}</div>
@@ -372,6 +134,60 @@
                 </div>
             `).join('');
     }
+
+    // 카테고리 네비게이션 이벤트
+    document.querySelectorAll('.tag-sort-options button').forEach(button => {
+        button.addEventListener('click', function () {
+
+            const parentSection = this.closest('.tag-sort-options');
+            parentSection.querySelector('button.active').classList.remove('active');
+            this.classList.add('active');
+
+            const tag = document.getElementById('selectedTag').textContent;
+            const sortType = this.dataset.sort;
+
+            fetchTagNovels(tag, sortType);
+        });
+    });
+
+    // 태그별 작품 목록 불러오기
+    function fetchTagNovels(tag, sortType) {
+        // API 호출 및 데이터 처리
+        console.log(tag);
+        console.log(sortType);
+
+        fetch(`/api/novels/tag`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(
+                {mainTag: tag, type: sortType}
+            )
+        })
+            .then(response => response.json())
+            .then(data => {
+                updateTagNovelList(data);
+            })
+            .catch(error => console.error('Error:', error));
+    }
+
+    // 태그별 작품 목록 업데이트
+    function updateTagNovelList(novels) {
+        const novelGrid = document.querySelector('.tag-novel-grid');
+        novelGrid.innerHTML = novels.map(novel => `
+        <div class="novel-card">
+            <img src="${novel.thumbnailUrl}" alt="${novel.title}">
+            <div class="novel-info">
+                <div class="novel-title">${novel.title}</div>
+                <div class="novel-author">${novel.author}</div>
+            </div>
+        </div>
+    `).join('');
+    }
+
+    fetchNovels('POPULARITY');
+    fetchTagNovels('FANTASY', 'POPULARITY');
 </script>
 </body>
 </html>
