@@ -29,6 +29,7 @@ import com.app.interstory.user.dto.response.MypageResponseDTO;
 import com.app.interstory.user.dto.response.PointHistoryResponseDTO;
 import com.app.interstory.user.dto.response.ReadNovelResponseDTO;
 import com.app.interstory.user.dto.response.SettlementResponseDTO;
+import com.app.interstory.user.dto.response.SubscriptionResponseDTO;
 import com.app.interstory.user.dto.response.UserCouponResponseDTO;
 import com.app.interstory.user.service.MypageService;
 
@@ -46,7 +47,14 @@ public class MypageController {
 	@GetMapping("/profile")
 	public String getUserProfile(@AuthenticationPrincipal CustomUserDetails userDetails, Model model) {
 		MypageResponseDTO userProfile = mypageService.getUser(userDetails);
-		model.addAttribute("userProfile", userProfile);
+		SubscriptionResponseDTO endAt = mypageService.getSubscription(userDetails);
+
+		Pageable pageable = PageRequest.of(0, 5);
+
+		model.addAttribute("user", userProfile);
+		model.addAttribute("endAt", endAt.getEndAt());
+		model.addAttribute("novels", mypageService.getMyNovels(userDetails, pageable));
+		model.addAttribute("comments", mypageService.getMyComments(userDetails, pageable));
 		return "mypage/my-profile";
 	}
 

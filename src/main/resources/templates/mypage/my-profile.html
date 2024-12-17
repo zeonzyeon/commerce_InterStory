@@ -614,8 +614,7 @@
         </div>
         <div class="payment-row">
             <span class="payment-label">구독 만료일 :
-                <span class="subscription-date"
-                      th:text="${#dates.format(subscribe.endAt, 'yyyy-MM-dd HH:mm:ss')}">2025.11.27</span>
+                <span class="subscription-date" th:if="${user.isSubscribed}" th:text="${#dates.format(subscribe.endAt, 'yyyy-MM-dd HH:mm:ss')}">2025.11.27</span>
             </span>
             <button class="payment-action payment" onclick="openSubscriptionModal()">결제</button>
         </div>
@@ -636,8 +635,8 @@
         <div class="works">
             <h3>연재한 작품</h3>
             <ul>
-                <li th:each="work : ${works}" th:text="${work.title}"></li>
-                <li th:if="${#lists.isEmpty(works)}">연재한 작품이 없습니다</li>
+                <li th:each="novel : ${novels}" th:text="${novel.title}"></li>
+                <li th:if="${#lists.isEmpty(novels)}">연재한 작품이 없습니다</li>
             </ul>
         </div>
         <div class="comments">
