@@ -23,26 +23,6 @@ body {
     }
 }
 
-header {
-    width: 1240px;
-    padding: 10px;
-
-    nav {
-        display: flex;
-        justify-content: space-between;
-
-        ul {
-            display: flex;
-            list-style-type: none;
-
-            li {
-                margin-right: 20px;
-                cursor: pointer;
-            }
-        }
-    }
-}
-
 main {
     width: 1240px;
     flex: 1;
@@ -348,10 +328,4 @@ main {
             }
         }
     }
-}
-
-footer {
-    width: 1240px;
-    padding: 10px 360px;
-    text-align: center;
 }
