@@ -50,6 +50,18 @@ public class MypageRestController {
 	private final MypageService mypageService;
 	private final UserService userService;
 
+	// 이메일 중복 확인
+	@GetMapping("/check-duplication-nickname")
+	public ResponseEntity<?> checkDuplicationNickname(
+		@RequestParam String nickname
+	) {
+		log.info("Check duplication nickname {}", nickname);
+		Boolean checked = userService.verifyNickname(nickname);
+		log.info("checked :  true 면 변경 가능함 ::: {}", checked);
+
+		return ResponseEntity.ok(checked);
+	}
+
 	//회원 프로필 변경
 	@PostMapping("/update-profile")
 	public ResponseEntity<Map<String, Object>> updateProfile(
