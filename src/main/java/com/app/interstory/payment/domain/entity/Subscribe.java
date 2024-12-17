@@ -28,4 +28,8 @@ public class Subscribe {
 
 	@Column(name = "end_at", nullable = false)
 	private Timestamp endAt;
+
+	public void updateEndAt(Timestamp endAt) {
+		this.endAt = endAt;
+	}
 }

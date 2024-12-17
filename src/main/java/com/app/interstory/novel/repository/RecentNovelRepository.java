@@ -1,7 +1,9 @@
 package com.app.interstory.novel.repository;
 
+import java.util.List;
 import java.util.Optional;
 
+import com.app.interstory.user.domain.entity.User;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.EntityGraph;
@@ -17,4 +19,6 @@ public interface RecentNovelRepository extends JpaRepository<RecentNovel, Long> 
 
 	@EntityGraph(attributePaths = {"novel"})
 	Page<RecentNovel> findByUser_UserId(Long userId, Pageable pageable);
+
+    List<RecentNovel> findByUser(User user);
 }

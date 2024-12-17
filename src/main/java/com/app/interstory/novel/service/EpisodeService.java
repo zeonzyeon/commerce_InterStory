@@ -12,6 +12,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.app.interstory.novel.domain.entity.Collection;
 import com.app.interstory.novel.domain.entity.Episode;
 import com.app.interstory.novel.domain.entity.EpisodeLike;
 import com.app.interstory.novel.domain.entity.Novel;
@@ -25,6 +26,8 @@ import com.app.interstory.novel.repository.CollectionRepository;
 import com.app.interstory.novel.repository.EpisodeLikeRepository;
 import com.app.interstory.novel.repository.EpisodeRepository;
 import com.app.interstory.novel.repository.NovelRepository;
+import com.app.interstory.payment.domain.enumtypes.PaymentType;
+import com.app.interstory.payment.service.KakaoService;
 import com.app.interstory.user.domain.CustomUserDetails;
 import com.app.interstory.user.domain.entity.CartItem;
 import com.app.interstory.user.domain.entity.Point;
@@ -45,6 +48,7 @@ public class EpisodeService {
 	private final CartItemRepository cartItemRepository;
 	private final EpisodeLikeRepository episodeLikeRepository;
 	private final CollectionRepository collectionRepository;
+	private final KakaoService kakaoService;
 
 	// 회차 작성
 	@Transactional
@@ -74,13 +78,9 @@ public class EpisodeService {
 
 	// 회차 수정
 	@Transactional
-	public EpisodeResponseDTO updateEpisode(Long novelId, Long episodeId, EpisodeRequestDTO requestDTO) {
+	public EpisodeResponseDTO updateEpisode(Long episodeId, EpisodeRequestDTO requestDTO) {
 		Episode episode = episodeRepository.findById(episodeId)
 			.orElseThrow(() -> new RuntimeException("Episode not found"));
-
-		if (!episode.getNovel().getNovelId().equals(novelId)) {
-			throw new IllegalArgumentException("Invalid novelId for the given episode.");
-		}
 
 		episode.updateEpisode(requestDTO);
 
@@ -128,6 +128,13 @@ public class EpisodeService {
 		Episode episode = episodeRepository.findById(episodeId)
 			.orElseThrow(() -> new RuntimeException("Episode not found"));
 
+		Collection collection = Collection.builder()
+			.user(user)
+			.episode(episode)
+			.build();
+
+		collectionRepository.save(collection);
+
 		Long episodePrice = 5L;
 
 		// 4. 포인트 차감
@@ -144,6 +151,10 @@ public class EpisodeService {
 		Collection collection = new Collection(user, episode);
 
 		collectionRepository.save(collection);
+
+		if (user.getPoint() < 50L && user.getIsAutoPayment()) {
+			kakaoService.kakaoPayPayment(userId, PaymentType.AUTO);
+		}
 	}
 
 	// 장바구니 담기

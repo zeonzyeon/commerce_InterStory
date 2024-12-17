@@ -575,8 +575,8 @@
             <input placeholder="제목/작가로 검색" type="text">
         </div>
         <div class="user-profile">
-            <span th:text="${userNickname}">닉네임</span>
-            <img alt="프로필" src="/images/default-profile.png" th:src="${userProfileImage}">
+            <span th:text="${user.nickname}">닉네임</span>
+            <img alt="프로필" src="/images/default-profile.png" th:src="${user.profileUrl}">
         </div>
     </div>
 </header>
@@ -608,14 +608,13 @@
     <div class="payment-settings">
         <div class="payment-row">
             <span class="payment-label">내 포인트 :
-        <span class="point-amount" th:text="${point.balance} + 'P'">200P</span>
+        <span class="point-amount" th:text="${user.point} + 'P'">200P</span>
             </span>
             <button class="payment-action payment" onclick="openPointPaymentModal()">결제</button>
         </div>
         <div class="payment-row">
             <span class="payment-label">구독 만료일 :
-                <span class="subscription-date"
-                      th:text="${#dates.format(subscribe.endAt, 'yyyy-MM-dd')}">2025.11.27</span>
+                <span class="subscription-date" th:if="${user.isSubscribed}" th:text="${#dates.format(subscribe.endAt, 'yyyy-MM-dd HH:mm:ss')}">2025.11.27</span>
             </span>
             <button class="payment-action payment" onclick="openSubscriptionModal()">결제</button>
         </div>
@@ -636,8 +635,8 @@
         <div class="works">
             <h3>연재한 작품</h3>
             <ul>
-                <li th:each="work : ${works}" th:text="${work.title}"></li>
-                <li th:if="${#lists.isEmpty(works)}">연재한 작품이 없습니다</li>
+                <li th:each="novel : ${novels}" th:text="${novel.title}"></li>
+                <li th:if="${#lists.isEmpty(novels)}">연재한 작품이 없습니다</li>
             </ul>
         </div>
         <div class="comments">
@@ -663,57 +662,54 @@
         <div class="modal-body">
             <div class="current-points">
                     <span class="point-label"> 내 포인트:
-                        <span class="point-amount" th:text="${point.balance} + 'P'">200P</span>
+                        <span class="point-amount" th:text="${user.point} + 'P'">200P</span>
                     </span>
             </div>
-            <form id="pointForm">
-                <table class="point-table">
-                    <thead>
-                    <tr>
-                        <th>포인트</th>
-                        <th>가격</th>
-                    </tr>
-                    </thead>
-                    <tbody>
-                    <tr>
-                        <td><input name="point" onclick="activateCoupon()" type="radio" value="10"> 10P</td>
-                        <td>1,000원</td>
-                    </tr>
-                    <tr>
-                        <td><input name="point" onclick="activateCoupon()" type="radio" value="30"> 30P</td>
-                        <td>3,000원</td>
-                    </tr>
-                    <tr>
-                        <td><input name="point" onclick="activateCoupon()" type="radio" value="50"> 50P</td>
-                        <td>5,000원</td>
-                    </tr>
-                    <tr>
-                        <td><input name="point" onclick="activateCoupon()" type="radio" value="100"> 100P</td>
-                        <td>10,000원</td>
-                    </tr>
-                    <tr>
-                        <td><input name="point" onclick="activateCoupon()" type="radio" value="500"> 500P</td>
-                        <td>50,000원</td>
-                    </tr>
-                    </tbody>
-                </table>
-                <div class="coupon-display">
-                    <label>쿠폰 적용</label>
-                    <select class="couponSelect" onchange="updateFinalPrice()">
-                        <option value="0">쿠폰을 선택하세요</option>
-                        <option value="1000">1000원 할인</option>
-                        <option value="3000">3000원 할인</option>
-                        <option value="5000">5000원 할인</option>
-                    </select>
+            <table class="point-table">
+                <thead>
+                <tr>
+                    <th>포인트</th>
+                    <th>가격</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr>
+                    <td><input checked name="point" onclick="updateFinalPrice('point')" type="radio" value="1000"> 50P</td>
+                    <td>1,000원</td>
+                </tr>
+                <tr>
+                    <td><input name="point" onclick="updateFinalPrice('point')" type="radio" value="3000"> 150P</td>
+                    <td>3,000원</td>
+                </tr>
+                <tr>
+                    <td><input name="point" onclick="updateFinalPrice('point')" type="radio" value="5000"> 250P</td>
+                    <td>5,000원</td>
+                </tr>
+                <tr>
+                    <td><input name="point" onclick="updateFinalPrice('point')" type="radio" value="10000"> 500P</td>
+                    <td>10,000원</td>
+                </tr>
+                <tr>
+                    <td><input name="point" onclick="updateFinalPrice('point')" type="radio" value="50000"> 2500P</td>
+                    <td>50,000원</td>
+                </tr>
+                </tbody>
+            </table>
+            <div class="coupon-display">
+                <label>쿠폰 적용</label>
+                <select class="couponSelect" onchange="updateFinalPrice('point')">
+                    <option selected value="0">쿠폰을 선택하세요</option>
+                    <option th:attr="data-min=${coupon.minimumAmount}, data-coupon-id=${coupon.userCouponId}"
+                            th:each="coupon : ${myCoupons}" th:text="${coupon.effect}" th:value="${coupon.discountAmount}"></option>
+                </select>
+            </div>
+            <div class="actions">
+                <div class="final-price-display">
+                    <label>최종 가격:</label>
+                    <span class="finalPrice">1,000원</span>
                 </div>
-                <div class="actions">
-                    <div class="final-price-display">
-                        <label>최종 가격:</label>
-                        <span class="finalPrice">1,000원</span>
-                    </div>
-                    <button class="btn btn-primary" type="submit">결제</button>
-                </div>
-            </form>
+                <button class="btn btn-primary" onclick="buyPoint()">결제</button>
+            </div>
         </div>
     </div>
 </div>
@@ -734,23 +730,14 @@
                     <h4>정기 구독권</h4>
                     <div class="benefits">혜택</div>
                     <div class="price">가격: <span>9,900원</span></div>
-                    <input name="subscription" onclick="updateFinalPrice()" type="radio" value="9900">
+                    <input name="subscription" onclick="updateFinalPrice('subscription')" type="radio" value="9900">
                 </div>
                 <div class="subscription-item">
                     <h4>구독권</h4>
                     <div class="benefits">혜택</div>
                     <div class="price">가격: <span>14,900원</span></div>
-                    <input name="subscription" onclick="updateFinalPrice()" type="radio" value="14900">
+                    <input name="subscription" onclick="updateFinalPrice('subscription')" type="radio" value="14900">
                 </div>
-            </div>
-            <div class="coupon-apply">
-                <label>쿠폰 적용</label>
-                <select class="couponSelect2" onchange="updateFinalPrice()">
-                    <option value="0">쿠폰을 선택하세요</option>
-                    <option value="1000">1000원 할인</option>
-                    <option value="3000">3000원 할인</option>
-                    <option value="5000">5000원 할인</option>
-                </select>
             </div>
             <div class="actions2">
                 <div class="final-price-display2">
@@ -763,6 +750,7 @@
     </div>
 </div>
 
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.3/jquery.min.js"></script>
 <script>
     function openPointPaymentModal() {
         document.getElementById('modalBackdrop').style.display = 'block';
@@ -785,31 +773,68 @@
     }
 
     function updateFinalPrice(scope) {
-        let selectedSubscription, selectedCoupon, finalPrice;
+        let selectedSubscription, finalPrice;
+        let totalPrice = 0;
 
         if (scope === 'point') {
             // 포인트 모달 선택 요소
             selectedSubscription = document.querySelector('#pointPaymentModal input[name="point"]:checked');
-            selectedCoupon = document.querySelector('#pointPaymentModal .couponSelect').value;
+            totalPrice = parseInt(selectedSubscription.value);
+
+            let selectCoupon = document.querySelector('#pointPaymentModal .couponSelect');
+            let selectedCoupon = selectCoupon.options[selectCoupon.selectedIndex];
+            let couponMin = selectedCoupon.getAttribute('data-min');
+
             finalPrice = document.querySelector('#pointPaymentModal .finalPrice');
+            if (totalPrice < couponMin) {
+                selectCoupon.selectedIndex = 0;
+                alert('최소 결제 금액을 충족하지 못했습니다.');
+                updateFinalPrice('point');
+                return;
+            }
+            totalPrice -= parseInt(selectedCoupon.value);
         } else if (scope === 'subscription') {
             // 구독 모달 선택 요소
             selectedSubscription = document.querySelector('#subscriptionModal input[name="subscription"]:checked');
-            selectedCoupon = document.querySelector('#subscriptionModal .couponSelect').value;
+            totalPrice = parseInt(selectedSubscription.value);
             finalPrice = document.querySelector('#subscriptionModal .finalPrice');
         }
 
-        let totalPrice = 0;
-
-        if (selectedSubscription) {
-            totalPrice = parseInt(selectedSubscription.value);
-        }
-
-        if (selectedCoupon) {
-            totalPrice -= parseInt(selectedCoupon);
-        }
-
         finalPrice.innerText = `${Math.max(0, totalPrice).toLocaleString()}원`;
+    }
+
+    function buyPoint() {
+        const point = document.querySelector('#pointPaymentModal input[name="point"]:checked').value;
+
+        let type;
+        if (point === '1000') type = 'NORMAL_FIRST';
+        else if (point === '3000') type = 'NORMAL_SECOND';
+        else if (point === '5000') type = 'NORMAL_THIRD';
+        else if (point === '10000') type = 'NORMAL_FOURTH';
+        else if (point === '50000') type = 'NORMAL_FIFTH';
+
+        let selectCoupon = document.querySelector('#pointPaymentModal .couponSelect');
+        let selectedCoupon = selectCoupon.options[selectCoupon.selectedIndex];
+        let couponId = selectedCoupon.getAttribute('data-coupon-id');
+
+        console.log(type, couponId);
+
+        $.ajax({
+            url: '/api/cash/establish',
+            type: 'post',
+            contentType: 'application/json',
+            data: JSON.stringify({
+                paymentType: type,
+                couponId: couponId
+            }),
+            success: function (response) {
+                if (response.next_redirect_pc_url != null)
+                    location.href = response.next_redirect_pc_url;
+            },
+            error: function (xhr, err, status) {
+                alert(err + "이(가) 발생했습니다: " + status);
+            }
+        });
     }
 
     function subscribe() {

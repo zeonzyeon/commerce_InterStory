@@ -32,24 +32,14 @@ import lombok.RequiredArgsConstructor;
 @RequestMapping("api/novels/episodes")
 @RequiredArgsConstructor
 public class EpisodeRestController {
-
 	private final EpisodeService episodeService;
-
-	// 회차 작성
-	@PostMapping
-	public ResponseEntity<EpisodeResponseDTO> createEpisode(@PathVariable Long novelId,
-		@RequestBody EpisodeRequestDTO requestDTO) {
-		EpisodeResponseDTO responseDTO = episodeService.writeEpisode(novelId, requestDTO);
-		return ResponseEntity.ok(responseDTO);
-	}
 
 	// 회차 수정
 	@PutMapping("/{episodeId}")
 	public ResponseEntity<EpisodeResponseDTO> updateEpisode(
-		@PathVariable Long novelId,
 		@PathVariable Long episodeId,
 		@RequestBody EpisodeRequestDTO requestDTO) {
-		EpisodeResponseDTO responseDTO = episodeService.updateEpisode(novelId, episodeId, requestDTO);
+		EpisodeResponseDTO responseDTO = episodeService.updateEpisode(episodeId, requestDTO);
 		return ResponseEntity.status(HttpStatus.OK).body(responseDTO);
 	}
 
@@ -100,39 +90,6 @@ public class EpisodeRestController {
 		Long userId = userDetails.getUser().getUserId();
 		String message = episodeService.likeEpisode(userId, episodeId);
 		return ResponseEntity.ok(message);
-	}
-
-	// 회차 목록 조회
-	@GetMapping("/list")
-	public ResponseEntity<EpisodeListResponseDTO> getEpisodeList(
-		@PathVariable(name = "novelId") Long novelId,
-		@AuthenticationPrincipal CustomUserDetails userDetails,
-		@RequestParam(name = "sort", defaultValue = "NEW_TO_OLD") SortType sort,
-		@RequestParam(name = "page", defaultValue = "0") int page,
-		@RequestParam(name = "showAll", defaultValue = "false") boolean showAll
-	) {
-		int pageSize = 4;
-		if (showAll)
-			pageSize = 10000;
-
-		Pageable pageable = PageRequest.of(page, pageSize);
-
-		EpisodeListResponseDTO responseDTO = episodeService.getEpisodeList(userDetails, novelId, sort, pageable, showAll);
-
-		return ResponseEntity.ok(responseDTO);
-	}
-
-	//에피소드 목록 갖고오기
-	@GetMapping
-	public ResponseEntity<Page<EpisodeResponseDTO>> getEpisodes(
-		@PathVariable Long novelId,
-		@RequestParam(defaultValue = "0") int page,
-		@RequestParam(defaultValue = "DESC") Sort.Direction direction
-	) {
-
-		Page<EpisodeResponseDTO> episodes = episodeService.getEpisodesByNovelId(novelId, page, direction);
-
-		return ResponseEntity.ok(episodes);
 	}
 
 }
