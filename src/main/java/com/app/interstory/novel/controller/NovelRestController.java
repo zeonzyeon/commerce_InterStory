@@ -2,13 +2,11 @@ package com.app.interstory.novel.controller;
 
 import java.util.List;
 
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
 import com.app.interstory.novel.domain.enumtypes.MainTag;
 import com.app.interstory.novel.domain.enumtypes.NovelStatus;
 import com.app.interstory.novel.dto.response.NovelListResponseDTO;
-import com.app.interstory.novel.repository.NovelRepository;
 
+import com.app.interstory.novel.service.RecommendationService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -22,15 +20,11 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.app.interstory.novel.domain.enumtypes.MainTag;
-import com.app.interstory.novel.domain.enumtypes.NovelStatus;
 import com.app.interstory.novel.domain.enumtypes.SortType;
 import com.app.interstory.novel.dto.request.NovelRequestDTO;
 import com.app.interstory.novel.dto.request.NovelSortRequestDTO;
 import com.app.interstory.novel.dto.response.NovelDetailResponseDTO;
-import com.app.interstory.novel.dto.response.NovelListResponseDTO;
 import com.app.interstory.novel.dto.response.NovelResponseDTO;
-import com.app.interstory.novel.repository.NovelRepository;
 import com.app.interstory.novel.service.NovelService;
 import com.app.interstory.user.domain.CustomUserDetails;
 
@@ -44,7 +38,7 @@ import lombok.extern.slf4j.Slf4j;
 public class NovelRestController {
 
 	private final NovelService novelService;
-	private final NovelRepository novelRepository;
+	private final RecommendationService recommendationService;
 
 	// 소설 작성
 	@PostMapping
@@ -133,6 +127,13 @@ public class NovelRestController {
 		log.info("getTagOrderedNovelList getMainTag ***: {}", request.getMainTag());
 		List<NovelResponseDTO> novels = novelService.getPopularNovelsByTag(request);
 
+		return ResponseEntity.ok(novels);
+	}
+
+	// 추천 소설 조회
+	@GetMapping("/recommended-novel")
+	public ResponseEntity<List<NovelResponseDTO>> getRecommendedNovelList(@AuthenticationPrincipal CustomUserDetails userDetails) {
+		List<NovelResponseDTO> novels = recommendationService.getRecommendedNovels(userDetails);
 		return ResponseEntity.ok(novels);
 	}
 }
