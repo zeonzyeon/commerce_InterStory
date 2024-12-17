@@ -2,10 +2,12 @@ package com.app.interstory.novel.service;
 
 import com.app.interstory.novel.domain.entity.Novel;
 import com.app.interstory.novel.domain.enumtypes.MainTag;
+import com.app.interstory.novel.dto.response.NovelResponseDTO;
 import com.app.interstory.novel.repository.EpisodeLikeRepository;
 import com.app.interstory.novel.repository.FavoriteNovelRepository;
 import com.app.interstory.novel.repository.NovelRepository;
 import com.app.interstory.novel.repository.RecentNovelRepository;
+import com.app.interstory.user.domain.CustomUserDetails;
 import com.app.interstory.user.domain.entity.User;
 import com.app.interstory.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
@@ -86,13 +88,13 @@ public class RecommendationService {
             Set<Novel> popularTagNovels = getPopularNovelsByPreferredTags(user, interactedNovels);
             recommendedNovels.addAll(popularTagNovels);
 
-            // 기존 추천 소설 5개 선택
+            // 추천 소설 5개 선택
             List<String> baseRecommendedNovelIds = recommendedNovels.stream()
                     .map(novel -> novel.getNovelId().toString())
                     .limit(BASE_RECOMMENDATIONS)
-                    .collect(Collectors.toList());
+                    .toList();
 
-            // 4. 같은 태그의 랜덤 소설 5개 추가
+            // 4. 같은 태그의 랜덤 소설
             Set<MainTag> userPreferredTags = interactedNovels.stream()
                     .map(Novel::getTag)
                     .collect(Collectors.toSet());
@@ -214,8 +216,11 @@ public class RecommendationService {
     }
 
     @Transactional(readOnly = true)
-    public List<Novel> getRecommendedNovels(User user) {
+    public List<NovelResponseDTO> getRecommendedNovels(CustomUserDetails userDetails) {
         try {
+            User user = userRepository.findById(userDetails.getUser().getUserId())
+                    .orElseThrow(() -> new IllegalArgumentException("User not found"));
+
             String key = NOVEL_RECOMMENDATION_KEY + user.getUserId();
             List<String> recommendedNovelIds = redisTemplate.opsForList()
                     .range(key, 0, MAX_RECOMMENDATIONS - 1);
@@ -235,11 +240,12 @@ public class RecommendationService {
                     .map(id -> novelRepository.findById(Long.parseLong(id)))
                     .filter(Optional::isPresent)
                     .map(Optional::get)
+                    .map(NovelResponseDTO::from)
                     .collect(Collectors.toList());
 
         } catch (Exception e) {
             log.error("Error getting recommendations for user {}: {}",
-                    user.getUserId(), e.getMessage());
+                    userDetails.getUsername(), e.getMessage());
             return Collections.emptyList();
         }
     }
