@@ -22,6 +22,8 @@ public class QEpisode extends EntityPathBase<Episode> {
 
     public static final QEpisode episode = new QEpisode("episode");
 
+    public final NumberPath<Integer> commentCount = createNumber("commentCount", Integer.class);
+
     public final StringPath content = createString("content");
 
     public final NumberPath<Long> episodeId = createNumber("episodeId", Long.class);

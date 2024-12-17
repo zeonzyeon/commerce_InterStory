@@ -4,8 +4,7 @@ import com.app.interstory.novel.domain.enumtypes.MainTag;
 import com.app.interstory.novel.domain.enumtypes.NovelStatus;
 import com.app.interstory.novel.dto.response.NovelListResponseDTO;
 import com.app.interstory.novel.repository.NovelRepository;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
+
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -19,7 +18,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.app.interstory.novel.domain.enumtypes.Sort;
+import com.app.interstory.novel.domain.enumtypes.SortType;
 import com.app.interstory.novel.dto.request.NovelRequestDTO;
 import com.app.interstory.novel.dto.response.NovelDetailResponseDTO;
 import com.app.interstory.novel.service.NovelService;
@@ -62,25 +61,22 @@ public class NovelRestController {
 	@GetMapping("/{novelId}")
 	public ResponseEntity<NovelDetailResponseDTO> readNovel(
 		@PathVariable("novelId") Long novelId,
-		@RequestParam(name = "sort", defaultValue = "NEW_TO_OLD") Sort sort,
-		@RequestParam(name = "page", defaultValue = "1") int page
+		@AuthenticationPrincipal CustomUserDetails userDetails
 	) {
-		Pageable pageable = PageRequest.of(page - 1, 4);
-
-		NovelDetailResponseDTO response = novelService.readNovel(novelId, sort, pageable);
+		NovelDetailResponseDTO response = novelService.readNovel(novelId, userDetails);
 		return ResponseEntity.ok(response);
 	}
 
 	// 소설 목록 조회
 	@GetMapping
 	public ResponseEntity<NovelListResponseDTO> getNovelList(
-			@RequestParam(name = "status", required = false) NovelStatus status,
-			@RequestParam(name = "title", required = false) String title,
-			@RequestParam(name = "author", required = false) String author,
-			@RequestParam(name = "monetized", required = false) Boolean monetized,
-			@RequestParam(name = "tag", required = false) MainTag tag,
-			@RequestParam(name = "sort", defaultValue = "NEW_TO_OLD") Sort sort,
-			@RequestParam(defaultValue = "1") Integer page
+		@RequestParam(name = "status", required = false) NovelStatus status,
+		@RequestParam(name = "title", required = false) String title,
+		@RequestParam(name = "author", required = false) String author,
+		@RequestParam(name = "monetized", required = false) Boolean monetized,
+		@RequestParam(name = "tag", required = false) MainTag tag,
+		@RequestParam(name = "sort", defaultValue = "NEW_TO_OLD") SortType sort,
+		@RequestParam(defaultValue = "1") Integer page
 	) {
 		NovelListResponseDTO novels = novelService.getNovelList(status, title, author, monetized, tag, sort, page);
 		return ResponseEntity.ok(novels);
@@ -95,5 +91,15 @@ public class NovelRestController {
 		Long userId = userDetails.getUser().getUserId();
 		novelService.deleteNovel(novelId, userId);
 		return ResponseEntity.noContent().build();
+	}
+
+	// 관심작품 등록
+	@PostMapping("/{novelId}/favorite")
+	public ResponseEntity<String> likeEpisode(@PathVariable("novelId") Long novelId, @AuthenticationPrincipal CustomUserDetails userDetails) {
+		Long userId = userDetails.getUser().getUserId();
+
+		String message = novelService.likeNovel(userId, novelId);
+
+		return ResponseEntity.ok(message);
 	}
 }
