@@ -1,5 +1,65 @@
 #!/bin/bash
 
+
+# Docker 설치 확인 및 설치
+if ! command -v docker &> /dev/null; then
+    echo "## Docker 설치를 시작합니다." >> $LOG_PATH
+    sudo yum update -y
+    sudo yum install -y docker
+    sudo service docker start
+    sudo usermod -a -G docker ec2-user
+fi
+
+# Docker Compose 설치 확인 및 설치
+if ! command -v docker-compose &> /dev/null; then
+    echo "## Docker Compose 설치를 시작합니다." >> $LOG_PATH
+    sudo curl -L "https://github.com/docker/compose/releases/download/v2.24.0/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
+    sudo chmod +x /usr/local/bin/docker-compose
+fi
+
+# Redis 컨테이너 실행
+echo "## Redis 컨테이너 시작" >> $LOG_PATH
+if [ ! -f "$APP_HOME/docker-compose.yml" ]; then
+    cat > $APP_HOME/docker-compose.yml << EOL
+version: '3.8'
+services:
+  redis:
+    container_name: interstory-redis
+    image: redis:latest
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+      - ./redis.conf:/usr/local/etc/redis/redis.conf
+    restart: always
+    networks:
+      - interstory-network
+
+volumes:
+  redis_data:
+    driver: local
+
+networks:
+  interstory-network:
+    driver: bridge
+EOL
+fi
+
+# Redis 설정 파일 생성
+if [ ! -f "$APP_HOME/redis.conf" ]; then
+    cat > $APP_HOME/redis.conf << EOL
+bind 0.0.0.0
+port 6379
+maxmemory 256mb
+maxmemory-policy allkeys-lru
+appendonly yes
+EOL
+fi
+
+# 기존 Redis 컨테이너 중지 및 재시작
+docker-compose -f $APP_HOME/docker-compose.yml down
+docker-compose -f $APP_HOME/docker-compose.yml up -d
+
 # 기본 경로 설정
 APP_HOME=/home/ec2-user/app/interstory
 LOG_DIR=$APP_HOME/log

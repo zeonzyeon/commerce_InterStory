@@ -1,6 +1,10 @@
 spring:
+  profiles:
+    active: prod
   config:
-    import: "classpath:.env.properties"
+    import: "/home/ec2-user/app/interstory/.env.properties"
+    activate:
+      on-profile: prod
   application:
     name: InterStory
 
