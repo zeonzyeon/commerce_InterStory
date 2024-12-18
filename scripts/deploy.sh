@@ -86,8 +86,7 @@ sudo /usr/local/bin/docker-compose -f $APP_HOME/docker-compose.yml down
 sudo /usr/local/bin/docker-compose -f $APP_HOME/docker-compose.yml up -d
 
 # JVM 옵션 설정
-JAVA_OPTS="-Dspring.profiles.default=prod -Dserver.port=8080 -Xms512m -Xmx1024m -Dspring.config.import=file:${APP_HOME}/.env.properties"
-
+JAVA_OPTS="-Dserver.port=8080 -Xms512m -Xmx1024m"
 # SNAPSHOT.jar 파일 찾기 및 검증
 echo "## Checking for JAR files in $DEPLOY_PATH" >> $LOG_PATH
 BUILD_JAR=$(find $DEPLOY_PATH -name "*SNAPSHOT.jar" -type f)
@@ -155,9 +154,6 @@ if [ ! -f "$APP_HOME/.env.properties" ]; then
     exit 1
 fi
 
-# Java 명령어 실행 시 환경 변수 파일 명시적 지정
-JAVA_OPTS="$JAVA_OPTS -Dspring.config.import=file:${APP_HOME}/.env.properties"
-
 # 애플리케이션 실행
 cd $APP_HOME  # 작업 디렉토리 변경
 echo "## Executing: java $JAVA_OPTS -jar $DEPLOY_JAR" >> $LOG_PATH
@@ -165,13 +161,12 @@ echo "## Executing: java $JAVA_OPTS -jar $DEPLOY_JAR" >> $LOG_PATH
 MAX_WAIT=30
 echo "## Starting application... (waiting max ${MAX_WAIT}s)" >> $LOG_PATH
 
+# 실행 명령어
+nohup java $JAVA_OPTS -jar $DEPLOY_JAR >> $LOG_PATH 2>> $ERROR_LOG_PATH &
+
 # 실행 명령어 추가
 #nohup java $JAVA_OPTS -jar $DEPLOY_JAR >> $LOG_PATH 2>> $ERROR_LOG_PATH &
 #nohup java -jar $DEPLOY_JAR >> $LOG_PATH 2>> $ERROR_LOG_PATH &
-nohup java -jar $DEPLOY_JAR --spring.profiles.active=prod \
-           --spring.config.import=file:${APP_HOME}/.env.properties \
-           --server.port=8080 \
-           -Xms512m -Xmx1024m >> $LOG_PATH 2>> $ERROR_LOG_PATH &
 
 # 실행 확인 (타임아웃 추가)
 for i in $(seq 1 $MAX_WAIT); do

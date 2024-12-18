@@ -1,8 +1,7 @@
 spring:
   config:
-    activate:
-      on-profile: prod
-    import: "/home/ec2-user/app/interstory/.env.properties"
+    #    import: "/home/ec2-user/app/interstory/.env.properties"
+    import: "classpath:.env.properties"
   application:
     name: InterStory
 
@@ -21,14 +20,14 @@ spring:
 
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
-    url: jdbc:mysql://${DB_HOST}.ap-northeast-2.rds.amazonaws.com:3306/interstory
+    url: jdbc:mysql://${DB_HOST}.ap-northeast-2.rds.amazonaws.com:3306/interstory?serverTimezone=Asia/Seoul
     username: ${DB_USERNAME}
     password: ${DB_PASSWORD}
 
-  h2:
-    console:
-      enabled: true
-      path: /h2-console
+  #  h2:
+  #    console:
+  #      enabled: false
+  #      path: /h2-console
 
   thymeleaf:
     prefix: classpath:/templates/
