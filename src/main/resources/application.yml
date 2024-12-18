@@ -3,8 +3,6 @@ spring:
     activate:
       on-profile: prod
     import: "/home/ec2-user/app/interstory/.env.properties"
-  profiles:
-    active: prod
   application:
     name: InterStory
 
@@ -93,6 +91,10 @@ spring:
   aop:
     auto: true
     proxy-target-class: true
+
+  profiles:
+    active: prod
+
 
 kakao:
   client_id: ${KAKAO_CLIENT_ID}
