@@ -14,6 +14,8 @@ public class UserCouponResponseDTO {
 	private String expiredAt;
 	private String name;
 	private String effect;
+	private Integer discountAmount;
+	private Integer minimumAmount;
 
 	public static UserCouponResponseDTO from(UserCoupon coupon) {
 		return UserCouponResponseDTO.builder()
@@ -22,6 +24,8 @@ public class UserCouponResponseDTO {
 			.name(coupon.getCoupon().getName())
 			.effect("포인트 " + coupon.getCoupon().getCouponEffect().getDiscountAmount() + "원 할인 (최소 " + coupon.getCoupon().getCouponEffect()
 				.getMinimumAmount() + "원 이상 구매 시 적용)")
+			.discountAmount(coupon.getCoupon().getCouponEffect().getDiscountAmount())
+			.minimumAmount(coupon.getCoupon().getCouponEffect().getMinimumAmount())
 			.build();
 	}
 }

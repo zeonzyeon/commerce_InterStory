@@ -24,6 +24,7 @@ import com.app.interstory.user.dto.response.MyNovelResponseDTO;
 import com.app.interstory.user.dto.response.PointHistoryResponseDTO;
 import com.app.interstory.user.dto.response.ReadNovelResponseDTO;
 import com.app.interstory.user.dto.response.SettlementResponseDTO;
+import com.app.interstory.user.dto.response.SubscriptionResponseDTO;
 import com.app.interstory.user.dto.response.UserCouponResponseDTO;
 import com.app.interstory.user.dto.response.UserResponseDTO;
 import com.app.interstory.user.service.MypageService;
@@ -51,6 +52,23 @@ public class MypageController {
 		model.addAttribute("user", currentUser);
 
 		return "mypage/edit-profile";
+	}
+
+	// 회원 정보 페이지
+	@GetMapping("/profile")
+	public String getUserProfile(@AuthenticationPrincipal CustomUserDetails userDetails, Model model) {
+		MypageResponseDTO userProfile = mypageService.getUser(userDetails);
+		SubscriptionResponseDTO endAt = mypageService.getSubscription(userDetails);
+
+		Pageable pageable = PageRequest.of(0, 5);
+		Pageable pageable2 = PageRequest.of(0, 100000);
+
+		model.addAttribute("user", userProfile);
+		model.addAttribute("endAt", endAt.getEndAt());
+		model.addAttribute("novels", mypageService.getMyNovels(userDetails, pageable));
+		model.addAttribute("comments", mypageService.getMyComments(userDetails, pageable));
+		model.addAttribute("myCoupons", mypageService.getCoupons(userDetails, pageable2));
+		return "mypage/my-profile";
 	}
 
 	// 관심 작품 페이지

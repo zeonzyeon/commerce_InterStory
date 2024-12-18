@@ -25,7 +25,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 @Entity
-@Table(name = "users")
+@Table(name = "user")
 @NoArgsConstructor
 @AllArgsConstructor
 @Getter
@@ -142,5 +142,17 @@ public class User {
 
 	public void updateNickname(String nickname) {
 		this.nickname = nickname;
+	}
+
+	public void updateIsSubscribe(Boolean isSubscribe) {
+		this.isSubscribe = isSubscribe;
+	}
+
+	public void updateIsAutoPayment(Boolean isAutoPayment) {
+		this.isAutoPayment = isAutoPayment;
+	}
+
+	public void updatePoint(Long point) {
+		this.point = point;
 	}
 }

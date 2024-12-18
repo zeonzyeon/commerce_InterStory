@@ -14,6 +14,7 @@ import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.app.interstory.novel.domain.entity.Collection;
 import com.app.interstory.novel.domain.entity.Episode;
 import com.app.interstory.novel.domain.entity.EpisodeLike;
 import com.app.interstory.novel.domain.entity.Novel;
@@ -28,6 +29,8 @@ import com.app.interstory.novel.repository.CollectionRepository;
 import com.app.interstory.novel.repository.EpisodeLikeRepository;
 import com.app.interstory.novel.repository.EpisodeRepository;
 import com.app.interstory.novel.repository.NovelRepository;
+import com.app.interstory.payment.domain.enumtypes.PaymentType;
+import com.app.interstory.payment.service.KakaoService;
 import com.app.interstory.user.domain.CustomUserDetails;
 import com.app.interstory.user.domain.entity.CartItem;
 import com.app.interstory.user.domain.entity.Point;
@@ -52,6 +55,7 @@ public class EpisodeService {
 	private final CartItemRepository cartItemRepository;
 	private final EpisodeLikeRepository episodeLikeRepository;
 	private final CollectionRepository collectionRepository;
+	private final KakaoService kakaoService;
 	private final RedisTemplate<String, String> redisTemplate;
 
 	// 회차 작성
@@ -82,30 +86,22 @@ public class EpisodeService {
 
 	// 회차 수정
 	@Transactional
-	public EpisodeResponseDTO updateEpisode(Long novelId, Long episodeId, EpisodeRequestDTO requestDTO) {
+	public EpisodeResponseDTO updateEpisode(Long episodeId, EpisodeRequestDTO requestDTO) {
 		Episode episode = episodeRepository.findById(episodeId)
 			.orElseThrow(() -> new RuntimeException("Episode not found"));
-
-		if (!episode.getNovel().getNovelId().equals(novelId)) {
-			throw new IllegalArgumentException("Invalid novelId for the given episode.");
-		}
 
 		episode.updateEpisode(requestDTO);
 
 		return convertToDTO(episode);
 	}
 
-	// 회차 상세 조회
-	public EpisodeResponseDTO readEpisode(Long novelId, Long episodeId) {
-		Episode episode = episodeRepository.findById(episodeId)
-			.orElseThrow(() -> new RuntimeException("Episode not found"));
-
-		if (!episode.getNovel().getNovelId().equals(novelId)) {
-			throw new RuntimeException("Episode does not belong to the specified novel");
-		}
-
-		return convertToDTO(episode);
-	}
+	// // 회차 상세 조회 변경
+	// public EpisodeResponseDTO readEpisode(Long episodeId) {
+	// 	Episode episode = episodeRepository.findById(episodeId)
+	// 		.orElseThrow(() -> new RuntimeException("Episode not found"));
+	//
+	// 	return convertToDTO(episode);
+	// }
 
 	private EpisodeResponseDTO convertToDTO(Episode episode) {
 		return EpisodeResponseDTO.builder()
@@ -123,20 +119,16 @@ public class EpisodeService {
 
 	// 회차 삭제
 	@Transactional
-	public void deleteEpisode(Long novelId, Long episodeId) {
+	public void deleteEpisode(Long episodeId) {
 		Episode episode = episodeRepository.findById(episodeId)
 			.orElseThrow(() -> new RuntimeException("Episode not found"));
-
-		if (!episode.getNovel().getNovelId().equals(novelId)) {
-			throw new RuntimeException("Episode does not belong to the specified novel");
-		}
 
 		episode.markAsDeleted();
 	}
 
 	// 회차 구매
 	@Transactional
-	public void purchaseEpisode(Long userId, Long novelId, Long episodeId) {
+	public void purchaseEpisode(Long userId, Long episodeId) {
 		// 1. 사용자 조회
 		User user = userRepository.findById(userId)
 			.orElseThrow(() -> new RuntimeException("User not found"));
@@ -145,11 +137,14 @@ public class EpisodeService {
 		Episode episode = episodeRepository.findById(episodeId)
 			.orElseThrow(() -> new RuntimeException("Episode not found"));
 
-		if (!episode.getNovel().getNovelId().equals(novelId)) {
-			throw new RuntimeException("Invalid novel ID for the given episode.");
-		}
+		Collection collection = Collection.builder()
+			.user(user)
+			.episode(episode)
+			.build();
 
-		Long episodePrice = 1L;
+		collectionRepository.save(collection);
+
+		Long episodePrice = 5L;
 
 		// 4. 포인트 차감
 		user.reducePointsForPurchase(episodePrice);
@@ -161,6 +156,10 @@ public class EpisodeService {
 			.description("회차 구매  : " + episode.getTitle() + "사용 포인트 :" + episodePrice)
 			.build();
 		pointRepository.save(point);
+
+		if (user.getPoint() < 50L && user.getIsAutoPayment()) {
+			kakaoService.kakaoPayPayment(userId, PaymentType.AUTO);
+		}
 	}
 
 	// 장바구니 담기
@@ -212,8 +211,7 @@ public class EpisodeService {
 		return afterLikeMessage;
 	}
 
-	public EpisodeListResponseDTO getEpisodeList(CustomUserDetails userDetails, Long novelId, SortType sort,
-		Pageable pageable, boolean showAll) {
+	public EpisodeListResponseDTO getEpisodeList(CustomUserDetails userDetails, Long novelId, SortType sort, Pageable pageable, boolean showAll) {
 		Long userId = userDetails.getUser().getUserId();
 
 		Page<Episode> episodes;
@@ -226,9 +224,7 @@ public class EpisodeService {
 		List<NovelEpisodeResponseDTO> episodeDTOs = episodes.getContent().stream()
 			.map(episode -> {
 				Long episodeId = episode.getEpisodeId();
-				boolean isFree = novelRepository.findById(novelId)
-					.orElseThrow(() -> new RuntimeException("Novel not found"))
-					.getIsFree();
+				boolean isFree = novelRepository.findById(novelId).orElseThrow(() -> new RuntimeException("Novel not found")).getIsFree();
 
 				return NovelEpisodeResponseDTO.builder()
 					.episodeId(episodeId)

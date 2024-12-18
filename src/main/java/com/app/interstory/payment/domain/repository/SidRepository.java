@@ -9,7 +9,7 @@ import com.app.interstory.payment.domain.entity.Sid;
 
 @Repository
 public interface SidRepository extends JpaRepository<Sid, Long> {
-	Optional<Sid> findByUser_UserId(Long userId);
+	Sid findByUser_UserId(Long userId);
 
 	Boolean existsByUser_UserId(Long userId);
 }
