@@ -1,6 +1,14 @@
 package com.app.interstory.user.domain.entity;
 
-import jakarta.persistence.*;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.OneToOne;
+import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -22,7 +30,7 @@ public class Settlement {
 	@Column(name = "settlement_id")
 	private Long settlementId;
 
-	@ManyToOne(fetch = FetchType.LAZY)
+	@OneToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "user_id", nullable = false)
 	private User user;
 
@@ -45,5 +53,15 @@ public class Settlement {
 	public void requestSettlement() {
 		this.viewCount = 0;
 		this.fee = 0L;
+	}
+
+	public void addViewCount(Boolean isFree) {
+		this.viewCount += 1;
+		long valance = isFree ? 20L : 40L;
+		this.fee += valance;
+	}
+
+	public void addUser(User user) {
+		this.user = user;
 	}
 }

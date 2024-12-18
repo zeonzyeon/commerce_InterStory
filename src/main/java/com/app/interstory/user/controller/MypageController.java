@@ -9,18 +9,14 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.app.interstory.novel.domain.enumtypes.SortType;
 import com.app.interstory.novel.dto.response.NovelDetailResponseDTO;
 import com.app.interstory.novel.service.NovelService;
 import com.app.interstory.user.domain.CustomUserDetails;
-import com.app.interstory.user.dto.request.UpdateUserRequestDTO;
 import com.app.interstory.user.dto.response.AccountResponseDTO;
 import com.app.interstory.user.dto.response.FavoriteNovelResponseDTO;
 import com.app.interstory.user.dto.response.MyCommentResponseDTO;
@@ -31,17 +27,33 @@ import com.app.interstory.user.dto.response.ReadNovelResponseDTO;
 import com.app.interstory.user.dto.response.SettlementResponseDTO;
 import com.app.interstory.user.dto.response.SubscriptionResponseDTO;
 import com.app.interstory.user.dto.response.UserCouponResponseDTO;
+import com.app.interstory.user.dto.response.UserResponseDTO;
 import com.app.interstory.user.service.MypageService;
+import com.app.interstory.user.service.UserService;
 
 import lombok.RequiredArgsConstructor;
 
 @Controller
-@RequestMapping("/users")
+@RequestMapping("users")
 @RequiredArgsConstructor
 public class MypageController {
 
 	private final MypageService mypageService;
 	private final NovelService novelService;
+	private final UserService userService;
+
+	// 회원 정보 수정
+	@GetMapping("/edit-profile")
+	public String userEditProfile(
+		@AuthenticationPrincipal CustomUserDetails userDetails,
+		Model model
+	) {
+
+		UserResponseDTO currentUser = userService.getCurrentUser(userDetails.getUser().getUserId());
+		model.addAttribute("user", currentUser);
+
+		return "mypage/edit-profile";
+	}
 
 	// 회원 정보 페이지
 	@GetMapping("/profile")
@@ -156,23 +168,23 @@ public class MypageController {
 		return "mypage/my-comments";
 	}
 
-	// 회원정보 수정 페이지
-	@GetMapping("/edit-profile")
-	public String editProfile(@AuthenticationPrincipal CustomUserDetails userDetails, Model model) {
-		MypageResponseDTO userInfo = mypageService.getUser(userDetails);
-		model.addAttribute("userInfo", userInfo);
-		return "mypage/edit-profile";
-	}
+	// // 회원정보 수정 페이지
+	// @GetMapping("/edit-profile")
+	// public String editProfile(@AuthenticationPrincipal CustomUserDetails userDetails, Model model) {
+	// 	MypageResponseDTO userInfo = mypageService.getUser(userDetails);
+	// 	model.addAttribute("userInfo", userInfo);
+	// 	return "mypage/edit-profile";
+	// }
 
-	// 회원정보 수정 처리
-	@PostMapping("/edit-profile")
-	public String updateProfile(@AuthenticationPrincipal CustomUserDetails userDetails,
-		@ModelAttribute UpdateUserRequestDTO updateUserRequestDTO,
-		RedirectAttributes redirectAttributes) {
-		mypageService.updateUser(userDetails, updateUserRequestDTO);
-		redirectAttributes.addFlashAttribute("successMessage", "회원정보가 성공적으로 수정되었습니다.");
-		return "redirect:/users/edit-profile";
-	}
+	// // 회원정보 수정 처리
+	// @PostMapping("/edit-profile")
+	// public String updateProfile(@AuthenticationPrincipal CustomUserDetails userDetails,
+	// 	@ModelAttribute UpdateUserRequestDTO updateUserRequestDTO,
+	// 	RedirectAttributes redirectAttributes) {
+	// 	mypageService.updateUser(userDetails, updateUserRequestDTO);
+	// 	redirectAttributes.addFlashAttribute("successMessage", "회원정보가 성공적으로 수정되었습니다.");
+	// 	return "redirect:/users/edit-profile";
+	// }
 
 	// 회차 리스트와 반응 분석 페이지
 	@GetMapping("/novels/{novelId}")

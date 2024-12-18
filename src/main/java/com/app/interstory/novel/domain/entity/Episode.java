@@ -33,6 +33,7 @@ public class Episode {
 	private static final Integer DEFAULT_VIEW_COUNT = 0;
 	private static final Integer DEFAULT_LIKE_COUNT = 0;
 	private static final Integer DEFAULT_COMMENT_COUNT = 0;
+	private static final Integer DEFAULT_EP_NUM = 0;
 	private static final Boolean DEFAULT_STATUS = true;
 
 	@Id
@@ -75,6 +76,10 @@ public class Episode {
 	@Builder.Default
 	@Column(name = "status", nullable = false)
 	private Boolean status = DEFAULT_STATUS;
+
+	@Builder.Default
+	@Column(name = "episode_number")
+	private Integer episodeNumber = DEFAULT_EP_NUM;
 
 	public void updateEpisode(EpisodeRequestDTO requestDTO) {
 		if (requestDTO.getTitle() != null) {
