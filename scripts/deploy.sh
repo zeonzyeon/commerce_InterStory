@@ -86,7 +86,7 @@ sudo /usr/local/bin/docker-compose -f $APP_HOME/docker-compose.yml down
 sudo /usr/local/bin/docker-compose -f $APP_HOME/docker-compose.yml up -d
 
 # JVM 옵션 설정
-JAVA_OPTS="-Dspring.profiles.active=prod -Dserver.port=8080 -Xms512m -Xmx1024m"
+JAVA_OPTS="-Dspring.profiles.default=prod -Dserver.port=8080 -Xms512m -Xmx1024m -Dspring.config.import=file:${APP_HOME}/.env.properties"
 
 # SNAPSHOT.jar 파일 찾기 및 검증
 echo "## Checking for JAR files in $DEPLOY_PATH" >> $LOG_PATH
