@@ -162,18 +162,25 @@ JAVA_OPTS="$JAVA_OPTS -Dspring.config.import=file:${APP_HOME}/.env.properties"
 cd $APP_HOME  # 작업 디렉토리 변경
 echo "## Executing: java $JAVA_OPTS -jar $DEPLOY_JAR" >> $LOG_PATH
 
+MAX_WAIT=30
+echo "## Starting application... (waiting max ${MAX_WAIT}s)" >> $LOG_PATH
+
+# 실행 명령어 추가
 nohup java $JAVA_OPTS -jar $DEPLOY_JAR >> $LOG_PATH 2>> $ERROR_LOG_PATH &
 
-# 실행 확인
-sleep 10
-NEW_PID=$(pgrep -f $JAR_NAME)
-if [ -n "$NEW_PID" ]; then
-    echo "## Application started successfully (PID: $NEW_PID)" >> $LOG_PATH
-    echo $NEW_PID > $APP_HOME/current.pid
-else
-    echo "## Application failed to start" >> $LOG_PATH
-    exit 1
-fi
+# 실행 확인 (타임아웃 추가)
+for i in $(seq 1 $MAX_WAIT); do
+   sleep 1
+   NEW_PID=$(pgrep -f $JAR_NAME)
+   if [ -n "$NEW_PID" ]; then
+       echo "## Application started successfully (PID: $NEW_PID)" >> $LOG_PATH
+       echo $NEW_PID > $APP_HOME/current.pid
+       exit 0  # 성공적으로 실행되면 스크립트 종료
+   fi
+done
 
-# 현재 실행 중인 애플리케이션 pid 기록
-echo $NEW_PID > $APP_HOME/current.pid
+# 타임아웃된 경우
+echo "## Application failed to start within ${MAX_WAIT} seconds" >> $LOG_PATH
+echo "## Checking error logs:" >> $LOG_PATH
+tail -n 50 $ERROR_LOG_PATH >> $LOG_PATH
+exit 1
