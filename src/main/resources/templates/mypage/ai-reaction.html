@@ -4,12 +4,18 @@
     <meta charset="UTF-8">
     <title>에피소드 목록</title>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <link rel="stylesheet" th:href="@{/css/reset.css}">
+    <link rel="stylesheet" th:href="@{/css/common/header.css}">
+    <link rel="stylesheet" th:href="@{/css/common/footer.css}">
+    <link rel="stylesheet" th:href="@{/css/mypage/my-header.css}">
     <link rel="stylesheet" th:href="@{/css/mypage/ai-reaction.css}">
 </head>
 <body>
+<div th:replace="~{common/header :: header}"></div>
+<div th:replace="~{mypage/fragment/my-header :: my-header}"></div>
 <div class="container">
     <div class="episode-list">
-        <h2 th:text="${novel.title}">소설 제목</h2>
+        <h2 th:text="${title}">소설 제목</h2>
 
         <div class="sort-section">
             <button class="sort-btn active" data-direction="DESC">최신순</button>
@@ -30,6 +36,7 @@
         <div class="analysis-result" style="display: none;"></div>
     </div>
 </div>
+<div th:replace="~{common/footer :: footer}"></div>
 
 <script th:inline="javascript">
 
@@ -46,6 +53,7 @@
 
         $loader.show();
         console.log(direction);
+        console.log(novelId);
         $.ajax({
             url: `/api/novels/${novelId}/episodes`,
             method: 'GET',

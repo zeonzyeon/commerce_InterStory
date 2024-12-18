@@ -1,0 +1,56 @@
+.profile-section {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 20px;
+    border: 1px solid #ccc;
+    border-radius: 10px;
+    background-color: #f9f9f9;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+.profile-info {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.profile-picture {
+    width: 50px;
+    height: 50px;
+    background-color: #d3d3d3;
+    border-radius: 50%;
+    margin-right: 10px;
+}
+
+.profile-name {
+    font-size: 16px;
+    color: #333;
+}
+
+.nickname {
+    font-weight: bold;;
+    font-size: 16px;
+}
+
+.profile-buttons {
+    display: flex;
+    gap: 10px;
+}
+
+button {
+    display: inline-block;
+    padding: 5px 10px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    text-decoration: none;
+    font-size: 14px;
+    color: #333;
+    background-color: #fff;
+    text-align: center;
+}
+
+button:hover {
+    background-color: #f0f0f0;
+    border-color: #999;
+}

@@ -206,10 +206,13 @@ public class MypageService {
 				.toList();
 
 			return MyNovelResponseDTO.builder()
+				.novelId(myNovel.getNovelId())
 				.title(myNovel.getTitle())
 				.likeCount(myNovel.getLikeCount())
 				.tags(tags)
 				.thumbnailUrl(myNovel.getThumbnailUrl())
+				.episodeUpdatedAt(myNovel.getEpisodeUpdatedAt())
+				.favoriteCount(myNovel.getFavoriteCount())
 				.build();
 		});
 	}

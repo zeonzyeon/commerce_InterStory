@@ -3,465 +3,56 @@
 <head>
     <meta charset="UTF-8">
     <title>My Novel List</title>
-    <style>
-        /* 헤더 스타일 */
-        .header {
-            background: #fff;
-            padding: 1rem 2rem;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-            position: sticky;
-            top: 0;
-            z-index: 100;
-        }
-
-        .header-content {
-            max-width: 1200px;
-            margin: 0 auto;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            gap: 2rem;
-        }
-
-        .logo-area {
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-            min-width: 150px;
-        }
-
-        .logo-image {
-            width: 32px;
-            height: 32px;
-            object-fit: cover;
-        }
-
-        .logo-text {
-            font-size: 1.25rem;
-            font-weight: 700;
-            color: #111;
-        }
-
-        .search-bar {
-            flex: 1;
-            max-width: 400px;
-            position: relative;
-        }
-
-        /* 반응형 처리 */
-        @media (max-width: 768px) {
-            .header-content {
-                gap: 1rem;
-            }
-
-            .logo-area {
-                min-width: auto;
-            }
-
-            .logo-text {
-                font-size: 1.1rem;
-            }
-
-            .search-bar {
-                max-width: 200px;
-            }
-        }
-
-        .search-bar {
-            flex: 0 1 400px;
-            position: relative;
-        }
-
-        .search-bar input {
-            width: 100%;
-            padding: 0.75rem 1rem;
-            border: 1px solid #ddd;
-            border-radius: 20px;
-            font-size: 0.9rem;
-            background: #f8f9fa;
-        }
-
-        .search-bar input:focus {
-            outline: none;
-            border-color: #333;
-            background: #fff;
-        }
-
-        .user-profile {
-            display: flex;
-            align-items: center;
-            gap: 1rem;
-        }
-
-        .user-profile img {
-            width: 40px;
-            height: 40px;
-            border-radius: 50%;
-            object-fit: cover;
-        }
-
-        /* 마이페이지 메뉴 */
-        .user-menu {
-            padding: 1rem;
-            background: #fff;
-            border-radius: 8px;
-            margin-bottom: 1rem;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .menu-items {
-            display: flex;
-            gap: 2rem;
-        }
-
-        .menu-item {
-            text-decoration: none;
-            color: #666;
-            padding: 0.5rem 1rem;
-            border-radius: 4px;
-            transition: all 0.2s;
-            cursor: pointer;
-        }
-
-        .menu-item:hover {
-            background: #f8f9fa;
-            color: #111;
-        }
-
-        .menu-item.active {
-            color: #111;
-            font-weight: 600;
-        }
-
-        .profile-section {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 20px;
-            border: 1px solid #ccc;
-            border-radius: 10px;
-            background-color: #f9f9f9;
-            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-        }
-
-        .profile-info {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-
-        .profile-picture {
-            width: 50px;
-            height: 50px;
-            background-color: #d3d3d3;
-            border-radius: 50%;
-            margin-right: 10px;
-        }
-
-        .profile-name {
-            font-size: 16px;
-            color: #333;
-        }
-
-        .nickname {
-            font-weight: bold;;
-            font-size: 16px;
-        }
-
-        .profile-buttons {
-            display: flex;
-            gap: 10px;
-        }
-
-        button {
-            display: inline-block;
-            padding: 5px 10px;
-            border: 1px solid #ccc;
-            border-radius: 4px;
-            text-decoration: none;
-            font-size: 14px;
-            color: #333;
-            background-color: #fff;
-            text-align: center;
-        }
-
-        button:hover {
-            background-color: #f0f0f0;
-            border-color: #999;
-        }
-
-        /* 메인 컨테이너 스타일 */
-        .my-novel-container {
-            padding: 20px 180px;
-            background-color: #eeeeee;
-        }
-
-        /* 수정된 계좌, 정산 섹션 */
-        .account-settlement-row {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            gap: 150px;
-            background-color: #f9f9f9;
-            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-            padding: 20px;
-            border: 1px solid #ccc;
-            border-radius: 10px;
-            flex: 2;
-            margin-top: 15px;
-        }
-
-        .account-edit {
-            display: flex;
-            align-items: center;
-            gap: 20px;
-        }
-
-        .account-edit label {
-            margin-bottom: 3px;
-        }
-
-        .account-edit input {
-            padding: 5px 10px;
-            border: 1px solid #ccc;
-            border-radius: 5px;
-            font-size: 14px;
-            flex: 1;
-            width: 300px;
-        }
-
-        .account-edit button {
-            padding: 5px 15px;
-            background-color: rgba(51, 51, 51, 0.8);
-            color: #fff;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-            font-size: 14px;
-        }
-
-        .account-edit button:hover {
-            background-color: #333;
-        }
-
-        .expected-amount {
-            display: flex;
-            align-items: center;
-            justify-content: flex-end;
-            gap: 10px;
-            flex: 1;
-            margin-left: auto;
-        }
-
-        .expected-amount .label {
-            font-size: 14px;
-            color: #666;
-        }
-
-        .expected-amount .value {
-            font-weight: bold;
-            color: #333;
-            margin-bottom: 2px;
-        }
-
-        .settlement-button {
-            padding: 5px 15px;
-            background-color: rgba(51, 51, 51, 0.8);
-            color: #fff;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-            font-size: 14px;
-            flex: 0.5;
-            margin-left: 100px;
-        }
-
-        .settlement-button:hover {
-            background-color: #333;
-        }
-
-        h2 {
-            font-size: 20px;
-            font-weight: bold;
-            color: #333;
-        }
-
-        .new-work-section {
-            display: flex;
-            flex-direction: row;
-            justify-content: space-between;
-        }
-
-        .new-work-button {
-            padding: 5px 10px;
-            font-size: 14px;
-            color: #333;
-            background-color: #fff;
-            border: 1px solid #ccc;
-            border-radius: 4px;
-            cursor: pointer;
-            transition: background-color 0.2s, box-shadow 0.2s;
-            text-align: center;
-            height: 30px;
-            margin-top: 15px;
-        }
-
-        .new-work-button:hover {
-            background-color: #f9f9f9;
-            border-color: #999;
-        }
-
-        /*작품 섹션 스타일 */
-        .works-section {
-            margin-top: 20px;
-        }
-
-        .works-container {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 20px;
-            padding: 0;
-        }
-
-        .work-card {
-            padding: 15px;
-            border: 1px solid #ccc;
-            border-radius: 10px;
-            background-color: #f9f9f9;
-            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-            text-align: center;
-            cursor: pointer;
-            transition: all 0.3s ease;
-        }
-
-        .work-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
-        }
-
-        .work-title {
-            font-size: 16px;
-            font-weight: bold;
-            margin-bottom: 10px;
-            color: #333;
-        }
-
-        .work-status {
-            font-size: 14px;
-            color: #666;
-            margin-bottom: 5px;
-        }
-
-        .work-date {
-            font-size: 12px;
-            color: #999;
-        }
-
-        .no-works {
-            text-align: center;
-            grid-column: span 3;
-            padding: 20px;
-            font-size: 14px;
-            color: #777;
-        }
-    </style>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.3/jquery.min.js"></script>
+    <link rel="stylesheet" th:href="@{/css/reset.css}">
+    <link rel="stylesheet" th:href="@{/css/common/header.css}">
+    <link rel="stylesheet" th:href="@{/css/common/footer.css}">
+    <link rel="stylesheet" th:href="@{/css/mypage/my-header.css}">
+    <link rel="stylesheet" th:href="@{/css/mypage/profile-header.css}">
+    <link rel="stylesheet" th:href="@{/css/mypage/novel-list.css}">
 </head>
 <body>
-<!-- 헤더 -->
-<header class="header">
-    <div class="header-content">
-        <div class="logo-area">
-            <img alt="로고" class="logo-image" th:src="@{/images/logo.png}">
-            <span class="logo-text">InterStory</span>
-        </div>
-        <div class="search-bar">
-            <input placeholder="제목/작가로 검색" type="text">
-        </div>
-        <div class="user-profile">
-            <span th:text="${userNickname}">닉네임</span>
-            <img alt="프로필" src="/images/default-profile.png" th:src="${userProfileImage}">
-        </div>
-    </div>
-</header>
-<main class="my-novel-container">
-    <!-- 마이페이지 메뉴 -->
-    <div class="user-menu">
-        <div class="menu-items">
-            <a class="menu-item active" href="users/profile">프로필</a>
-            <a class="menu-item" href="users/favorite-novels">관심 작품</a>
-            <a class="menu-item" href="users/recent-novels">열람 작품</a>
-            <a class="menu-item" href="/users/point-history">포인트 내역</a>
-            <a class="menu-item" href="users/my-coupons">쿠폰</a>
-            <a class="menu-item" href="users/edit-profile">회원 정보 관리</a>
-        </div>
-    </div>
-    <div class="profile-section">
-        <div class="profile-info">
-            <div class="profile-picture"></div>
-            <span class="profile-name">
-                <span class="nickname" th:text="${user.nickname}">닉네임</span> 님의 프로필
-            </span>
-        </div>
-        <div class="profile-buttons">
-            <button href="/profile">프로필</button>
-            <button href="/works">연재 작품</button>
-            <button href="/comments">댓글</button>
-        </div>
-    </div>
+<div th:replace="~{common/header :: header}"></div>
+<div th:replace="~{mypage/fragment/my-header :: my-header}"></div>
+<main>
+    <div th:replace="~{mypage/fragment/profile-header :: profile-header}"></div>
+
     <div class="account-settlement-row">
         <div class="account-edit">
             <label for="accountNumber">계좌번호</label>
-            <input id="accountNumber" placeholder="계좌번호를 입력하세요" type="text">
+            <input id="accountNumber" placeholder="숫자만 입력하세요" type="number">
             <button onclick="updateAccount()" type="button">수정</button>
         </div>
         <div class="expected-amount">
             <span class="label">예상 정산 금액:</span>
-            <span class="value" id="expectedAmount">0원</span>
+            <span class="value" id="expectedAmount" th:text="|${#numbers.formatInteger(settlement, 0,'COMMA')}원|">0원</span>
             <button class="settlement-button" onclick="calculateSettlement()">연재 작품 정산</button>
         </div>
     </div>
     <!-- 등록된 작품 목록 -->
-    <div class="works-section">
-        <div class="new-work-section">
-            <h2>연재한 작품</h2>
-            <button class="new-work-button" onclick="location.href='/novel/new'">신규 작품 등록</button>
-        </div>
-        <div class="works-container">
-            <div class="work-card"
-                 th:data-id="${novel.id}"
-                 th:data-title="${novel.title}"
-                 th:onclick="|location.href='@{/novels/{id}/episodes(id=${novel.id})}'|">
-                <div class="work-title" th:text="${novel.title}">작품 제목</div>
-                <div class="work-status" th:text="${novel.status}">상태</div>
-                <div class="work-date" th:text="${#dates.format(novel.createdAt, 'yyyy-MM-dd')}">2024-06-15</div>
+    <section class="my-novels">
+        <div class="novel-item" th:each="novel : ${myNovels}">
+            <img alt="" class="novel-thumbnail" th:src="${novel.thumbnailUrl}">
+            <div class="novel-content">
+                <a class="novel-title" th:href="@{/users/episode/{novelId}(novelId=${novel.novelId})}" th:text="${novel.title}">소설 제목</a>
+                <span class="novel-updated-at" th:text="${#dates.format(novel.episodeUpdatedAt, 'yyyy.MM.dd HH:mm:ss')}">연재 시간</span>
+            </div>
+            <div class="novel-feature">
+                <div class="novel-favorive-count">
+                    <img alt="" th:src="@{/img/full_heart.png}">
+                    <span th:text="${novel.favoriteCount}">관심작품 수</span>
+                </div>
+                <div class="novel-like-count">
+                    <img alt="" th:src="@{/img/thumb.png}">
+                    <span th:text="${novel.likeCount}">추천 수</span>
+                </div>
             </div>
         </div>
-    </div>
+        <div th:if="${#lists.isEmpty(myNovels)}">연재한 작품이 없습니다</div>
+    </section>
 </main>
-<script>
-    function updateAccount() {
-        const accountNumber = document.getElementById('accountNumber').value;
-        if (accountNumber) {
-            alert(`계좌번호가 수정되었습니다: ${accountNumber}`);
-        } else {
-            alert("계좌번호를 입력하세요.");
-        }
-    }
+<div th:replace="~{common/footer :: footer}"></div>
 
-    function calculateSettlement() {
-        const expectedAmount = "100,000원"; // 정산 금액 예시
-        document.getElementById('expectedAmount').innerText = expectedAmount;
-        alert("정산이 완료되었습니다.");
-    }
-
-    function registerNewWork() {
-        alert("신규 작품 등록 페이지로 이동합니다.");
-        // 신규 작품 등록 페이지로 이동
-        window.location.href = "/works/new";
-    }
-</script>
+<script th:src="@{/js/mypage/novel-list.js}"></script>
 </body>
 </html>

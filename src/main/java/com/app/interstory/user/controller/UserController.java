@@ -14,6 +14,7 @@ import com.app.interstory.user.domain.CustomUserDetails;
 import com.app.interstory.user.domain.entity.User;
 import com.app.interstory.user.dto.vo.KakaoAPI;
 import com.app.interstory.user.service.AuthenticationService;
+import com.app.interstory.user.service.UserService;
 
 import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
@@ -27,6 +28,7 @@ public class UserController {
 	private final KakaoAPI kakaoAPI;
 	private final AuthenticationService authenticationService;
 	private final EpisodeService episodeService;
+	private final UserService userService;
 
 	//로그인 페이지
 	@GetMapping("auth/login")
@@ -71,11 +73,8 @@ public class UserController {
 	}
 
 	//내 애피소드 페이지
-	@GetMapping("mypage/episode/{novelId}")
-	public String myEpisode(
-		@PathVariable Long novelId,
-		Model model
-	) {
+	@GetMapping("users/episode/{novelId}")
+	public String myEpisode(@PathVariable(name = "novelId") Long novelId, Model model) {
 		MyPageNovelResponseDto novel = episodeService.findByNovelId(novelId);
 		model.addAttribute("novel", novel);
 
