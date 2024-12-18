@@ -121,8 +121,8 @@
     </section>
 </main>
 
-<div class="modal-backdrop" id="modalBackdrop" onclick="closePurchaseModal()"></div>
-<div class="modal" id="episodePurchaseModal">
+<div class="modal-backdrop" id="modal-backdrop" onclick="closePurchaseModal()"></div>
+<div class="modal" id="episode-purchase-modal">
     <div class="modal-content">
         <div class="modal-header">
             <h2 id="purchase-episode-title">회차 제목</h2>
@@ -130,12 +130,12 @@
         </div>
         <hr>
         <div class="modal-body">
-            <span>보유한 포인트</span>
+            <span class="modal-body-point" th:text="|보유한 포인트: ${#numbers.formatInteger(point, 0,'COMMA')}|">보유한 포인트</span>
             <span>포인트를 이용하여 해당 회차를 구매하시겠습니까?</span>
             <span>(구매한 회차는 환불이 불가합니다.)</span>
-            <div>
-                <!--                <button id="episodeBasket" onclick="episodeBasket()">장바구니</button>-->
-                <!--                <button id="episodePurchase" onclick="episodePurchase()">구매하기</button>-->
+            <div class="modal-body-button-container">
+                <button id="episode-basket">장바구니</button>
+                <button id="episode-purchase">구매하기</button>
             </div>
         </div>
     </div>

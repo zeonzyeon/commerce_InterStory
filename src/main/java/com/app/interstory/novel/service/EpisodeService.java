@@ -239,10 +239,7 @@ public class EpisodeService {
 					.likeCount(episode.getLikeCount())
 					.status(episode.getStatus())
 					.isPurchased(collectionRepository.existsByUser_UserIdAndEpisode_EpisodeId(userId, episodeId))
-					.isFree(isFree || episodes.getContent().stream()
-						.sorted(Comparator.comparing(Episode::getPublishedAt))
-						.toList()
-						.indexOf(episode) < 5)
+					.isFree(isFree || episode.getEpisodeNumber() < 5)
 					.commentCount(episode.getCommentCount())
 					.build();
 			})

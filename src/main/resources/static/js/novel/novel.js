@@ -42,7 +42,7 @@ document.getElementById('episode-sort-old').addEventListener('click', () => {
 
 function viewEpisode(episodeId, episodeTitle, isFree, isPurchased) {
     console.log(episodeId, episodeTitle, isFree, isPurchased);
-    if (isFree || isPurchased) {
+    if (isFree === 'true' || isPurchased === 'true') {
         window.location.href = '/episodes/' + episodeId;
     } else {
         openPurchaseModal(episodeId, episodeTitle);
@@ -79,13 +79,41 @@ document.getElementById('btn-comment-sort-popular').addEventListener('click', ()
 });
 
 function openPurchaseModal(episodeId, episodeTitle) {
-    document.getElementById('modalBackdrop').style.display = 'block';
-    document.getElementById('episodePurchaseModal').style.display = 'block';
+    document.getElementById('modal-backdrop').style.display = 'block';
+    document.getElementById('episode-purchase-modal').style.display = 'block';
 
     document.getElementById('purchase-episode-title').innerText = episodeTitle;
+
+    basket = document.getElementById('episode-basket');
+    purchase = document.getElementById('episode-purchase');
+
+    basket.addEventListener('click', () => {
+        $.ajax({
+            url: '/api/novels/episodes/' + episodeId + '/cart',
+            type: 'POST',
+            success: function (response) {
+                alert(response);
+                location.reload();
+            },
+            error: function () {
+            }
+        });
+    });
+    purchase.addEventListener('click', () => {
+        $.ajax({
+            url: '/api/novels/episodes/' + episodeId + '/purchase',
+            type: 'POST',
+            success: function (response) {
+                alert(response);
+                location.href = '/episodes/' + episodeId;
+            },
+            error: function () {
+            }
+        });
+    });
 }
 
 function closePurchaseModal() {
-    document.getElementById('modalBackdrop').style.display = 'none';
-    document.getElementById('episodePurchaseModal').style.display = 'none';
+    document.getElementById('modal-backdrop').style.display = 'none';
+    document.getElementById('episode-purchase-modal').style.display = 'none';
 }
