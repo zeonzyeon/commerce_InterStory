@@ -167,7 +167,11 @@ echo "## Starting application... (waiting max ${MAX_WAIT}s)" >> $LOG_PATH
 
 # 실행 명령어 추가
 #nohup java $JAVA_OPTS -jar $DEPLOY_JAR >> $LOG_PATH 2>> $ERROR_LOG_PATH &
-nohup java -jar $DEPLOY_JAR >> $LOG_PATH 2>> $ERROR_LOG_PATH &
+#nohup java -jar $DEPLOY_JAR >> $LOG_PATH 2>> $ERROR_LOG_PATH &
+nohup java -jar $DEPLOY_JAR --spring.profiles.active=prod \
+           --spring.config.import=file:${APP_HOME}/.env.properties \
+           --server.port=8080 \
+           -Xms512m -Xmx1024m >> $LOG_PATH 2>> $ERROR_LOG_PATH &
 
 # 실행 확인 (타임아웃 추가)
 for i in $(seq 1 $MAX_WAIT); do

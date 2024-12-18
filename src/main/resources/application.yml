@@ -92,10 +92,6 @@ spring:
     auto: true
     proxy-target-class: true
 
-  profiles:
-    active: prod
-
-
 kakao:
   client_id: ${KAKAO_CLIENT_ID}
   secret_key: ${KAKAO_CLIENT_SECRET}
