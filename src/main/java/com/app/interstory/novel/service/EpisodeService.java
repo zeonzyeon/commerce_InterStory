@@ -211,7 +211,8 @@ public class EpisodeService {
 		return afterLikeMessage;
 	}
 
-	public EpisodeListResponseDTO getEpisodeList(CustomUserDetails userDetails, Long novelId, SortType sort, Pageable pageable, boolean showAll) {
+	public EpisodeListResponseDTO getEpisodeList(CustomUserDetails userDetails, Long novelId, SortType sort,
+		Pageable pageable, boolean showAll) {
 		Long userId = userDetails.getUser().getUserId();
 
 		Page<Episode> episodes;
@@ -224,7 +225,9 @@ public class EpisodeService {
 		List<NovelEpisodeResponseDTO> episodeDTOs = episodes.getContent().stream()
 			.map(episode -> {
 				Long episodeId = episode.getEpisodeId();
-				boolean isFree = novelRepository.findById(novelId).orElseThrow(() -> new RuntimeException("Novel not found")).getIsFree();
+				boolean isFree = novelRepository.findById(novelId)
+					.orElseThrow(() -> new RuntimeException("Novel not found"))
+					.getIsFree();
 
 				return NovelEpisodeResponseDTO.builder()
 					.episodeId(episodeId)
@@ -291,6 +294,10 @@ public class EpisodeService {
 
 		//true 면 조회수 증가
 		if (isFirstView(ip, episodeId)) {
+			if (settlement == null) {
+				settlement = createSettlement(author);
+				author.addSettlement(settlement);
+			}
 			if (thisNovel.getIsFree() || episodeDetail.getEpisodeNumber() >= 4) {
 				settlement.addViewCount(true);
 			} else {
@@ -299,6 +306,12 @@ public class EpisodeService {
 		}
 
 		return EpisodeDetailResponseDto.from(episodeDetail);
+	}
+
+	private Settlement createSettlement(User author) {
+		return Settlement.builder()
+			.user(author)
+			.build();
 	}
 
 	private boolean isFirstView(String ip, Long episodeId) {

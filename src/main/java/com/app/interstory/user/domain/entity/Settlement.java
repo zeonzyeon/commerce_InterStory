@@ -60,4 +60,8 @@ public class Settlement {
 		long valance = isFree ? 20L : 40L;
 		this.fee += valance;
 	}
+
+	public void addUser(User user) {
+		this.user = user;
+	}
 }

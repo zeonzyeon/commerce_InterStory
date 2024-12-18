@@ -87,7 +87,7 @@ public class User {
 	@OneToOne(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
 	private Social social;
 
-	@OneToOne(cascade = CascadeType.ALL, orphanRemoval = true)
+	@OneToOne(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
 	private Settlement settlement;
 
 	//연관관계 method
@@ -154,5 +154,10 @@ public class User {
 
 	public void updatePoint(Long point) {
 		this.point = point;
+	}
+
+	public void addSettlement(Settlement settlement) {
+		this.settlement = settlement;
+		settlement.addUser(this);
 	}
 }

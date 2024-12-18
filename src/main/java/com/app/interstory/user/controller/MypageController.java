@@ -21,6 +21,7 @@ import com.app.interstory.user.dto.response.AccountResponseDTO;
 import com.app.interstory.user.dto.response.FavoriteNovelResponseDTO;
 import com.app.interstory.user.dto.response.MyCommentResponseDTO;
 import com.app.interstory.user.dto.response.MyNovelResponseDTO;
+import com.app.interstory.user.dto.response.MypageResponseDTO;
 import com.app.interstory.user.dto.response.PointHistoryResponseDTO;
 import com.app.interstory.user.dto.response.ReadNovelResponseDTO;
 import com.app.interstory.user.dto.response.SettlementResponseDTO;
