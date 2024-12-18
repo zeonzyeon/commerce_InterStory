@@ -135,9 +135,9 @@ public class User {
 	}
 
 	//프로필 정보 업데이트
-	public void updateProfile(String filePath) {
-		this.profileUrl = filePath;
+	public void updateProfile(String filePath, String dirPath) {
 		this.profileRenamedFilename = filePath.substring(filePath.lastIndexOf("/") + 1);
+		this.profileUrl = dirPath + profileRenamedFilename;
 	}
 
 	public void updateNickname(String nickname) {

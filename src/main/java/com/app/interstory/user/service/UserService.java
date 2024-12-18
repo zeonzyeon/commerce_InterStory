@@ -173,9 +173,9 @@ public class UserService {
 		deleteExistingProfile(user);
 		//file s3 uploads
 		String dirPath = filePathConfig.getUserProfilePath(); // "user/"
-		String filePath = s3Service.uploadFile(file, dirPath);
+		String filePath = s3Service.uploadFile(file, dirPath); //dir
 		//파일 업데이트
-		user.updateProfile(filePath);
+		user.updateProfile(filePath, filePathConfig.getUserProfilePath());
 
 		return filePath;
 	}
