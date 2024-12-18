@@ -147,7 +147,20 @@ fi
 
 # 새로운 애플리케이션 실행
 echo "## Starting new application" >> $LOG_PATH
-nohup java $JAVA_OPTS -jar $DEPLOY_JAR >> $LOG_PATH 2>> $ERROR_LOG_PATH &
+
+# 환경 변수 확인
+echo "## Checking environment variables" >> $LOG_PATH
+if [ ! -f "$APP_HOME/.env.properties" ]; then
+    echo "### Error: .env.properties file not found" >> $LOG_PATH
+    exit 1
+fi
+
+# Java 명령어 실행 시 환경 변수 파일 명시적 지정
+JAVA_OPTS="$JAVA_OPTS -Dspring.config.import=file:${APP_HOME}/.env.properties"
+
+# 애플리케이션 실행
+cd $APP_HOME  # 작업 디렉토리 변경
+echo "## Executing: java $JAVA_OPTS -jar $DEPLOY_JAR" >> $LOG_PATH
 
 # 실행 확인
 sleep 10
