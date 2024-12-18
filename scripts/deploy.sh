@@ -173,7 +173,7 @@ MAX_WAIT=30
 echo "## Starting application... (waiting max ${MAX_WAIT}s)" >> $LOG_PATH
 
 # 실행 명령어
-nohup java -jar $DEPLOY_JAR >> $LOG_PATH 2>> $ERROR_LOG_PATH &
+nohup java -jar spring-project-0.0.1-SNAPSHOT.jar > /home/ec2-user/app/interstroylog/nohup.out 2>&1 &
 
 # 실행 명령어 추가
 #nohup java $JAVA_OPTS -jar $DEPLOY_JAR >> $LOG_PATH 2>> $ERROR_LOG_PATH &
