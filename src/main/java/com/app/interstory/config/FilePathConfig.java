@@ -15,18 +15,25 @@ public class FilePathConfig {
 	private final String userProfilePath;
 	private final String userDefaultProfilePath;
 	private final String thumbnailPath;
+	private final String DefaultThumbnailPath;
 	private final String common;
+	private final String profile;
+	private final String thumbnail;
 
 	public FilePathConfig(
 		@Value("${cloud.aws.s3.bucket}") String bucketName,
 		@Value("${cloud.aws.region.static}") String region) {
+
 		this.bucketName = bucketName;
 		this.region = region;
 		this.basePath = String.format("https://%s.s3.%s.amazonaws.com", bucketName, region);
 		this.userProfilePath = basePath + "/profile/";
 		this.userDefaultProfilePath = userProfilePath + "user.png";
 		this.thumbnailPath = basePath + "/thumbnail/";
+		this.DefaultThumbnailPath = thumbnailPath + "novel.png";
 		this.common = basePath + "/common/";
+		this.profile = "profile/";
+		this.thumbnail = "thumbnail/";
 	}
 
 }

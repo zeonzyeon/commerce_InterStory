@@ -116,4 +116,9 @@ public class Novel {
 	public void updateFavoriteCount(Integer favoriteCount) {
 		this.favoriteCount = favoriteCount;
 	}
+
+	public void updateThumbnail(String thumbnailUrl, String renamedFilename) {
+		this.thumbnailUrl = thumbnailUrl;
+		this.thumbnailRenamedFilename = renamedFilename;
+	}
 }

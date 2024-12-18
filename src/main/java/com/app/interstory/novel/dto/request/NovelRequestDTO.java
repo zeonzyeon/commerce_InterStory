@@ -5,15 +5,14 @@ import com.app.interstory.novel.domain.enumtypes.NovelStatus;
 
 import lombok.Getter;
 
+import java.util.List;
+
 @Getter
 public class NovelRequestDTO {
-	private Long userId;
 	private String title;
 	private String description;
 	private String plan;
-	private String thumbnailRenamedFilename;
-	private String thumbnailUrl;
 	private MainTag tag;
-	private NovelStatus status;
 	private Boolean isFree;
+	private List<String> customTag;
 }
