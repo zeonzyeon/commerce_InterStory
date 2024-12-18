@@ -1,5 +1,6 @@
 package com.app.interstory.user.service;
 
+import java.io.IOException;
 import java.util.Objects;
 
 import org.springframework.http.HttpEntity;
@@ -14,9 +15,11 @@ import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
+import org.springframework.web.multipart.MultipartFile;
 
 import com.app.interstory.common.service.S3Service;
 import com.app.interstory.config.FilePathConfig;
+import com.app.interstory.config.S3Config;
 import com.app.interstory.config.globalExeption.customException.DuplicateEmailException;
 import com.app.interstory.config.globalExeption.customException.DuplicateNicknameException;
 import com.app.interstory.config.globalExeption.customException.WrongApproach;
@@ -25,8 +28,10 @@ import com.app.interstory.user.domain.entity.Social;
 import com.app.interstory.user.domain.entity.User;
 import com.app.interstory.user.domain.enumtypes.Roles;
 import com.app.interstory.user.dto.request.LocalSignUpRequest;
+import com.app.interstory.user.dto.request.UserNicknameRequsetDto;
 import com.app.interstory.user.dto.request.withdrawalRequest;
 import com.app.interstory.user.dto.response.UserResponse;
+import com.app.interstory.user.dto.response.UserResponseDTO;
 import com.app.interstory.user.dto.vo.KakaoAPI;
 import com.app.interstory.user.dto.vo.KakaoUserInfo;
 import com.app.interstory.user.repository.UserRepository;
@@ -47,6 +52,7 @@ public class UserService {
 	private final KakaoAPI kakaoAPI;
 	private final FilePathConfig filePathConfig;
 	private final S3Service s3Service;
+	private final S3Config s3Config;
 
 	public boolean verifyNickname(String nickname) {
 		return !userRepository.existsByNickname(nickname);
@@ -150,7 +156,45 @@ public class UserService {
 		}
 	}
 
-	//빌드시 테스트 계정 생성
+	//현재 유저
+	public UserResponseDTO getCurrentUser(Long userId) {
+
+		return UserResponseDTO.from(findById(userId));
+
+	}
+
+	//프로필 이미지 업데이트
+	@Transactional
+	public String updateProfileImage(Long UserId, MultipartFile file) throws IOException {
+		User user = userRepository.findById(UserId)
+			.orElseThrow(() -> new UsernameNotFoundException("UserNotFound"));
+
+		//기본 파일 아닐 시 s3에서 삭제
+		deleteExistingProfile(user);
+		//file s3 uploads
+		String dirPath = filePathConfig.getUserProfilePath(); // "user/"
+		String filePath = s3Service.uploadFile(file, dirPath);
+		//파일 업데이트
+		user.updateProfile(filePath);
+
+		return filePath;
+	}
+
+	private void deleteExistingProfile(User user) throws IOException {
+		if (!user.getProfileRenamedFilename().equals("user.png")) {
+			s3Service.deleteFile(user.getProfileUrl());
+		}
+	}
+
+	@Transactional
+	public void updateNickname(UserNicknameRequsetDto requset, CustomUserDetails currentUser) {
+
+		User user = userRepository.findById(currentUser.getUser().getUserId())
+			.orElseThrow(() -> new UsernameNotFoundException("UserNotFound"));
+
+		user.updateNickname(requset.getNickname());
+
+	}
 
 	//convert
 

@@ -16,4 +16,5 @@ public class NovelRequestDTO {
 	private MainTag tag;
 	private NovelStatus status;
 	private Boolean isFree;
+
 }

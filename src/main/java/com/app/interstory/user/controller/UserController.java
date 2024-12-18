@@ -43,7 +43,6 @@ public class UserController {
 	//kakao 로그인
 	@GetMapping("auth/login/kakao")
 	public String kakaoLogin() {
-		System.out.println("유알엘 연결확인!!!!!!!!!!!!!!");
 
 		return "redirect:" + kakaoAPI.getAuthorizationUrl();
 	}

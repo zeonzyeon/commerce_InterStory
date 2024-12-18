@@ -24,6 +24,7 @@ import lombok.RequiredArgsConstructor;
 @RequestMapping("novels")
 @RequiredArgsConstructor
 public class NovelController {
+
 	private final NovelService novelService;
 	private final UserService userService;
 	private final EpisodeService episodeService;
