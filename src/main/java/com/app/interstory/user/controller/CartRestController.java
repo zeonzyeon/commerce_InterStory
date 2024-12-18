@@ -17,7 +17,7 @@ import com.app.interstory.user.dto.response.CartItemResponseDTO;
 import com.app.interstory.user.service.CartService;
 
 @RestController
-@RequestMapping("/api/cart")
+@RequestMapping("api/cart")
 public class CartRestController {
 
 	private final CartService cartService;

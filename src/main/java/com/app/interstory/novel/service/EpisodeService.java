@@ -148,10 +148,6 @@ public class EpisodeService {
 			.build();
 		pointRepository.save(point);
 
-		Collection collection = new Collection(user, episode);
-
-		collectionRepository.save(collection);
-
 		if (user.getPoint() < 50L && user.getIsAutoPayment()) {
 			kakaoService.kakaoPayPayment(userId, PaymentType.AUTO);
 		}

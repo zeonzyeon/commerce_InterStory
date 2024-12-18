@@ -14,7 +14,7 @@ import com.app.interstory.user.service.CartService;
 import lombok.RequiredArgsConstructor;
 
 @Controller
-@RequestMapping("/cart")
+@RequestMapping("cart")
 @RequiredArgsConstructor
 public class CartController {
 
