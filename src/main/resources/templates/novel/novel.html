@@ -63,7 +63,11 @@
             <div class="episode-item" th:attr="isFree=${episode.isFree}, isPurchased=${episode.isPurchased}" th:each="episode, iter : ${episodes.episodeList}">
                 <img alt="" class="episode-thumbnail" th:src="${episode.thumbnailUrl}">
                 <div class="episode-content">
-                    <button class="episode-title" th:onclick="'viewEpisode(' + ${episode.episodeId} + ')'" th:text="${episode.title}">회차 제목</button>
+                    <button class="episode-title"
+                            th:attr="data-episode-id=${episode.episodeId}, data-title=${episode.title}, data-is-free=${episode.isFree}, data-is-purchased=${episode.isPurchased}"
+                            th:onclick="|viewEpisode(this.dataset.episodeId, this.dataset.title, this.dataset.isFree, this.dataset.isPurchased)|"
+                            th:text="${episode.title}">회차 제목
+                    </button>
                     <span class="episode-published-at" th:text="${#dates.format(episode.publishedAt, 'yyyy.MM.dd HH:mm:ss')}">연재 시간</span>
                     <span class="episode-is-free" th:if="${episode.isFree}">무료</span>
                     <span class="episode-is-free" th:if="${!episode.isFree && !episode.isPurchased}">유료</span>
@@ -116,6 +120,27 @@
         </div>
     </section>
 </main>
+
+<div class="modal-backdrop" id="modalBackdrop" onclick="closePurchaseModal()"></div>
+<div class="modal" id="episodePurchaseModal">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h2 id="purchase-episode-title">회차 제목</h2>
+            <button class="close" onclick="closePurchaseModal()">&times;</button>
+        </div>
+        <hr>
+        <div class="modal-body">
+            <span>보유한 포인트</span>
+            <span>포인트를 이용하여 해당 회차를 구매하시겠습니까?</span>
+            <span>(구매한 회차는 환불이 불가합니다.)</span>
+            <div>
+                <!--                <button id="episodeBasket" onclick="episodeBasket()">장바구니</button>-->
+                <!--                <button id="episodePurchase" onclick="episodePurchase()">구매하기</button>-->
+            </div>
+        </div>
+    </div>
+</div>
+
 <script th:src="@{/js/novel/novel.js}"></script>
 </body>
 </html>

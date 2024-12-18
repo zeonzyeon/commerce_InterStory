@@ -40,8 +40,13 @@ document.getElementById('episode-sort-old').addEventListener('click', () => {
     location.reload();
 });
 
-function viewEpisode(episodeId) {
-    console.log(episodeId);
+function viewEpisode(episodeId, episodeTitle, isFree, isPurchased) {
+    console.log(episodeId, episodeTitle, isFree, isPurchased);
+    if (isFree || isPurchased) {
+        window.location.href = '/episodes/' + episodeId;
+    } else {
+        openPurchaseModal(episodeId, episodeTitle);
+    }
 }
 
 function showAllEpisodes() {
@@ -72,3 +77,15 @@ document.getElementById('btn-comment-sort-popular').addEventListener('click', ()
     window.history.pushState({}, '', currentUrl);
     location.reload();
 });
+
+function openPurchaseModal(episodeId, episodeTitle) {
+    document.getElementById('modalBackdrop').style.display = 'block';
+    document.getElementById('episodePurchaseModal').style.display = 'block';
+
+    document.getElementById('purchase-episode-title').innerText = episodeTitle;
+}
+
+function closePurchaseModal() {
+    document.getElementById('modalBackdrop').style.display = 'none';
+    document.getElementById('episodePurchaseModal').style.display = 'none';
+}

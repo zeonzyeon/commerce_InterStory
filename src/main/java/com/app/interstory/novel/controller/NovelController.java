@@ -41,7 +41,7 @@ public class NovelController {
 		NovelDetailResponseDTO novel = novelService.readNovel(novelId, userDetails);
 		String nickname = userService.findById(novel.getAuthorId()).getNickname();
 
-		int pageSize = 4;
+		int pageSize = 10;
 		if (showAll)
 			pageSize = 10000;
 
@@ -52,6 +52,7 @@ public class NovelController {
 		model.addAttribute("author", nickname);
 		model.addAttribute("episodes", episodeService.getEpisodeList(userDetails, novelId, sort, pageable, showAll));
 		model.addAttribute("comments", commentService.getNovelComment(novelId, commentSort, commentPage, userDetails));
+		model.addAttribute("point", userService.findById(userId).getPoint());
 
 		return "novel/novel";
 	}
