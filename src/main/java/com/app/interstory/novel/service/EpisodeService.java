@@ -1,5 +1,7 @@
 package com.app.interstory.novel.service;
 
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.Comparator;
 import java.util.List;
 
@@ -9,6 +11,7 @@ import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -18,6 +21,7 @@ import com.app.interstory.novel.domain.entity.EpisodeLike;
 import com.app.interstory.novel.domain.entity.Novel;
 import com.app.interstory.novel.domain.enumtypes.SortType;
 import com.app.interstory.novel.dto.request.EpisodeRequestDTO;
+import com.app.interstory.novel.dto.response.EpisodeDetailResponseDto;
 import com.app.interstory.novel.dto.response.EpisodeListResponseDTO;
 import com.app.interstory.novel.dto.response.EpisodeResponseDTO;
 import com.app.interstory.novel.dto.response.MyPageNovelResponseDto;
@@ -31,15 +35,19 @@ import com.app.interstory.payment.service.KakaoService;
 import com.app.interstory.user.domain.CustomUserDetails;
 import com.app.interstory.user.domain.entity.CartItem;
 import com.app.interstory.user.domain.entity.Point;
+import com.app.interstory.user.domain.entity.Settlement;
 import com.app.interstory.user.domain.entity.User;
 import com.app.interstory.user.repository.CartItemRepository;
 import com.app.interstory.user.repository.PointRepository;
 import com.app.interstory.user.repository.UserRepository;
 
+import jakarta.persistence.EntityNotFoundException;
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 
 @Service
 @RequiredArgsConstructor
+@Transactional(readOnly = true)
 public class EpisodeService {
 	private final NovelRepository novelRepository;
 	private final EpisodeRepository episodeRepository;
@@ -49,6 +57,7 @@ public class EpisodeService {
 	private final EpisodeLikeRepository episodeLikeRepository;
 	private final CollectionRepository collectionRepository;
 	private final KakaoService kakaoService;
+	private final RedisTemplate<String, String> redisTemplate;
 
 	// 회차 작성
 	@Transactional
@@ -87,13 +96,13 @@ public class EpisodeService {
 		return convertToDTO(episode);
 	}
 
-	// 회차 상세 조회
-	public EpisodeResponseDTO readEpisode(Long episodeId) {
-		Episode episode = episodeRepository.findById(episodeId)
-			.orElseThrow(() -> new RuntimeException("Episode not found"));
-
-		return convertToDTO(episode);
-	}
+	// // 회차 상세 조회 변경
+	// public EpisodeResponseDTO readEpisode(Long episodeId) {
+	// 	Episode episode = episodeRepository.findById(episodeId)
+	// 		.orElseThrow(() -> new RuntimeException("Episode not found"));
+	//
+	// 	return convertToDTO(episode);
+	// }
 
 	private EpisodeResponseDTO convertToDTO(Episode episode) {
 		return EpisodeResponseDTO.builder()
@@ -144,7 +153,7 @@ public class EpisodeService {
 		Point point = Point.builder()
 			.user(user)
 			.balance(-episodePrice)
-			.description("Episode purchase - ID: " + episodeId)
+			.description("회차 구매  : " + episode.getTitle() + "사용 포인트 :" + episodePrice)
 			.build();
 		pointRepository.save(point);
 
@@ -202,7 +211,8 @@ public class EpisodeService {
 		return afterLikeMessage;
 	}
 
-	public EpisodeListResponseDTO getEpisodeList(CustomUserDetails userDetails, Long novelId, SortType sort, Pageable pageable, boolean showAll) {
+	public EpisodeListResponseDTO getEpisodeList(CustomUserDetails userDetails, Long novelId, SortType sort,
+		Pageable pageable, boolean showAll) {
 		Long userId = userDetails.getUser().getUserId();
 
 		Page<Episode> episodes;
@@ -215,7 +225,9 @@ public class EpisodeService {
 		List<NovelEpisodeResponseDTO> episodeDTOs = episodes.getContent().stream()
 			.map(episode -> {
 				Long episodeId = episode.getEpisodeId();
-				boolean isFree = novelRepository.findById(novelId).orElseThrow(() -> new RuntimeException("Novel not found")).getIsFree();
+				boolean isFree = novelRepository.findById(novelId)
+					.orElseThrow(() -> new RuntimeException("Novel not found"))
+					.getIsFree();
 
 				return NovelEpisodeResponseDTO.builder()
 					.episodeId(episodeId)
@@ -266,6 +278,62 @@ public class EpisodeService {
 			.orElseThrow(() -> new IllegalArgumentException("소설 정보가 없습니다"));
 
 		return novelToResponseDto(novel);
+	}
+
+	@Transactional
+	public EpisodeDetailResponseDto viewEpisodeDetail(Long episodeId, HttpServletRequest request) {
+
+		//ip addr
+		String ip = request.getRemoteAddr();
+
+		Episode episodeDetail = episodeRepository.findEpisodeWithNovelAndUserAndSettlement(episodeId)
+			.orElseThrow(() -> new EntityNotFoundException("Episode not found with id: " + episodeId));
+		Novel thisNovel = episodeDetail.getNovel();
+		User author = episodeDetail.getNovel().getUser();
+		Settlement settlement = author.getSettlement();
+
+		//true 면 조회수 증가
+		if (isFirstView(ip, episodeId)) {
+			if (settlement == null) {
+				settlement = createSettlement(author);
+				author.addSettlement(settlement);
+			}
+			if (thisNovel.getIsFree() || episodeDetail.getEpisodeNumber() >= 4) {
+				settlement.addViewCount(true);
+			} else {
+				settlement.addViewCount(false);
+			}
+		}
+
+		return EpisodeDetailResponseDto.from(episodeDetail);
+	}
+
+	private Settlement createSettlement(User author) {
+		return Settlement.builder()
+			.user(author)
+			.build();
+	}
+
+	private boolean isFirstView(String ip, Long episodeId) {
+		//TTL 설정 - 6시간
+		int expireTime = 6 * 60 * 60;
+		//key 설정 - id + yyyyMMdd
+		String key = String.format("view:%d:%s",
+			episodeId,
+			LocalDate.now().format(DateTimeFormatter.BASIC_ISO_DATE)
+		);
+
+		// IP를 해시화하여 비트맵의 오프셋으로 사용
+		long offset = Math.abs(ip.hashCode() % 10000000);
+
+		// setbit 명령어로 조회 여부 체크 및 설정
+		Boolean result = redisTemplate.opsForValue()
+			.getBit(key, offset);
+
+		redisTemplate.opsForValue().setBit(key, offset, true);
+
+		return !Boolean.TRUE.equals(result);
+
 	}
 
 	//convert

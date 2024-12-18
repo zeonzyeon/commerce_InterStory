@@ -2,6 +2,17 @@ package com.app.interstory.novel.service;
 
 import com.app.interstory.common.service.S3Service;
 import com.app.interstory.config.FilePathConfig;
+import java.util.List;
+import java.util.concurrent.TimeUnit;
+
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
 import com.app.interstory.novel.domain.entity.Episode;
 import com.app.interstory.novel.domain.entity.FavoriteNovel;
 import com.app.interstory.novel.domain.entity.Novel;
@@ -38,6 +49,7 @@ import java.util.concurrent.TimeUnit;
 @Slf4j
 @Service
 @RequiredArgsConstructor
+@Transactional(readOnly = true)
 public class NovelService {
     private final NovelRepository novelRepository;
     private final UserRepository userRepository;
@@ -50,6 +62,7 @@ public class NovelService {
     private final FilePathConfig filePathConfig;
 
     // 소설 작성
+    @Transactional
     public Long writeNovel(NovelRequestDTO novelRequestDTO, MultipartFile file, CustomUserDetails userDetails) {
 
         String thumbnailUrl = file != null ? uploadThumbnail(file) : filePathConfig.getDefaultThumbnailPath();

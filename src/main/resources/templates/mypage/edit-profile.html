@@ -1,589 +1,610 @@
 <!DOCTYPE html>
-<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
-    <title>Edit Profile</title>
+    <meta content="width=device-width, initial-scale=1.0" name="viewport">
+    <title>프로필 수정</title>
+    <link rel="stylesheet" th:href="@{/css/common/header.css}">
     <style>
-        /* 헤더 스타일 */
-        .header {
-            background: #fff;
-            padding: 1rem 2rem;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-            position: sticky;
-            top: 0;
-            z-index: 100;
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, system-ui, Roboto, sans-serif;
         }
 
-        .header-content {
+        body {
+            background-color: #f8f9fa;
+            color: #333;
+        }
+
+        /* 상단 네비게이션 */
+        .profile-nav {
+            border-bottom: 1px solid #e5e7eb;
+            background-color: white;
+        }
+
+        .nav-container {
             max-width: 1200px;
             margin: 0 auto;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            gap: 2rem;
         }
 
-        .logo-area {
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-            min-width: 150px;
-        }
-
-        .logo-image {
-            width: 32px;
-            height: 32px;
-            object-fit: cover;
-        }
-
-        .logo-text {
-            font-size: 1.25rem;
-            font-weight: 700;
-            color: #111;
-        }
-
-        .search-bar {
-            flex: 1;
-            max-width: 400px;
-            position: relative;
-        }
-
-        /* 반응형 처리 */
-        @media (max-width: 768px) {
-            .header-content {
-                gap: 1rem;
-            }
-
-            .logo-area {
-                min-width: auto;
-            }
-
-            .logo-text {
-                font-size: 1.1rem;
-            }
-
-            .search-bar {
-                max-width: 200px;
-            }
-        }
-
-        .search-bar {
-            flex: 0 1 400px;
-            position: relative;
-        }
-
-        .search-bar input {
-            width: 100%;
-            padding: 0.75rem 1rem;
-            border: 1px solid #ddd;
-            border-radius: 20px;
-            font-size: 0.9rem;
-            background: #f8f9fa;
-        }
-
-        .search-bar input:focus {
-            outline: none;
-            border-color: #333;
-            background: #fff;
-        }
-
-        .user-profile {
-            display: flex;
-            align-items: center;
-            gap: 1rem;
-        }
-
-        .user-profile img {
-            width: 40px;
-            height: 40px;
-            border-radius: 50%;
-            object-fit: cover;
-        }
-
-        /* 마이페이지 메뉴 */
-        .user-menu {
-            padding: 1rem;
-            background: #fff;
-            border-radius: 8px;
-            margin-bottom: 1rem;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .menu-items {
+        .nav-menu {
             display: flex;
             gap: 2rem;
+            overflow-x: auto;
+            padding: 1rem 1.5rem;
         }
 
-        .menu-item {
+        .nav-link {
+            padding: 0.5rem 0;
+            color: #6b7280;
             text-decoration: none;
-            color: #666;
-            padding: 0.5rem 1rem;
-            border-radius: 4px;
-            transition: all 0.2s;
+            white-space: nowrap;
+            transition: color 0.2s;
+        }
+
+        .nav-link:hover {
+            color: #374151;
+        }
+
+        .nav-link.active {
+            color: #2563eb;
+            font-weight: 500;
+            border-bottom: 2px solid #2563eb;
+        }
+
+        /* 메인 컨텐츠 */
+        .main-container {
+            max-width: 1200px;
+            margin: 2rem auto;
+            padding: 0 1rem;
+        }
+
+        .content-grid {
+            display: grid;
+            grid-template-columns: 1fr 2fr;
+            gap: 2rem;
+        }
+
+        /* 프로필 섹션 */
+        .profile-section {
+            background-color: white;
+            border-radius: 0.75rem;
+            padding: 1.5rem;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+        }
+
+        .profile-image-container {
             cursor: pointer;
+            position: relative;
         }
 
-        .menu-item:hover {
-            background: #f8f9fa;
-            color: #111;
-        }
-
-        .menu-item.active {
-            color: #111;
-            font-weight: 600;
-        }
-
-        /*메인 스타일*/
-        .profile-edit-container {
-            /*max-height: 950px;*/
-            padding: 20px 180px;
-            background-color: #eeeeee;
-            box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
-            border-radius: 10px;
+        .profile-image-container:hover::after {
+            content: '클릭하여 이미지 변경';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            color: white;
             display: flex;
-            flex-direction: column;
-        }
-
-        .profile-edit-container h2 {
-            margin-top: 20px;
-            text-align: left;
-            font-size: 20px;
-            padding: 0;
-        }
-
-        .profile-edit-content {
-            display: flex;
-            justify-content: space-between;
-        }
-
-        .profile-edit {
-            background-color: #f9f9f9;
-            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-            border: 1px solid #ccc;
-            padding: 20px;
-            border-radius: 10px;
-        }
-
-        .profile-content {
-            display: flex;
-            justify-content: center;
             align-items: center;
-            flex-direction: column;
-            width: 700px;
+            justify-content: center;
+            border-radius: 50%;
+            font-size: 0.875rem;
+        }
+
+        .profile-image-container {
+            position: relative;
+            width: 8rem;
+            height: 8rem;
+            margin: 0 auto 1rem;
         }
 
         .profile-image {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            margin-top: 50px;
-            margin-left: 100px;
-        }
-
-        .image-circle {
-            width: 170px;
-            height: 170px;
-            border-radius: 50%;
-            background-color: #eeeeee;
-            border: 1px solid #ccc;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            margin-bottom: 30px;
-        }
-
-        .image-btn {
-            background-color: rgba(51, 51, 51, 0.8);
-            color: white;
-            border: 1px solid #ccc;
-            padding: 5px 15px;
-            border-radius: 5px;
-            cursor: pointer;
-            text-align: center;
-        }
-
-        .image-btn:hover {
-            background-color: #0f0f0f;
-        }
-
-        .form-group {
-            width: 90%;
-            display: flex;
-            flex-direction: column;
-            padding: 20px 0;
-            gap: 20px;
-        }
-
-        .form-group label {
-            font-weight: bold;
-            gap: 20px;
-        }
-
-        .form-group input {
-            padding: 10px;
-            border: 1px solid #ccc;
-            border-radius: 5px;
-            margin: 20px 0 0 0;
-            background-color: #f9f9f9
-        }
-
-        input[type="text"],
-        input[type="email"],
-        input[type="password"] {
             width: 100%;
-            padding: 8px;
-            border: none;
-            font-size: 14px;
-            box-sizing: border-box;
-            outline: none;
+            height: 100%;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 4px solid #f3f4f6;
         }
 
-        .check-btn {
-            height: 30px;
-            padding: 5px 15px;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
+        .image-edit-button {
+            position: absolute;
+            bottom: 0;
+            right: 0;
+            background-color: #2563eb;
             color: white;
-            background-color: rgba(51, 51, 51, 0.8);
-            margin-top: 35px;
-        }
-
-        .check-btn:hover {
-            background-color: #0f0f0f;
-        }
-
-        .nickname-form .check-btn {
-            margin-right: 10px;
-        }
-
-        .password-form .check-btn {
-            margin-left: auto;
-            margin-right: 10px;
-        }
-
-        .btn-group {
-            display: flex;
-            justify-content: center;
-            margin: 40px 0 0 0;
-        }
-
-        .btn-group button {
-            margin: 0 10px;
-            padding: 5px 15px;
-            border-radius: 5px;
-            cursor: pointer;
-        }
-
-        .nickname-form, .password-form {
-            display: flex;
-            flex-direction: row;
-            justify-content: space-between;
-            border-bottom: 1px solid #ccc;
-        }
-
-        .email-form {
-            border-bottom: 1px solid #ccc;
-        }
-
-        .save-btn {
-            color: white;
-            background-color: rgba(51, 51, 51, 0.8);
+            padding: 0.5rem;
+            border-radius: 50%;
             border: none;
+            cursor: pointer;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
         }
 
-        .save-btn:hover {
-            background-color: #0f0f0f;
+        .profile-form {
+            width: 100%;
+            max-width: 20rem;
+            margin: 0 auto;
         }
 
-        .cancel-btn {
-            display: inline-block;
-            padding: 5px 10px;
-            border: 1px solid #ccc;
-            border-radius: 4px;
-            text-decoration: none;
-            font-size: 14px;
-            color: #333;
-            background-color: #fff;
+        .profile-input {
+            width: 100%;
+            padding: 0.75rem 1rem;
+            border: 1px solid #e5e7eb;
+            border-radius: 0.5rem;
+            margin-bottom: 0.5rem;
             text-align: center;
         }
 
-        .cancel-btn:hover {
-            background-color: #f0f0f0;
-            border-color: #999;
+        .profile-button {
+            width: 100%;
+            padding: 0.75rem 1rem;
+            background-color: #2563eb;
+            color: white;
+            border: none;
+            border-radius: 0.5rem;
+            cursor: pointer;
+            transition: background-color 0.2s;
         }
 
-        .withdrawal-content {
-            background-color: rgba(51, 51, 51, 0.8);
+        .profile-button:hover {
+            background-color: #1d4ed8;
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        .spinner {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: rgba(255, 255, 255, 0.9);
+            padding: 1rem;
+            border-radius: 0.5rem;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .spinner-content {
             display: flex;
             align-items: center;
-            flex-direction: column;
-            padding: 20px;
-            border-radius: 10px;
-            margin-top: 20px;
-            border: 1px solid #ccc;
-            background-color: #f9f9f9;
-            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            gap: 0.5rem;
+            color: #2563eb;
         }
 
-        .withdrawal-content p {
-            text-align: center;
-            font-size: 14px;
+        .animate-spin {
+            animation: spin 1s linear infinite;
         }
 
-        .withdrawal-btn {
+        @keyframes spin {
+            from {
+                transform: rotate(0deg);
+            }
+            to {
+                transform: rotate(360deg);
+            }
+        }
+
+        /* 토스트 메시지 스타일 */
+        .toast {
+            position: fixed;
+            bottom: 2rem;
+            right: 2rem;
+            padding: 1rem 1.5rem;
+            background: #333;
+            color: white;
+            border-radius: 0.5rem;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+            z-index: 1000;
+            animation: slideIn 0.3s ease-out;
+        }
+
+        .toast.error {
+            background: #ef4444;
+        }
+
+        @keyframes slideIn {
+            from {
+                transform: translateY(100%);
+                opacity: 0;
+            }
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+
+        /* 정보 섹션 */
+        .info-section {
+            background-color: white;
+            border-radius: 0.75rem;
+            padding: 1.5rem;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+        }
+
+        .info-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 1.5rem;
+        }
+
+        .info-card {
+            background-color: #f9fafb;
+            border-radius: 0.75rem;
+            padding: 1.5rem;
+        }
+
+        .info-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+        }
+
+        .info-label {
+            color: #6b7280;
+        }
+
+        .info-value {
+            font-size: 1.5rem;
+            font-weight: bold;
+        }
+
+        .status-badge {
+            padding: 0.25rem 0.75rem;
+            background-color: #dcfce7;
+            color: #166534;
+            border-radius: 9999px;
+            font-size: 0.875rem;
+            font-weight: 500;
+        }
+
+        .action-button {
+            padding: 0.5rem 1rem;
+            background-color: #2563eb;
+            color: white;
+            border: none;
+            border-radius: 0.5rem;
+            font-size: 0.875rem;
             cursor: pointer;
-            display: inline-block;
-            padding: 5px 10px;
-            border: 1px solid #ccc;
-            border-radius: 5px;
-            text-decoration: none;
-            font-size: 14px;
-            color: #333;
-            background-color: #fff;
-            text-align: center;
+            transition: background-color 0.2s;
         }
 
-        .withdrawal-btn:hover {
-            background-color: #f0f0f0;
-            border-color: #999;
+        .action-button:hover {
+            background-color: #1d4ed8;
         }
+
+        .nickname-input-group {
+            display: flex;
+            gap: 0.5rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .check-button {
+            padding: 0.75rem 1rem;
+            background-color: #f3f4f6;
+            border: 1px solid #e5e7eb;
+            border-radius: 0.5rem;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .check-button:hover {
+            background-color: #e5e7eb;
+        }
+
+        .error-message {
+            color: #ef4444;
+            font-size: 0.875rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .profile-input[readonly] {
+            background-color: #f3f4f6;
+            cursor: not-allowed;
+        }
+
+        /* 구독 배너 */
+        .subscription-banner {
+            margin-top: 1.5rem;
+            background: linear-gradient(to right, #2563eb, #3b82f6);
+            border-radius: 0.75rem;
+            padding: 1.5rem;
+            color: white;
+        }
+
+        .banner-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .banner-text h3 {
+            font-size: 1.25rem;
+            font-weight: bold;
+            margin-bottom: 0.5rem;
+        }
+
+        .banner-text p {
+            color: #bfdbfe;
+        }
+
+        .banner-button {
+            padding: 0.75rem 1.5rem;
+            background-color: white;
+            color: #2563eb;
+            border: none;
+            border-radius: 0.5rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+
+        .banner-button:hover {
+            background-color: #f8fafc;
+        }
+
+        /* 반응형 디자인 */
+        @media (max-width: 768px) {
+            .content-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .info-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .banner-content {
+                flex-direction: column;
+                gap: 1rem;
+                text-align: center;
+            }
+        }
+
     </style>
 </head>
 <body>
 <!-- 헤더 -->
-<header class="header">
-    <div class="header-content">
-        <div class="logo-area">
-            <img alt="로고" class="logo-image" th:src="@{/images/logo.png}">
-            <span class="logo-text">InterStory</span>
-        </div>
-        <div class="search-bar">
-            <input placeholder="제목/작가로 검색" type="text">
-        </div>
-        <div class="user-profile">
-            <span th:text="${userNickname}">닉네임</span>
-            <img alt="프로필" src="/images/default-profile.png" th:src="${userProfileImage}">
-        </div>
-    </div>
-</header>
-<main class="profile-edit-container">
-    <!-- 마이페이지 메뉴 -->
-    <div class="user-menu">
-        <div class="menu-items">
-            <a class="menu-item" href="users/profile">프로필</a>
-            <a class="menu-item" href="users/favorite-novels">관심 작품</a>
-            <a class="menu-item" href="users/recent-novels">열람 작품</a>
-            <a class="menu-item active" href="/users/point-history">포인트 내역</a>
-            <a class="menu-item" href="users/my-coupons">쿠폰</a>
-            <a class="menu-item" href="users/edit-profile">회원 정보 관리</a>
+<div th:replace="~{common/header :: header}"></div>
+
+<!-- 상단 네비게이션 -->
+<nav class="profile-nav">
+    <div class="nav-container">
+        <div class="nav-menu">
+            <a class="nav-link active" href="/users/profile">프로필</a>
+            <a class="nav-link" href="/users/favorite-novels">관심 작품</a>
+            <a class="nav-link" href="/users/recent-novels">열람 작품</a>
+            <a class="nav-link" href="/users/point-history">포인트 내역</a>
+            <a class="nav-link" href="/users/my-coupons">쿠폰</a>
+            <a class="nav-link" href="/users/edit-profile">회원 정보 관리</a>
         </div>
     </div>
-    <h2>내 정보</h2>
-    <form enctype="multipart/form-data" id="profileEditForm" method="post" onsubmit="submitProfileEditForm(event)"
-          th:action="@{/users/edit-profile}">
-        <div class="profile-edit">
-            <div class="profile-edit-content">
-                <div class="profile-image">
-                    <div class="image-circle" id="imagePreview"></div>
-                    <input id="imageInput" name="profileImage" onchange="previewImage(event)" style="display: none;"
-                           th:attr="data-image-url=${profileImageUrl}" type="file">
-                    <button class="image-btn" onclick="document.getElementById('imageInput').click()" type="button">프로필
-                        변경
-                    </button>
+</nav>
+
+<!-- 메인 컨텐츠 -->
+<main class="main-container">
+    <div class="content-grid">
+        <!-- 왼쪽: 프로필 섹션 -->
+        <section class="profile-section">
+            <form class="profile-image-section" enctype="multipart/form-data" id="profileImageForm">
+                <div class="profile-image-container">
+                    <img alt="프로필"
+                         class="profile-image"
+                         id="profilePreview"
+                         th:src="${user.profileUrl}">
+                    <label class="image-edit-button" for="profileImage">
+                        <svg fill="none" height="16" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"
+                             width="16">
+                            <path d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"/>
+                        </svg>
+                    </label>
+                    <input accept="image/*"
+                           class="hidden"
+                           id="profileImage"
+                           name="profileImage"
+                           onchange="handleImageChange()"
+                           type="file">
                 </div>
-                <div class="profile-content">
-                    <div class="form-group">
-                        <div class="nickname-form">
-                            <label>
-                                <span>닉네임</span>
-                                <input id="nickname" name="nickname" required th:placeholder="${nickname}"
-                                       th:value="${nickname}" type="text">
-                            </label>
-                            <button class="check-btn" onclick="checkNickname()" type="button">중복 확인</button>
+                <div class="spinner hidden" id="imageUploadSpinner">
+                    <div class="spinner-content">
+                        <svg class="animate-spin h-5 w-5 text-blue-600" fill="none" viewBox="0 0 24 24"
+                             xmlns="http://www.w3.org/2000/svg">
+                            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor"
+                                    stroke-width="4"></circle>
+                            <path class="opacity-75"
+                                  d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                                  fill="currentColor"></path>
+                        </svg>
+                        <span class="ml-2">업로드 중...</span>
+                    </div>
+                </div>
+            </form>
+
+            <form class="profile-form">
+                <input class="profile-input" placeholder="닉네임" th:value="${user.nickname}" type="text">
+                <button class="profile-button hidden" type="submit">닉네임 변경</button>
+                <button class="check-button" onclick="checkNickname()" type="button">
+                    중복 확인
+                </button>
+                <span class="error-message hidden" id="nicknameError"></span>
+            </form>
+        </section>
+
+        <!-- 오른쪽: 정보 섹션 -->
+        <div>
+            <section class="info-section">
+                <div class="info-grid">
+                    <!-- 포인트 카드 -->
+                    <div class="info-card">
+                        <div class="info-row">
+                            <span class="info-label">보유 포인트</span>
+                            <span class="info-value" th:text="${user.point + ' P'}">0 P</span>
                         </div>
-                        <div class="email-form">
-                            <label>
-                                <span>내 계정</span>
-                                <input id="email" name="email" readonly th:value="${email}" type="email">
-                            </label>
+                    </div>
+
+                    <!-- 구독 상태 카드 -->
+                    <div class="info-card">
+                        <div class="info-row">
+                            <span class="info-label">구독 상태</span>
+                            <span class="status-badge" th:text="${user.isSubscribed ? '구독중' : '미구독'}">구독중</span>
                         </div>
-                        <div class="password-form">
-                            <label>
-                                <span>비밀번호</span>
-                                <input id="password" name="password" placeholder="비밀번호를 입력해주세요" type="password">
-                            </label>
-                            <span id="passwordValidationMessage"></span>
-                            <button class="check-btn" onclick="checkPassword()" type="button">비밀번호 확인</button>
+                        <div class="info-row">
+                            <span class="info-label">자동 결제</span>
+                            <button class="action-button" th:if="${!user.isAutoPayment}">설정하기</button>
+                            <span class="status-badge" th:if="${user.isAutoPayment}">설정됨</span>
                         </div>
                     </div>
                 </div>
-            </div>
-            <!-- 버튼 그룹 -->
-            <div class="btn-group">
-                <button class="save-btn" type="submit">저장</button>
-                <button class="cancel-btn" onclick="cancelProfileEdit()" type="button">취소</button>
-            </div>
-        </div>
-    </form>
+            </section>
 
-    <div class="withdrawal-content">
-        <span><strong>InterStory 탈퇴 주의사항</strong></span>
-        <p>
-            탈퇴 시 구매 이력 등 모든 이용 기록이 즉시 삭제되며 복구할 수 없습니다.<br>
-            탈퇴 후 사용하지 않은 포인트는 소멸됩니다.
-        </p>
-        <button class="withdrawal-btn" onclick="profileDeleteUser()">서비스 탈퇴</button>
+            <!-- 구독 배너 -->
+            <section class="subscription-banner" th:if="${!user.isSubscribed}">
+                <div class="banner-content">
+                    <div class="banner-text">
+                        <h3>프리미엄 구독으로 업그레이드</h3>
+                        <p>모든 작품을 무제한으로 즐겨보세요!</p>
+                    </div>
+                    <button class="banner-button">구독하기</button>
+                </div>
+            </section>
+        </div>
     </div>
 </main>
-<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-<script>
-    function checkNickname() {
-        const nickname = $('#nickname').val();
-        if (!nickname.trim()) {
-            alert("닉네임을 입력해주세요.");
+
+<script th:inline="javascript">
+
+    const checkNickname = () => {
+        const nicknameInput = document.querySelector('.profile-input');
+        const nicknameError = document.getElementById('nicknameError');
+        const submitButton = document.querySelector('.profile-button');
+        const nickname = nicknameInput.value;
+
+        if (!nickname) {
+            nicknameError.textContent = '닉네임을 입력해주세요.';
+            nicknameError.classList.remove('hidden');
             return;
         }
 
-        $.ajax({
-            url: '/api/auth/nickname-verification',
-            type: 'GET',
-            data: {nickname: nickname},
-            success: function (data) {
-                if (data.isAvailable) {
-                    alert("사용 가능한 닉네임입니다.");
+        fetch(`/api/users/check-duplication-nickname?nickname=${nickname}`)
+            .then(response => response.json())
+            .then(data => {
+                console.log(data);
+                if (data) {
+                    submitButton.classList.remove('hidden');
+                    nicknameInput.readOnly = true;
+                    nicknameCheck = true;
+                    nicknameError.classList.add('hidden');
                 } else {
-                    alert("이미 사용 중인 닉네임입니다.");
+                    nicknameError.textContent = '이미 사용중인 닉네임입니다.';
+                    nicknameError.classList.remove('hidden');
+                    nicknameCheck = false;
                 }
-            },
-            error: function () {
-                alert("닉네임 확인 중 오류가 발생했습니다.");
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                nicknameError.textContent = '닉네임 중복 확인 중 오류가 발생했습니다.';
+                nicknameError.classList.remove('hidden');
+            });
+    };
+
+    // 이미지 변경 처리 함수
+    const handleImageChange = () => {
+        const fileInput = document.getElementById('profileImage');
+        const spinner = document.getElementById('imageUploadSpinner');
+
+        if (fileInput.files && fileInput.files[0]) {
+            const formData = new FormData();
+            formData.append('profileImage', fileInput.files[0]);
+
+            // 이미지 미리보기
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                document.getElementById('profilePreview').src = e.target.result;
             }
-        });
-    }
+            reader.readAsDataURL(fileInput.files[0]);
 
-    function checkPassword(password) {
-        const minLength = 8;
-        const hasUpperCase = /[A-Z]/.test(password);
-        const hasLowerCase = /[a-z]/.test(password);
-        const hasNumber = /[0-9]/.test(password);
-        const hasSpecialChar = /[!@#$%^&*(),.?":{}|<>]/.test(password);
+            // 스피너 표시
+            spinner.classList.remove('hidden');
 
-        return password.length >= minLength && hasUpperCase && hasLowerCase && hasNumber && hasSpecialChar;
-    }
-
-    $('#password').on('keyup', function () {
-        const password = $(this).val();
-        const message = $('#passwordValidationMessage');
-
-        if (isPasswordValid(password)) {
-            message.text('안전한 비밀번호입니다.').css('color', 'green');
-        } else {
-            message.text('비밀번호는 최소 8자 이상, 대/소문자, 숫자, 특수문자를 포함해야 합니다.').css('color', 'red');
+            // 이미지 업로드 요청
+            fetch('/api/users/update-profile', {
+                method: 'POST',
+                body: formData
+            })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        alert("이미지 변경 완료");
+                    } else {
+                        alert(data.message);
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    showToast('이미지 업로드 중 오류가 발생했습니다.', 'error');
+                })
+                .finally(() => {
+                    spinner.classList.add('hidden');
+                });
         }
+    }
+
+    // 이미지 클릭 이벤트 처리
+    document.querySelector('#profileImage').addEventListener('click', function (e) {
+        document.getElementById('profileImageInput').click();
     });
 
-    window.onload = function () {
-        const profileImageUrl = /*[[${profileImageUrl}]]*/'';
-        const imagePreview = document.getElementById('imagePreview');
-        if (profileImageUrl) {
-            imagePreview.style.backgroundImage = `url(${profileImageUrl})`;
-            imagePreview.style.backgroundSize = 'cover';
-        }
-    }
+    // 닉네임 변경 폼 제출
+    document.querySelector('.profile-form').addEventListener('submit', function (e) {
+        e.preventDefault();
 
-    function previewImage(event) {
-        const reader = new FileReader();
-        reader.onload = function () {
-            const imagePreview = document.getElementById('imagePreview');
-            imagePreview.style.backgroundImage = `url(${reader.result})`;
-            imagePreview.style.backgroundSize = 'cover';
-        };
-        reader.readAsDataURL(event.target.files[0]);
-
-        uploadImage(event.target.files[0]);
-    }
-
-    function uploadImage(file) {
-        const formData = new FormData();
-        formData.append('file', file);
-
-        $.ajax({
-            type: 'POST',
-            url: '/api/image/upload',
-            data: formData,
-            processData: false,
-            contentType: false,
-            success: function (response) {
-                $("#imageInput").attr('data-image-url', response.imageUrl);
-            },
-            error: function (error) {
-                console.error('Error uploading image:', error);
-                alert('이미지 업로드 중 오류가 발생했습니다.');
-            }
-        });
-    }
-
-    function submitProfileEditForm(event) {
-        event.preventDefault(); // 기본 폼 제출 방지
-
-        const userId = document.querySelector('.profile-edit-container').dataset.userId;
-        const nickname = document.getElementById('nickname').value;
-        const password = document.getElementById('password').value;
-        const profileImageUrl = document.getElementById('imageInput').dataset.imageUrl;
-
-        if (!isPasswordValid(password)) {
-            alert('비밀번호는 최소 8자 이상이며, 대문자, 소문자, 숫자, 특수 문자를 포함해야 합니다.');
+        if (!nicknameCheck) {
+            alert('닉네임 중복 확인을 해주세요.');
             return;
         }
 
-        const data = {
-            nickname: nickname,
-            password: password,
-            profileImageUrl: profileImageUrl
-        };
+        const nickname = this.querySelector('input').value;
 
-        $.ajax({
-            type: 'PUT',
-            url: `/api/users/${userId}`,
-            contentType: 'application/json',
-            data: JSON.stringify(data),
-            success: function () {
-                alert('수정이 완료되었습니다!');
-                window.location.href = '/users/edit-profile';
+        fetch('/api/users/update-nickname', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
             },
-            error: function (error) {
-                console.error('Error:', error);
-                alert('회원 정보 수정 중 오류가 발생했습니다.');
-            }
-        });
-    }
-
-    function cancelProfileEdit() {
-        if (confirm("수정을 취소하시겠습니까? 변경 사항이 저장되지 않습니다.")) {
-            window.location.href = '/mypage/edit-profile';
-        }
-    }
-
-    function profileDeleteUser() {
-        if (confirm("정말로 탈퇴하시겠습니까?")) {
-            $.ajax({
-                type: 'DELETE',
-                url: '/api/users/withdrawal',
-                success: function () {
-                    alert("회원 탈퇴가 완료되었습니다.");
-                    window.location.href = '/login';
-                },
-                error: function (error) {
-                    console.error('Error:', error);
-                    alert("탈퇴 처리 중 오류가 발생했습니다.");
+            body: JSON.stringify({nickname})
+        })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    alert(data.message);
+                    //location.reload();
+                } else {
+                    alert(data.message || '닉네임 변경에 실패했습니다.');
                 }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('닉네임 변경 중 오류가 발생했습니다.');
             });
-        }
-    }
+    });
+
+    // 구독하기 ** 해야함
+    document.querySelector('.banner-button')?.addEventListener('click', function () {
+        fetch('/api/subscription/subscribe', {
+            method: 'POST'
+        })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    //location.reload();
+                }
+            })
+            .catch(error => console.error('Error:', error));
+    });
 </script>
 </body>
 </html>

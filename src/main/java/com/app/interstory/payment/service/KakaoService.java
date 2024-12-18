@@ -201,6 +201,8 @@ public class KakaoService {
 			pointRepository.save(point);
 
 			user.updateIsAutoPayment(true);
+
+			user.updatePoint(user.getPoint() + (POINT_AUTO_PRICE.intValue() / 20));
 		} else if (totalAmount == POINT_SEQUENCE_PRICE.intValue()) {
 			user.updateIsSubscribe(true);
 
@@ -340,23 +342,27 @@ public class KakaoService {
 		User user = userRepository.findById(userId)
 			.orElseThrow(() -> new IllegalArgumentException(NOT_FOUND_USER_ID + userId));
 
-		Map<String, String> parameters = new HashMap<>();
+		if (!user.getIsAutoPayment()) {
+			Map<String, String> parameters = new HashMap<>();
 
-		parameters.put("cid", kakaoPayProperties.getSubscriptionCid());
-		parameters.put("sid", sid.getSid());
+			parameters.put("cid", kakaoPayProperties.getSubscriptionCid());
+			parameters.put("sid", sid.getSid());
 
-		HttpEntity<Map<String, String>> requestEntity = new HttpEntity<>(parameters, this.getHeaders());
+			HttpEntity<Map<String, String>> requestEntity = new HttpEntity<>(parameters, this.getHeaders());
 
-		RestTemplate template = new RestTemplate();
+			RestTemplate template = new RestTemplate();
 
-		String url = "https://open-api.kakaopay.com/online/v1/payment/manage/subscription/inactive";
+			String url = "https://open-api.kakaopay.com/online/v1/payment/manage/subscription/inactive";
 
-		if (!user.getIsAutoPayment())
 			sidRepository.delete(sid);
+			user.updateIsSubscribe(false);
+
+			return template.postForObject(url, requestEntity, PaymentInactiveResponseDTO.class);
+		}
 
 		user.updateIsSubscribe(false);
 
-		return template.postForObject(url, requestEntity, PaymentInactiveResponseDTO.class);
+		return new PaymentInactiveResponseDTO();
 	}
 
 	public PaymentInactiveResponseDTO kakaoPayInactiveAutoPayment(Long userId) {
@@ -368,23 +374,27 @@ public class KakaoService {
 		User user = userRepository.findById(userId)
 			.orElseThrow(() -> new IllegalArgumentException(NOT_FOUND_USER_ID + userId));
 
-		Map<String, String> parameters = new HashMap<>();
+		if (!user.getIsSubscribe()) {
+			Map<String, String> parameters = new HashMap<>();
 
-		parameters.put("cid", kakaoPayProperties.getSubscriptionCid());
-		parameters.put("sid", sid.getSid());
+			parameters.put("cid", kakaoPayProperties.getSubscriptionCid());
+			parameters.put("sid", sid.getSid());
 
-		HttpEntity<Map<String, String>> requestEntity = new HttpEntity<>(parameters, this.getHeaders());
+			HttpEntity<Map<String, String>> requestEntity = new HttpEntity<>(parameters, this.getHeaders());
 
-		RestTemplate template = new RestTemplate();
+			RestTemplate template = new RestTemplate();
 
-		String url = "https://open-api.kakaopay.com/online/v1/payment/manage/subscription/inactive";
+			String url = "https://open-api.kakaopay.com/online/v1/payment/manage/subscription/inactive";
 
-		if (!user.getIsSubscribe())
 			sidRepository.delete(sid);
+			user.updateIsAutoPayment(false);
+
+			return template.postForObject(url, requestEntity, PaymentInactiveResponseDTO.class);
+		}
 
 		user.updateIsAutoPayment(false);
 
-		return template.postForObject(url, requestEntity, PaymentInactiveResponseDTO.class);
+		return new PaymentInactiveResponseDTO();
 	}
 
 	public String kakaoPayCancel() {
