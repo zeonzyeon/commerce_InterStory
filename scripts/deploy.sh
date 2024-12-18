@@ -162,6 +162,8 @@ JAVA_OPTS="$JAVA_OPTS -Dspring.config.import=file:${APP_HOME}/.env.properties"
 cd $APP_HOME  # 작업 디렉토리 변경
 echo "## Executing: java $JAVA_OPTS -jar $DEPLOY_JAR" >> $LOG_PATH
 
+nohup java $JAVA_OPTS -jar $DEPLOY_JAR >> $LOG_PATH 2>> $ERROR_LOG_PATH &
+
 # 실행 확인
 sleep 10
 NEW_PID=$(pgrep -f $JAR_NAME)
