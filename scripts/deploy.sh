@@ -88,47 +88,76 @@ sudo /usr/local/bin/docker-compose -f $APP_HOME/docker-compose.yml up -d
 # JVM 옵션 설정
 JAVA_OPTS="-Dspring.profiles.active=prod -Dserver.port=8080 -Xms512m -Xmx1024m"
 
-# SNAPSHOT.jar 파일 찾기
-BUILD_JAR=$(ls $DEPLOY_PATH/*SNAPSHOT.jar)
+# SNAPSHOT.jar 파일 찾기 및 검증
+echo "## Checking for JAR files in $DEPLOY_PATH" >> $LOG_PATH
+BUILD_JAR=$(find $DEPLOY_PATH -name "*SNAPSHOT.jar" -type f)
+
+if [ -z "$BUILD_JAR" ]; then
+    echo "### Error: No JAR file found in $DEPLOY_PATH" >> $LOG_PATH
+    ls -l $DEPLOY_PATH >> $LOG_PATH
+    exit 1
+fi
+
+# 여러 JAR 파일이 있는 경우 처리
+if [ $(echo "$BUILD_JAR" | wc -l) -gt 1 ]; then
+    echo "### Multiple JAR files found, using the latest one" >> $LOG_PATH
+    BUILD_JAR=$(ls -t $DEPLOY_PATH/*SNAPSHOT.jar | head -1)
+fi
+
+# JAR 파일 무결성 검사
+echo "## Verifying JAR file integrity" >> $LOG_PATH
+if ! jar tf "$BUILD_JAR" > /dev/null 2>&1; then
+    echo "### Error: Corrupt JAR file: $BUILD_JAR" >> $LOG_PATH
+    exit 1
+fi
+
 JAR_NAME=$(basename $BUILD_JAR)
+echo "## Found valid JAR file: $JAR_NAME" >> $LOG_PATH
 
-echo "## build file name : $JAR_NAME" >> $LOG_PATH
+# JAR 파일 권한 확인 및 설정
+echo "## Setting JAR file permissions" >> $LOG_PATH
+sudo chown ec2-user:ec2-user "$BUILD_JAR"
+sudo chmod 755 "$BUILD_JAR"
 
-#echo "## copy build file" >> $LOG_PATH
-#cp $BUILD_JAR $DEPLOY_PATH
+# 실행 경로 및 JAR 파일 존재 확인
+DEPLOY_JAR=$DEPLOY_PATH/$JAR_NAME
+if [ ! -f "$DEPLOY_JAR" ]; then
+    echo "### Error: JAR file not found at $DEPLOY_JAR" >> $LOG_PATH
+    exit 1
+fi
 
-echo "## current pid" >> $LOG_PATH
+echo "## Deploying JAR file: $DEPLOY_JAR" >> $LOG_PATH
+
+echo "## Checking current process" >> $LOG_PATH
 CURRENT_PID=$(pgrep -f $JAR_NAME)
 
 if [ -z "$CURRENT_PID" ]; then
-   echo "## 현재 구동중인 애플리케이션이 없으므로 종료하지 않습니다." >> $LOG_PATH
+    echo "## No running application found" >> $LOG_PATH
 else
-   echo "## kill -15 $CURRENT_PID" >> $LOG_PATH
-   kill -15 $CURRENT_PID
-   sleep 5
+    echo "## Terminating existing application (PID: $CURRENT_PID)" >> $LOG_PATH
+    kill -15 $CURRENT_PID
+    sleep 5
 
-   # 프로세스가 종료되었는지 확인
-   if kill -0 $CURRENT_PID 2>/dev/null; then
-       echo "## Force kill $CURRENT_PID" >> $LOG_PATH
-       kill -9 $CURRENT_PID
-   fi
+    # 프로세스가 종료되었는지 확인
+    if kill -0 $CURRENT_PID 2>/dev/null; then
+        echo "## Force terminating application" >> $LOG_PATH
+        kill -9 $CURRENT_PID
+    fi
 fi
 
-DEPLOY_JAR=$DEPLOY_PATH/$JAR_NAME
-echo "## deploy JAR file" >> $LOG_PATH
-
-# 새로운 애플리케이션 배포
-echo "## $JAR_NAME 배포" >> $LOG_PATH
+# 새로운 애플리케이션 실행
+echo "## Starting new application" >> $LOG_PATH
 nohup java $JAVA_OPTS -jar $DEPLOY_JAR >> $LOG_PATH 2>> $ERROR_LOG_PATH &
 
-# 배포 성공 여부 확인
+# 실행 확인
 sleep 10
 NEW_PID=$(pgrep -f $JAR_NAME)
 if [ -n "$NEW_PID" ]; then
-   echo "## Deploy Success! New PID: $NEW_PID" >> $LOG_PATH
+    echo "## Application started successfully (PID: $NEW_PID)" >> $LOG_PATH
+    echo $NEW_PID > $APP_HOME/current.pid
 else
-   echo "## Deploy Failed!" >> $LOG_PATH
-   exit 1
+    echo "## Application failed to start" >> $LOG_PATH
+    exit 1
 fi
 
 # 현재 실행 중인 애플리케이션 pid 기록
