@@ -25,106 +25,173 @@ debug_log "### Deployment started at $(date)"
 debug_log "## Java Version Check"
 java -version >> $LOG_PATH 2>&1
 
+
+echo "### Deployment started at $(date)" >> $LOG_PATH
+
+# Docker 설치 확인 및 설치
+if ! command -v docker &> /dev/null; then
+    echo "## Docker 설치를 시작합니다." >> $LOG_PATH
+    sudo yum update -y
+    sudo yum install -y docker
+    sudo service docker start
+    sudo usermod -a -G docker ec2-user
+    echo "### Docker installed successfully" >> $LOG_PATH
+fi
+
+# Docker Compose 설치
+if ! command -v docker-compose &> /dev/null; then
+    echo "## Docker Compose 설치를 시작합니다." >> $LOG_PATH
+    sudo curl -L "https://github.com/docker/compose/releases/download/v2.24.0/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
+    sudo chmod +x /usr/local/bin/docker-compose
+    sudo ln -s /usr/local/bin/docker-compose /usr/bin/docker-compose  # 심볼릭 링크 생성
+    echo "### Docker Compose installed successfully" >> $LOG_PATH
+fi
+
+# 파일 권한 설정
+sudo chown -R ec2-user:ec2-user $APP_HOME
+sudo chmod -R 755 $APP_HOME
+
+# Redis 설정 파일 생성
+if [ ! -f "$APP_HOME/redis.conf" ]; then
+    sudo bash -c "cat > $APP_HOME/redis.conf << 'EOL'
+bind 0.0.0.0
+port 6379
+maxmemory 256mb
+maxmemory-policy allkeys-lru
+appendonly yes
+EOL"
+fi
+
+echo "### Setting up Redis configuration..." >> $LOG_PATH
+
+# Redis 컨테이너 실행
+echo "## Redis 컨테이너 시작" >> $LOG_PATH
+if [ ! -f "$APP_HOME/docker-compose.yml" ]; then
+    cat > $APP_HOME/docker-compose.yml << EOL
+version: '3.8'
+services:
+  redis:
+    container_name: interstory-redis
+    image: redis:latest
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+      - ./redis.conf:/usr/local/etc/redis/redis.conf
+    restart: always
+    networks:
+      - interstory-network
+
+volumes:
+  redis_data:
+    driver: local
+
+networks:
+  interstory-network:
+    driver: bridge
+EOL
+fi
+
+# 기존 Redis 컨테이너 중지 및 재시작
+sudo /usr/local/bin/docker-compose -f $APP_HOME/docker-compose.yml down
+sudo /usr/local/bin/docker-compose -f $APP_HOME/docker-compose.yml up -d
+
+# JVM 옵션 설정
+JAVA_OPTS="-Dserver.port=8080 -Xms512m -Xmx1024m"
 # SNAPSHOT.jar 파일 찾기 및 검증
-debug_log "## Checking for JAR files in $DEPLOY_PATH"
-BUILD_JAR=$(find $DEPLOY_PATH -name "*SNAPSHOT.jar" -type f | grep -v "plain.jar")
+echo "## Checking for JAR files in $DEPLOY_PATH" >> $LOG_PATH
+BUILD_JAR=$(find $DEPLOY_PATH -name "*SNAPSHOT.jar" -type f)
 
 if [ -z "$BUILD_JAR" ]; then
-    debug_log "### Error: No JAR file found in $DEPLOY_PATH"
+    echo "### Error: No JAR file found in $DEPLOY_PATH" >> $LOG_PATH
     ls -l $DEPLOY_PATH >> $LOG_PATH
     exit 1
 fi
 
 # 여러 JAR 파일이 있는 경우 처리
 if [ $(echo "$BUILD_JAR" | wc -l) -gt 1 ]; then
-    debug_log "### Multiple JAR files found, using the latest one"
-    BUILD_JAR=$(ls -t $DEPLOY_PATH/*SNAPSHOT.jar | grep -v "plain.jar" | head -1)
+    echo "### Multiple JAR files found, using the latest one" >> $LOG_PATH
+    BUILD_JAR=$(ls -t $DEPLOY_PATH/*SNAPSHOT.jar | head -1)
 fi
 
-debug_log "## Found JAR file: $BUILD_JAR"
-
-# JAR 파일 세부 정보 확인
-debug_log "## JAR File Details"
-ls -l "$BUILD_JAR" >> $LOG_PATH
-file "$BUILD_JAR" >> $LOG_PATH
-
 # JAR 파일 무결성 검사
-debug_log "## Verifying JAR file integrity"
+echo "## Verifying JAR file integrity" >> $LOG_PATH
 if ! jar tf "$BUILD_JAR" > /dev/null 2>&1; then
-    debug_log "### Error: Corrupt JAR file: $BUILD_JAR"
+    echo "### Error: Corrupt JAR file: $BUILD_JAR" >> $LOG_PATH
     exit 1
 fi
 
-JAR_NAME=$(basename "$BUILD_JAR")
-debug_log "## Found valid JAR file: $JAR_NAME"
+JAR_NAME=$(basename $BUILD_JAR)
+echo "## Found valid JAR file: $JAR_NAME" >> $LOG_PATH
 
 # JAR 파일 권한 확인 및 설정
-debug_log "## Setting JAR file permissions"
+echo "## Setting JAR file permissions" >> $LOG_PATH
 sudo chown ec2-user:ec2-user "$BUILD_JAR"
 sudo chmod 755 "$BUILD_JAR"
 
 # 실행 경로 및 JAR 파일 존재 확인
 DEPLOY_JAR=$DEPLOY_PATH/$JAR_NAME
 if [ ! -f "$DEPLOY_JAR" ]; then
-    debug_log "### Error: JAR file not found at $DEPLOY_JAR"
+    echo "### Error: JAR file not found at $DEPLOY_JAR" >> $LOG_PATH
     exit 1
 fi
 
-debug_log "## Deploying JAR file: $DEPLOY_JAR"
+echo "## Deploying JAR file: $DEPLOY_JAR" >> $LOG_PATH
 
-# 현재 실행 중인 프로세스 확인
-debug_log "## Checking current process"
-CURRENT_PID=$(pgrep -f "$JAR_NAME")
+echo "## Checking current process" >> $LOG_PATH
+CURRENT_PID=$(pgrep -f $JAR_NAME)
 
 if [ -z "$CURRENT_PID" ]; then
-    debug_log "## No running application found"
+    echo "## No running application found" >> $LOG_PATH
 else
-    debug_log "## Terminating existing application (PID: $CURRENT_PID)"
+    echo "## Terminating existing application (PID: $CURRENT_PID)" >> $LOG_PATH
     kill -15 $CURRENT_PID
     sleep 5
 
     # 프로세스가 종료되었는지 확인
     if kill -0 $CURRENT_PID 2>/dev/null; then
-        debug_log "## Force terminating application"
+        echo "## Force terminating application" >> $LOG_PATH
         kill -9 $CURRENT_PID
     fi
 fi
 
-# 환경 변수 및 설정 파일 확인
-debug_log "## Checking .env.properties"
-if [ ! -f "$APP_HOME/.env.properties" ]; then
-    debug_log "### Warning: .env.properties file not found"
-fi
-
 # 새로운 애플리케이션 실행
-debug_log "## Starting new application"
+echo "## Starting new application" >> $LOG_PATH
 
-# JVM 옵션 설정
-JAVA_OPTS="-Dserver.port=8080 -Xms512m -Xmx1024m"
+# 환경 변수 확인
+echo "## Checking environment variables" >> $LOG_PATH
+if [ ! -f "$APP_HOME/.env.properties" ]; then
+    echo "### Error: .env.properties file not found" >> $LOG_PATH
+    exit 1
+fi
 
 # 애플리케이션 실행
 cd $APP_HOME  # 작업 디렉토리 변경
-debug_log "## Executing: java $JAVA_OPTS -jar $DEPLOY_JAR"
+echo "## Executing: java $JAVA_OPTS -jar $DEPLOY_JAR" >> $LOG_PATH
 
-MAX_WAIT=60
-debug_log "## Starting application... (waiting max ${MAX_WAIT}s)"
+MAX_WAIT=30
+echo "## Starting application... (waiting max ${MAX_WAIT}s)" >> $LOG_PATH
 
-# 실행 명령어 (환경 변수 파일 옵션 제거)
-nohup java $JAVA_OPTS -jar "$DEPLOY_JAR" >> $LOG_PATH 2>> $ERROR_LOG_PATH &
+# 실행 명령어
+nohup java -jar $DEPLOY_JAR >> $LOG_PATH 2>> $ERROR_LOG_PATH &
+
+# 실행 명령어 추가
+#nohup java $JAVA_OPTS -jar $DEPLOY_JAR >> $LOG_PATH 2>> $ERROR_LOG_PATH &
+#nohup java -jar $DEPLOY_JAR >> $LOG_PATH 2>> $ERROR_LOG_PATH &
 
 # 실행 확인 (타임아웃 추가)
 for i in $(seq 1 $MAX_WAIT); do
    sleep 1
-   NEW_PID=$(pgrep -f "$JAR_NAME")
+   NEW_PID=$(pgrep -f $JAR_NAME)
    if [ -n "$NEW_PID" ]; then
-       debug_log "## Application started successfully (PID: $NEW_PID)"
+       echo "## Application started successfully (PID: $NEW_PID)" >> $LOG_PATH
        echo $NEW_PID > $APP_HOME/current.pid
        exit 0  # 성공적으로 실행되면 스크립트 종료
    fi
 done
 
 # 타임아웃된 경우
-debug_log "## Application failed to start within ${MAX_WAIT} seconds"
-debug_log "## Checking error logs:"
+echo "## Application failed to start within ${MAX_WAIT} seconds" >> $LOG_PATH
+echo "## Checking error logs:" >> $LOG_PATH
 tail -n 50 $ERROR_LOG_PATH >> $LOG_PATH
 exit 1
