@@ -172,7 +172,7 @@ public class UserService {
 		//기본 파일 아닐 시 s3에서 삭제
 		deleteExistingProfile(user);
 		//file s3 uploads
-		String dirPath = filePathConfig.getProfile();
+		String dirPath = filePathConfig.getUserProfilePath(); // "user/"
 		String filePath = s3Service.uploadFile(file, dirPath);
 		//파일 업데이트
 		user.updateProfile(filePath);

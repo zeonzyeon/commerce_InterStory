@@ -87,6 +87,9 @@ public class User {
 	@OneToOne(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
 	private Social social;
 
+	@OneToOne(cascade = CascadeType.ALL, orphanRemoval = true)
+	private Settlement settlement;
+
 	//연관관계 method
 	public void addSocialProvider(Social social) {
 		this.social = social;

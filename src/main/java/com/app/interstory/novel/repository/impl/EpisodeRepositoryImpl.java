@@ -4,6 +4,7 @@ import static com.app.interstory.novel.domain.entity.QEpisode.*;
 
 import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
@@ -47,4 +48,14 @@ public class EpisodeRepositoryImpl implements EpisodeRepositoryCustom {
 		return new PageImpl<>(episodes, pageable, total);
 	}
 
+	@Override
+	public Optional<Episode> findEpisodeWithNovelAndUserAndSettlement(Long episodeId) {
+		return Optional.ofNullable(queryFactory
+			.selectFrom(episode)
+			.leftJoin(episode.novel).fetchJoin()
+			.leftJoin(episode.novel.user).fetchJoin()
+			.leftJoin(episode.novel.user.settlement).fetchJoin()
+			.where(episode.episodeId.eq(episodeId))
+			.fetchOne());
+	}
 }
