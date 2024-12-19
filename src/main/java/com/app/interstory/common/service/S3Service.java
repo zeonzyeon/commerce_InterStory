@@ -48,10 +48,10 @@ public class S3Service {
 	}
 
 	//파일 삭제
-	public void deleteFile(String fileUrl) {
+	public void deleteFile(String fileUrl, String dirPath) {
 		try {
 			String fileName = extractFileNameFromUrl(fileUrl);
-			amazonS3Client.deleteObject(bucket, fileName);
+			amazonS3Client.deleteObject(bucket, dirPath + fileName);
 		} catch (Exception e) {
 			log.error("파일 삭제 실패: {}", e.getMessage());
 			throw new RuntimeException("파일 삭제 실패", e);

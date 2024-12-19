@@ -250,11 +250,11 @@ public class MypageService {
 			Map<String, Object> getEpisodeNumber = episodeRepository.findRowNumberByNovelIdAndEpisodeId(
 				novel.getNovelId(), episode.getEpisodeId());
 
-			long episodeNumber;
+			int episodeNumber;
 			if (getEpisodeNumber != null && getEpisodeNumber.containsKey("row_number")) {
 				episodeNumber = Integer.parseInt(getEpisodeNumber.get("row_number").toString());
 			} else {
-				episodeNumber = 0L;
+				episodeNumber = 0;
 			}
 
 			return MyCommentResponseDTO.builder()

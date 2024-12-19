@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>내 댓글 | InterStory</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" rel="stylesheet">
+    <link rel="stylesheet" th:href="@{/css/mypage/my-comments.css}">
+</head>
+<body>
+<div th:replace="~{common/header :: header}"></div>
+
+<div class="page-container">
+    <!-- 사이드바 -->
+    <div th:replace="~{common/mypage/mypage-sidebar :: sidebar}"></div>
+
+    <!-- 메인 콘텐츠 -->
+    <main class="main-content">
+        <div class="written-comments">
+            <h2>내 댓글</h2>
+
+            <div class="comments-list">
+                <div class="comment-card" th:each="comment : ${myComments}">
+                    <div class="comment-header">
+                        <div class="comment-header-content">
+                            <span th:text="${comment.novelTitle}">작품명</span>
+                            <span th:text="${comment.episodeTitle}">| 회차</span>
+                        </div>
+                        <button aria-label="댓글 삭제"
+                                class="delete-button"
+                                th:onclick="|deleteComment('${comment.commentId}')|">
+                            &times;
+                        </button>
+                    </div>
+                    <div class="comment-content">
+                        <span th:text="${comment.content}">댓글 내용</span>
+                    </div>
+                    <div class="comment-footer">
+                            <span th:text="${comment.createdAt}">
+                                2024.12.15 14:30
+                            </span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 댓글이 없을 경우 -->
+            <div class="no-comments" th:if="${#lists.isEmpty(myComments)}">
+                <p>작성한 댓글이 없습니다.</p>
+            </div>
+
+            <!-- 페이지네이션 -->
+            <div class="pagination-wrapper" th:if="${myComments.totalPages > 1}">
+                <ul class="pagination">
+                    <li th:class="${myComments.first ? 'disabled' : ''}">
+                        <a th:href="@{/users/my-comment(page=${myComments.number - 1})}">
+                            <i class="fas fa-chevron-left"></i>
+                        </a>
+                    </li>
+                    <li th:class="${pageNum == myComments.number + 1 ? 'active' : ''}"
+                        th:each="pageNum : ${#numbers.sequence(1, myComments.totalPages)}">
+                        <a th:href="@{/users/my-comment(page=${pageNum - 1})}"
+                           th:text="${pageNum}">1</a>
+                    </li>
+                    <li th:class="${myComments.last ? 'disabled' : ''}">
+                        <a th:href="@{/users/my-comment(page=${myComments.number + 1})}">
+                            <i class="fas fa-chevron-right"></i>
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </main>
+</div>
+
+<script th:inline="javascript">
+    function deleteComment(commentId) {
+        if (!confirm('정말로 이 댓글을 삭제하시겠습니까?')) return;
+
+        fetch(`/api/comments/${commentId}`, {
+            method: 'DELETE',
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        })
+            .then(response => {
+                if (response.ok) {
+                    alert('댓글이 삭제되었습니다.');
+                    location.reload();
+                } else {
+                    throw new Error('댓글 삭제에 실패했습니다.');
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('오류가 발생했습니다. 다시 시도해주세요.');
+            });
+    }
+</script>
+</body>
+</html>

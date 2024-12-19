@@ -1,5 +1,6 @@
 package com.app.interstory.novel.service;
 
+import java.time.Duration;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.Comparator;
@@ -312,8 +313,6 @@ public class EpisodeService {
 	}
 
 	private boolean isFirstView(String ip, Long episodeId) {
-		//TTL 설정 - 6시간
-		int expireTime = 6 * 60 * 60;
 		//key 설정 - id + yyyyMMdd
 		String key = String.format("view:%d:%s",
 			episodeId,
@@ -328,6 +327,9 @@ public class EpisodeService {
 			.getBit(key, offset);
 
 		redisTemplate.opsForValue().setBit(key, offset, true);
+
+		// TTL 설정 - 1일 (24시간)
+		redisTemplate.expire(key, Duration.ofDays(1));
 
 		return !Boolean.TRUE.equals(result);
 

@@ -12,7 +12,11 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 
 import com.app.interstory.novel.domain.entity.Episode;
+import com.app.interstory.novel.domain.entity.QEpisode;
+import com.app.interstory.novel.domain.entity.QNovel;
 import com.app.interstory.novel.repository.EpisodeRepositoryCustom;
+import com.app.interstory.user.domain.entity.QSettlement;
+import com.app.interstory.user.domain.entity.QUser;
 import com.querydsl.core.types.OrderSpecifier;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 
@@ -50,11 +54,17 @@ public class EpisodeRepositoryImpl implements EpisodeRepositoryCustom {
 
 	@Override
 	public Optional<Episode> findEpisodeWithNovelAndUserAndSettlement(Long episodeId) {
+
+		QEpisode episode = QEpisode.episode;
+		QNovel novel = QNovel.novel;
+		QUser user = QUser.user;
+		QSettlement settlement = QSettlement.settlement;
+
 		return Optional.ofNullable(queryFactory
 			.selectFrom(episode)
-			.leftJoin(episode.novel).fetchJoin()
-			.leftJoin(episode.novel.user).fetchJoin()
-			.leftJoin(episode.novel.user.settlement).fetchJoin()
+			.leftJoin(episode.novel, novel).fetchJoin()
+			.leftJoin(novel.user, user).fetchJoin()
+			.leftJoin(user.settlement, settlement).fetchJoin()
 			.where(episode.episodeId.eq(episodeId))
 			.fetchOne());
 	}

@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 import com.app.interstory.novel.domain.enumtypes.SortType;
 import com.app.interstory.novel.dto.response.NovelDetailResponseDTO;
+import com.app.interstory.novel.service.CommentService;
 import com.app.interstory.novel.service.NovelService;
 import com.app.interstory.user.domain.CustomUserDetails;
 import com.app.interstory.user.dto.response.AccountResponseDTO;
@@ -43,10 +44,28 @@ public class MypageController {
 	private final MypageService mypageService;
 	private final NovelService novelService;
 	private final UserService userService;
+	private final CommentService commentService;
+
+	//내 댓글 모음
+	@GetMapping("/my-comment")
+	public String showMyComments(
+		Model model,
+		@AuthenticationPrincipal CustomUserDetails userDetails,
+		@RequestParam(defaultValue = "0") int page
+	) {
+
+		Page<MyCommentResponseDTO> myComments =
+			commentService.getMyComments(userDetails.getUser().getUserId(), page);
+		
+		model.addAttribute("myComments", myComments);
+		model.addAttribute("user", userService.findById(userDetails.getUser().getUserId()));
+
+		return "mypage/my-comment";
+	}
 
 	// 회원 정보 수정
 	@GetMapping("/edit-profile")
-	public String userEditProfile(
+	public String showUserEditProfile(
 		@AuthenticationPrincipal CustomUserDetails userDetails,
 		Model model
 	) {
