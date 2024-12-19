@@ -30,6 +30,10 @@ public class WebSecurityConfig {
 			.authorizeHttpRequests(authorize -> authorize
 				// .requestMatchers("/h2-console/**").permitAll()
 				.requestMatchers("/api/auth/login", "/auth/login", "/auth/signup").anonymous()
+				.requestMatchers("/admin/notices").permitAll()
+				.requestMatchers("/novels/**").authenticated()
+				.requestMatchers("/admin/notices/{noticeId}").permitAll()
+				.requestMatchers("/admin/**").hasRole("ADMIN")
 				.anyRequest().permitAll()
 			)
 			.sessionManagement(session -> session  // 추가: 세션 관리 :  동일한 계정으로 다른 기기나 브라우저에서 로그인하면 이전 세션이 만료

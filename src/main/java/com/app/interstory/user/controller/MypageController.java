@@ -65,7 +65,6 @@ public class MypageController {
 		@AuthenticationPrincipal CustomUserDetails userDetails,
 		Model model
 	) {
-
 		UserResponseDTO currentUser = userService.getCurrentUser(userDetails.getUser().getUserId());
 		model.addAttribute("user", currentUser);
 		model.addAttribute("currentMenu", "edit");
@@ -128,7 +127,7 @@ public class MypageController {
 		@RequestParam(defaultValue = "10", name = "size") int size,
 		Model model) {
 
-		Pageable pageable = PageRequest.of(page, size);
+		Pageable pageable = PageRequest.of(page, size, Sort.by(Sort.Direction.DESC, "usedAt"));
 
 		Page<PointHistoryResponseDTO> pointHistoryPage = mypageService.getPointHistory(userDetails, pageable);
 

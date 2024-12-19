@@ -1,17 +1,24 @@
 package com.app.interstory.user.domain.entity;
 
 import java.sql.Timestamp;
-import java.util.ArrayList;
-import java.util.List;
 
-import com.app.interstory.novel.domain.entity.Novel;
-import jakarta.persistence.*;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import com.app.interstory.user.domain.enumtypes.Roles;
 import com.app.interstory.user.dto.request.withdrawalRequest;
 
+import jakarta.persistence.CascadeType;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.EntityListeners;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.OneToOne;
+import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -82,11 +89,10 @@ public class User {
 
 	@OneToOne(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
 	private Settlement settlement;
-//
-//	@OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
-//	@JoinColumn(name = "novel_id", nullable = false)
-//	private List<Novel> novels = new ArrayList<>();
-
+	//
+	//	@OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
+	//	@JoinColumn(name = "novel_id", nullable = false)
+	//	private List<Novel> novels = new ArrayList<>();
 
 	//연관관계 method
 	public void addSocialProvider(Social social) {
@@ -157,5 +163,9 @@ public class User {
 	public void addSettlement(Settlement settlement) {
 		this.settlement = settlement;
 		settlement.addUser(this);
+	}
+
+	public void updateSubscriptionStatus(boolean isSubscribe) {
+		this.isSubscribe = isSubscribe;
 	}
 }

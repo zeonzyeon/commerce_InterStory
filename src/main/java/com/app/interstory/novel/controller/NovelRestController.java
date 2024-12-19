@@ -36,8 +36,10 @@ import com.app.interstory.novel.service.EpisodeService;
 import com.app.interstory.novel.service.NovelService;
 import com.app.interstory.novel.service.RecommendationService;
 import com.app.interstory.user.domain.CustomUserDetails;
+
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -56,41 +58,41 @@ import java.util.List;
 @Slf4j
 public class NovelRestController {
 
-    private final NovelService novelService;
-    private final EpisodeService episodeService;
-    private final RecommendationService recommendationService;
+	private final NovelService novelService;
+	private final EpisodeService episodeService;
+	private final RecommendationService recommendationService;
 
-    // 소설 작성
-    @PostMapping
-    public ResponseEntity<Long> writeNovel(
-            @RequestPart("novelRequestDTO") NovelRequestDTO novelRequestDTO,
-            @RequestPart(value = "file", required = false) MultipartFile file,
-            @AuthenticationPrincipal CustomUserDetails userDetails) {
-        Long novelId = novelService.writeNovel(novelRequestDTO, file, userDetails);
-        return ResponseEntity.status(HttpStatus.CREATED).body(novelId);
-    }
+	// 소설 작성
+	@PostMapping
+	public ResponseEntity<Long> writeNovel(
+		@RequestPart("novelRequestDTO") NovelRequestDTO novelRequestDTO,
+		@RequestPart(value = "file", required = false) MultipartFile file,
+		@AuthenticationPrincipal CustomUserDetails userDetails) {
+		Long novelId = novelService.writeNovel(novelRequestDTO, file, userDetails);
+		return ResponseEntity.status(HttpStatus.CREATED).body(novelId);
+	}
 
-    // 소설 수정
-    @PutMapping("/{novelId}")
-    public ResponseEntity<String> updateNovel(
-            @PathVariable("novelId") Long novelId,
-            @RequestPart("novelRequestDTO") NovelRequestDTO novelRequestDTO,
-            @RequestPart(value = "file", required = false) MultipartFile file,
-            @AuthenticationPrincipal CustomUserDetails userDetails
-    ) {
-        novelService.updateNovel(novelId, novelRequestDTO, file, userDetails);
-        return ResponseEntity.ok("Novel updated successfully");
-    }
+	// 소설 수정
+	@PutMapping("/{novelId}")
+	public ResponseEntity<String> updateNovel(
+		@PathVariable("novelId") Long novelId,
+		@RequestPart("novelRequestDTO") NovelRequestDTO novelRequestDTO,
+		@RequestPart(value = "file", required = false) MultipartFile file,
+		@AuthenticationPrincipal CustomUserDetails userDetails
+	) {
+		novelService.updateNovel(novelId, novelRequestDTO, file, userDetails);
+		return ResponseEntity.ok("Novel updated successfully");
+	}
 
-    // 소설 상세 조회
-    @GetMapping("/{novelId}")
-    public ResponseEntity<NovelDetailResponseDTO> readNovel(
-            @PathVariable("novelId") Long novelId,
-            @AuthenticationPrincipal CustomUserDetails userDetails
-    ) {
-        NovelDetailResponseDTO response = novelService.readNovel(novelId, userDetails);
-        return ResponseEntity.ok(response);
-    }
+	// 소설 상세 조회
+	@GetMapping("/{novelId}")
+	public ResponseEntity<NovelDetailResponseDTO> readNovel(
+		@PathVariable("novelId") Long novelId,
+		@AuthenticationPrincipal CustomUserDetails userDetails
+	) {
+		NovelDetailResponseDTO response = novelService.readNovel(novelId, userDetails);
+		return ResponseEntity.ok(response);
+	}
 
 	// 소설 목록 조회
 	@GetMapping
@@ -107,84 +109,84 @@ public class NovelRestController {
 		return ResponseEntity.ok(novels);
 	}
 
-    // 소설 삭제
-    @DeleteMapping("/{novelId}")
-    public ResponseEntity<Void> deleteNovel(
-            @PathVariable("novelId") Long novelId,
-            @AuthenticationPrincipal CustomUserDetails userDetails
-    ) {
-        novelService.deleteNovel(novelId, userDetails);
-        return ResponseEntity.noContent().build();
-    }
+	// 소설 삭제
+	@DeleteMapping("/{novelId}")
+	public ResponseEntity<Void> deleteNovel(
+		@PathVariable("novelId") Long novelId,
+		@AuthenticationPrincipal CustomUserDetails userDetails
+	) {
+		novelService.deleteNovel(novelId, userDetails);
+		return ResponseEntity.noContent().build();
+	}
 
-    // 관심작품 등록
-    @PostMapping("/{novelId}/favorite")
-    public ResponseEntity<String> likeEpisode(@PathVariable("novelId") Long novelId, @AuthenticationPrincipal CustomUserDetails userDetails) {
-        Long userId = userDetails.getUser().getUserId();
+	// 관심작품 등록
+	@PostMapping("/{novelId}/favorite")
+	public ResponseEntity<String> likeEpisode(@PathVariable("novelId") Long novelId, @AuthenticationPrincipal CustomUserDetails userDetails) {
+		Long userId = userDetails.getUser().getUserId();
 
-        String message = novelService.likeNovel(userId, novelId);
+		String message = novelService.likeNovel(userId, novelId);
 
-        return ResponseEntity.ok(message);
-    }
+		return ResponseEntity.ok(message);
+	}
 
-    //소설 조회 - 인기순 최신순 이름순
-    @PostMapping("/sortType")
-    public ResponseEntity<List<NovelResponseDTO>> getOrderedNovelList(
-            @RequestBody NovelSortRequestDTO request
-    ) {
-        List<NovelResponseDTO> novels = novelService.getOrderedNovel(request.getType());
+	//소설 조회 - 인기순 최신순 이름순
+	@PostMapping("/sortType")
+	public ResponseEntity<List<NovelResponseDTO>> getOrderedNovelList(
+		@RequestBody NovelSortRequestDTO request
+	) {
+		List<NovelResponseDTO> novels = novelService.getOrderedNovel(request.getType());
 
-        return ResponseEntity.ok(novels);
-    }
+		return ResponseEntity.ok(novels);
+	}
 
-    //소설 태그별 목록
-    @PostMapping("/tag")
-    public ResponseEntity<List<NovelResponseDTO>> getTagOrderedNovelList(
-            @RequestBody NovelSortRequestDTO request
-    ) {
-        log.info("getTagOrderedNovelList getMainTag ***: {}", request.getMainTag());
-        List<NovelResponseDTO> novels = novelService.getPopularNovelsByTag(request);
+	//소설 태그별 목록
+	@PostMapping("/tag")
+	public ResponseEntity<List<NovelResponseDTO>> getTagOrderedNovelList(
+		@RequestBody NovelSortRequestDTO request
+	) {
+		log.info("getTagOrderedNovelList getMainTag ***: {}", request.getMainTag());
+		List<NovelResponseDTO> novels = novelService.getPopularNovelsByTag(request);
 
-        return ResponseEntity.ok(novels);
-    }
+		return ResponseEntity.ok(novels);
+	}
 
-    // 추천 소설 조회
-    @GetMapping("/recommended-novel")
-    public ResponseEntity<List<NovelResponseDTO>> getRecommendedNovelList(@AuthenticationPrincipal CustomUserDetails userDetails) {
-        List<NovelResponseDTO> novels = recommendationService.getRecommendedNovels(userDetails);
-        return ResponseEntity.ok(novels);
-    }
+	// 추천 소설 조회
+	@GetMapping("/recommended-novel")
+	public ResponseEntity<List<NovelResponseDTO>> getRecommendedNovelList(@AuthenticationPrincipal CustomUserDetails userDetails) {
+		List<NovelResponseDTO> novels = recommendationService.getRecommendedNovels(userDetails);
+		return ResponseEntity.ok(novels);
+	}
 
-    // 회차 작성
-    @PostMapping("/{novelId}/episodes")
-    public ResponseEntity<EpisodeResponseDTO> createEpisode(
-            @PathVariable Long novelId,
-            @RequestPart("episodeRequestDTO") EpisodeRequestDTO requestDTO,
-            @RequestPart(value = "file", required = false) MultipartFile file,
-            @AuthenticationPrincipal CustomUserDetails userDetails) {
-        EpisodeResponseDTO responseDTO = episodeService.writeEpisode(novelId, requestDTO, file, userDetails);
-        return ResponseEntity.ok(responseDTO);
-    }
+	// 회차 작성
+	@PostMapping("/{novelId}/episodes")
+	public ResponseEntity<EpisodeResponseDTO> createEpisode(
+		@PathVariable(name = "novelId") Long novelId,
+		@RequestPart("episodeRequestDTO") EpisodeRequestDTO requestDTO,
+		@RequestPart(value = "file", required = false) MultipartFile file,
+		@AuthenticationPrincipal CustomUserDetails userDetails) {
+		EpisodeResponseDTO responseDTO = episodeService.writeEpisode(novelId, requestDTO, file, userDetails);
+		return ResponseEntity.ok(responseDTO);
+	}
 
-    // 회차 목록 조회
-    @GetMapping("/{novelId}/episodes/list")
-    public ResponseEntity<EpisodeListResponseDTO> getEpisodeList(
-            @PathVariable(name = "novelId") Long novelId,
-            @AuthenticationPrincipal CustomUserDetails userDetails,
-            @RequestParam(name = "sort", defaultValue = "NEW_TO_OLD") SortType sort,
-            @RequestParam(name = "page", defaultValue = "0") int page,
-            @RequestParam(name = "showAll", defaultValue = "false") boolean showAll
-    ) {
-        int pageSize = 4;
-        if (showAll)
-            pageSize = 10000;
+	// 회차 목록 조회
+	@GetMapping("/{novelId}/episodes/list")
+	public ResponseEntity<EpisodeListResponseDTO> getEpisodeList(
+		@PathVariable(name = "novelId") Long novelId,
+		@AuthenticationPrincipal CustomUserDetails userDetails,
+		@RequestParam(name = "sort", defaultValue = "NEW_TO_OLD") SortType sort,
+		@RequestParam(name = "page", defaultValue = "0") int page,
+		@RequestParam(name = "showAll", defaultValue = "false") boolean showAll
+	) {
+		int pageSize = 4;
+		if (showAll)
+			pageSize = 10000;
 
-        Pageable pageable = PageRequest.of(page, pageSize);
+		Pageable pageable = PageRequest.of(page, pageSize);
 
-        EpisodeListResponseDTO responseDTO = episodeService.getEpisodeList(userDetails, novelId, sort, pageable, showAll);
+		EpisodeListResponseDTO responseDTO = episodeService.getEpisodeList(userDetails, novelId, sort, pageable, showAll);
 
-        return ResponseEntity.ok(responseDTO);
-    }
+		return ResponseEntity.ok(responseDTO);
+	}
 
 	//에피소드 목록 갖고오기
 	@GetMapping("/{novelId}/episodes")
@@ -194,8 +196,8 @@ public class NovelRestController {
 		@RequestParam(defaultValue = "DESC", name = "direction") Sort.Direction direction
 	) {
 
-        Page<EpisodeResponseDTO> episodes = episodeService.getEpisodesByNovelId(novelId, page, direction);
+		Page<EpisodeResponseDTO> episodes = episodeService.getEpisodesByNovelId(novelId, page, direction);
 
-        return ResponseEntity.ok(episodes);
-    }
+		return ResponseEntity.ok(episodes);
+	}
 }

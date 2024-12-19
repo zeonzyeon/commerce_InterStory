@@ -43,7 +43,7 @@ document.getElementById('episode-sort-old').addEventListener('click', () => {
 function viewEpisode(episodeId, episodeTitle, isFree, isPurchased, isSubscribe) {
     console.log(episodeId, episodeTitle, isFree, isPurchased);
     if (isFree === 'true' || isPurchased === 'true' || isSubscribe === 'true') {
-        window.location.href = '/episodes/' + episodeId;
+        window.location.href = '/episodes/detail/' + episodeId;
     } else {
         openPurchaseModal(episodeId, episodeTitle);
     }
@@ -105,7 +105,7 @@ function openPurchaseModal(episodeId, episodeTitle) {
             type: 'POST',
             success: function (response) {
                 alert(response);
-                location.href = '/episodes/' + episodeId;
+                location.href = '/episodes/detail/' + episodeId;
             },
             error: function () {
             }
@@ -116,4 +116,14 @@ function openPurchaseModal(episodeId, episodeTitle) {
 function closePurchaseModal() {
     document.getElementById('modal-backdrop').style.display = 'none';
     document.getElementById('episode-purchase-modal').style.display = 'none';
+}
+
+function editNovel() {
+    const novelId = document.getElementById('novel-profile').getAttribute('data-novel-id');
+    location.href = '/novels/' + novelId + '/edit';
+}
+
+function writeNovel() {
+    const novelId = document.getElementById('novel-profile').getAttribute('data-novel-id');
+    location.href = '/novels/' + novelId + '/write-episode';
 }

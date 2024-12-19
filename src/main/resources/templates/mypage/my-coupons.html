@@ -16,7 +16,7 @@
         <div class="coupon-register">
             <label for="coupon">쿠폰</label>
             <input id="coupon" placeholder="쿠폰 코드" type="text">
-            <button type="button">등록</button>
+            <button onclick="submitCoupon()" type="button">등록</button>
         </div>
         <h2>보유 쿠폰</h2>
         <div class="no-coupon" id="no-coupon" th:if="${#lists.isEmpty(coupons)}">
@@ -89,6 +89,24 @@
             location.href = '/users/my-coupons?page=' + currentPage;
         }
     });
+
+    function submitCoupon() {
+        let couponCode = $('#coupon').val();
+
+        $.ajax({
+            url: '/api/users/coupons',
+            type: 'POST',
+            contentType: 'application/json',
+            data: JSON.stringify({
+                couponCode: couponCode
+            }),
+            success: function (response) {
+                location.reload();
+            },
+            error: function (xhr, status, error) {
+            }
+        });
+    }
 </script>
 </body>
 </html>
