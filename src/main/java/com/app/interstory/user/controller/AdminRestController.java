@@ -25,28 +25,28 @@ import com.app.interstory.user.service.AdminService;
 import lombok.RequiredArgsConstructor;
 
 @RestController
-@RequestMapping("/api/admin")
+@RequestMapping("api/admin")
 @RequiredArgsConstructor
 public class AdminRestController {
 	private final AdminService adminService;
 
 	@GetMapping("/users")
-	public ResponseEntity<UserListResponseDTO> getUsers(@RequestParam(defaultValue = "1") Integer page,
+	public ResponseEntity<UserListResponseDTO> getUsers(@RequestParam(defaultValue = "1", name = "page") Integer page,
 		@AuthenticationPrincipal CustomUserDetails userDetails) {
 		return ResponseEntity.ok(adminService.getUsers(page, userDetails));
 	}
 
 	@GetMapping("/users/search")
 	public ResponseEntity<UserListResponseDTO> searchUsers(
-		@RequestParam(required = false) String nickname,
-		@RequestParam(required = false) String email,
-		@RequestParam(defaultValue = "1") Integer page,
+		@RequestParam(required = false, name = "nickname") String nickname,
+		@RequestParam(required = false, name = "email") String email,
+		@RequestParam(defaultValue = "1", name = "page") Integer page,
 		@AuthenticationPrincipal CustomUserDetails userDetails) {
 		return ResponseEntity.ok(adminService.searchUsers(nickname, email, page, userDetails));
 	}
 
 	@PostMapping("/users/{userId}/active")
-	public ResponseEntity<String> activeUser(@PathVariable Long userId,
+	public ResponseEntity<String> activeUser(@PathVariable(name = "userId") Long userId,
 		@AuthenticationPrincipal CustomUserDetails userDetails) {
 		return ResponseEntity.ok(adminService.activeUser(userId, userDetails));
 	}
@@ -58,23 +58,23 @@ public class AdminRestController {
 	}
 
 	@PutMapping("/notices/{noticeId}")
-	public ResponseEntity<String> updateNotice(@PathVariable Long noticeId,
+	public ResponseEntity<String> updateNotice(@PathVariable(name = "noticeId") Long noticeId,
 		@RequestBody NoticeRequestDTO noticeRequestDTO, @AuthenticationPrincipal CustomUserDetails userDetails) {
 		return ResponseEntity.ok(adminService.updateNotice(noticeId, noticeRequestDTO, userDetails));
 	}
 
 	@GetMapping("/notices")
-	public ResponseEntity<NoticeListResponseDTO> getNoticeList(@RequestParam(defaultValue = "1") Integer page) {
+	public ResponseEntity<NoticeListResponseDTO> getNoticeList(@RequestParam(defaultValue = "1", name = "page") Integer page) {
 		return ResponseEntity.ok(adminService.getNoticeList(page));
 	}
 
 	@GetMapping("/notices/{noticeId}")
-	public ResponseEntity<NoticeResponseDTO> getNoticeDetail(@PathVariable Long noticeId) {
+	public ResponseEntity<NoticeResponseDTO> getNoticeDetail(@PathVariable(name = "noticeId") Long noticeId) {
 		return ResponseEntity.ok(adminService.getNoticeDetail(noticeId));
 	}
 
 	@DeleteMapping("/notices/{noticeId}")
-	public ResponseEntity<Void> deleteNotice(@PathVariable Long noticeId,
+	public ResponseEntity<Void> deleteNotice(@PathVariable(name = "noticeId") Long noticeId,
 		@AuthenticationPrincipal CustomUserDetails userDetails) {
 		adminService.deleteNotice(noticeId, userDetails);
 		return ResponseEntity.noContent().build();
@@ -87,26 +87,27 @@ public class AdminRestController {
 	}
 
 	@GetMapping("/coupons")
-	public ResponseEntity<CouponListResponseDTO> getCoupons(@RequestParam(defaultValue = "1") Integer page,
+	public ResponseEntity<CouponListResponseDTO> getCoupons(@RequestParam(defaultValue = "1", name = "page") Integer page,
 		@AuthenticationPrincipal CustomUserDetails userDetails) {
 		return ResponseEntity.ok(adminService.getCoupons(page, userDetails));
 	}
 
 	@DeleteMapping("/coupons/{couponId}")
-	public ResponseEntity<Void> deleteCoupon(@PathVariable Long couponId,
+	public ResponseEntity<Void> deleteCoupon(@PathVariable(name = "couponId") Long couponId,
 		@AuthenticationPrincipal CustomUserDetails userDetails) {
 		adminService.deleteCoupon(couponId, userDetails);
 		return ResponseEntity.noContent().build();
 	}
 
 	@PostMapping("/plan/{novelId}/approval")
-	public ResponseEntity<Void> handlePlanApproval(@PathVariable Long novelId, @RequestParam Boolean approve, @AuthenticationPrincipal CustomUserDetails userDetails) {
+	public ResponseEntity<Void> handlePlanApproval(@PathVariable(name = "novelId") Long novelId, @RequestParam(name = "approve") Boolean approve,
+		@AuthenticationPrincipal CustomUserDetails userDetails) {
 		adminService.handlePlanApproval(novelId, approve, userDetails);
 		return ResponseEntity.ok().build();
 	}
 
 	@PostMapping("/novel/{novelId}/restore")
-	public ResponseEntity<Void> restoreDeletedNovel(@PathVariable Long novelId, @AuthenticationPrincipal CustomUserDetails userDetails) {
+	public ResponseEntity<Void> restoreDeletedNovel(@PathVariable(name = "novelId") Long novelId, @AuthenticationPrincipal CustomUserDetails userDetails) {
 		adminService.restoreDeletedNovel(novelId, userDetails);
 		return ResponseEntity.ok().build();
 	}

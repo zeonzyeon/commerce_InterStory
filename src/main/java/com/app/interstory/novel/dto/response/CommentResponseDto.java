@@ -20,6 +20,8 @@ public class CommentResponseDto {
 	private Integer likeCount;
 	private Boolean isLiked;
 	private Boolean status;
+    private Long commentId;
+    private Long userId;
 
 	public static CommentResponseDto fromComment(Comment comment) {
 		return CommentResponseDto.builder()
@@ -29,4 +31,5 @@ public class CommentResponseDto {
 			.status(comment.getStatus())
 			.build();
 	}
+
 }

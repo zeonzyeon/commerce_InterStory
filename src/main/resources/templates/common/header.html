@@ -4,12 +4,13 @@
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" rel="stylesheet">
     <div class="header-content">
         <div class="logo-area">
-            <img alt="로고" class="logo-image"
-                 th:src="@{https://est-team4-bucket.s3.ap-northeast-2.amazonaws.com/common/interstory_logo.png}">
-            <span class="logo-text">InterStory</span>
+            <img alt="로고" class="logo-image" th:src="@{https://est-team4-bucket.s3.ap-northeast-2.amazonaws.com/common/interstory_logo.png}">
+            <a class="logo-text" href="/">InterStory</a>
         </div>
         <div class="search-bar">
-            <input placeholder="제목/작가로 검색" type="text">
+            <input id="searchInput" placeholder="제목/작가로 검색" type="text">
+            <div id="searchResults" class="search-results" style="display: none;">
+            </div>
         </div>
         <div class="user-area">
             <!-- 로그인 상태에 따른 조건부 렌더링 -->
@@ -49,8 +50,4 @@
     </div>
 
     <script th:src="@{/js/common/header.js}"></script>
-    <script>
-
-
-    </script>
 </header>

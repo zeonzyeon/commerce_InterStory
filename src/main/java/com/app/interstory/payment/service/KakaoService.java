@@ -355,12 +355,13 @@ public class KakaoService {
 			String url = "https://open-api.kakaopay.com/online/v1/payment/manage/subscription/inactive";
 
 			sidRepository.delete(sid);
-			user.updateIsSubscribe(false);
+
+			subscribeRepository.findByUser_UserId(userId).updateIsContinue(false);
 
 			return template.postForObject(url, requestEntity, PaymentInactiveResponseDTO.class);
 		}
 
-		user.updateIsSubscribe(false);
+		subscribeRepository.findByUser_UserId(userId).updateIsContinue(false);
 
 		return new PaymentInactiveResponseDTO();
 	}

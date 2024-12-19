@@ -2,6 +2,7 @@ package com.app.interstory.novel.repository;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -64,4 +65,10 @@ public interface EpisodeRepository extends JpaRepository<Episode, Long>, Episode
 	);
 
 	List<Episode> findByNovel(Novel novel);
+
+	@Query("SELECT e FROM Episode e WHERE e.novel = :novel AND e.episodeNumber = :episodeNumber - 1")
+	Optional<Episode> findPrevEpisode(@Param("novel") Novel novel, @Param("episodeNumber") Integer episodeNumber);
+
+	@Query("SELECT e FROM Episode e WHERE e.novel = :novel AND e.episodeNumber = :episodeNumber + 1")
+	Optional<Episode> findNextEpisode(@Param("novel") Novel novel, @Param("episodeNumber") Integer episodeNumber);
 }

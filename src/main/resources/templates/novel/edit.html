@@ -1,0 +1,409 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta content="width=device-width, initial-scale=1.0" name="viewport">
+    <title>작품 수정</title>
+    <link rel="stylesheet" th:href="@{/css/common/header.css}">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, system-ui, Roboto, sans-serif;
+        }
+
+        body {
+            background-color: #f8f9fa;
+            color: #333;
+        }
+
+        .main-container {
+            max-width: 1200px;
+            margin: 2rem auto;
+            padding: 0 1rem;
+        }
+
+        .content-grid {
+            display: grid;
+            grid-template-columns: 1fr 2fr;
+            gap: 2rem;
+        }
+
+        .thumbnail-section {
+            background-color: white;
+            border-radius: 0.75rem;
+            padding: 1.5rem;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+        }
+
+        .thumbnail-container {
+            width: 200px;
+            height: 280px;
+            margin: 0 auto 1rem;
+            position: relative;
+            cursor: pointer;
+            border: 1px solid #e5e7eb;
+            border-radius: 0.5rem;
+            overflow: hidden;
+        }
+
+        .thumbnail-container:hover::after {
+            content: '클릭하여 이미지 변경';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.875rem;
+        }
+
+        .thumbnail-preview {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .form-section {
+            background-color: white;
+            border-radius: 0.75rem;
+            padding: 1.5rem;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .form-group label {
+            display: block;
+            color: #6b7280;
+            margin-bottom: 0.5rem;
+            font-weight: 500;
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 0.75rem 1rem;
+            border: 1px solid #e5e7eb;
+            border-radius: 0.5rem;
+            font-size: 1rem;
+        }
+
+        textarea.form-control {
+            min-height: 150px;
+            resize: vertical;
+        }
+
+        textarea.form-control[readonly] {
+            background-color: #f3f4f6;
+            color: #6b7280;
+        }
+
+        .tag-input-group {
+            display: flex;
+            gap: 0.5rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .custom-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+            margin-top: 0.5rem;
+        }
+
+        .tag-item {
+            background-color: #e5e7eb;
+            padding: 0.25rem 0.75rem;
+            border-radius: 9999px;
+            font-size: 0.875rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .tag-remove {
+            cursor: pointer;
+            color: #ef4444;
+        }
+
+        .button-container {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 2rem;
+        }
+
+        .button-group {
+            display: flex;
+            gap: 1rem;
+        }
+
+        .btn {
+            padding: 0.75rem 1.5rem;
+            border: none;
+            border-radius: 0.5rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+
+        .btn-primary {
+            background-color: #2563eb;
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background-color: #1d4ed8;
+        }
+
+        .btn-secondary {
+            background-color: #f3f4f6;
+            color: #374151;
+        }
+
+        .btn-secondary:hover {
+            background-color: #e5e7eb;
+        }
+
+        .btn-danger {
+            background-color: #dc2626;
+            color: white;
+        }
+
+        .btn-danger:hover {
+            background-color: #b91c1c;
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        .novel-status {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .novel-status input[type="checkbox"]:disabled + span {
+            color: #9ca3af;
+            cursor: not-allowed;
+        }
+
+        .novel-status label {
+            display: flex;
+            align-items: center;
+            gap: 0.25rem;
+        }
+
+        @media (max-width: 768px) {
+            .content-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+<div th:replace="~{common/header :: header}"></div>
+
+<main class="main-container">
+    <form id="novelForm" enctype="multipart/form-data">
+        <div class="content-grid">
+            <section class="thumbnail-section">
+                <div class="thumbnail-container">
+                    <img id="thumbnailPreview" class="thumbnail-preview"
+                         th:src="${novel.thumbnailUrl != null ? novel.thumbnailUrl : 'https://placehold.co/200x280'}"
+                         alt="작품 썸네일">
+                    <input type="file" id="thumbnailFile" name="file" accept="image/*" class="hidden"
+                           onchange="handleThumbnailChange()">
+                </div>
+            </section>
+
+            <section class="form-section">
+                <div class="form-group">
+                    <label for="title">작품명*</label>
+                    <input type="text" id="title" name="title" class="form-control" th:value="${novel.title}" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="mainTag">메인태그*</label>
+                    <select id="mainTag" name="tag" class="form-control" required>
+                        <option value="">선택</option>
+                        <option th:each="tag : ${T(com.app.interstory.novel.domain.enumtypes.MainTag).values()}"
+                                th:value="${tag}"
+                                th:text="${tag}"
+                                th:selected="${tag.name() == novel.tag.name()}">
+                        </option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label>마이너태그*</label>
+                    <div class="tag-input-group">
+                        <input type="text" id="customTag" class="form-control" placeholder="태그를 입력하고 Enter를 누르세요">
+                    </div>
+                    <div id="customTagContainer" class="custom-tags"></div>
+                </div>
+
+                <div class="form-group">
+                    <label for="description">작품소개*</label>
+                    <textarea id="description" name="description" class="form-control" required
+                              th:text="${novel.description}"></textarea>
+                </div>
+
+                <div class="form-group">
+                    <label for="plan">작품기획*</label>
+                    <textarea id="plan" name="plan" class="form-control" required th:text="${novel.plan}" readonly></textarea>
+                </div>
+
+                <div class="form-group novel-status">
+                    <label>
+                        <input type="checkbox" id="isFree" name="isFree" th:checked="${!novel.free}">
+                        <span>유료화</span>
+                    </label>
+
+                    <label>
+                        <input type="checkbox" id="isCompleted" name="isCompleted"
+                               th:checked="${novel.status == T(com.app.interstory.novel.domain.enumtypes.NovelStatus).COMPLETED}"
+                               th:disabled="${novel.status == T(com.app.interstory.novel.domain.enumtypes.NovelStatus).DRAFT}">
+                        <span>완결</span>
+                    </label>
+                </div>
+
+                <div class="button-container">
+                    <button type="button" class="btn btn-danger" onclick="deleteNovel()">삭제하기</button>
+                    <div class="button-group">
+                        <button type="button" class="btn btn-secondary" onclick="history.back()">취소</button>
+                        <button type="submit" class="btn btn-primary">수정하기</button>
+                    </div>
+                </div>
+            </section>
+        </div>
+    </form>
+</main>
+
+<script th:inline="javascript">
+    const novelId = [[${novel.novelId}]];
+    const currentStatus = [[${novel.status}]];
+    const existingCustomTags = new Set(/*[[${novel.tags.![tag]}]]*/ []);
+
+    document.addEventListener('DOMContentLoaded', function() {
+        updateCustomTagsDisplay();
+    });
+
+    function handleThumbnailChange() {
+        const fileInput = document.getElementById('thumbnailFile');
+        const preview = document.getElementById('thumbnailPreview');
+
+        if (fileInput.files && fileInput.files[0]) {
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                preview.src = e.target.result;
+            };
+            reader.readAsDataURL(fileInput.files[0]);
+        }
+    }
+
+    document.querySelector('.thumbnail-container').addEventListener('click', () => {
+        document.getElementById('thumbnailFile').click();
+    });
+
+    document.getElementById('customTag').addEventListener('keypress', function (e) {
+        if (e.key === 'Enter') {
+            e.preventDefault();
+            const tag = this.value.trim();
+            if (tag && !existingCustomTags.has(tag)) {
+                existingCustomTags.add(tag);
+                updateCustomTagsDisplay();
+            }
+            this.value = '';
+        }
+    });
+
+    function updateCustomTagsDisplay() {
+        const container = document.getElementById('customTagContainer');
+        container.innerHTML = '';
+        existingCustomTags.forEach(tag => {
+            const tagElement = document.createElement('div');
+            tagElement.className = 'tag-item';
+            tagElement.innerHTML = `
+                ${tag}
+                <span class="tag-remove" onclick="removeTag('${tag}')">&times;</span>
+            `;
+            container.appendChild(tagElement);
+        });
+    }
+
+    function removeTag(tag) {
+        existingCustomTags.delete(tag);
+        updateCustomTagsDisplay();
+    }
+
+    async function deleteNovel() {
+        if (confirm('정말로 이 작품을 삭제하시겠습니까? 이 작업은 되돌릴 수 없습니다.')) {
+            try {
+                const response = await fetch(`/api/novels/${novelId}`, {
+                    method: 'DELETE'
+                });
+
+                if (response.ok) {
+                    alert('작품이 성공적으로 삭제되었습니다.');
+                    window.location.href = '/';
+                } else {
+                    const error = await response.text();
+                    alert('작품 삭제에 실패했습니다: ' + error);
+                }
+            } catch (error) {
+                alert('작품 삭제 중 오류가 발생했습니다: ' + error);
+            }
+        }
+    }
+
+    document.getElementById('novelForm').addEventListener('submit', async function (e) {
+        e.preventDefault();
+
+        const formData = new FormData();
+        const novelRequestDTO = {
+            title: document.getElementById('title').value,
+            description: document.getElementById('description').value,
+            plan: document.getElementById('plan').value,
+            tag: document.getElementById('mainTag').value,
+            isFree: !document.getElementById('isFree').checked,
+            customTag: Array.from(existingCustomTags),
+            status: document.getElementById('isCompleted').checked ? 'COMPLETED' : currentStatus
+        };
+
+        formData.append('novelRequestDTO', new Blob([JSON.stringify(novelRequestDTO)], {
+            type: 'application/json'
+        }));
+
+        const thumbnailFile = document.getElementById('thumbnailFile').files[0];
+        if (thumbnailFile) {
+            formData.append('file', thumbnailFile);
+        }
+
+        try {
+            const response = await fetch(`/api/novels/${novelId}`, {
+                method: 'PUT',
+                body: formData
+            });
+
+            if (response.ok) {
+                alert('작품이 성공적으로 수정되었습니다.');
+                window.location.href = ``;
+            } else {
+                const error = await response.text();
+                alert('작품 수정에 실패했습니다: ' + error);
+            }
+        } catch (error) {
+            alert('작품 수정 중 오류가 발생했습니다: ' + error);
+        }
+    });
+</script>
+</body>
+</html>

@@ -1,5 +1,6 @@
 package com.app.interstory.novel.controller;
 
+import com.app.interstory.common.service.S3Service;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -19,6 +20,7 @@ import com.app.interstory.user.domain.CustomUserDetails;
 import com.app.interstory.user.service.UserService;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.web.multipart.MultipartFile;
 
 @Controller
 @RequestMapping("novels")
@@ -29,6 +31,7 @@ public class NovelController {
 	private final UserService userService;
 	private final EpisodeService episodeService;
 	private final CommentService commentService;
+	private final S3Service s3Service;
 
 	@GetMapping("/{novelId}")
 	public String getNovel(Model model, @PathVariable("novelId") Long novelId,
@@ -42,18 +45,41 @@ public class NovelController {
 		NovelDetailResponseDTO novel = novelService.readNovel(novelId, userDetails);
 		String nickname = userService.findById(novel.getAuthorId()).getNickname();
 
-		int pageSize = 4;
+		int pageSize = 10;
 		if (showAll)
 			pageSize = 10000;
 
 		Pageable pageable = PageRequest.of(page, pageSize);
 
+		model.addAttribute("user", userService.findById(userId));
 		model.addAttribute("novel", novel);
 		model.addAttribute("isAuthor", userId.equals(novel.getAuthorId()));
 		model.addAttribute("author", nickname);
 		model.addAttribute("episodes", episodeService.getEpisodeList(userDetails, novelId, sort, pageable, showAll));
 		model.addAttribute("comments", commentService.getNovelComment(novelId, commentSort, commentPage, userDetails));
+		model.addAttribute("point", userService.findById(userId).getPoint());
 
 		return "novel/novel";
+	}
+
+	@GetMapping("/write")
+	public String writeNovelForm(Model model, @AuthenticationPrincipal CustomUserDetails userDetails) {
+		model.addAttribute("user", userDetails.getUser());
+		return "novel/write";
+	}
+
+	@GetMapping("/{novelId}/edit")
+	public String editNovelForm(@PathVariable Long novelId, Model model, @AuthenticationPrincipal CustomUserDetails userDetails) {
+		NovelDetailResponseDTO novel = novelService.readNovel(novelId, userDetails);
+		model.addAttribute("user", userDetails.getUser());
+		model.addAttribute("novel", novel);
+		return "novel/edit";
+	}
+
+	@GetMapping("/{novelId}/write-episode")
+	public String writeEpisodeForm(@PathVariable Long novelId, Model model, @AuthenticationPrincipal CustomUserDetails userDetails) {
+		model.addAttribute("user", userDetails.getUser());
+		model.addAttribute("novelId", novelId);
+		return "novel/episode-write";
 	}
 }

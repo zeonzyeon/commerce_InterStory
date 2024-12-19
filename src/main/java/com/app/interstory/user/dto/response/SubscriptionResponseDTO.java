@@ -9,4 +9,5 @@ import lombok.Getter;
 @Getter
 public class SubscriptionResponseDTO {
 	Timestamp endAt;
+	Boolean isContinue;
 }

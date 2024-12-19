@@ -21,7 +21,7 @@ import com.app.interstory.user.domain.CustomUserDetails;
 import lombok.RequiredArgsConstructor;
 
 @RestController
-@RequestMapping("/api")
+@RequestMapping("api")
 @RequiredArgsConstructor
 public class CommentRestController {
 	private final CommentService commentService;

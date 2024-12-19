@@ -33,10 +33,12 @@ import com.app.interstory.user.service.MypageService;
 import com.app.interstory.user.service.UserService;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
 @Controller
 @RequestMapping("users")
 @RequiredArgsConstructor
+@Slf4j
 public class MypageController {
 
 	private final MypageService mypageService;
@@ -49,14 +51,15 @@ public class MypageController {
 	public String showMyComments(
 		Model model,
 		@AuthenticationPrincipal CustomUserDetails userDetails,
-		@RequestParam(defaultValue = "0") int page
+		@RequestParam(defaultValue = "0", name = "page") int page
 	) {
 
 		Page<MyCommentResponseDTO> myComments =
 			commentService.getMyComments(userDetails.getUser().getUserId(), page);
-		
+
 		model.addAttribute("myComments", myComments);
 		model.addAttribute("user", userService.findById(userDetails.getUser().getUserId()));
+		model.addAttribute("currentMenu", "comments");
 
 		return "mypage/my-comment";
 	}
@@ -70,6 +73,7 @@ public class MypageController {
 
 		UserResponseDTO currentUser = userService.getCurrentUser(userDetails.getUser().getUserId());
 		model.addAttribute("user", currentUser);
+		model.addAttribute("currentMenu", "edit");
 
 		return "mypage/edit-profile";
 	}
@@ -77,17 +81,16 @@ public class MypageController {
 	// 회원 정보 페이지
 	@GetMapping("/profile")
 	public String getUserProfile(@AuthenticationPrincipal CustomUserDetails userDetails, Model model) {
-		MypageResponseDTO userProfile = mypageService.getUser(userDetails);
-		SubscriptionResponseDTO endAt = mypageService.getSubscription(userDetails);
-
 		Pageable pageable = PageRequest.of(0, 5);
 		Pageable pageable2 = PageRequest.of(0, 100000);
 
-		model.addAttribute("user", userProfile);
-		model.addAttribute("endAt", endAt.getEndAt());
+		model.addAttribute("user", mypageService.getUser(userDetails));
+		model.addAttribute("endAt", mypageService.getSubscription(userDetails).getEndAt());
+		model.addAttribute("isSubscriptionContinue", mypageService.getSubscription(userDetails).getIsContinue());
 		model.addAttribute("novels", mypageService.getMyNovels(userDetails, pageable));
 		model.addAttribute("comments", mypageService.getMyComments(userDetails, pageable));
 		model.addAttribute("myCoupons", mypageService.getCoupons(userDetails, pageable2));
+		model.addAttribute("currentMenu", "profile");
 		return "mypage/my-profile";
 	}
 
@@ -97,6 +100,7 @@ public class MypageController {
 		Page<FavoriteNovelResponseDTO> favoriteNovels = mypageService.getFavoriteNovels(userDetails,
 			Pageable.unpaged());
 		model.addAttribute("favoriteNovels", favoriteNovels);
+		model.addAttribute("currentMenu", "favorites");
 		return "mypage/favorite-novel";
 	}
 
@@ -116,6 +120,7 @@ public class MypageController {
 		Page<ReadNovelResponseDTO> recentNovels = mypageService.getReadNovels(userDetails, sortedPageable);
 		model.addAttribute("recentNovels", recentNovels);
 		model.addAttribute("currentSort", sort);
+		model.addAttribute("currentMenu", "recent");
 
 		return "mypage/recent-novel";
 	}
@@ -124,46 +129,44 @@ public class MypageController {
 	@GetMapping("/point-history")
 	public String getPointHistory(
 		@AuthenticationPrincipal CustomUserDetails userDetails,
-		@RequestParam(defaultValue = "1") int page,
-		@RequestParam(defaultValue = "10") int size,
+		@RequestParam(defaultValue = "0", name = "page") int page,
+		@RequestParam(defaultValue = "10", name = "size") int size,
 		Model model) {
 
-		Pageable pageable = PageRequest.of(page - 1, size);
+		Pageable pageable = PageRequest.of(page, size);
 
 		Page<PointHistoryResponseDTO> pointHistoryPage = mypageService.getPointHistory(userDetails, pageable);
 
+		model.addAttribute("user", mypageService.getUser(userDetails));
 		model.addAttribute("pointHistoryList", pointHistoryPage.getContent());
 		model.addAttribute("currentPage", page);
 		model.addAttribute("totalPages", pointHistoryPage.getTotalPages());
+		model.addAttribute("currentMenu", "points");
 
 		return "mypage/point-history";
 	}
 
 	// 보유 쿠폰 페이지
 	@GetMapping("/my-coupons")
-	public String getCouponPage(@AuthenticationPrincipal CustomUserDetails userDetails, Pageable pageable,
-		Model model) {
+	public String getCouponPage(@AuthenticationPrincipal CustomUserDetails userDetails, Pageable pageable, Model model) {
 		Page<UserCouponResponseDTO> coupons = mypageService.getCoupons(userDetails, pageable);
-		model.addAttribute("coupons", coupons.getContent());
+
+		model.addAttribute("user", mypageService.getUser(userDetails));
+		model.addAttribute("coupons", coupons);
+		model.addAttribute("currentPage", pageable.getPageNumber());
+		model.addAttribute("totalPages", coupons.getTotalPages());
+		model.addAttribute("currentMenu", "coupons");
 		return "mypage/my-coupons";
 	}
 
 	// 연재 작품 페이지
 	@GetMapping("/my-novel")
-	public String getMyNovels(@AuthenticationPrincipal CustomUserDetails userDetails,
-		@PageableDefault(size = 10) Pageable pageable,
-		Model model) {
-		// 연재 작품 목록
-		Page<MyNovelResponseDTO> myNovels = mypageService.getMyNovels(userDetails, pageable);
-		model.addAttribute("myNovels", myNovels.getContent());
-
-		// 계좌 정보
-		AccountResponseDTO accountInfo = mypageService.getAccount(userDetails);
-		model.addAttribute("accountInfo", accountInfo);
-
-		// 정산 정보
-		SettlementResponseDTO settlement = mypageService.getSettlement(userDetails);
-		model.addAttribute("settlement", settlement);
+	public String getMyNovels(@AuthenticationPrincipal CustomUserDetails userDetails, @PageableDefault(size = 10000) Pageable pageable, Model model) {
+		model.addAttribute("user", mypageService.getUser(userDetails));
+		model.addAttribute("myNovels", mypageService.getMyNovels(userDetails, pageable));
+		model.addAttribute("accountInfo", mypageService.getAccount(userDetails));
+		model.addAttribute("settlement", mypageService.getSettlement(userDetails).getFee());
+		model.addAttribute("currentMenu", "myNovel");
 		return "mypage/novel-list";
 	}
 

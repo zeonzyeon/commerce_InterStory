@@ -3,79 +3,9 @@
 <head>
   <meta charset="UTF-8">
   <meta content="width=device-width, initial-scale=1.0" name="viewport">
+  <link rel="stylesheet" th:href="@{/css/common/header.css}">
   <title>공지사항 수정 | InterStory</title>
   <style>
-    /* 헤더 스타일 */
-    .header {
-      background: #fff;
-      padding: 1rem 2rem;
-      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-      position: sticky;
-      top: 0;
-      z-index: 100;
-    }
-
-    .header-content {
-      max-width: 1200px;
-      margin: 0 auto;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      gap: 2rem;
-    }
-
-    .logo-area {
-      display: flex;
-      align-items: center;
-      gap: 0.5rem;
-      min-width: 150px;
-    }
-
-    .logo-image {
-      width: 32px;
-      height: 32px;
-      object-fit: cover;
-    }
-
-    .logo-text {
-      font-size: 1.25rem;
-      font-weight: 700;
-      color: #111;
-    }
-
-    .search-bar {
-      flex: 1;
-      max-width: 400px;
-      position: relative;
-    }
-
-    .search-bar input {
-      width: 100%;
-      padding: 0.75rem 1rem;
-      border: 1px solid #ddd;
-      border-radius: 20px;
-      font-size: 0.9rem;
-      background: #f8f9fa;
-    }
-
-    .search-bar input:focus {
-      outline: none;
-      border-color: #333;
-      background: #fff;
-    }
-
-    .user-profile {
-      display: flex;
-      align-items: center;
-      gap: 1rem;
-    }
-
-    .user-profile img {
-      width: 40px;
-      height: 40px;
-      border-radius: 50%;
-      object-fit: cover;
-    }
 
     /* 메인 컨텐츠 영역 */
     .admin-nav {
@@ -189,30 +119,16 @@
   </style>
 </head>
 <body>
-<!-- 헤더는 동일하게 유지 -->
-<header class="header">
-  <div class="header-content">
-    <div class="logo-area">
-      <img alt="로고" class="logo-image" th:src="@{/images/logo.png}">
-      <span class="logo-text">InterStory</span>
-    </div>
-    <div class="search-bar">
-      <input placeholder="제목/작가로 검색" type="text">
-    </div>
-    <div class="user-profile">
-      <span th:text="${userNickname}">닉네임</span>
-      <img alt="프로필" src="/images/default-profile.png" th:src="${userProfileImage}">
-    </div>
-  </div>
-</header>
+<!-- 헤더 -->
+<div th:replace="~{common/header :: header}"></div>
 
 <main class="admin-nav">
   <div class="notice-menu">
     <div class="menu-items">
       <a href="/admin/users" class="menu-item">유저 조회</a>
       <a href="/admin/novels" class="menu-item">작품 관리</a>
-      <a href="/admin/coupons" class="menu-item active">쿠폰 관리</a>
-      <a href="/admin/notices" class="menu-item">공지사항</a>
+      <a href="/admin/coupons" class="menu-item">쿠폰 관리</a>
+      <a href="/admin/notices" class="menu-item active">공지사항</a>
     </div>
   </div>
 

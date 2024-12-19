@@ -24,6 +24,8 @@ public class QNovel extends EntityPathBase<Novel> {
 
     public final StringPath description = createString("description");
 
+    public final ListPath<Episode, QEpisode> episodes = this.<Episode, QEpisode>createList("episodes", Episode.class, QEpisode.class, PathInits.DIRECT2);
+
     public final DateTimePath<java.sql.Timestamp> episodeUpdatedAt = createDateTime("episodeUpdatedAt", java.sql.Timestamp.class);
 
     public final NumberPath<Integer> favoriteCount = createNumber("favoriteCount", Integer.class);
