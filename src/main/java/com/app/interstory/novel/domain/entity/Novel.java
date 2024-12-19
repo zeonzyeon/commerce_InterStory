@@ -4,6 +4,7 @@ import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
 
+import jakarta.persistence.*;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
@@ -29,6 +30,13 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+
+import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
+
+import java.sql.Timestamp;
+import java.util.ArrayList;
+import java.util.List;
 
 @Getter
 @Entity
@@ -101,7 +109,6 @@ public class Novel {
 	public void update(
 		String title,
 		String description,
-		String plan,
 		String thumbnailRenamedFilename,
 		String thumbnailUrl,
 		MainTag tag,
@@ -110,7 +117,6 @@ public class Novel {
 	) {
 		this.title = title;
 		this.description = description;
-		this.plan = plan;
 		this.thumbnailRenamedFilename = thumbnailRenamedFilename;
 		this.thumbnailUrl = thumbnailUrl;
 		this.tag = tag;
@@ -130,4 +136,8 @@ public class Novel {
 		this.favoriteCount = favoriteCount;
 	}
 
+	public void updateThumbnail(String thumbnailUrl) {
+		this.thumbnailUrl = thumbnailUrl;
+		this.thumbnailRenamedFilename = thumbnailUrl.substring(thumbnailUrl.lastIndexOf("/") + 1);
+	}
 }

@@ -24,4 +24,9 @@ public class Tag {
 
 	@Column(name = "tag", nullable = false)
 	private String tag;
+
+	public Tag(Novel novel,  String tag) {
+		this.novel = novel;
+		this.tag = tag;
+	}
 }

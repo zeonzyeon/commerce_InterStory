@@ -1,16 +1,7 @@
 package com.app.interstory.novel.service;
 
-import java.util.List;
-import java.util.concurrent.TimeUnit;
-
-import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.redis.core.RedisTemplate;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-
+import com.app.interstory.common.service.S3Service;
+import com.app.interstory.config.FilePathConfig;
 import com.app.interstory.novel.domain.entity.Episode;
 import com.app.interstory.novel.domain.entity.FavoriteNovel;
 import com.app.interstory.novel.domain.entity.Novel;
@@ -29,206 +20,267 @@ import com.app.interstory.novel.repository.NovelRepository;
 import com.app.interstory.novel.repository.TagRepository;
 import com.app.interstory.user.domain.CustomUserDetails;
 import com.app.interstory.user.domain.enumtypes.NovelSortType;
+import com.app.interstory.user.domain.enumtypes.Roles;
 import com.app.interstory.user.repository.UserRepository;
-
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
+
+import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 @Slf4j
 @Service
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
 public class NovelService {
-	private final NovelRepository novelRepository;
-	private final UserRepository userRepository;
-	private final EpisodeRepository episodeRepository;
-	private final TagRepository tagRepository;
-	@Qualifier("redisObjectTemplate")
-	private final RedisTemplate<String, Object> redisTemplate;
-	private final FavoriteNovelRepository favoriteNovelRepository;
+    private final NovelRepository novelRepository;
+    private final UserRepository userRepository;
+    private final EpisodeRepository episodeRepository;
+    private final TagRepository tagRepository;
+    @Qualifier("redisObjectTemplate")
+    private final RedisTemplate<String, Object> redisTemplate;
+    private final FavoriteNovelRepository favoriteNovelRepository;
+    private final S3Service s3Service;
+    private final FilePathConfig filePathConfig;
 
-	// 소설 작성
-	@Transactional
-	public Long writeNovel(NovelRequestDTO novelRequestDTO, Long userId) {
-		Novel novel = Novel.builder()
-			.user(userRepository.findById(userId)
-				.orElseThrow(() -> new RuntimeException("User not found")))
-			.title(novelRequestDTO.getTitle())
-			.description(novelRequestDTO.getDescription())
-			.plan(novelRequestDTO.getPlan())
-			.status(NovelStatus.DRAFT)
-			.thumbnailRenamedFilename(novelRequestDTO.getThumbnailRenamedFilename())
-			.thumbnailUrl(novelRequestDTO.getThumbnailUrl())
-			.tag(novelRequestDTO.getTag())
-			.isFree(novelRequestDTO.getIsFree())
-			.build();
+    // 소설 작성
+    @Transactional
+    public Long writeNovel(NovelRequestDTO novelRequestDTO, MultipartFile file, CustomUserDetails userDetails) {
 
-		novelRepository.save(novel);
-		return novel.getNovelId();
-	}
+        String thumbnailUrl = file != null ? uploadThumbnail(file) : filePathConfig.getDefaultThumbnailPath();
+        String renamedFileName = thumbnailUrl.substring(thumbnailUrl.lastIndexOf("/") + 1);
 
-	// 소설 수정
-	@Transactional
-	public void updateNovel(Long novelId, NovelRequestDTO novelRequestDTO, Long userId) {
-		Novel novel = novelRepository.findById(novelId)
-			.orElseThrow(() -> new RuntimeException("Novel not found"));
+        String filePath = filePathConfig.getThumbnailPath() + renamedFileName;
 
-		if (!novel.getUser().getUserId().equals(userId)) {
-			throw new RuntimeException("Unauthorized user");
-		}
+        Novel novel = Novel.builder()
+                .user(userRepository.findById(userDetails.getUser().getUserId())
+                        .orElseThrow(() -> new RuntimeException("User not found")))
+                .title(novelRequestDTO.getTitle())
+                .description(novelRequestDTO.getDescription())
+                .plan(novelRequestDTO.getPlan())
+                .thumbnailUrl(filePath)
+                .thumbnailRenamedFilename(renamedFileName)
+                .status(NovelStatus.DRAFT)
+                .tag(novelRequestDTO.getTag())
+                .isFree(novelRequestDTO.getIsFree())
+                .build();
 
-		novel.update(
-			novelRequestDTO.getTitle(),
-			novelRequestDTO.getDescription(),
-			novelRequestDTO.getPlan(),
-			novelRequestDTO.getThumbnailRenamedFilename(),
-			novelRequestDTO.getThumbnailUrl(),
-			novelRequestDTO.getTag(),
-			novelRequestDTO.getStatus(),
-			novelRequestDTO.getIsFree()
-		);
-	}
+        novelRepository.save(novel);
 
-	// 소설 상세 조회
-	public NovelDetailResponseDTO readNovel(Long novelId, CustomUserDetails userDetails) {
-		Novel novel = novelRepository.findById(novelId)
-			.orElseThrow(() -> new RuntimeException("Novel not found"));
+        List<String> customTags = novelRequestDTO.getCustomTag();
+        if (customTags != null) {
+            for (String tagName : customTags) {
+                Tag tag = new Tag(novel, tagName);
+                tagRepository.save(tag);
+            }
+        }
 
-		return new NovelDetailResponseDTO(
-			novel.getNovelId(),
-			novel.getUser().getUserId(),
-			novel.getTitle(),
-			novel.getDescription(),
-			novel.getPlan(),
-			novel.getThumbnailUrl(),
-			novel.getStatus(),
-			novel.getTag(),
-			tagRepository.findByNovel(novel),
-			novel.getIsFree(),
-			novel.getFavoriteCount(),
-			novel.getLikeCount(),
-			episodeRepository.countByNovel(novel),
-			episodeRepository.findByNovel(novel).stream()
-				.mapToInt(Episode::getCommentCount)
-				.sum(),
-			favoriteNovelRepository.existsByUser_UserId(userDetails.getUser().getUserId())
-		);
-	}
+        return novel.getNovelId();
+    }
 
-	// 소설 목록 조회
-	public NovelListResponseDTO getNovelList(
-		NovelStatus status,
-		String title,
-		String author,
-		Boolean monetized,
-		MainTag tag,
-		SortType sort,
-		Integer page
-	) {
-		final int getItemCount = 10;
+    // 소설 수정
+    @Transactional
+    public void updateNovel(Long novelId, NovelRequestDTO novelRequestDTO, MultipartFile file, CustomUserDetails userDetails) {
+        Novel novel = novelRepository.findById(novelId)
+                .orElseThrow(() -> new RuntimeException("Novel not found"));
 
-		Pageable pageable = PageRequest.of(page - 1, getItemCount);
+        if (!novel.getUser().getUserId().equals(userDetails.getUser().getUserId()) && userDetails.getUser().getRole() != Roles.ADMIN) {
+            throw new RuntimeException("Unauthorized user");
+        }
 
-		Page<Novel> novelPages = novelRepository.findByFilterAndSort(
-			status, title, author, monetized, tag, sort.getDescription(), pageable
-		);
+        String thumbnailUrl = updateThumbnailImage(novel, file);
+        String renamedFileName = thumbnailUrl.substring(thumbnailUrl.lastIndexOf("/") + 1);
+        String filePath = filePathConfig.getThumbnailPath() + renamedFileName;
 
-		if (page > novelPages.getTotalPages()) {
-			throw new RuntimeException("유효하지 않은 페이지입니다.");
-		}
+        tagRepository.deleteByNovel(novel);
 
-		List<NovelResponseDTO> novels = novelPages.stream()
-			.map(novel -> {
-				List<String> customTags = tagRepository.findByNovel(novel).stream()
-					.map(Tag::getTag)
-					.toList();
-				return NovelResponseDTO.from(novel, customTags);
-			})
-			.toList();
+        List<String> customTags = novelRequestDTO.getCustomTag();
+        if (customTags != null) {
+            for (String tagName : customTags) {
+                Tag tag = new Tag(novel, tagName);
+                tagRepository.save(tag);
+            }
+        }
 
-		return NovelListResponseDTO.from(novels, novelPages.getTotalPages());
-	}
+        novel.update(
+                novelRequestDTO.getTitle(),
+                novelRequestDTO.getDescription(),
+                renamedFileName,
+                filePath,
+                novelRequestDTO.getTag(),
+                novelRequestDTO.getStatus(),
+                novelRequestDTO.getIsFree()
+        );
+    }
 
-	// 소설 삭제
-	@Transactional
-	public void deleteNovel(Long novelId, Long userId) {
-		Novel novel = novelRepository.findById(novelId)
-			.orElseThrow(() -> new RuntimeException("Novel not found with id: " + novelId));
+    // 소설 상세 조회
+    public NovelDetailResponseDTO readNovel(Long novelId, CustomUserDetails userDetails) {
+        Novel novel = novelRepository.findById(novelId)
+                .orElseThrow(() -> new RuntimeException("Novel not found"));
 
-		if (!novel.getUser().getUserId().equals(userId)) {
-			throw new RuntimeException("Unauthorized user");
-		}
+        return new NovelDetailResponseDTO(
+                novel.getNovelId(),
+                novel.getUser().getUserId(),
+                novel.getTitle(),
+                novel.getDescription(),
+                novel.getPlan(),
+                novel.getThumbnailUrl(),
+                novel.getStatus(),
+                novel.getTag(),
+                tagRepository.findByNovel(novel),
+                novel.getIsFree(),
+                novel.getFavoriteCount(),
+                novel.getLikeCount(),
+                episodeRepository.countByNovel(novel),
+                episodeRepository.findByNovel(novel).stream()
+                        .mapToInt(Episode::getCommentCount)
+                        .sum(),
+                favoriteNovelRepository.existsByUser_UserId(userDetails.getUser().getUserId())
+        );
+    }
 
-		if (novel.getStatus() == NovelStatus.DELETED) {
-			throw new RuntimeException("Novel is already deleted.");
-		}
+    // 소설 목록 조회
+    public NovelListResponseDTO getNovelList(
+            NovelStatus status,
+            String title,
+            String author,
+            Boolean monetized,
+            MainTag tag,
+            SortType sort,
+            Integer page
+    ) {
+        final int getItemCount = 10;
 
-		novel.markAsDeleted();
-		novelRepository.save(novel);
-	}
+        Pageable pageable = PageRequest.of(page - 1, getItemCount);
 
-	// 관심작품 등록
-	@Transactional
-	public String likeNovel(Long userId, Long novelId) {
-		String afterLikeMessage;
+        Page<Novel> novelPages = novelRepository.findByFilterAndSort(
+                status, title, author, monetized, tag, sort.getDescription(), pageable
+        );
 
-		// 에피소드 조회
-		Novel novel = novelRepository.findById(novelId)
-			.orElseThrow(() -> new RuntimeException("Novel not found"));
+        if (page > novelPages.getTotalPages()) {
+            throw new RuntimeException("유효하지 않은 페이지입니다.");
+        }
 
-		if (favoriteNovelRepository.existsByUser_UserId(userId)) {
-			favoriteNovelRepository.deleteByUser_UserId(userId);
-			novel.updateFavoriteCount(novel.getFavoriteCount() - 1);
-			afterLikeMessage = "관심 작품에서 제거되었습니다.";
-		} else {
-			FavoriteNovel favoriteNovel = FavoriteNovel.builder()
-				.user(userRepository.findById(userId)
-					.orElseThrow(() -> new RuntimeException("User not found")))
-				.novel(novel)
-				.build();
-			favoriteNovelRepository.save(favoriteNovel);
-			novel.updateFavoriteCount(novel.getFavoriteCount() + 1);
-			afterLikeMessage = "관심 작품으로 등록했습니다.";
-		}
+        List<NovelResponseDTO> novels = novelPages.stream()
+                .map(novel -> {
+                    List<String> customTags = tagRepository.findByNovel(novel).stream()
+                            .map(Tag::getTag)
+                            .toList();
+                    return NovelResponseDTO.from(novel, customTags);
+                })
+                .toList();
 
-		return afterLikeMessage;
-	}
+        return NovelListResponseDTO.from(novels, novelPages.getTotalPages());
+    }
 
-	// 태그별 인기 작품 캐싱 (TTL: 3시간)
-	public List<NovelResponseDTO> getPopularNovelsByTag(NovelSortRequestDTO request) {
+    // 소설 삭제
+    @Transactional
+    public void deleteNovel(Long novelId, CustomUserDetails userDetails) {
+        Novel novel = novelRepository.findById(novelId)
+                .orElseThrow(() -> new RuntimeException("Novel not found with id: " + novelId));
 
-		String cacheKey = "popular:novels:" + request.getMainTag() + request.getType();
-		List<NovelResponseDTO> cached = (List<NovelResponseDTO>)redisTemplate.opsForValue().get(cacheKey);
+        if (!novel.getUser().getUserId().equals(userDetails.getUser().getUserId()) && userDetails.getUser().getRole() != Roles.ADMIN) {
+            throw new RuntimeException("Unauthorized user");
+        }
 
-		if (cached == null) {
-			log.info("**********cache refresh check*******************");
-			cached = novelRepository.findPopularNovelsByTag(request).stream()
-				.map(NovelResponseDTO::from)
-				.toList();
+        novel.markAsDeleted();
+    }
 
-			redisTemplate.opsForValue().set(cacheKey, cached, 3, TimeUnit.HOURS);
-		}
+    // 관심작품 등록
+    @Transactional
+    public String likeNovel(Long userId, Long novelId) {
+        String afterLikeMessage;
 
-		return cached;
-	}
+        // 에피소드 조회
+        Novel novel = novelRepository.findById(novelId)
+                .orElseThrow(() -> new RuntimeException("Novel not found"));
 
-	//인기순 최신순 이름순 캐싱 - 3시간
-	public List<NovelResponseDTO> getOrderedNovel(NovelSortType novelSortType) {
+        if (favoriteNovelRepository.existsByUser_UserId(userId)) {
+            favoriteNovelRepository.deleteByUser_UserId(userId);
+            novel.updateFavoriteCount(novel.getFavoriteCount() - 1);
+            afterLikeMessage = "관심 작품에서 제거되었습니다.";
+        } else {
+            FavoriteNovel favoriteNovel = FavoriteNovel.builder()
+                    .user(userRepository.findById(userId)
+                            .orElseThrow(() -> new RuntimeException("User not found")))
+                    .novel(novel)
+                    .build();
+            favoriteNovelRepository.save(favoriteNovel);
+            novel.updateFavoriteCount(novel.getFavoriteCount() + 1);
+            afterLikeMessage = "관심 작품으로 등록했습니다.";
+        }
 
-		String cacheKey = "popular:novels:cache:" + novelSortType;
-		log.info("cacheKey*****{}", cacheKey);
-		List<NovelResponseDTO> cached = (List<NovelResponseDTO>)redisTemplate.opsForValue().get(cacheKey);
+        return afterLikeMessage;
+    }
 
-		if (cached == null) {
-			log.info("**********cache refresh check*******************");
+    // 태그별 인기 작품 캐싱 (TTL: 3시간)
+    public List<NovelResponseDTO> getPopularNovelsByTag(NovelSortRequestDTO request) {
 
-			cached = novelRepository.findNovelByOrder(novelSortType).stream()
-				.map(NovelResponseDTO::from)
-				.toList();
+        String cacheKey = "popular:novels:" + request.getMainTag() + request.getType();
+        List<NovelResponseDTO> cached = (List<NovelResponseDTO>) redisTemplate.opsForValue().get(cacheKey);
 
-			redisTemplate.opsForValue().set(cacheKey, cached, 3, TimeUnit.HOURS);
-		}
+        if (cached == null) {
+            log.info("**********cache refresh check*******************");
+            cached = novelRepository.findPopularNovelsByTag(request).stream()
+                    .map(NovelResponseDTO::from)
+                    .toList();
 
-		return cached;
-	}
+            redisTemplate.opsForValue().set(cacheKey, cached, 3, TimeUnit.HOURS);
+        }
+
+        return cached;
+    }
+
+    //인기순 최신순 이름순 캐싱 - 3시간
+    public List<NovelResponseDTO> getOrderedNovel(NovelSortType novelSortType) {
+
+        String cacheKey = "popular:novels:cache:" + novelSortType;
+        log.info("cacheKey*****{}", cacheKey);
+        List<NovelResponseDTO> cached = (List<NovelResponseDTO>) redisTemplate.opsForValue().get(cacheKey);
+
+        if (cached == null) {
+            log.info("**********cache refresh check*******************");
+
+            cached = novelRepository.findNovelByOrder(novelSortType).stream()
+                    .map(NovelResponseDTO::from)
+                    .toList();
+
+            redisTemplate.opsForValue().set(cacheKey, cached, 3, TimeUnit.HOURS);
+        }
+
+        return cached;
+    }
+
+    // 썸네일 이미지 업데이트
+    @Transactional
+    public String updateThumbnailImage(Novel novel, MultipartFile file) {
+
+        // 기존 썸네일 삭제
+        deleteExistingThumbnail(novel);
+
+        // 새 썸네일 업로드
+        String thumbnailUrl = uploadThumbnail(file);
+        novel.updateThumbnail(thumbnailUrl);
+
+        return thumbnailUrl;
+    }
+
+    private String uploadThumbnail(MultipartFile file) {
+        String dirPath = filePathConfig.getThumbnail();
+        return s3Service.uploadFile(file, dirPath);
+    }
+
+    private void deleteExistingThumbnail(Novel novel) {
+        if (!novel.getThumbnailRenamedFilename().equals("novel.png")) {
+            s3Service.deleteFile(novel.getThumbnailUrl(), filePathConfig.getThumbnail());
+        }
+    }
 }

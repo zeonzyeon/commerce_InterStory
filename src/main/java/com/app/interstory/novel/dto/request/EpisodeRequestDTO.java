@@ -10,8 +10,5 @@ import lombok.NoArgsConstructor;
 public class EpisodeRequestDTO {
 	private Long novelId;
 	private String title;
-	private String thumbnailRenamedFilename;
-	private String thumbnailUrl;
 	private String content;
-	private Boolean status;
 }

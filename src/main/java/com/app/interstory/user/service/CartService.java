@@ -3,6 +3,8 @@ package com.app.interstory.user.service;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import com.app.interstory.user.domain.CustomUserDetails;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -24,19 +26,22 @@ public class CartService {
 	private final PointRepository pointRepository;
 
 	// 장바구니 아이템 조회
-	public List<CartItemResponseDTO> getCartItems(Long userId) {
-		List<CartItem> cartItems = cartItemRepository.findByUser_UserId(userId);
+	public List<CartItemResponseDTO> getCartItems(CustomUserDetails userDetails) {
+
+		if (userDetails == null) {
+			throw new IllegalStateException("로그인이 필요한 서비스입니다.");
+		}
+
+		List<CartItem> cartItems = cartItemRepository.findByUser_UserId(userDetails.getUser().getUserId());
 
 		return cartItems.stream()
-			.map(item -> new CartItemResponseDTO(
-				item.getCartItemId(),
-				item.getEpisode().getEpisodeId(),
-				item.getEpisode().getTitle()))
-			.collect(Collectors.toList());
+				.map(CartItemResponseDTO::from)
+				.collect(Collectors.toList());
 	}
 
 	// 장바구니 아이템 선택 삭제
-	public void deleteCartItems(Long userId, List<Long> cartItemIds) {
+	public void deleteCartItems(CustomUserDetails userDetails, List<Long> cartItemIds) {
+		Long userId = userDetails.getUser().getUserId();
 		List<CartItem> cartItems = cartItemRepository.findByUser_UserIdAndCartItemIdIn(userId, cartItemIds);
 
 		if (cartItems.isEmpty()) {
