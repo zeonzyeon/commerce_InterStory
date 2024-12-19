@@ -6,6 +6,7 @@ import org.springframework.stereotype.Repository;
 import com.app.interstory.payment.domain.entity.Subscribe;
 
 @Repository
-public interface SubscribeRepository extends JpaRepository<Subscribe, Long> {
+public interface SubscribeRepository extends JpaRepository<Subscribe, Long>, SubscribeRepositoryCustom {
 	Subscribe findByUser_UserId(Long userId);
+
 }
