@@ -1,22 +1,32 @@
 package com.app.interstory.novel.dto.response;
 
-import java.sql.Timestamp;
-import java.time.format.DateTimeFormatter;
+import com.app.interstory.novel.domain.entity.Comment;
 
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
-import lombok.Setter;
+import lombok.NoArgsConstructor;
 
 @Getter
-@Setter
 @Builder
+@NoArgsConstructor
+@AllArgsConstructor
 public class CommentResponseDto {
-	private final String nickname;
-	private final String profileUrl;
-	private final String content;
-	private final String episodeTitle;
-	private final String createdAt;
-	private final Integer likeCount;
-	private final Boolean isLiked;
-	private final Boolean status;
+	private String nickname;
+	private String profileUrl;
+	private String content;
+	private String episodeTitle;
+	private String createdAt;
+	private Integer likeCount;
+	private Boolean isLiked;
+	private Boolean status;
+
+	public static CommentResponseDto fromComment(Comment comment) {
+		return CommentResponseDto.builder()
+			.content(comment.getContent())
+			.createdAt(comment.getCreatedAt().toString())
+			.likeCount(comment.getLikeCount())
+			.status(comment.getStatus())
+			.build();
+	}
 }

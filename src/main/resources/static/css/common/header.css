@@ -10,7 +10,7 @@ body {
     color: #333;
 }
 
-/* 헤더 스타일 */
+/* �ㅻ뜑 �ㅽ��� */
 .header {
     background: #fff;
     padding: 1rem 2rem;
@@ -54,7 +54,37 @@ body {
     position: relative;
 }
 
-/* 반응형 처리 */
+.search-results {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    background: white;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    margin-top: 4px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    max-height: 300px;
+    overflow-y: auto;
+}
+
+.search-result-item {
+    padding: 10px;
+    border-bottom: 1px solid #eee;
+    cursor: pointer;
+}
+
+.search-result-item:hover {
+    background-color: #f5f5f5;
+}
+
+.loading {
+    text-align: center;
+    padding: 10px;
+    color: #666;
+}
+
+/* 諛섏쓳�� 泥섎━ */
 @media (max-width: 768px) {
     .header-content {
         gap: 1rem;
@@ -104,4 +134,77 @@ body {
     height: 40px;
     border-radius: 50%;
     object-fit: cover;
+}
+
+/* 프로필 호버 메뉴 스타일 */
+.profile-wrapper {
+    position: relative;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
+.hover-menu {
+    position: absolute;
+    top: 100%;
+    right: 0;
+    width: 200px;
+    background: white;
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    padding: 8px 0;
+    margin-top: 8px;
+    opacity: 0;
+    visibility: hidden;
+    transition: all 0.2s ease-in-out;
+}
+
+.profile-wrapper:hover .hover-menu {
+    opacity: 1;
+    visibility: visible;
+}
+
+.menu-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px 16px;
+    color: #333;
+    text-decoration: none;
+    transition: background-color 0.2s ease;
+}
+
+.menu-item i {
+    width: 20px;
+    color: #666;
+}
+
+.menu-item:hover {
+    background-color: #f8f9fa;
+}
+
+.menu-divider {
+    height: 1px;
+    background-color: #eee;
+    margin: 8px 0;
+}
+
+.menu-item.logout {
+    color: #dc3545;
+}
+
+.menu-item.logout i {
+    color: #dc3545;
+}
+
+/* 호버 메뉴 화살표 */
+.hover-menu::before {
+    content: '';
+    position: absolute;
+    top: -8px;
+    right: 20px;
+    border-left: 8px solid transparent;
+    border-right: 8px solid transparent;
+    border-bottom: 8px solid white;
 }

@@ -1,0 +1,121 @@
+.page-container {
+    display: flex;
+    gap: 2rem;
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 2rem;
+}
+
+.main-content {
+    flex: 1;
+}
+
+.written-comments {
+    background: white;
+    border-radius: 12px;
+    padding: 2rem;
+}
+
+.written-comments h2 {
+    margin-bottom: 1.5rem;
+    font-size: 1.5rem;
+}
+
+.comments-list {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.comment-card {
+    background: #f8f9fa;
+    border-radius: 8px;
+    padding: 1rem;
+}
+
+.comment-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1rem;
+}
+
+.comment-header-content {
+    font-weight: 500;
+}
+
+.comment-header-content span:first-child {
+    margin-right: 0.5rem;
+}
+
+.delete-button {
+    background: none;
+    border: none;
+    color: #666;
+    cursor: pointer;
+    font-size: 1.2rem;
+}
+
+.comment-content {
+    margin-bottom: 1rem;
+    line-height: 1.5;
+}
+
+.comment-footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    color: #666;
+    font-size: 0.9rem;
+}
+
+.like-count {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.no-comments {
+    text-align: center;
+    padding: 3rem 0;
+    color: #666;
+}
+
+/* 페이지네이션 스타일 */
+.pagination-wrapper {
+    margin-top: 2rem;
+    display: flex;
+    justify-content: center;
+}
+
+.pagination {
+    display: flex;
+    list-style: none;
+    gap: 0.5rem;
+}
+
+.pagination li {
+    min-width: 2rem;
+    height: 2rem;
+}
+
+.pagination li a {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    height: 100%;
+    border-radius: 4px;
+    color: #333;
+    text-decoration: none;
+}
+
+.pagination li.active a {
+    background: #333;
+    color: white;
+}
+
+.pagination li.disabled a {
+    color: #ccc;
+    pointer-events: none;
+}

@@ -286,21 +286,8 @@
 </head>
 <body>
 <!-- 헤더 -->
-<header class="header">
-    <div class="header-content">
-        <div class="logo-area">
-            <img alt="로고" class="logo-image" th:src="@{/images/logo.png}">
-            <span class="logo-text">InterStory</span>
-        </div>
-        <div class="search-bar">
-            <input placeholder="제목/작가로 검색" type="text">
-        </div>
-        <div class="user-profile">
-            <span th:text="${userNickname}">닉네임</span>
-            <img alt="프로필" src="/images/default-profile.png" th:src="${userProfileImage}">
-        </div>
-    </div>
-</header>
+<div th:replace="~{common/header :: header}"></div>
+
 <main class="written-comments-container">
     <!-- 마이페이지 메뉴 -->
     <div class="user-menu">
@@ -317,7 +304,7 @@
         <div class="profile-info">
             <div class="profile-picture"></div>
             <span class="profile-name">
-                <span class="nickname" th:text="${user.nickname}">닉네임</span> 님의 프로필
+<!--                <span class="nickname" th:text="${user.nickname}">닉네임</span> 님의 프로필-->
             </span>
         </div>
         <div class="profile-buttons">
