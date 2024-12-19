@@ -102,6 +102,7 @@ kakaopay:
   onetime_cid: ${KAKAOPAY_ONETIME_CID}
   sequence_cid: ${KAKAOPAY_SEQUENCE_CID}
   subscription_cid: ${KAKAOPAY_SUBSCRIP_CID}
+  redirect_url: ${KAKAOPAY_REDIRECT_URL}
 
 logging:
   level:

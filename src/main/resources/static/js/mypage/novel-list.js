@@ -26,6 +26,7 @@ function calculateSettlement() {
         type: 'POST',
         success: function (response) {
             alert("정산이 완료되었습니다");
+            location.reload();
         },
         error: function (xhr, err, status) {
             alert(err + "이(가) 발생했습니다: " + status);

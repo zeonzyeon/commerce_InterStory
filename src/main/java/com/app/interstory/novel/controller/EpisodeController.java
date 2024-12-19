@@ -7,8 +7,10 @@ import com.app.interstory.novel.service.CommentService;
 import com.app.interstory.novel.service.EpisodeService;
 import com.app.interstory.user.domain.CustomUserDetails;
 import com.app.interstory.user.domain.enumtypes.Roles;
+
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
+
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -22,60 +24,60 @@ import org.springframework.web.bind.annotation.RequestParam;
 @RequiredArgsConstructor
 public class EpisodeController {
 
-    private final EpisodeService episodeService;
-    private final CommentService commentService;
+	private final EpisodeService episodeService;
+	private final CommentService commentService;
 
-    @GetMapping("/detail/{episodeId}")
-    public String episodeDetail(
-            @PathVariable Long episodeId,
-            @AuthenticationPrincipal CustomUserDetails customUserDetails,
-            HttpServletRequest request,
-            Model model
-    ) {
+	@GetMapping("/detail/{episodeId}")
+	public String episodeDetail(
+		@PathVariable(name = "episodeId") Long episodeId,
+		@AuthenticationPrincipal CustomUserDetails customUserDetails,
+		HttpServletRequest request,
+		Model model
+	) {
 
-        EpisodeDetailResponseDto episodeDetail = episodeService.viewEpisodeDetail(episodeId, request);
-        Boolean isLikeEpisode = episodeService.existEpisodeLike(episodeId, customUserDetails);
-        model.addAttribute("episodeDetail", episodeDetail);
-        model.addAttribute("isLikeEpisode", isLikeEpisode);
-        return "novel/episode";
-    }
+		EpisodeDetailResponseDto episodeDetail = episodeService.viewEpisodeDetail(episodeId, request);
+		Boolean isLikeEpisode = episodeService.existEpisodeLike(episodeId, customUserDetails);
+		model.addAttribute("episodeDetail", episodeDetail);
+		model.addAttribute("isLikeEpisode", isLikeEpisode);
+		return "novel/episode";
+	}
 
-    @GetMapping("/{episodeId}/comments")
-    public String getEpisodeComments(
-            Model model,
-            @PathVariable("episodeId") Long episodeId,
-            @RequestParam(defaultValue = "RECOMMENDATION") SortType sort,
-            @RequestParam(defaultValue = "0") Integer page,
-            HttpServletRequest request,
-            @AuthenticationPrincipal CustomUserDetails userDetails) {
+	@GetMapping("/{episodeId}/comments")
+	public String getEpisodeComments(
+		Model model,
+		@PathVariable("episodeId") Long episodeId,
+		@RequestParam(defaultValue = "RECOMMENDATION", name = "sort") SortType sort,
+		@RequestParam(defaultValue = "0", name = "page") Integer page,
+		HttpServletRequest request,
+		@AuthenticationPrincipal CustomUserDetails userDetails) {
 
-        EpisodeDetailResponseDto episodeDetail = episodeService.viewEpisodeDetail(episodeId, request);
-        CommentListResponseDto comments = commentService.getEpisodeComment(episodeId, sort, page, userDetails);
+		EpisodeDetailResponseDto episodeDetail = episodeService.viewEpisodeDetail(episodeId, request);
+		CommentListResponseDto comments = commentService.getEpisodeComment(episodeId, sort, page, userDetails);
 
-        Roles role = userDetails.getUser().getRole();
-        Long userId = userDetails.getUser().getUserId();
-        Boolean isLikeEpisode = episodeService.existEpisodeLike(episodeId, userDetails);
+		Roles role = userDetails.getUser().getRole();
+		Long userId = userDetails.getUser().getUserId();
+		Boolean isLikeEpisode = episodeService.existEpisodeLike(episodeId, userDetails);
 
-        model.addAttribute("role", role);
-        model.addAttribute("userId", userId);
-        model.addAttribute("episodeDetail", episodeDetail);
-        model.addAttribute("comments", comments);
-        model.addAttribute("currentPage", page);
-        model.addAttribute("sort", sort);
-        model.addAttribute("isLikeEpisode", isLikeEpisode);
+		model.addAttribute("role", role);
+		model.addAttribute("userId", userId);
+		model.addAttribute("episodeDetail", episodeDetail);
+		model.addAttribute("comments", comments);
+		model.addAttribute("currentPage", page);
+		model.addAttribute("sort", sort);
+		model.addAttribute("isLikeEpisode", isLikeEpisode);
 
-        return "novel/comment";
-    }
+		return "novel/comment";
+	}
 
-    @GetMapping("/{episodeId}/edit")
-    public String editEpisodeForm(
-            @PathVariable Long episodeId,
-            HttpServletRequest request,
-            Model model,
-            @AuthenticationPrincipal CustomUserDetails userDetails) {
-        EpisodeDetailResponseDto episode = episodeService.viewEpisodeDetail(episodeId, request);
-        model.addAttribute("user", userDetails.getUser());
-        model.addAttribute("episode", episode);
-        return "novel/episode-edit";
-    }
+	@GetMapping("/{episodeId}/edit")
+	public String editEpisodeForm(
+		@PathVariable(name = "episodeId") Long episodeId,
+		HttpServletRequest request,
+		Model model,
+		@AuthenticationPrincipal CustomUserDetails userDetails) {
+		EpisodeDetailResponseDto episode = episodeService.viewEpisodeDetail(episodeId, request);
+		model.addAttribute("user", userDetails.getUser());
+		model.addAttribute("episode", episode);
+		return "novel/episode-edit";
+	}
 }

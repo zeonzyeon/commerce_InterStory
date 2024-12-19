@@ -220,11 +220,19 @@ public class MypageService {
 	public SettlementResponseDTO getSettlement(CustomUserDetails userDetails) {
 		Long userId = userDetails.getUser().getUserId();
 
-		Settlement settlement = settlementRepository.findByUser_UserId(userId)
+		User user = userRepository.findById(userId)
 			.orElseThrow(() -> new IllegalArgumentException(NOT_FOUND_USER_ID + userId));
+		Settlement settlement = user.getSettlement();
+
+		Long fee;
+		if (settlement == null) {
+			fee = 0L;
+		} else {
+			fee = settlement.getFee();
+		}
 
 		return SettlementResponseDTO.builder()
-			.fee(settlement.getFee())
+			.fee(fee)
 			.build();
 	}
 
@@ -270,11 +278,19 @@ public class MypageService {
 	public AccountResponseDTO getAccount(CustomUserDetails userDetails) {
 		Long userId = userDetails.getUser().getUserId();
 
-		Settlement settlement = settlementRepository.findByUser_UserId(userId)
+		User user = userRepository.findById(userId)
 			.orElseThrow(() -> new IllegalArgumentException(NOT_FOUND_USER_ID + userId));
+		Settlement settlement = user.getSettlement();
+
+		String accountNumber;
+		if (settlement == null) {
+			accountNumber = null;
+		} else {
+			accountNumber = settlement.getAccountNumber();
+		}
 
 		return AccountResponseDTO.builder()
-			.accountNumber(settlement.getAccountNumber())
+			.accountNumber(accountNumber)
 			.build();
 	}
 
