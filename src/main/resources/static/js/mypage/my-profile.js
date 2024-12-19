@@ -63,6 +63,7 @@ function buyPoint() {
     let selectedCoupon = selectCoupon.options[selectCoupon.selectedIndex];
     let couponId = selectedCoupon.getAttribute('data-coupon-id');
 
+    if (couponId === null) couponId = 0;
     console.log(type, couponId);
 
     $.ajax({
@@ -123,6 +124,8 @@ function autoPayment() {
             console.log(response);
             if (response.next_redirect_pc_url != null)
                 location.href = response.next_redirect_pc_url;
+            else
+                location.reload();
         },
         error: function (xhr, err, status) {
             alert(err + "이(가) 발생했습니다: " + status);
@@ -149,6 +152,8 @@ function subscribe() {
             console.log(response);
             if (response.next_redirect_pc_url != null)
                 location.href = response.next_redirect_pc_url;
+            else
+                location.reload();
         },
         error: function (xhr, err, status) {
             alert(err + "이(가) 발생했습니다: " + status);

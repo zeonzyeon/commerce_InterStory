@@ -29,7 +29,15 @@ public class Subscribe {
 	@Column(name = "end_at", nullable = false)
 	private Timestamp endAt;
 
+	@Column(name = "is_continue", nullable = false)
+	@Builder.Default
+	private Boolean isContinue = true;
+
 	public void updateEndAt(Timestamp endAt) {
 		this.endAt = endAt;
+	}
+
+	public void updateIsContinue(Boolean isContinue) {
+		this.isContinue = isContinue;
 	}
 }

@@ -86,6 +86,7 @@ public class MypageController {
 
 		model.addAttribute("user", mypageService.getUser(userDetails));
 		model.addAttribute("endAt", mypageService.getSubscription(userDetails).getEndAt());
+		model.addAttribute("isSubscriptionContinue", mypageService.getSubscription(userDetails).getIsContinue());
 		model.addAttribute("novels", mypageService.getMyNovels(userDetails, pageable));
 		model.addAttribute("comments", mypageService.getMyComments(userDetails, pageable));
 		model.addAttribute("myCoupons", mypageService.getCoupons(userDetails, pageable2));

@@ -42,7 +42,7 @@
                 <span class="payment-label">포인트 자동 결제</span>
                 <button class="payment-action cancel" onclick="inactiveAutoPayment()">자동 결제 취소</button>
             </div>
-            <div class="payment-row" th:if="${user.isSubscribed}">
+            <div class="payment-row" th:if="${isSubscriptionContinue}">
                 <span class="payment-label">정기 구독 서비스</span>
                 <button class="payment-action cancel" onclick="inactiveSubscription()">구독 취소</button>
             </div>
