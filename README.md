@@ -113,17 +113,28 @@ Interstory는 작가와 독자가 상호작용하며 함께 만들어 나가는 
 
 |                                                                                                              |                                                                                                                 |
 |--------------------------------------------------------------------------------------------------------------|-----------------------------------------------------------------------------------------------------------------|
-| <img src="https://github.com/user-attachments/assets/870953e6-126f-4b7e-b7c6-b8b33d18c485"> <br/> 메인 페이지     | <img src="https://github.com/user-attachments/assets/5d3817ad-8542-4d7a-9dd1-5c65febb8fd4"> <br/> 로그인 화면        |
-| <img src="https://github.com/user-attachments/assets/4e88822a-3c0d-479d-b699-6613db8a44c0"> <br/> 프로필 메뉴     | <img src="https://github.com/user-attachments/assets/6c150708-cb8c-4dd3-8053-6d3c9f811c7e"> <br/> 마이페이지         |
-| <img src="https://github.com/user-attachments/assets/f591222d-fe0d-480f-b61c-c05c91d8fa62"> <br/> 구독 모달창     | <img src="https://github.com/user-attachments/assets/9fc5e6e2-1d98-4fab-b1a3-a649c9eee68b"> <br/> 포인트 결제창       |
-| <img src="https://github.com/user-attachments/assets/a20d0ea6-193a-41dc-a0cc-404461c34926"> <br/> 연재한 작품 목록  | <img src="https://github.com/user-attachments/assets/ddf83681-71de-46f9-8afe-97478e89133f"> <br/> 연재한 작품의 반응 분석 |
-| <img src="https://github.com/user-attachments/assets/29f91af8-366d-4ea2-a153-7ad33d0da784"> <br/> 포인트 내역     | <img src="https://github.com/user-attachments/assets/c7f57f97-b137-469f-b087-8d52dcd82ffc"> <br/> 장바구니          |
-| <img src="https://github.com/user-attachments/assets/4b8852cd-b04d-427f-a7fd-a7e17b1f0960"> <br/> 회원 정보 수정   | <img src="https://github.com/user-attachments/assets/66655118-bae1-4230-84ce-da75822f8453"> <br/> 쿠폰 내역         |
-| <img src="https://github.com/user-attachments/assets/06956f1a-4e22-41df-b6a4-524976f14ba9"> <br/> 소설 상세 조회   | <img src="https://github.com/user-attachments/assets/f2f78729-27cc-4c16-8001-1fbe07c96a7e"> <br/> 작성한 댓글        |
-| <img src="https://github.com/user-attachments/assets/7e50222c-a030-4f68-aebe-41ab53118138"> <br/> 작품 수정      | <img src="https://github.com/user-attachments/assets/449c656d-9cf0-4a10-b1fc-74d2bb336d94"> <br/> 작품 추가         |
-| <img src="https://github.com/user-attachments/assets/540f78b7-0557-4cf9-b4ec-8c9a97313405"> <br/> 회차 구매 모달창  | <img src="https://github.com/user-attachments/assets/27d33174-63a1-45f3-bd80-f3754775fc8d"> <br/> 회차 댓글 조회      |
-| <img src="https://github.com/user-attachments/assets/3e8d75f3-ae38-48eb-97ba-e82452c233fa"> <br/> 회차 상세 조회   | <img src="https://github.com/user-attachments/assets/ffe3f433-43d2-4d25-9108-c524da496e7c"> <br/> 회차 수정 (소설)    |
-| <img src="https://github.com/user-attachments/assets/2876b066-731f-4166-b40a-427486d72e27"> <br/> 회차 작성 (소설) |                                                                                                                 |
+| <img src="https://github.com/user-attachments/assets/870953e6-126f-4b7e-b7c6-b8b33d18c485"> | <img src="https://github.com/user-attachments/assets/5d3817ad-8542-4d7a-9dd1-5c65febb8fd4"> |
+| 메인 페이지 | 로그인 화면 | 
+| <img src="https://github.com/user-attachments/assets/4e88822a-3c0d-479d-b699-6613db8a44c0"> | <img src="https://github.com/user-attachments/assets/6c150708-cb8c-4dd3-8053-6d3c9f811c7e">  |
+| 프로필 메뉴 | 마이페이지 |
+| <img src="https://github.com/user-attachments/assets/f591222d-fe0d-480f-b61c-c05c91d8fa62"> | <img src="https://github.com/user-attachments/assets/9fc5e6e2-1d98-4fab-b1a3-a649c9eee68b">  |
+| 구독 모달창 | 포인트 결제창 |
+| <img src="https://github.com/user-attachments/assets/a20d0ea6-193a-41dc-a0cc-404461c34926">  | <img src="https://github.com/user-attachments/assets/ddf83681-71de-46f9-8afe-97478e89133f">  |
+| 연재한 작품 목록 | 연재한 작품의 반응 분석 |
+| <img src="https://github.com/user-attachments/assets/29f91af8-366d-4ea2-a153-7ad33d0da784">  | <img src="https://github.com/user-attachments/assets/c7f57f97-b137-469f-b087-8d52dcd82ffc">  |
+| 포인트 내역 | 장바구니 |
+| <img src="https://github.com/user-attachments/assets/4b8852cd-b04d-427f-a7fd-a7e17b1f0960">   | <img src="https://github.com/user-attachments/assets/66655118-bae1-4230-84ce-da75822f8453">  |
+| 회원 정보 수정 | 쿠폰 내역 |
+| <img src="https://github.com/user-attachments/assets/06956f1a-4e22-41df-b6a4-524976f14ba9">   | <img src="https://github.com/user-attachments/assets/f2f78729-27cc-4c16-8001-1fbe07c96a7e">    |
+| 소설 상세 조회 |  작성한 댓글  |
+| <img src="https://github.com/user-attachments/assets/7e50222c-a030-4f68-aebe-41ab53118138">  | <img src="https://github.com/user-attachments/assets/449c656d-9cf0-4a10-b1fc-74d2bb336d94">    |
+| 작품 수정  | 작품 추가 |
+| <img src="https://github.com/user-attachments/assets/540f78b7-0557-4cf9-b4ec-8c9a97313405">  | <img src="https://github.com/user-attachments/assets/27d33174-63a1-45f3-bd80-f3754775fc8d">      |
+| 회차 구매 모달창  | 회차 댓글 조회 |
+| <img src="https://github.com/user-attachments/assets/3e8d75f3-ae38-48eb-97ba-e82452c233fa">   | <img src="https://github.com/user-attachments/assets/ffe3f433-43d2-4d25-9108-c524da496e7c">     |
+| 회차 상세 조회  | 회차 수정 (소설) |
+| <img src="https://github.com/user-attachments/assets/2876b066-731f-4166-b40a-427486d72e27"> |                                                                                                                 |
+| 회차 작성 (소설) |
 
 ## 4. 시스템 구조도
 
