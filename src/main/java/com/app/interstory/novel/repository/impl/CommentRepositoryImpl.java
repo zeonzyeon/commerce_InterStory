@@ -47,7 +47,10 @@ public class CommentRepositoryImpl implements CommentRepositoryCustom {
 			.leftJoin(comment.user).fetchJoin()
 			.leftJoin(comment.episode).fetchJoin()
 			.leftJoin(comment.episode.novel).fetchJoin()
-			.where(comment.user.userId.eq(userId))
+			.where(
+				comment.user.userId.eq(userId),
+				comment.status.isTrue()
+			)
 			.orderBy(comment.createdAt.desc())
 			.offset(pageable.getOffset())
 			.limit(pageable.getPageSize())
