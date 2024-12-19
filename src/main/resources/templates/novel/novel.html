@@ -65,7 +65,7 @@
                 <img alt="" class="episode-thumbnail" th:src="${episode.thumbnailUrl}">
                 <div class="episode-content">
                     <button class="episode-title"
-                            th:attr="data-episode-id=${episode.episodeId}, data-title=${episode.title}, data-is-free=${episode.isFree}, data-is-purchased=${episode.isPurchased}, data-is-subscribed=${user.isSubscribe}"
+                            th:attr="data-episode-id=${episode.episodeId}, data-title=${episode.title}, data-is-free=${episode.isFree}, data-is-purchased=${episode.isPurchased}, data-is-subscribe=${user.isSubscribe}"
                             th:onclick="|viewEpisode(this.dataset.episodeId, this.dataset.title, this.dataset.isFree, this.dataset.isPurchased, this.dataset.isSubscribe)|"
                             th:text="${episode.title}">회차 제목
                     </button>
