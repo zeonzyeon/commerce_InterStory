@@ -123,9 +123,9 @@ public class KakaoService {
 		parameters.put("quantity", "1");                                                   // 상품 수량
 		parameters.put("total_amount", totalPrice.toString());                             // 상품 총액
 		parameters.put("tax_free_amount", "0");                                            // 상품 비과세 금액
-		parameters.put("approval_url", "http://localhost:8080/api/cash/request");          // 결제 성공 시 URL
-		parameters.put("cancel_url", "http://localhost:8080/api/cash/cancel");             // 결제 취소 시 URL
-		parameters.put("fail_url", "http://localhost:8080/api/cash/fail");                 // 결제 실패 시 URL
+		parameters.put("approval_url", kakaoPayProperties.getRedirectUrl() + "/api/cash/request");          // 결제 성공 시 URL
+		parameters.put("cancel_url", kakaoPayProperties.getRedirectUrl() + "/api/cash/cancel");             // 결제 취소 시 URL
+		parameters.put("fail_url", kakaoPayProperties.getRedirectUrl() + "/api/cash/fail");                 // 결제 실패 시 URL
 
 		HttpEntity<Map<String, Object>> requestEntity = new HttpEntity<>(parameters, this.getHeaders());
 
