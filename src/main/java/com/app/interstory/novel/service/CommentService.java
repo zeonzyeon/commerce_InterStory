@@ -1,5 +1,17 @@
 package com.app.interstory.novel.service;
 
+import static com.app.interstory.util.Utils.*;
+
+import java.util.List;
+
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
 import com.app.interstory.novel.domain.entity.Comment;
 import com.app.interstory.novel.domain.entity.CommentLike;
 import com.app.interstory.novel.domain.entity.Episode;
@@ -13,6 +25,7 @@ import com.app.interstory.novel.repository.EpisodeRepository;
 import com.app.interstory.user.domain.CustomUserDetails;
 import com.app.interstory.user.domain.entity.User;
 import com.app.interstory.user.domain.enumtypes.Roles;
+import com.app.interstory.user.dto.response.MyCommentResponseDTO;
 import com.app.interstory.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -28,6 +41,7 @@ import static com.app.interstory.util.Utils.formatTimestamp;
 
 @Service
 @RequiredArgsConstructor
+@Transactional(readOnly = true)
 public class CommentService {
     private final CommentRepository commentRepository;
     private final EpisodeRepository episodeRepository;
@@ -211,5 +225,20 @@ public class CommentService {
         }
         commentRepository.save(comment);
         return afterLikeMessage;
+    }
+
+    public Page<MyCommentResponseDTO> getMyComments(Long userId, int page) {
+
+        int page_size = 10;
+
+        Pageable pageable = PageRequest.of(
+                page,
+                page_size,
+                Sort.by(Sort.Direction.DESC, "createdAt")
+        );
+
+        Page<Comment> commentPage = commentRepository.findByUserWithNovelAndEpisode(userId, pageable);
+
+        return commentPage.map(MyCommentResponseDTO::createMyCommentResponseDTO);
     }
 }

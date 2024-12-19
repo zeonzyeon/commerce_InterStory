@@ -1,9 +1,9 @@
-document.addEventListener('DOMContentLoaded', function() {
+document.addEventListener('DOMContentLoaded', function () {
     const searchInput = document.getElementById('searchInput');
     const searchResults = document.getElementById('searchResults');
     let searchTimeout;
 
-    searchInput.addEventListener('input', function(e) {
+    searchInput.addEventListener('input', function (e) {
         clearTimeout(searchTimeout);
 
         const searchTerm = e.target.value.trim();
@@ -17,12 +17,12 @@ document.addEventListener('DOMContentLoaded', function() {
             searchResults.innerHTML = '<div class="loading">검색 중...</div>';
 
             const titleSearch = fetch(`/api/novels?title=${encodeURIComponent(searchTerm)}&page=1`)
-                .then(response => response.ok ? response.json() : { novels: [] })
-                .catch(() => ({ novels: [] }));
+                .then(response => response.ok ? response.json() : {novels: []})
+                .catch(() => ({novels: []}));
 
             const authorSearch = fetch(`/api/novels?author=${encodeURIComponent(searchTerm)}&page=1`)
-                .then(response => response.ok ? response.json() : { novels: [] })
-                .catch(() => ({ novels: [] }));
+                .then(response => response.ok ? response.json() : {novels: []})
+                .catch(() => ({novels: []}));
 
             Promise.all([titleSearch, authorSearch])
                 .then(([titleData, authorData]) => {
@@ -69,7 +69,7 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     // 검색창 외부 클릭시 결과창 숨기기
-    document.addEventListener('click', function(e) {
+    document.addEventListener('click', function (e) {
         if (!searchInput.contains(e.target) && !searchResults.contains(e.target)) {
             searchResults.style.display = 'none';
         }

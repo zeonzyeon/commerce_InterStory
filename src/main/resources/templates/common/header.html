@@ -1,5 +1,7 @@
 <!-- fragments/header.html -->
 <header class="header" th:fragment="header">
+    <link rel="stylesheet" th:href="@{/css/common/header.css}">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" rel="stylesheet">
     <div class="header-content">
         <div class="logo-area">
             <img alt="로고" class="logo-image"
@@ -14,8 +16,35 @@
         <div class="user-area">
             <!-- 로그인 상태에 따른 조건부 렌더링 -->
             <div class="user-profile" th:if="${user}">
-                <span th:text="${user.nickname}">닉네임</span>
-                <img alt="프로필" th:src="${user.profileUrl}">
+                <div class="profile-wrapper">
+                    <span th:text="${user.nickname}">닉네임</span>
+                    <img alt="프로필" th:src="${user.profileUrl}">
+                    <!-- 호버 메뉴 -->
+                    <div class="hover-menu">
+                        <a class="menu-item" href="/users/profile">
+                            <i class="fas fa-user"></i>프로필
+                        </a>
+                        <a class="menu-item" href="/users/favorite-novels">
+                            <i class="fas fa-heart"></i>관심 작품
+                        </a>
+                        <a class="menu-item" href="/users/recent-novels">
+                            <i class="fas fa-history"></i>열람 작품
+                        </a>
+                        <a class="menu-item" href="/users/point-history">
+                            <i class="fas fa-coins"></i>포인트 내역
+                        </a>
+                        <a class="menu-item" href="/users/my-coupons">
+                            <i class="fas fa-ticket-alt"></i>쿠폰
+                        </a>
+                        <a class="menu-item" href="/users/edit-profile">
+                            <i class="fas fa-user"></i>정보 수정
+                        </a>
+                        <div class="menu-divider"></div>
+                        <a class="menu-item logout" href="/auth/logout">
+                            <i class="fas fa-sign-out-alt"></i>로그아웃
+                        </a>
+                    </div>
+                </div>
             </div>
             <a class="login-btn" href="/auth/login" th:unless="${user}">로그인</a>
         </div>

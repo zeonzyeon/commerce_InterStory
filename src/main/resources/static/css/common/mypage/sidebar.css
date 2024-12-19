@@ -1,0 +1,100 @@
+.page-container {
+    display: flex;
+    min-height: 100vh;
+    background-color: #f8f9fa;
+}
+
+.sidebar {
+    width: 250px;
+    background: white;
+    padding: 20px;
+    border-right: 1px solid #eee;
+    position: fixed;
+    height: 100vh;
+    overflow-y: auto;
+}
+
+.main-content {
+    flex: 1;
+    margin-left: 250px;
+    padding: 20px;
+}
+
+.sidebar-nav {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    margin-top: 20px;
+}
+
+.menu-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px 16px;
+    border-radius: 8px;
+    color: #666;
+    text-decoration: none;
+    transition: all 0.2s ease;
+}
+
+.menu-item i {
+    width: 20px;
+    text-align: center;
+}
+
+.menu-item:hover {
+    background-color: #f8f9fa;
+    color: #333;
+}
+
+.menu-item.active {
+    background-color: #e9ecef;
+    color: #000;
+    font-weight: 500;
+}
+
+/* 프로필 섹션 스타일 */
+.profile-section {
+    padding: 20px;
+    border-bottom: 1px solid #eee;
+}
+
+.profile-info {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.profile-picture {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    background-color: #e9ecef;
+    overflow: hidden;
+}
+
+.profile-name {
+    font-size: 14px;
+    color: #333;
+}
+
+.nickname {
+    font-weight: 600;
+}
+
+@media (max-width: 768px) {
+    .sidebar {
+        width: 100%;
+        height: auto;
+        position: relative;
+    }
+
+    .main-content {
+        margin-left: 0;
+    }
+
+    .page-container {
+        flex-direction: column;
+    }
+}

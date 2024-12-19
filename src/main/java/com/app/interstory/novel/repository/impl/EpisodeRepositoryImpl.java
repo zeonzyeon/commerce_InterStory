@@ -65,6 +65,5 @@ public class EpisodeRepositoryImpl implements EpisodeRepositoryCustom {
                 .leftJoin(user.settlement, settlement).fetchJoin()
                 .where(episode.episodeId.eq(episodeId))
                 .fetchOne());
-
     }
 }

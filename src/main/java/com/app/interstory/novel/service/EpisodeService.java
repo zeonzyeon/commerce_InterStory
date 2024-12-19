@@ -2,6 +2,21 @@ package com.app.interstory.novel.service;
 
 import com.app.interstory.common.service.S3Service;
 import com.app.interstory.config.FilePathConfig;
+import java.time.Duration;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+import java.util.Comparator;
+import java.util.List;
+
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
 import com.app.interstory.novel.domain.entity.Collection;
 import com.app.interstory.novel.domain.entity.Episode;
 import com.app.interstory.novel.domain.entity.EpisodeLike;
@@ -334,14 +349,12 @@ public class EpisodeService {
                 .build();
     }
 
-    private boolean isFirstView(String ip, Long episodeId) {
-        //TTL 설정 - 6시간
-        int expireTime = 6 * 60 * 60;
-        //key 설정 - id + yyyyMMdd
-        String key = String.format("view:%d:%s",
-                episodeId,
-                LocalDate.now().format(DateTimeFormatter.BASIC_ISO_DATE)
-        );
+	private boolean isFirstView(String ip, Long episodeId) {
+		//key 설정 - id + yyyyMMdd
+		String key = String.format("view:%d:%s",
+			episodeId,
+			LocalDate.now().format(DateTimeFormatter.BASIC_ISO_DATE)
+		);
 
         // IP를 해시화하여 비트맵의 오프셋으로 사용
         long offset = Math.abs(ip.hashCode() % 10000000);
@@ -352,7 +365,10 @@ public class EpisodeService {
 
         redisTemplate.opsForValue().setBit(key, offset, true);
 
-        return !Boolean.TRUE.equals(result);
+		// TTL 설정 - 1일 (24시간)
+		redisTemplate.expire(key, Duration.ofDays(1));
+
+		return !Boolean.TRUE.equals(result);
 
     }
 

@@ -1,9 +1,9 @@
 name: github-action-workflow
 on:
   push:
-    branches: [ "feat/cicd" ]
+    branches: [ "release" ]
   pull_request:
-    branches: [ "feat/cicd" ]
+    branches: [ "release" ]
   workflow_dispatch:
 
 env:
@@ -28,6 +28,14 @@ jobs:
             ~/.gradle/wrapper
           key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*') }}
           restore-keys: ${{ runner.os }}-gradle-
+
+      - name: Cache Docker layers
+        uses: actions/cache@v3
+        with:
+          path: /tmp/.buildx-cache
+          key: ${{ runner.os }}-buildx-${{ github.sha }}
+          restore-keys: |
+            ${{ runner.os }}-buildx-     
 
       - name: Set up JDK 17
         uses: actions/setup-java@v4

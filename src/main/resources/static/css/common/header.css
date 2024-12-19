@@ -135,3 +135,76 @@ body {
     border-radius: 50%;
     object-fit: cover;
 }
+
+/* 프로필 호버 메뉴 스타일 */
+.profile-wrapper {
+    position: relative;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
+.hover-menu {
+    position: absolute;
+    top: 100%;
+    right: 0;
+    width: 200px;
+    background: white;
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    padding: 8px 0;
+    margin-top: 8px;
+    opacity: 0;
+    visibility: hidden;
+    transition: all 0.2s ease-in-out;
+}
+
+.profile-wrapper:hover .hover-menu {
+    opacity: 1;
+    visibility: visible;
+}
+
+.menu-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px 16px;
+    color: #333;
+    text-decoration: none;
+    transition: background-color 0.2s ease;
+}
+
+.menu-item i {
+    width: 20px;
+    color: #666;
+}
+
+.menu-item:hover {
+    background-color: #f8f9fa;
+}
+
+.menu-divider {
+    height: 1px;
+    background-color: #eee;
+    margin: 8px 0;
+}
+
+.menu-item.logout {
+    color: #dc3545;
+}
+
+.menu-item.logout i {
+    color: #dc3545;
+}
+
+/* 호버 메뉴 화살표 */
+.hover-menu::before {
+    content: '';
+    position: absolute;
+    top: -8px;
+    right: 20px;
+    border-left: 8px solid transparent;
+    border-right: 8px solid transparent;
+    border-bottom: 8px solid white;
+}

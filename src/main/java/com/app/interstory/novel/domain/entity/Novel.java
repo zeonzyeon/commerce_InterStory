@@ -1,6 +1,8 @@
 package com.app.interstory.novel.domain.entity;
 
 import java.sql.Timestamp;
+import java.util.ArrayList;
+import java.util.List;
 
 import jakarta.persistence.*;
 import org.springframework.data.annotation.CreatedDate;
@@ -10,6 +12,20 @@ import com.app.interstory.novel.domain.enumtypes.MainTag;
 import com.app.interstory.novel.domain.enumtypes.NovelStatus;
 import com.app.interstory.user.domain.entity.User;
 
+import jakarta.persistence.CascadeType;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.EntityListeners;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
+import jakarta.persistence.FetchType;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToMany;
+import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -43,6 +59,9 @@ public class Novel {
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "user_id", nullable = false)
 	private User user;
+
+	@OneToMany(mappedBy = "novel", cascade = CascadeType.ALL)
+	private List<Episode> episodes = new ArrayList<>();
 
 	@Column(name = "title", nullable = false)
 	private String title;
@@ -86,9 +105,6 @@ public class Novel {
 
 	@Column(name = "episode_updated_at")
 	private Timestamp episodeUpdatedAt;
-
-	@OneToMany(mappedBy = "novel", cascade = CascadeType.ALL)
-	private List<Episode> episodes = new ArrayList<>();
 
 	public void update(
 		String title,

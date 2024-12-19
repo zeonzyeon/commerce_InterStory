@@ -167,22 +167,22 @@ public class UserService {
         User user = userRepository.findById(UserId)
                 .orElseThrow(() -> new UsernameNotFoundException("UserNotFound"));
 
-        //기본 파일 아닐 시 s3에서 삭제
-        deleteExistingProfile(user);
-        //file s3 uploads
-        String dirPath = filePathConfig.getUserProfilePath(); // "user/"
-        String filePath = s3Service.uploadFile(file, dirPath);
-        //파일 업데이트
-        user.updateProfile(filePath);
+		//기본 파일 아닐 시 s3에서 삭제
+		deleteExistingProfile(user);
+		//file s3 uploads
+		String dirPath = filePathConfig.getProfile(); // "user/"
+		String filePath = s3Service.uploadFile(file, dirPath); //dir
+		//파일 업데이트
+		user.updateProfile(filePath, filePathConfig.getUserProfilePath());
 
         return filePath;
     }
 
-    private void deleteExistingProfile(User user) throws IOException {
-        if (!user.getProfileRenamedFilename().equals("user.png")) {
-            s3Service.deleteFile(user.getProfileUrl(), filePathConfig.getProfile());
-        }
-    }
+	private void deleteExistingProfile(User user) throws IOException {
+		if (!user.getProfileRenamedFilename().equals("user.png")) {
+			s3Service.deleteFile(user.getProfileUrl(), filePathConfig.getProfile());
+		}
+	}
 
     @Transactional
     public void updateNickname(UserNicknameRequsetDto requset, CustomUserDetails currentUser) {
