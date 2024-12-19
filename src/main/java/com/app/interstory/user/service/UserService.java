@@ -141,7 +141,7 @@ public class UserService {
 		}
 		// 기본 이미지 아닐 시 s3에 저장된 이미지 삭제
 		if (!withdrawalUser.isDefaultProfile()) {
-			s3Service.deleteFile(withdrawalUser.getProfileUrl());
+			s3Service.deleteFile(withdrawalUser.getProfileUrl(), filePathConfig.getProfile());
 		}
 
 		return withdrawalUser;
@@ -172,17 +172,17 @@ public class UserService {
 		//기본 파일 아닐 시 s3에서 삭제
 		deleteExistingProfile(user);
 		//file s3 uploads
-		String dirPath = filePathConfig.getUserProfilePath(); // "user/"
-		String filePath = s3Service.uploadFile(file, dirPath);
+		String dirPath = filePathConfig.getProfile(); // "user/"
+		String filePath = s3Service.uploadFile(file, dirPath); //dir
 		//파일 업데이트
-		user.updateProfile(filePath);
+		user.updateProfile(filePath, filePathConfig.getUserProfilePath());
 
 		return filePath;
 	}
 
 	private void deleteExistingProfile(User user) throws IOException {
 		if (!user.getProfileRenamedFilename().equals("user.png")) {
-			s3Service.deleteFile(user.getProfileUrl());
+			s3Service.deleteFile(user.getProfileUrl(), filePathConfig.getProfile());
 		}
 	}
 

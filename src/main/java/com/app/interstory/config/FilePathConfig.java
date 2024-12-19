@@ -28,7 +28,7 @@ public class FilePathConfig {
 		this.userProfilePath = basePath + "/profile/";
 		this.userDefaultProfilePath = userProfilePath + "user.png";
 		this.thumbnailPath = basePath + "/thumbnail/";
-		this.common = basePath + "/common/";
+		this.common = basePath + "/static/js/common/";
 		this.profile = "profile/";
 		this.thumbnail = "thumbnail/";
 	}
