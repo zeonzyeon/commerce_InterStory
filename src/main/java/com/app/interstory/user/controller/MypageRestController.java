@@ -80,7 +80,7 @@ public class MypageRestController {
 			currentUser.getUser().getUserId(),  // email
 			file
 		);
-		
+
 		log.info("imageUrl : {}", imageUrl);
 
 		return ResponseEntity.ok().body(Map.of(
@@ -89,7 +89,7 @@ public class MypageRestController {
 		));
 	}
 
-	@PostMapping("update-nickname")
+	@PostMapping("/update-nickname")
 	public ResponseEntity<Map<String, Object>> updateNickname(
 		@RequestBody UserNicknameRequsetDto requset,
 		@AuthenticationPrincipal CustomUserDetails currentUser

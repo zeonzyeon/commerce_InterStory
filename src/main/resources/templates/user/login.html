@@ -2,7 +2,7 @@
 <html lang="ko">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta content="width=device-width, initial-scale=1.0" name="viewport">
     <title>로그인 | InterStory</title>
     <link rel="stylesheet" th:href="@{/css/user/login.css}">
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
@@ -12,41 +12,42 @@
 <div class="background-gradient"></div>
 <div class="login-container">
     <div class="logo">
-<!--        <img src="/" alt="Logo" style="width: 80px; height: 80px; border-radius: 20px; margin-bottom: 1rem;">-->
+        <!--        <img src="/" alt="Logo" style="width: 80px; height: 80px; border-radius: 20px; margin-bottom: 1rem;">-->
         <h1>ENJOY YOUR INTERSTORY</h1>
         <span>당신만의 이야기를 시작하세요</span>
     </div>
     <form id="login-frm">
         <div class="input-group">
-            <input type="email" id="email" placeholder="이메일" required>
+            <input id="email" placeholder="이메일" required type="email">
             <div class="validation-message"></div>
         </div>
         <div class="input-group">
-            <input type="password" id="password" placeholder="비밀번호" required>
+            <input id="password" placeholder="비밀번호" required type="password">
             <div class="validation-message"></div>
         </div>
         <div class="remember-forgot">
             <label>
-                <input type="checkbox" id="remember">
+                <input id="remember" type="checkbox">
                 이메일 기억 하기
             </label>
             <a href="/auth/forgot-password">비밀번호 찾기</a>
         </div>
-        <button type="submit" class="btn login-btn">로그인</button>
+        <button class="btn login-btn" type="submit">로그인</button>
         <div class="divider">
             <span>또는</span>
         </div>
     </form>
-    <a th:href="@{/auth/login/kakao}" class="btn kakao-btn">
-        <img th:src="@{/images/kakao-icon.png}" alt="kakao" style="width: 20px; height: 20px;">
+    <a class="btn kakao-btn" th:href="@{/auth/login/kakao}">
+        <img alt="kakao" style="width: 20px; height: 20px;"
+             th:src="@{https://est-team4-bucket.s3.ap-northeast-2.amazonaws.com/common/kakao-icon.png}">
         카카오로 시작하기
     </a>
-    <a href="/auth/signup" class="signup-link">아직 계정이 없으신가요? 가입하기</a>
+    <a class="signup-link" href="/auth/signup">아직 계정이 없으신가요? 가입하기</a>
 </div>
 
 <script>
 
-    $(document).ready(function() {
+    $(document).ready(function () {
         // 요소 캐싱
         const $form = $('#login-frm');
         const $email = $('#email');
@@ -59,12 +60,12 @@
         const savedEmail = localStorage.getItem('rememberedEmail');
         if (savedEmail) {
             $email.val(savedEmail);
-            $remember.prop('checked',true);
+            $remember.prop('checked', true);
         }
 
 
         // 폼 제출 처리
-        $form.on('submit', function(e) {
+        $form.on('submit', function (e) {
             e.preventDefault();
 
             // 입력값 검증
@@ -86,7 +87,7 @@
                 type: 'POST',
                 contentType: 'application/json',
                 data: JSON.stringify(loginData),
-                success: function(response) {
+                success: function (response) {
 
                     if ($remember.is(':checked')) {
                         localStorage.setItem('rememberedEmail', loginData.email);
@@ -101,7 +102,7 @@
                     }
 
                 },
-                error: function(xhr) {
+                error: function (xhr) {
                     // 에러 메시지 표시
                     let errorMessage = '로그인 중 오류가 발생했습니다.';
                     if (xhr.status === 401) {
@@ -111,7 +112,7 @@
                     showValidationMessage(errorMessage);
                     $loginBtn.prop('disabled', false);
                 },
-                complete: function() {
+                complete: function () {
                     $loginBtn.removeClass('loading');
                 }
             });
@@ -167,7 +168,7 @@
         }
 
         // 입력 필드 포커스 시 에러 상태 초기화
-        $('input').on('focus', function() {
+        $('input').on('focus', function () {
             $(this)
                 .siblings('.validation-message')
                 .removeClass('show')
