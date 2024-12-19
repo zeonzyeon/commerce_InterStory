@@ -75,14 +75,14 @@
     function deleteComment(commentId) {
         if (!confirm('정말로 이 댓글을 삭제하시겠습니까?')) return;
 
-        fetch(`/api/comments/${commentId}`, {
+        fetch(`/api/novels/episodes/comments/${commentId}`, {
             method: 'DELETE',
             headers: {
                 'Content-Type': 'application/json'
             }
         })
             .then(response => {
-                if (response.ok) {
+                if (response.status === 204) {
                     alert('댓글이 삭제되었습니다.');
                     location.reload();
                 } else {
