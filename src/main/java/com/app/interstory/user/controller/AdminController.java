@@ -20,7 +20,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 @Controller
-@RequestMapping("/admin")
+@RequestMapping("admin")
 @RequiredArgsConstructor
 public class AdminController {
 	private final AdminService adminService;
@@ -29,10 +29,12 @@ public class AdminController {
 	@GetMapping("/notices")
 	public String getNoticeList(
 		@RequestParam(defaultValue = "1", name = "page") Integer page,
+		@AuthenticationPrincipal CustomUserDetails userDetails,
 		Model model) {
 
 		NoticeListResponseDTO noticeList = adminService.getNoticeList(page);
 
+		model.addAttribute("user", userDetails.getUser());
 		model.addAttribute("noticeList", noticeList);
 		model.addAttribute("currentPage", page);
 
@@ -41,22 +43,25 @@ public class AdminController {
 
 	// 공지사항 작성 페이지
 	@GetMapping("/notice/write")
-	public String getNoticeWritePage() {
+	public String getNoticeWritePage(Model model, @AuthenticationPrincipal CustomUserDetails userDetails) {
+		model.addAttribute("user", userDetails.getUser());
 		return "admin/admin-notice-write";
 	}
 
 	// 공지사항 상세 페이지
 	@GetMapping("/notices/{noticeId}")
-	public String getNoticeDetail(@PathVariable(name = "noticeId") Long noticeId, Model model) {
+	public String getNoticeDetail(@PathVariable(name = "noticeId") Long noticeId, Model model, @AuthenticationPrincipal CustomUserDetails userDetails) {
 		NoticeResponseDTO notice = adminService.getNoticeDetail(noticeId);
+		model.addAttribute("user", userDetails.getUser());
 		model.addAttribute("notice", notice);
 		return "admin/admin-notice-detail";
 	}
 
 	// 공지사항 수정 페이지
 	@GetMapping("/notices/{noticeId}/edit")
-	public String getNoticeEditPage(@PathVariable(name = "noticeId") Long noticeId, Model model) {
+	public String getNoticeEditPage(@PathVariable(name = "noticeId") Long noticeId, Model model, @AuthenticationPrincipal CustomUserDetails userDetails) {
 		NoticeResponseDTO notice = adminService.getNoticeDetail(noticeId);
+		model.addAttribute("user", userDetails.getUser());
 		model.addAttribute("notice", notice);
 		return "admin/admin-notice-edit";
 	}
@@ -70,12 +75,13 @@ public class AdminController {
 
 		try {
 			CouponListResponseDTO couponList = adminService.getCoupons(page, userDetails);
+			model.addAttribute("user", userDetails.getUser());
 			model.addAttribute("couponList", couponList);
 			model.addAttribute("currentPage", page);
 			return "admin/admin-coupon-list";
 		} catch (IllegalStateException e) {
 			model.addAttribute("error", e.getMessage());
-			return "error"; // 권한 없음 에러 페이지로 리다이렉트
+			return "error";
 		}
 	}
 
@@ -89,6 +95,7 @@ public class AdminController {
 			UserListResponseDTO userList = adminService.getUsers(page, userDetails);
 			model.addAttribute("userList", userList);
 			model.addAttribute("currentPage", page);
+			model.addAttribute("user", userDetails.getUser());
 			return "admin/admin-user-list";
 		} catch (IllegalStateException e) {
 			model.addAttribute("error", e.getMessage());
@@ -110,6 +117,7 @@ public class AdminController {
 			model.addAttribute("currentPage", page);
 			model.addAttribute("searchNickname", nickname);
 			model.addAttribute("searchEmail", email);
+			model.addAttribute("user", userDetails.getUser());
 			return "admin/admin-user-list";
 		} catch (IllegalStateException e) {
 			model.addAttribute("error", e.getMessage());
@@ -122,7 +130,8 @@ public class AdminController {
 	public String getNovelList(
 		@RequestParam(defaultValue = "1", name = "page") Integer page,
 		@RequestParam(required = false, name = "status") String status,
-		Model model) {
+		Model model,
+		@AuthenticationPrincipal CustomUserDetails userDetails) {
 		try {
 			NovelStatus novelStatus = null;
 			if (status != null && !status.equals("ALL")) {
@@ -138,6 +147,7 @@ public class AdminController {
 			model.addAttribute("novelList", novels.getNovels());
 			model.addAttribute("currentPage", page);
 			model.addAttribute("selectedStatus", status != null ? status : "ALL");
+			model.addAttribute("user", userDetails.getUser());
 			return "admin/admin-novel-list";
 		} catch (IllegalStateException e) {
 			model.addAttribute("error", e.getMessage());
@@ -154,6 +164,7 @@ public class AdminController {
 		try {
 			NovelDetailResponseDTO novel = novelService.readNovel(novelId, userDetails);
 			model.addAttribute("novel", novel);
+			model.addAttribute("user", userDetails.getUser());
 			return "admin/admin-novel-detail";
 		} catch (IllegalStateException e) {
 			model.addAttribute("error", e.getMessage());

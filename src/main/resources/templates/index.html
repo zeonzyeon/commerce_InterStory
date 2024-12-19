@@ -29,19 +29,19 @@
         <button data-sort="MEDIEVAL">중세</button>
     </nav>
 
-    <!-- AI 추천 작품 -->
+    <!-- 개인 맞춤 추천 작품 -->
     <section>
-        <h2 class="section-title">
-            AI 추천 작품
-            <a href="#more">더보기 ></a>
-        </h2>
-        <div class="ai-recommendations">
-            <!-- 작품 카드 반복 -->
-            <div class="novel-card" th:each="novel : ${aiRecommendations}">
-                <img alt="작품 썸네일" th:src="${novel.coverImage}">
-                <div class="novel-info">
-                    <div class="novel-title" th:text="${novel.title}">작품 제목</div>
-                    <div class="novel-author" th:text="${novel.author}">작가명</div>
+        <h2 class="section-title">개인 맞춤 추천 작품</h2>
+        <div class="recommendations-container">
+            <div class="recommendations">
+                <div class="novel-card" th:each="novel : ${recommendedNovels}">
+                    <a th:href="@{/novels/{novelId}(novelId=${novel.novelId})}">
+                        <img alt="작품 썸네일" th:src="${novel.thumbnailUrl}">
+                        <div class="novel-info">
+                            <div class="novel-title" th:text="${novel.title}">작품 제목</div>
+                            <div class="novel-author" th:text="${novel.author}">작가명</div>
+                        </div>
+                    </a>
                 </div>
             </div>
         </div>

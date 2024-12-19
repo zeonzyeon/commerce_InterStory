@@ -1,0 +1,408 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta content="width=device-width, initial-scale=1.0" name="viewport">
+    <link rel="stylesheet" th:href="@{/css/common/header.css}">
+    <title>장바구니 | InterStory</title>
+    <style>
+        /* 기본 스타일 */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            background: #f8f9fa;
+        }
+
+        /* 메인 컨테이너 */
+        .container {
+            max-width: 1200px;
+            margin: 2rem auto;
+            padding: 2rem;
+        }
+
+        .cart-header {
+            background: #fff;
+            padding: 1.5rem;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+        }
+
+        .points-info {
+            font-size: 1.1rem;
+            color: #111;
+        }
+
+        .cart-table-container {
+            background: #fff;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+            padding: 1.5rem;
+        }
+
+        .cart-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .cart-table th {
+            background: #f8f9fa;
+            padding: 1rem;
+            text-align: left;
+            border-bottom: 2px solid #ddd;
+            font-weight: 600;
+        }
+
+        .cart-table td {
+            padding: 1rem;
+            border-bottom: 1px solid #eee;
+        }
+
+        .checkbox-col {
+            width: 40px;
+        }
+
+        .novel-title-col {
+            width: 35%;
+        }
+
+        .episode-title-col {
+            width: auto;
+        }
+
+        .button-group {
+            display: flex;
+            justify-content: center;
+            gap: 1rem;
+            margin-top: 2rem;
+        }
+
+        .btn {
+            padding: 0.75rem 2rem;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            transition: all 0.2s;
+        }
+
+        .btn-delete {
+            background: #f8f9fa;
+            border: 1px solid #ddd;
+            color: #333;
+        }
+
+        .btn-purchase {
+            background: #111;
+            color: #fff;
+        }
+
+        .btn:hover {
+            opacity: 0.9;
+        }
+
+        /* 모달 스타일 */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 1000;
+        }
+
+        .modal-content {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: #fff;
+            padding: 2rem;
+            border-radius: 8px;
+            width: 90%;
+            max-width: 500px;
+        }
+
+        .modal-header {
+            margin-bottom: 1.5rem;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid #eee;
+        }
+
+        .modal-title {
+            font-size: 1.25rem;
+            font-weight: 600;
+        }
+
+        .modal-body {
+            margin-bottom: 1.5rem;
+        }
+
+        .modal-footer {
+            display: flex;
+            justify-content: flex-end;
+            gap: 1rem;
+        }
+
+        .points-summary {
+            background: #f8f9fa;
+            padding: 1rem;
+            border-radius: 4px;
+            margin: 1rem 0;
+        }
+
+        .points-summary p {
+            display: flex;
+            justify-content: space-between;
+            margin: 0.5rem 0;
+        }
+    </style>
+</head>
+<body>
+<div th:replace="~{common/header :: header}"></div>
+
+<div class="container">
+    <div class="cart-header">
+        <h2>장바구니</h2>
+        <div class="points-info">
+            보유 포인트: <span th:text="${user.point}">1000</span>P
+        </div>
+    </div>
+
+    <div class="cart-table-container">
+        <table class="cart-table">
+            <thead>
+            <tr>
+                <th class="checkbox-col">
+                    <input type="checkbox" id="selectAll">
+                </th>
+                <th class="novel-title-col">작품명</th>
+                <th class="episode-title-col">회차</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="item : ${cartItems}" th:data-episode-id="${item.episodeId}">
+                <td>
+                    <input type="checkbox" name="selectedItems" th:value="${item.cartItemId}">
+                </td>
+                <td th:text="${item.novelTitle}">작품명</td>
+                <td th:text="${item.episodeTitle}">회차 제목</td>
+            </tr>
+            </tbody>
+        </table>
+
+        <div class="button-group">
+            <button type="button" class="btn btn-delete" id="deleteBtn">선택 삭제</button>
+            <button type="button" class="btn btn-purchase" id="purchaseBtn">선택 결제</button>
+        </div>
+    </div>
+</div>
+
+<!-- 결제 확인 모달 -->
+<div id="purchaseModal" class="modal">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h3 class="modal-title">결제 확인</h3>
+        </div>
+        <div class="modal-body">
+            <div class="points-summary">
+                <p>
+                    <span>보유 포인트</span>
+                    <span><span th:text="${user.point}">1000</span>P</span>
+                </p>
+                <p>
+                    <span>결제 예정 포인트</span>
+                    <span id="totalSelectedPoints">0P</span>
+                </p>
+                <p style="font-weight: bold; margin-top: 1rem; border-top: 1px solid #ddd; padding-top: 1rem;">
+                    <span>잔여 예정 포인트</span>
+                    <span id="remainingPoints">1000P</span>
+                </p>
+            </div>
+            <p>선택하신 회차들을 구매하시겠습니까?</p>
+        </div>
+        <div class="modal-footer">
+            <button class="btn btn-delete" onclick="closeModal()">취소</button>
+            <button class="btn btn-purchase" onclick="confirmPurchase()">결제</button>
+        </div>
+    </div>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const selectAll = document.getElementById('selectAll');
+        const checkboxes = document.getElementsByName('selectedItems');
+        const deleteBtn = document.getElementById('deleteBtn');
+        const purchaseBtn = document.getElementById('purchaseBtn');
+        const modal = document.getElementById('purchaseModal');
+        const currentPoints = parseInt(document.querySelector('.points-info span').textContent);
+        const POINTS_PER_EPISODE = 5; // EpisodeService에서 설정된 가격
+
+        selectAll.addEventListener('change', function() {
+            checkboxes.forEach(checkbox => {
+                checkbox.checked = selectAll.checked;
+            });
+            updateTotalPoints();
+        });
+
+        checkboxes.forEach(checkbox => {
+            checkbox.addEventListener('change', function() {
+                updateTotalPoints();
+                updateSelectAllCheckbox();
+            });
+        });
+
+        function updateSelectAllCheckbox() {
+            const allChecked = Array.from(checkboxes).every(cb => cb.checked);
+            selectAll.checked = allChecked;
+        }
+
+        deleteBtn.addEventListener('click', function() {
+            const selectedIds = getSelectedIds();
+            if (selectedIds.length === 0) {
+                alert('삭제할 항목을 선택해주세요.');
+                return;
+            }
+
+            if (confirm('선택한 항목을 삭제하시겠습니까?')) {
+                deleteItems(selectedIds);
+            }
+        });
+
+        purchaseBtn.addEventListener('click', function() {
+            const selectedIds = getSelectedIds();
+            if (selectedIds.length === 0) {
+                alert('결제할 항목을 선택해주세요.');
+                return;
+            }
+
+            const totalPoints = selectedIds.length * POINTS_PER_EPISODE;
+            if (totalPoints > currentPoints) {
+                alert('보유 포인트가 부족합니다.');
+                return;
+            }
+
+            openPurchaseModal();
+        });
+
+        function updateTotalPoints() {
+            const selectedCount = Array.from(checkboxes).filter(cb => cb.checked).length;
+            const totalPoints = selectedCount * POINTS_PER_EPISODE;
+            document.getElementById('totalSelectedPoints').textContent = totalPoints + 'P';
+            document.getElementById('remainingPoints').textContent = (currentPoints - totalPoints) + 'P';
+        }
+
+        function getSelectedIds() {
+            return Array.from(checkboxes)
+                .filter(cb => cb.checked)
+                .map(cb => cb.value);
+        }
+
+        function deleteItems(ids) {
+            fetch('/api/cart', {
+                method: 'DELETE',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(ids)
+            })
+                .then(response => {
+                    if (response.ok) {
+                        location.reload();
+                    } else {
+                        alert('삭제 중 오류가 발생했습니다.');
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    alert('삭제 중 오류가 발생했습니다.');
+                });
+        }
+
+        function openPurchaseModal() {
+            modal.style.display = 'block';
+        }
+
+        window.closeModal = function() {
+            modal.style.display = 'none';
+        }
+
+        window.confirmPurchase = async function() {
+            const selectedRows = Array.from(checkboxes)
+                .filter(cb => cb.checked)
+                .map(cb => cb.closest('tr'));
+
+            let successCount = 0;
+            let failCount = 0;
+
+            for (const row of selectedRows) {
+                const episodeId = row.getAttribute('data-episode-id');
+
+                try {
+                    const response = await fetch(`/api/novels/episodes/${episodeId}/purchase`, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        }
+                    });
+
+                    if (response.ok) {
+                        successCount++;
+                    } else {
+                        failCount++;
+                    }
+                } catch (error) {
+                    console.error('Error:', error);
+                    failCount++;
+                }
+            }
+
+            // 성공한 항목이 있으면 장바구니에서 삭제
+            if (successCount > 0) {
+                const selectedIds = getSelectedIds();
+                try {
+                    await fetch('/api/cart', {
+                        method: 'DELETE',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify(selectedIds)
+                    });
+                } catch (error) {
+                    console.error('Error deleting from cart:', error);
+                }
+            }
+
+            let message = '';
+            if (successCount > 0) {
+                message += `${successCount}개의 회차가 구매되었습니다.`;
+            }
+            if (failCount > 0) {
+                message += `\n${failCount}개의 회차 구매에 실패했습니다.`;
+            }
+
+            alert(message);
+            closeModal();
+            location.reload();
+        }
+
+        // 모달 외부 클릭 시 닫기
+        window.onclick = function(event) {
+            if (event.target === modal) {
+                closeModal();
+            }
+        }
+    });
+</script>
+</body>
+</html>

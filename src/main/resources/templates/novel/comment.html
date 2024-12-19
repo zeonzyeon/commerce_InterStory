@@ -1,0 +1,492 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>회차 댓글 | InterStory</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f8f9fa;
+            color: #333;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        .comment-write {
+            background: #fff;
+            padding: 1.5rem;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+            margin-bottom: 1rem;
+        }
+
+        .comment-textarea {
+            width: 100%;
+            min-height: 100px;
+            padding: 1rem;
+            border: 1px solid #eee;
+            border-radius: 4px;
+            resize: none;
+            font-size: 0.95rem;
+            margin-bottom: 1rem;
+        }
+
+        .comment-textarea:focus {
+            outline: none;
+            border-color: #ddd;
+        }
+
+        .comment-submit-wrapper {
+            display: flex;
+            justify-content: flex-end;
+        }
+
+        .comment-submit {
+            background: #111;
+            color: #fff;
+            border: none;
+            padding: 0.5rem 1.5rem;
+            border-radius: 4px;
+            cursor: pointer;
+            white-space: nowrap;
+        }
+
+        .sort-buttons {
+            display: flex;
+            justify-content: flex-end;
+            align-items: center;
+            gap: 0.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .sort-buttons button {
+            background: none;
+            border: none;
+            color: #666;
+            cursor: pointer;
+            padding: 0.25rem;
+            font-size: 0.9rem;
+        }
+
+        .sort-buttons button.active {
+            color: #111;
+            font-weight: 600;
+        }
+
+        .sort-buttons .separator {
+            color: #ddd;
+        }
+
+        .comments-list {
+            padding: 1rem;
+            background-color: #fff;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+        }
+
+        .comment-item {
+            display: flex;
+            gap: 1rem;
+            padding: 1rem 0;
+            border-bottom: 1px solid #eee;
+        }
+
+        .comment-item:last-child {
+            border-bottom: none;
+        }
+
+        .profile-image {
+            width: 48px;
+            height: 48px;
+            border-radius: 50%;
+            object-fit: cover;
+        }
+
+        .comment-content-wrapper {
+            flex: 1;
+        }
+
+        .comment-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 0.75rem;
+        }
+
+        .header-left {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .user-nickname {
+            font-weight: 600;
+            color: #111;
+        }
+
+        .like-button {
+            display: flex;
+            align-items: center;
+            gap: 0.25rem;
+            background: none;
+            border: none;
+            cursor: pointer;
+            color: #666;
+            font-size: 0.9rem;
+            padding: 0.25rem 0.5rem;
+        }
+
+        .like-button.active {
+            color: #ff4b4b;
+        }
+
+        .comment-footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 0.75rem;
+        }
+
+        .created-at {
+            font-size: 0.85rem;
+            color: #888;
+        }
+
+        .delete-button {
+            background: none;
+            border: none;
+            color: #666;
+            font-size: 0.9rem;
+            cursor: pointer;
+        }
+
+        .delete-button:hover {
+            text-decoration: underline;
+        }
+
+        .comment-content {
+            line-height: 1.6;
+            color: #333;
+            margin-top: 0.5rem;
+        }
+
+        .load-more {
+            display: block;
+            width: 100%;
+            padding: 1rem;
+            margin-top: 1rem;
+            background: #fff;
+            border: none;
+            border-radius: 8px;
+            color: #666;
+            font-size: 0.9rem;
+            cursor: pointer;
+            text-align: center;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+        }
+
+        .load-more:hover {
+            background: #f8f9fa;
+        }
+    </style>
+</head>
+<body>
+<div th:replace="novel/fragment/fragment :: top-nav"></div>
+
+<div class="container">
+    <div class="comment-write">
+        <textarea class="comment-textarea" placeholder="댓글을 입력하세요"></textarea>
+        <div class="comment-submit-wrapper">
+            <button class="comment-submit">등록</button>
+        </div>
+    </div>
+
+    <div class="sort-buttons">
+        <button th:class="${sort == 'NEW_TO_OLD'} ? 'active' : ''"
+                data-sort="NEW_TO_OLD">
+            최신순
+        </button>
+        <span class="separator">|</span>
+        <button th:class="${sort == 'OLD_TO_NEW'} ? 'active' : ''"
+                data-sort="OLD_TO_NEW">
+            오래된순
+        </button>
+        <span class="separator">|</span>
+        <button th:class="${sort == 'RECOMMENDATION'} ? 'active' : ''"
+                data-sort="RECOMMENDATION">
+            추천순
+        </button>
+    </div>
+
+    <div class="comments-list">
+        <div id="commentsList">
+            <div th:each="comment : ${comments.comments}" class="comment-item">
+                <div class="user-profile">
+                    <img th:src="${comment.profileUrl}" alt="프로필" class="profile-image">
+                </div>
+                <div class="comment-content-wrapper">
+                    <div class="comment-header">
+                        <div class="header-left">
+                            <span class="user-nickname" th:text="${comment.nickname}">사용자</span>
+                            <button th:if="${comment.status}"
+                                    th:class="'like-button ' + ${comment.isLiked ? 'active' : ''}"
+                                    th:data-comment-id="${comment.commentId}">
+                                <span class="heart">♥</span>
+                                <span class="like-count" th:text="${comment.likeCount}">0</span>
+                            </button>
+                            <span th:if="${!comment.status}" class="like-count">
+        ♥ <span th:text="${comment.likeCount}">0</span>
+    </span>
+                        </div>
+                    </div>
+                    <div class="comment-content" th:text="${comment.content}"></div>
+                    <div class="comment-footer">
+                        <span class="created-at" th:text="${comment.createdAt}"></span>
+                        <button class="delete-button"
+                                th:if="${comment.status and ((role != null and role.name() == 'ADMIN') or (userId != null and userId == comment.userId))}"
+                                th:data-comment-id="${comment.commentId}"
+                                th:data-user-id="${comment.userId}">
+                            삭제하기
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <button id="loadMoreBtn"
+            class="load-more"
+            th:if="${comments.totalPage > 1}"
+            th:data-current-page="${currentPage}"
+            th:data-total-pages="${comments.totalPage}">
+        더보기
+    </button>
+</div>
+
+<div th:replace="novel/fragment/fragment :: bottom-nav"></div>
+<div th:replace="novel/fragment/fragment :: nav-script"></div>
+
+<script th:inline="javascript">
+    document.addEventListener('DOMContentLoaded', function() {
+        const episodeId = [[${episodeDetail.episodeId}]];
+        const currentSort = [[${sort}]];
+        const currentUserId = [[${userId}]];
+        const currentRole = [[${role.name()}]];
+        let isLoading = false;
+
+        // 이벤트 리스너 초기화 함수
+        function initializeEventListeners() {
+            // 더보기 버튼
+            const loadMoreBtn = document.getElementById('loadMoreBtn');
+            if (loadMoreBtn && !loadMoreBtn.hasListener) {
+                loadMoreBtn.hasListener = true;
+                loadMoreBtn.addEventListener('click', loadMore);
+            }
+
+            // 댓글 등록 버튼
+            const submitBtn = document.querySelector('.comment-submit');
+            if (submitBtn && !submitBtn.hasListener) {
+                submitBtn.hasListener = true;
+                submitBtn.addEventListener('click', submitComment);
+            }
+
+            // 정렬 버튼들
+            document.querySelectorAll('.sort-buttons button').forEach(button => {
+                if (!button.hasListener) {
+                    button.hasListener = true;
+                    button.addEventListener('click', () => {
+                        const sortType = button.getAttribute('data-sort');
+                        changeSort(sortType);
+                    });
+                }
+            });
+
+            // 좋아요 버튼들 (삭제되지 않은 댓글만)
+            document.querySelectorAll('.like-button').forEach(button => {
+                if (!button.hasListener) {
+                    button.hasListener = true;
+                    const commentId = button.getAttribute('data-comment-id');
+                    if (commentId) {
+                        button.addEventListener('click', () => likeComment(button, commentId));
+                    }
+                }
+            });
+
+            // 삭제 버튼들
+            document.querySelectorAll('.delete-button').forEach(button => {
+                if (!button.hasListener) {
+                    const commentUserId = parseInt(button.getAttribute('data-user-id'));
+
+                    // 권한 체크: 관리자이거나 자신의 댓글인 경우만 버튼 보이기
+                    if (!(currentRole === 'ADMIN' || currentUserId === commentUserId)) {
+                        button.style.display = 'none';
+                        return; // 권한이 없으면 이벤트 리스너도 추가하지 않음
+                    }
+
+                    button.hasListener = true;
+                    const commentId = button.getAttribute('data-comment-id');
+                    if (commentId) {
+                        button.addEventListener('click', () => deleteComment(commentId));
+                    }
+                }
+            });
+        }
+
+        // 댓글 등록
+        function submitComment() {
+            const textarea = document.querySelector('.comment-textarea');
+            const content = textarea.value;
+
+            if (!content.trim()) {
+                alert('댓글 내용을 입력해주세요.');
+                return;
+            }
+
+            fetch(`/api/novels/episodes/${episodeId}/comments`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({content: content})
+            })
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('댓글 등록 실패');
+                    }
+                    location.reload();
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    alert('댓글 등록에 실패했습니다.');
+                });
+        }
+
+        // 댓글 삭제
+        function deleteComment(commentId) {
+            if (!confirm('댓글을 삭제하시겠습니까?')) {
+                return;
+            }
+
+            fetch(`/api/novels/episodes/comments/${commentId}`, {
+                method: 'DELETE',
+            })
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('댓글 삭제 실패');
+                    }
+                    location.reload();
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    alert('댓글 삭제에 실패했습니다.');
+                });
+        }
+
+        // 댓글 좋아요
+        function likeComment(button, commentId) {
+            if (isLoading) return;
+            isLoading = true;
+
+            fetch(`/api/novels/episodes/comments/${commentId}/like`, {
+                method: 'POST',
+            })
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('좋아요 처리 실패');
+                    }
+                    return response.text();
+                })
+                .then(() => {
+                    const likeCount = button.querySelector('.like-count');
+                    const currentCount = parseInt(likeCount.textContent);
+
+                    if (button.classList.contains('active')) {
+                        button.classList.remove('active');
+                        likeCount.textContent = currentCount - 1;
+                    } else {
+                        button.classList.add('active');
+                        likeCount.textContent = currentCount + 1;
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    alert('좋아요 처리에 실패했습니다.');
+                })
+                .finally(() => {
+                    isLoading = false;
+                });
+        }
+
+        // 정렬 변경
+        function changeSort(sortType) {
+            const url = new URL(window.location.href);
+            url.searchParams.set('sort', sortType);
+            url.searchParams.set('page', '0');
+            window.location.href = url.toString();
+        }
+
+        function loadMore() {
+            if (isLoading) return;
+            isLoading = true;
+
+            const btn = document.getElementById('loadMoreBtn');
+            const currentPage = parseInt(btn.dataset.currentPage);
+            const nextPage = currentPage + 1;
+
+            fetch(`/episodes/${episodeId}/comments?sort=${currentSort}&page=${nextPage}`)
+                .then(response => {
+                    if (!response.ok) throw new Error('댓글 로드 실패');
+                    return response.text();
+                })
+                .then(html => {
+                    const parser = new DOMParser();
+                    const doc = parser.parseFromString(html, 'text/html');
+                    const newComments = doc.querySelector('#commentsList').children;
+                    const commentsList = document.getElementById('commentsList');
+
+                    Array.from(newComments).forEach(comment => {
+                        const deleteButton = comment.querySelector('.delete-button');
+                        if (deleteButton) {
+                            const commentUserId = parseInt(deleteButton.getAttribute('data-user-id'));
+                            if (!(currentRole === 'ADMIN' || currentUserId === commentUserId)) {
+                                deleteButton.style.display = 'none';
+                            }
+                        }
+                        commentsList.appendChild(comment);
+                    });
+
+                    btn.dataset.currentPage = nextPage;
+
+                    const totalPages = parseInt(btn.dataset.totalPages);
+                    if (nextPage >= totalPages - 1) {
+                        btn.style.display = 'none';
+                    }
+
+                    initializeEventListeners();
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    alert('댓글을 더 불러오는데 실패했습니다.');
+                })
+                .finally(() => {
+                    isLoading = false;
+                });
+        }
+
+        // 초기 이벤트 리스너 등록
+        initializeEventListeners();
+    });
+</script>
+</body>
+</html>

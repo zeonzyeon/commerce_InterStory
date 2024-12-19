@@ -11,4 +11,6 @@ import com.app.interstory.novel.domain.entity.Tag;
 @Repository
 public interface TagRepository extends JpaRepository<Tag, Long> {
 	List<Tag> findByNovel(Novel novel);
+
+	void deleteByNovel(Novel novel);
 }
