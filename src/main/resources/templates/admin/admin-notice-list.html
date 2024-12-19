@@ -192,7 +192,7 @@
   </div>
 
   <div class="write-btn-container">
-    <button class="write-btn">글쓰기</button>
+    <button class="write-btn" sec:authorize="hasRole('ROLE_ADMIN')">글쓰기</button>
   </div>
 
   <!-- 공지사항 테이블 -->

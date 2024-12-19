@@ -151,8 +151,8 @@
 
         <div class="button-group">
             <button class="btn btn-primary" onclick="location.href='/admin/notices'">목록</button>
-            <button class="btn btn-secondary" onclick="editNotice()">수정</button>
-            <button class="btn btn-secondary" onclick="deleteNotice()">삭제</button>
+            <button class="btn btn-secondary" sec:authorize="hasRole('ROLE_ADMIN')" onclick="editNotice()">수정</button>
+            <button class="btn btn-secondary" sec:authorize="hasRole('ROLE_ADMIN')" onclick="deleteNotice()">삭제</button>
         </div>
     </div>
 </main>

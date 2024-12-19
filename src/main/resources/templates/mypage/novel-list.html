@@ -25,6 +25,7 @@
                 <button class="settlement-button" onclick="calculateSettlement()">연재 작품 정산</button>
             </div>
         </div>
+        <button class="write-novel" onclick="writeNovel()">신규 작품 등록</button>
         <!-- 등록된 작품 목록 -->
         <section class="my-novels">
             <div class="novel-item" th:each="novel : ${myNovels}">

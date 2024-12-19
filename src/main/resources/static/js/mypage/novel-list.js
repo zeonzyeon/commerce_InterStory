@@ -26,6 +26,7 @@ function calculateSettlement() {
         type: 'POST',
         success: function (response) {
             alert("정산이 완료되었습니다");
+            location.reload();
         },
         error: function (xhr, err, status) {
             alert(err + "이(가) 발생했습니다: " + status);
@@ -37,4 +38,8 @@ function registerNewWork() {
     alert("신규 작품 등록 페이지로 이동합니다.");
     // 신규 작품 등록 페이지로 이동
     window.location.href = "/works/new";
+}
+
+function writeNovel() {
+    location.href = "/novels/write";
 }

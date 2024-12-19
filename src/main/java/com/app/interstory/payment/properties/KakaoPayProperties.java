@@ -15,4 +15,5 @@ public class KakaoPayProperties {
 	private String onetimeCid;
 	private String sequenceCid;
 	private String subscriptionCid;
+	private String redirectUrl;
 }

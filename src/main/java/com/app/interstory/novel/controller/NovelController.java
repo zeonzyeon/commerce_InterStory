@@ -1,6 +1,7 @@
 package com.app.interstory.novel.controller;
 
 import com.app.interstory.common.service.S3Service;
+
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -20,6 +21,7 @@ import com.app.interstory.user.domain.CustomUserDetails;
 import com.app.interstory.user.service.UserService;
 
 import lombok.RequiredArgsConstructor;
+
 import org.springframework.web.multipart.MultipartFile;
 
 @Controller
@@ -69,7 +71,7 @@ public class NovelController {
 	}
 
 	@GetMapping("/{novelId}/edit")
-	public String editNovelForm(@PathVariable Long novelId, Model model, @AuthenticationPrincipal CustomUserDetails userDetails) {
+	public String editNovelForm(@PathVariable(name = "novelId") Long novelId, Model model, @AuthenticationPrincipal CustomUserDetails userDetails) {
 		NovelDetailResponseDTO novel = novelService.readNovel(novelId, userDetails);
 		model.addAttribute("user", userDetails.getUser());
 		model.addAttribute("novel", novel);
@@ -77,7 +79,7 @@ public class NovelController {
 	}
 
 	@GetMapping("/{novelId}/write-episode")
-	public String writeEpisodeForm(@PathVariable Long novelId, Model model, @AuthenticationPrincipal CustomUserDetails userDetails) {
+	public String writeEpisodeForm(@PathVariable(name = "novelId") Long novelId, Model model, @AuthenticationPrincipal CustomUserDetails userDetails) {
 		model.addAttribute("user", userDetails.getUser());
 		model.addAttribute("novelId", novelId);
 		return "novel/episode-write";
