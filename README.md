@@ -286,7 +286,8 @@ Interstory는 작가와 독자가 상호작용하며 함께 만들어 나가는 
 
 
 
-```graph LR
+```mermaid
+raph LR
     Git[GitHub] -->|1. Push| Actions[GitHub Actions]
     Actions -->|2. Build된 파일 전달/저장| S3[AWS S3]
     Actions -->|3. 배포 요청| CodeDeploy[AWS CodeDeploy]
