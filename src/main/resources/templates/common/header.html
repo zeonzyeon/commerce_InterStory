@@ -38,6 +38,12 @@
                         <a class="menu-item" href="/users/edit-profile">
                             <i class="fas fa-user"></i>정보 수정
                         </a>
+                        <a class="menu-item" href="/admin/notices">
+                            <i class="fas fa-bullhorn"></i>공지사항
+                        </a>
+                        <a class="menu-item" href="/admin/users" sec:authorize="hasRole('ROLE_ADMIN')">
+                            <i class="fas fa-users-cog"></i>관리자 페이지
+                        </a>
                         <div class="menu-divider"></div>
                         <a class="menu-item logout" href="/auth/logout">
                             <i class="fas fa-sign-out-alt"></i>로그아웃
