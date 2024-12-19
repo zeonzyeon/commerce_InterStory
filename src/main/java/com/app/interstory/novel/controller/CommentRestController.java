@@ -28,7 +28,7 @@ public class CommentRestController {
 
 	// 댓글 작성
 	@PostMapping("/novels/episodes/{episodeId}/comments")
-	public ResponseEntity<String> writeComment(@RequestBody CommentRequestDto requestDto, @PathVariable long episodeId,
+	public ResponseEntity<String> writeComment(@RequestBody CommentRequestDto requestDto, @PathVariable(name = "episodeId") long episodeId,
 		@AuthenticationPrincipal CustomUserDetails userDetails) {
 		commentService.writeComment(requestDto, episodeId, userDetails);
 		return ResponseEntity.status(HttpStatus.CREATED).body("댓글 작성이 완료되었습니다.");
@@ -36,8 +36,8 @@ public class CommentRestController {
 
 	// 회차 댓글 조회
 	@GetMapping("/novels/episodes/{episodeId}/comments")
-	public ResponseEntity<CommentListResponseDto> getEpisodeComment(@PathVariable Long episodeId,
-		@RequestParam(defaultValue = "NEW_TO_OLD") SortType sort, @RequestParam(defaultValue = "0") Integer page,
+	public ResponseEntity<CommentListResponseDto> getEpisodeComment(@PathVariable(name = "episodeId") Long episodeId,
+		@RequestParam(defaultValue = "NEW_TO_OLD", name = "sort") SortType sort, @RequestParam(defaultValue = "0", name = "page") Integer page,
 		@AuthenticationPrincipal CustomUserDetails userDetails) {
 		CommentListResponseDto commentList = commentService.getEpisodeComment(episodeId, sort, page, userDetails);
 		return ResponseEntity.status(HttpStatus.OK).body(commentList);
@@ -45,8 +45,8 @@ public class CommentRestController {
 
 	// 소설 댓글 조회
 	@GetMapping("/novels/{novelId}/comments/list")
-	public ResponseEntity<CommentListResponseDto> getNovelComment(@PathVariable Long novelId,
-		@RequestParam(defaultValue = "NEW_TO_OLD") SortType sort, @RequestParam(defaultValue = "0") Integer page,
+	public ResponseEntity<CommentListResponseDto> getNovelComment(@PathVariable(name = "novelId") Long novelId,
+		@RequestParam(defaultValue = "NEW_TO_OLD", name = "sort") SortType sort, @RequestParam(defaultValue = "0", name = "page") Integer page,
 		@AuthenticationPrincipal CustomUserDetails userDetails) {
 		CommentListResponseDto commentList = commentService.getNovelComment(novelId, sort, page, userDetails);
 		return ResponseEntity.status(HttpStatus.OK).body(commentList);
@@ -54,7 +54,7 @@ public class CommentRestController {
 
 	// 댓글 삭제
 	@DeleteMapping("/novels/episodes/comments/{commentId}")
-	public ResponseEntity<Void> deleteComment(@PathVariable Long commentId,
+	public ResponseEntity<Void> deleteComment(@PathVariable(name = "commentId") Long commentId,
 		@AuthenticationPrincipal CustomUserDetails userDetails) {
 		commentService.deleteComment(commentId, userDetails);
 		return ResponseEntity.noContent().build();
@@ -62,7 +62,7 @@ public class CommentRestController {
 
 	// 댓글 추천
 	@PostMapping("/novels/episodes/comments/{commentId}/like")
-	public ResponseEntity<String> likeComment(@PathVariable Long commentId,
+	public ResponseEntity<String> likeComment(@PathVariable(name = "commentId") Long commentId,
 		@AuthenticationPrincipal CustomUserDetails userDetails) {
 		String afterLikeMessage = commentService.likeComment(commentId, userDetails);
 		return ResponseEntity.ok(afterLikeMessage);
