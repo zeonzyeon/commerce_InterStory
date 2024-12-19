@@ -85,22 +85,20 @@ Interstory는 작가와 독자가 상호작용하며 함께 만들어 나가는 
   <img alt="GitHub Actions" src ="https://img.shields.io/badge/github%20actions-%232671E5.svg?style=for-the-badge&logo=githubactions&logoColor=white"/>
 </div>
 
-
-##  흐름도
-
+## 흐름도
 
 ```mermaid
 
 graph LR
-    Git[GitHub] -->|1. Push| Actions[GitHub Actions]
-    Actions -->|2. Build된 파일 전달/저장| S3[AWS S3]
-    Actions -->|3. 배포 요청| CodeDeploy[AWS CodeDeploy]
-    S3 -->|4. Build된 파일 전달| CodeDeploy
-    CodeDeploy -->|5. 배포| EC2[AWS EC2]
-    
+    Git[GitHub] -->|1 . Push| Actions[GitHub Actions]
+    Actions -->|2 . Build된 파일 전달/저장| S3[AWS S3]
+    Actions -->|3 . 배포 요청| CodeDeploy[AWS CodeDeploy]
+    S3 -->|4 . Build된 파일 전달| CodeDeploy
+    CodeDeploy -->|5 . 배포| EC2[AWS EC2]
+
     subgraph AWS EC2 Instance
-        EC2 -->|scripts/deploy.sh| Spring[Spring Boot App]
-        EC2 -->|appspec.yml| Config[Configuration]
+        EC2 -->|scripts/deploy . sh| Spring[Spring Boot App]
+        EC2 -->|appspec . yml| Config[Configuration]
         Spring --> Redis[(Redis Docker)]
         Spring --> RDS[(AWS RDS MySQL)]
     end
@@ -129,23 +127,23 @@ graph LR
 
 <br>
 
+
+<img src="https://github.com/user-attachments/assets/49cf8382-1053-4ab5-bcc4-6fd0a4d6a1cc">
+
 ## 3. 화면 설계서
 
 [InterStory 화면 설계(figma)](https://www.figma.com/design/mXSWpX1p48UCLlsu02EcRi/%ED%99%94%EB%A9%B4-%EC%84%A4%EA%B3%84%EC%84%9C?node-id=0-1&t=YCbEi94CdYIUqlmr-1)
 
-|                                                                                                              |                                                                                                                 |
-|--------------------------------------------------------------------------------------------------------------|-----------------------------------------------------------------------------------------------------------------|
-| <img src="https://github.com/user-attachments/assets/870953e6-126f-4b7e-b7c6-b8b33d18c485"> <br/> 메인 페이지     | <img src="https://github.com/user-attachments/assets/5d3817ad-8542-4d7a-9dd1-5c65febb8fd4"> <br/> 로그인 화면        |
-| <img src="https://github.com/user-attachments/assets/4e88822a-3c0d-479d-b699-6613db8a44c0"> <br/> 프로필 메뉴     | <img src="https://github.com/user-attachments/assets/6c150708-cb8c-4dd3-8053-6d3c9f811c7e"> <br/> 마이페이지         |
-| <img src="https://github.com/user-attachments/assets/f591222d-fe0d-480f-b61c-c05c91d8fa62"> <br/> 구독 모달창     | <img src="https://github.com/user-attachments/assets/9fc5e6e2-1d98-4fab-b1a3-a649c9eee68b"> <br/> 포인트 결제창       |
-| <img src="https://github.com/user-attachments/assets/a20d0ea6-193a-41dc-a0cc-404461c34926"> <br/> 연재한 작품 목록  | <img src="https://github.com/user-attachments/assets/ddf83681-71de-46f9-8afe-97478e89133f"> <br/> 연재한 작품의 반응 분석 |
-| <img src="https://github.com/user-attachments/assets/29f91af8-366d-4ea2-a153-7ad33d0da784"> <br/> 포인트 내역     | <img src="https://github.com/user-attachments/assets/c7f57f97-b137-469f-b087-8d52dcd82ffc"> <br/> 장바구니          |
-| <img src="https://github.com/user-attachments/assets/4b8852cd-b04d-427f-a7fd-a7e17b1f0960"> <br/> 회원 정보 수정   | <img src="https://github.com/user-attachments/assets/66655118-bae1-4230-84ce-da75822f8453"> <br/> 쿠폰 내역         |
-| <img src="https://github.com/user-attachments/assets/06956f1a-4e22-41df-b6a4-524976f14ba9"> <br/> 소설 상세 조회   | <img src="https://github.com/user-attachments/assets/f2f78729-27cc-4c16-8001-1fbe07c96a7e"> <br/> 작성한 댓글        |
-| <img src="https://github.com/user-attachments/assets/7e50222c-a030-4f68-aebe-41ab53118138"> <br/> 작품 수정      | <img src="https://github.com/user-attachments/assets/449c656d-9cf0-4a10-b1fc-74d2bb336d94"> <br/> 작품 추가         |
-| <img src="https://github.com/user-attachments/assets/540f78b7-0557-4cf9-b4ec-8c9a97313405"> <br/> 회차 구매 모달창  | <img src="https://github.com/user-attachments/assets/27d33174-63a1-45f3-bd80-f3754775fc8d"> <br/> 회차 댓글 조회      |
-| <img src="https://github.com/user-attachments/assets/3e8d75f3-ae38-48eb-97ba-e82452c233fa"> <br/> 회차 상세 조회   | <img src="https://github.com/user-attachments/assets/ffe3f433-43d2-4d25-9108-c524da496e7c"> <br/> 회차 수정 (소설)    |
-| <img src="https://github.com/user-attachments/assets/2876b066-731f-4166-b40a-427486d72e27"> <br/> 회차 작성 (소설) |                                                                                                                 |
+<img alt="화면 설계서" src="https://github.com/user-attachments/assets/a88398f7-d653-4ca2-b383-6948ef12db70">
+
+|                                                                                             |                                                                                             |
+|---------------------------------------------------------------------------------------------|---------------------------------------------------------------------------------------------|
+| **메인 페이지**                                                                                  | **마이페이지**                                                                                   |
+| <img src="https://github.com/user-attachments/assets/e58772b8-5243-4a2c-8721-cec6feccc7e1"> | <img src="https://github.com/user-attachments/assets/88a1cdad-b70f-41fa-8e94-5f81cd37d30e"> |
+| **포인트 내역**                                                                                  | **소설 상세 조회**                                                                                |  
+| <img src="https://github.com/user-attachments/assets/413dea56-413f-4725-a38a-396bfe940ca3"> | <img src="https://github.com/user-attachments/assets/1b7c54d1-38ce-430c-9a1b-5e5db655d5c0"> |
+| **회차 구매**                                                                                   | **공지사항**                                                                                    | 
+| <img src="https://github.com/user-attachments/assets/ebaad24c-f58e-4d8e-9b6e-4fabc31df4e0"> | <img src="https://github.com/user-attachments/assets/7ef849c8-2692-4204-8e54-c68c07b78fc6"> |
 
 ## 4. 시스템 구조도
 
