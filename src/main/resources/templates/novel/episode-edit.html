@@ -1,0 +1,334 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta content="width=device-width, initial-scale=1.0" name="viewport">
+    <title>회차 수정</title>
+    <link rel="stylesheet" th:href="@{/css/common/header.css}">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, system-ui, Roboto, sans-serif;
+        }
+
+        body {
+            background-color: #f8f9fa;
+            color: #333;
+        }
+
+        .main-container {
+            max-width: 1200px;
+            margin: 2rem auto;
+            padding: 0 1rem;
+        }
+
+        .content-grid {
+            display: grid;
+            grid-template-columns: 1fr 2fr;
+            gap: 2rem;
+        }
+
+        .thumbnail-section {
+            background-color: white;
+            border-radius: 0.75rem;
+            padding: 1.5rem;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+        }
+
+        .thumbnail-container {
+            width: 200px;
+            height: 280px;
+            margin: 0 auto 1rem;
+            position: relative;
+            cursor: pointer;
+            border: 1px solid #e5e7eb;
+            border-radius: 0.5rem;
+            overflow: hidden;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .thumbnail-container img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .thumbnail-container::after {
+            content: '클릭하여 이미지 변경';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.875rem;
+            opacity: 0;
+            transition: opacity 0.2s;
+        }
+
+        .thumbnail-container:hover::after {
+            opacity: 1;
+        }
+
+        .form-section {
+            background-color: white;
+            border-radius: 0.75rem;
+            padding: 1.5rem;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .form-group label {
+            display: block;
+            color: #6b7280;
+            margin-bottom: 0.5rem;
+            font-weight: 500;
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 0.75rem 1rem;
+            border: 1px solid #e5e7eb;
+            border-radius: 0.5rem;
+            font-size: 1rem;
+        }
+
+        textarea.form-control {
+            min-height: 400px;
+            resize: vertical;
+        }
+
+        .button-container {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 2rem;
+        }
+
+        .button-group {
+            display: flex;
+            gap: 1rem;
+        }
+
+        .btn {
+            padding: 0.75rem 1.5rem;
+            border: none;
+            border-radius: 0.5rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+
+        .btn-primary {
+            background-color: #2563eb;
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background-color: #1d4ed8;
+        }
+
+        .btn-secondary {
+            background-color: #f3f4f6;
+            color: #374151;
+        }
+
+        .btn-secondary:hover {
+            background-color: #e5e7eb;
+        }
+
+        .btn-danger {
+            background-color: #dc2626;
+            color: white;
+        }
+
+        .btn-danger:hover {
+            background-color: #b91c1c;
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        .error-message {
+            color: #ef4444;
+            font-size: 0.875rem;
+            margin-top: 0.5rem;
+            display: none;
+        }
+
+        .error-message.show {
+            display: block;
+        }
+
+        @media (max-width: 768px) {
+            .content-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+<div th:replace="~{common/header :: header}"></div>
+
+<main class="main-container">
+    <form id="episodeForm" enctype="multipart/form-data">
+        <div class="content-grid">
+            <section class="thumbnail-section">
+                <div class="thumbnail-container">
+                    <img id="thumbnailPreview" class="thumbnail-preview"
+                         th:src="${episode.thumbnailUrl != null ? episode.thumbnailUrl : 'https://placehold.co/200x280'}"
+                         alt="회차 썸네일">
+                    <input type="file" id="thumbnailFile" name="file"
+                           accept="image/*" class="hidden">
+                </div>
+            </section>
+
+            <section class="form-section">
+                <div class="form-group">
+                    <label for="title">회차 제목*</label>
+                    <input type="text" id="title" name="title"
+                           class="form-control" required
+                           th:value="${episode.title}">
+                    <div class="error-message" id="titleError">
+                        제목을 입력해주세요.
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="content">회차 내용*</label>
+                    <textarea id="content" name="content"
+                              class="form-control" required
+                              th:text="${episode.content}"></textarea>
+                    <div class="error-message" id="contentError">
+                        내용을 입력해주세요.
+                    </div>
+                </div>
+
+                <div class="button-container">
+                    <button type="button" class="btn btn-danger" onclick="deleteEpisode()">삭제하기</button>
+                    <div class="button-group">
+                        <button type="button" class="btn btn-secondary" onclick="history.back()">취소</button>
+                        <button type="submit" class="btn btn-primary">수정하기</button>
+                    </div>
+                </div>
+            </section>
+        </div>
+    </form>
+</main>
+
+<script th:inline="javascript">
+    const episodeId = [[${episode.episodeId}]];
+    const novelId = [[${episode.novel.novelId}]];
+
+    document.addEventListener('DOMContentLoaded', function() {
+        const thumbnailContainer = document.querySelector('.thumbnail-container');
+        const fileInput = document.getElementById('thumbnailFile');
+        const preview = document.getElementById('thumbnailPreview');
+
+        thumbnailContainer.addEventListener('click', function() {
+            fileInput.click();
+        });
+
+        fileInput.addEventListener('change', function() {
+            if (this.files && this.files[0]) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    preview.src = e.target.result;
+                };
+                reader.readAsDataURL(this.files[0]);
+            }
+        });
+    });
+
+    async function deleteEpisode() {
+        if (confirm('정말로 이 회차를 삭제하시겠습니까? 이 작업은 되돌릴 수 없습니다.')) {
+            try {
+                const response = await fetch(`/api/novels/episodes/${episodeId}`, {
+                    method: 'DELETE'
+                });
+
+                if (response.ok) {
+                    alert('회차가 성공적으로 삭제되었습니다.');
+                    window.location.href = `/novels/${novelId}`;
+                } else {
+                    const error = await response.text();
+                    alert('회차 삭제에 실패했습니다: ' + error);
+                }
+            } catch (error) {
+                alert('회차 삭제 중 오류가 발생했습니다: ' + error);
+            }
+        }
+    }
+
+    document.getElementById('episodeForm').addEventListener('submit', async (e) => {
+        e.preventDefault();
+
+        const title = document.getElementById('title').value.trim();
+        const content = document.getElementById('content').value.trim();
+        let hasError = false;
+
+        if (!title) {
+            document.getElementById('titleError').classList.add('show');
+            hasError = true;
+        } else {
+            document.getElementById('titleError').classList.remove('show');
+        }
+
+        if (!content) {
+            document.getElementById('contentError').classList.add('show');
+            hasError = true;
+        } else {
+            document.getElementById('contentError').classList.remove('show');
+        }
+
+        if (hasError) return;
+
+        const formData = new FormData();
+        const episodeData = {
+            novelId: novelId,
+            title: title,
+            content: content
+        };
+
+        formData.append('episodeRequestDTO', new Blob([JSON.stringify(episodeData)], {
+            type: 'application/json'
+        }));
+
+        const thumbnailFile = document.getElementById('thumbnailFile').files[0];
+        if (thumbnailFile) {
+            formData.append('file', thumbnailFile);
+        }
+
+        try {
+            const response = await fetch(`/api/novels/episodes/${episodeId}`, {
+                method: 'PUT',
+                body: formData
+            });
+
+            if (response.ok) {
+                const result = await response.json();
+                alert('회차가 성공적으로 수정되었습니다.');
+                window.location.href = `/novels/${novelId}`;
+            } else {
+                const error = await response.text();
+                alert('회차 수정에 실패했습니다: ' + error);
+            }
+        } catch (error) {
+            alert('회차 수정 중 오류가 발생했습니다.');
+            console.error('Error:', error);
+        }
+    });
+</script>
+</body>
+</html>

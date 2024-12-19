@@ -8,7 +8,9 @@
             <a class="logo-text" href="/">InterStory</a>
         </div>
         <div class="search-bar">
-            <input placeholder="제목/작가로 검색" type="text">
+            <input id="searchInput" placeholder="제목/작가로 검색" type="text">
+            <div id="searchResults" class="search-results" style="display: none;">
+            </div>
         </div>
         <div class="user-area">
             <!-- 로그인 상태에 따른 조건부 렌더링 -->
@@ -48,8 +50,4 @@
     </div>
 
     <script th:src="@{/js/common/header.js}"></script>
-    <script>
-
-
-    </script>
 </header>

@@ -25,7 +25,7 @@ import com.app.interstory.user.service.AdminService;
 import lombok.RequiredArgsConstructor;
 
 @RestController
-@RequestMapping("/api/admin")
+@RequestMapping("api/admin")
 @RequiredArgsConstructor
 public class AdminRestController {
 	private final AdminService adminService;

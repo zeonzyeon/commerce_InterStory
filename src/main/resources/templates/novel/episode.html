@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>InterStory</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, system-ui, Roboto, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background: #f8f8f8;
+        }
+
+        .episode-content {
+            max-width: 800px;
+            margin: 80px auto 100px;
+            padding: 30px;
+            background: white;
+            min-height: calc(100vh - 180px);
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .episode-header {
+            margin-bottom: 30px;
+            padding-bottom: 20px;
+            border-bottom: 1px solid #eee;
+        }
+
+        .episode-title {
+            font-size: 24px;
+            font-weight: 700;
+            margin-bottom: 15px;
+            color: #2C3E50;
+        }
+
+        .episode-info {
+            display: flex;
+            gap: 24px;
+            color: #666;
+            font-size: 14px;
+        }
+
+        .info-item {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .episode-body {
+            font-size: 16px;
+            line-height: 1.8;
+            white-space: pre-wrap;
+            word-break: break-word;
+            color: #2C3E50;
+        }
+
+        @media (max-width: 840px) {
+            .episode-content {
+                margin: 70px 15px 90px;
+                padding: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+<div th:replace="novel/fragment/fragment :: top-nav"></div>
+
+<main class="episode-content">
+    <div class="episode-header">
+        <h1 class="episode-title" th:text="${episodeDetail.title}">에피소드 제목</h1>
+        <div class="episode-info">
+                <span class="info-item">
+                    <i class="fas fa-book"></i>
+                    <span th:text="|${episodeDetail.episodeNumber}화|">0화</span>
+                </span>
+            <span class="info-item">
+                    <i class="fas fa-eye"></i>
+                    <span th:text="${episodeDetail.viewCount}">0</span>
+                </span>
+            <span class="info-item">
+                    <i class="fas fa-heart"></i>
+                    <span th:text="${episodeDetail.likeCount}">0</span>
+                </span>
+            <span class="info-item">
+                    <i class="fas fa-comment"></i>
+                    <span th:text="${episodeDetail.commentCount}">0</span>
+                </span>
+        </div>
+    </div>
+
+    <div class="episode-body" th:utext="${episodeDetail.content}">
+        에피소드 내용이 여기에 표시됩니다.
+    </div>
+</main>
+
+<div th:replace="novel/fragment/fragment :: bottom-nav"></div>
+<div th:replace="novel/fragment/fragment :: nav-script"></div>
+</body>
+</html>
