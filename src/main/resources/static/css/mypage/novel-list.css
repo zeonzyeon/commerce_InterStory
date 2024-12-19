@@ -72,6 +72,16 @@ main {
         }
     }
 
+    .write-novel {
+        width: 150px;
+        padding: 5px 15px;
+        background-color: #f9f9f9;
+        border-radius: 5px;
+        font-size: 14px;
+        border: 1px solid #ccc;
+        margin: 0 0 0 auto;
+    }
+
     .expected-amount {
         display: flex;
         align-items: center;
