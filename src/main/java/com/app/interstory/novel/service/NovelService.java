@@ -2,17 +2,6 @@ package com.app.interstory.novel.service;
 
 import com.app.interstory.common.service.S3Service;
 import com.app.interstory.config.FilePathConfig;
-import java.util.List;
-import java.util.concurrent.TimeUnit;
-
-import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.redis.core.RedisTemplate;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-
 import com.app.interstory.novel.domain.entity.Episode;
 import com.app.interstory.novel.domain.entity.FavoriteNovel;
 import com.app.interstory.novel.domain.entity.Novel;
@@ -31,6 +20,7 @@ import com.app.interstory.novel.repository.NovelRepository;
 import com.app.interstory.novel.repository.TagRepository;
 import com.app.interstory.user.domain.CustomUserDetails;
 import com.app.interstory.user.domain.enumtypes.NovelSortType;
+import com.app.interstory.user.domain.enumtypes.Roles;
 import com.app.interstory.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -66,7 +56,9 @@ public class NovelService {
     public Long writeNovel(NovelRequestDTO novelRequestDTO, MultipartFile file, CustomUserDetails userDetails) {
 
         String thumbnailUrl = file != null ? uploadThumbnail(file) : filePathConfig.getDefaultThumbnailPath();
-        String thumbnailRenamedFilename = file != null ? file.getOriginalFilename() : "novel.png";
+        String renamedFileName = thumbnailUrl.substring(thumbnailUrl.lastIndexOf("/") + 1);
+
+        String filePath = filePathConfig.getThumbnailPath() + renamedFileName;
 
         Novel novel = Novel.builder()
                 .user(userRepository.findById(userDetails.getUser().getUserId())
@@ -74,38 +66,60 @@ public class NovelService {
                 .title(novelRequestDTO.getTitle())
                 .description(novelRequestDTO.getDescription())
                 .plan(novelRequestDTO.getPlan())
+                .thumbnailUrl(filePath)
+                .thumbnailRenamedFilename(renamedFileName)
                 .status(NovelStatus.DRAFT)
-                .thumbnailRenamedFilename(thumbnailRenamedFilename)
-                .thumbnailUrl(thumbnailUrl)
                 .tag(novelRequestDTO.getTag())
                 .isFree(novelRequestDTO.getIsFree())
                 .build();
 
         novelRepository.save(novel);
+
+        List<String> customTags = novelRequestDTO.getCustomTag();
+        if (customTags != null) {
+            for (String tagName : customTags) {
+                Tag tag = new Tag(novel, tagName);
+                tagRepository.save(tag);
+            }
+        }
+
         return novel.getNovelId();
     }
 
-//    // 소설 수정
-//    @Transactional
-//    public void updateNovel(Long novelId, NovelRequestDTO novelRequestDTO, Long userId) {
-//        Novel novel = novelRepository.findById(novelId)
-//                .orElseThrow(() -> new RuntimeException("Novel not found"));
-//
-//        if (!novel.getUser().getUserId().equals(userId)) {
-//            throw new RuntimeException("Unauthorized user");
-//        }
-//
-//        novel.update(
-//                novelRequestDTO.getTitle(),
-//                novelRequestDTO.getDescription(),
-//                novelRequestDTO.getPlan(),
-//                novelRequestDTO.getThumbnailRenamedFilename(),
-//                novelRequestDTO.getThumbnailUrl(),
-//                novelRequestDTO.getTag(),
-//                novelRequestDTO.getStatus(),
-//                novelRequestDTO.getIsFree()
-//        );
-//    }
+    // 소설 수정
+    @Transactional
+    public void updateNovel(Long novelId, NovelRequestDTO novelRequestDTO, MultipartFile file, CustomUserDetails userDetails) {
+        Novel novel = novelRepository.findById(novelId)
+                .orElseThrow(() -> new RuntimeException("Novel not found"));
+
+        if (!novel.getUser().getUserId().equals(userDetails.getUser().getUserId()) && userDetails.getUser().getRole() != Roles.ADMIN) {
+            throw new RuntimeException("Unauthorized user");
+        }
+
+        String thumbnailUrl = updateThumbnailImage(novel, file);
+        String renamedFileName = thumbnailUrl.substring(thumbnailUrl.lastIndexOf("/") + 1);
+        String filePath = filePathConfig.getThumbnailPath() + renamedFileName;
+
+        tagRepository.deleteByNovel(novel);
+
+        List<String> customTags = novelRequestDTO.getCustomTag();
+        if (customTags != null) {
+            for (String tagName : customTags) {
+                Tag tag = new Tag(novel, tagName);
+                tagRepository.save(tag);
+            }
+        }
+
+        novel.update(
+                novelRequestDTO.getTitle(),
+                novelRequestDTO.getDescription(),
+                renamedFileName,
+                filePath,
+                novelRequestDTO.getTag(),
+                novelRequestDTO.getStatus(),
+                novelRequestDTO.getIsFree()
+        );
+    }
 
     // 소설 상세 조회
     public NovelDetailResponseDTO readNovel(Long novelId, CustomUserDetails userDetails) {
@@ -169,20 +183,15 @@ public class NovelService {
 
     // 소설 삭제
     @Transactional
-    public void deleteNovel(Long novelId, Long userId) {
+    public void deleteNovel(Long novelId, CustomUserDetails userDetails) {
         Novel novel = novelRepository.findById(novelId)
                 .orElseThrow(() -> new RuntimeException("Novel not found with id: " + novelId));
 
-        if (!novel.getUser().getUserId().equals(userId)) {
+        if (!novel.getUser().getUserId().equals(userDetails.getUser().getUserId()) && userDetails.getUser().getRole() != Roles.ADMIN) {
             throw new RuntimeException("Unauthorized user");
         }
 
-        if (novel.getStatus() == NovelStatus.DELETED) {
-            throw new RuntimeException("Novel is already deleted.");
-        }
-
         novel.markAsDeleted();
-        novelRepository.save(novel);
     }
 
     // 관심작품 등록
@@ -252,21 +261,14 @@ public class NovelService {
 
     // 썸네일 이미지 업데이트
     @Transactional
-    public String updateThumbnailImage(Long novelId, MultipartFile file, Long userId) {
-        Novel novel = novelRepository.findById(novelId)
-                .orElseThrow(() -> new RuntimeException("Novel not found"));
-
-        // 권한 체크
-        if (!novel.getUser().getUserId().equals(userId)) {
-            throw new RuntimeException("Unauthorized user");
-        }
+    public String updateThumbnailImage(Novel novel, MultipartFile file) {
 
         // 기존 썸네일 삭제
         deleteExistingThumbnail(novel);
 
         // 새 썸네일 업로드
         String thumbnailUrl = uploadThumbnail(file);
-        novel.updateThumbnail(thumbnailUrl, file.getOriginalFilename());
+        novel.updateThumbnail(thumbnailUrl);
 
         return thumbnailUrl;
     }
@@ -278,7 +280,7 @@ public class NovelService {
 
     private void deleteExistingThumbnail(Novel novel) {
         if (!novel.getThumbnailRenamedFilename().equals("novel.png")) {
-            s3Service.deleteFile(novel.getThumbnailUrl());
+            s3Service.deleteFile(novel.getThumbnailUrl(), filePathConfig.getThumbnail());
         }
     }
 }

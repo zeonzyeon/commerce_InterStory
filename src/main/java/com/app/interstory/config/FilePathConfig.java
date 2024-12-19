@@ -16,6 +16,7 @@ public class FilePathConfig {
 	private final String userDefaultProfilePath;
 	private final String thumbnailPath;
 	private final String DefaultThumbnailPath;
+	private final String DefaultEpisodeThumbnailPath;
 	private final String common;
 	private final String profile;
 	private final String thumbnail;
@@ -30,7 +31,8 @@ public class FilePathConfig {
 		this.userProfilePath = basePath + "/profile/";
 		this.userDefaultProfilePath = userProfilePath + "user.png";
 		this.thumbnailPath = basePath + "/thumbnail/";
-		this.DefaultThumbnailPath = thumbnailPath + "novel.png";
+		this.DefaultThumbnailPath = thumbnailPath + "novel.jpg";
+		this.DefaultEpisodeThumbnailPath = thumbnailPath + "episode.jpg";
 		this.common = basePath + "/common/";
 		this.profile = "profile/";
 		this.thumbnail = "thumbnail/";

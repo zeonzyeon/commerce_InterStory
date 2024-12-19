@@ -35,7 +35,6 @@ public class NovelController {
 
 	@GetMapping("/{novelId}")
 	public String getNovel(Model model, @PathVariable("novelId") Long novelId,
-		MultipartFile file,
 		@AuthenticationPrincipal CustomUserDetails userDetails,
 		@RequestParam(name = "sort", defaultValue = "NEW_TO_OLD") SortType sort,
 		@RequestParam(name = "page", defaultValue = "0") int page,
@@ -65,5 +64,20 @@ public class NovelController {
 	public String writeNovelForm(Model model, @AuthenticationPrincipal CustomUserDetails userDetails) {
 		model.addAttribute("user", userDetails.getUser());
 		return "novel/write";
+	}
+
+	@GetMapping("/{novelId}/edit")
+	public String editNovelForm(@PathVariable Long novelId, Model model, @AuthenticationPrincipal CustomUserDetails userDetails) {
+		NovelDetailResponseDTO novel = novelService.readNovel(novelId, userDetails);
+		model.addAttribute("user", userDetails.getUser());
+		model.addAttribute("novel", novel);
+		return "novel/edit";
+	}
+
+	@GetMapping("/{novelId}/write-episode")
+	public String writeEpisodeForm(@PathVariable Long novelId, Model model, @AuthenticationPrincipal CustomUserDetails userDetails) {
+		model.addAttribute("user", userDetails.getUser());
+		model.addAttribute("novelId", novelId);
+		return "novel/episode-write";
 	}
 }

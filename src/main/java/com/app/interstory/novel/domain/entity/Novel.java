@@ -2,6 +2,7 @@ package com.app.interstory.novel.domain.entity;
 
 import java.sql.Timestamp;
 
+import jakarta.persistence.*;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
@@ -9,18 +10,6 @@ import com.app.interstory.novel.domain.enumtypes.MainTag;
 import com.app.interstory.novel.domain.enumtypes.NovelStatus;
 import com.app.interstory.user.domain.entity.User;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.EntityListeners;
-import jakarta.persistence.EnumType;
-import jakarta.persistence.Enumerated;
-import jakarta.persistence.FetchType;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
-import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -30,6 +19,8 @@ import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import java.sql.Timestamp;
+import java.util.ArrayList;
+import java.util.List;
 
 @Getter
 @Entity
@@ -96,10 +87,12 @@ public class Novel {
 	@Column(name = "episode_updated_at")
 	private Timestamp episodeUpdatedAt;
 
+	@OneToMany(mappedBy = "novel", cascade = CascadeType.ALL)
+	private List<Episode> episodes = new ArrayList<>();
+
 	public void update(
 		String title,
 		String description,
-		String plan,
 		String thumbnailRenamedFilename,
 		String thumbnailUrl,
 		MainTag tag,
@@ -108,7 +101,6 @@ public class Novel {
 	) {
 		this.title = title;
 		this.description = description;
-		this.plan = plan;
 		this.thumbnailRenamedFilename = thumbnailRenamedFilename;
 		this.thumbnailUrl = thumbnailUrl;
 		this.tag = tag;
@@ -128,8 +120,8 @@ public class Novel {
 		this.favoriteCount = favoriteCount;
 	}
 
-	public void updateThumbnail(String thumbnailUrl, String renamedFilename) {
+	public void updateThumbnail(String thumbnailUrl) {
 		this.thumbnailUrl = thumbnailUrl;
-		this.thumbnailRenamedFilename = renamedFilename;
+		this.thumbnailRenamedFilename = thumbnailUrl.substring(thumbnailUrl.lastIndexOf("/") + 1);
 	}
 }

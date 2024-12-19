@@ -45,17 +45,17 @@ public class NovelRestController {
         return ResponseEntity.status(HttpStatus.CREATED).body(novelId);
     }
 
-//	// 소설 수정
-//	@PutMapping("/{novelId}")
-//	public ResponseEntity<String> updateNovel(
-//		@PathVariable("novelId") Long novelId,
-//		@RequestBody NovelRequestDTO novelRequestDTO,
-//		@AuthenticationPrincipal CustomUserDetails userDetails
-//	) {
-//		Long userId = userDetails.getUser().getUserId();
-//		novelService.updateNovel(novelId, novelRequestDTO, userId);
-//		return ResponseEntity.ok("Novel updated successfully");
-//	}
+    // 소설 수정
+    @PutMapping("/{novelId}")
+    public ResponseEntity<String> updateNovel(
+            @PathVariable("novelId") Long novelId,
+            @RequestPart("novelRequestDTO") NovelRequestDTO novelRequestDTO,
+            @RequestPart(value = "file", required = false) MultipartFile file,
+            @AuthenticationPrincipal CustomUserDetails userDetails
+    ) {
+        novelService.updateNovel(novelId, novelRequestDTO, file, userDetails);
+        return ResponseEntity.ok("Novel updated successfully");
+    }
 
     // 소설 상세 조회
     @GetMapping("/{novelId}")
@@ -88,8 +88,7 @@ public class NovelRestController {
             @PathVariable("novelId") Long novelId,
             @AuthenticationPrincipal CustomUserDetails userDetails
     ) {
-        Long userId = userDetails.getUser().getUserId();
-        novelService.deleteNovel(novelId, userId);
+        novelService.deleteNovel(novelId, userDetails);
         return ResponseEntity.noContent().build();
     }
 
@@ -133,9 +132,12 @@ public class NovelRestController {
 
     // 회차 작성
     @PostMapping("/{novelId}/episodes")
-    public ResponseEntity<EpisodeResponseDTO> createEpisode(@PathVariable Long novelId,
-                                                            @RequestBody EpisodeRequestDTO requestDTO) {
-        EpisodeResponseDTO responseDTO = episodeService.writeEpisode(novelId, requestDTO);
+    public ResponseEntity<EpisodeResponseDTO> createEpisode(
+            @PathVariable Long novelId,
+            @RequestPart("episodeRequestDTO") EpisodeRequestDTO requestDTO,
+            @RequestPart(value = "file", required = false) MultipartFile file,
+            @AuthenticationPrincipal CustomUserDetails userDetails) {
+        EpisodeResponseDTO responseDTO = episodeService.writeEpisode(novelId, requestDTO, file, userDetails);
         return ResponseEntity.ok(responseDTO);
     }
 

@@ -87,7 +87,7 @@ public class CommentService {
                         .isLiked(false)
                         .status(comment.getStatus())
                         .commentId(comment.getCommentId())
-                        .userId(userDetails.getUser().getUserId())
+                        .userId(comment.getUser().getUserId())
                         .build();
 
             } else {
@@ -100,7 +100,7 @@ public class CommentService {
                         .isLiked(commentLikeRepository.existsByCommentAndUser(comment, user))
                         .status(comment.getStatus())
                         .commentId(comment.getCommentId())
-                        .userId(userDetails.getUser().getUserId())
+                        .userId(comment.getUser().getUserId())
                         .build();
             }
         }).toList();
@@ -143,7 +143,7 @@ public class CommentService {
                         .isLiked(false)
                         .status(comment.getStatus())
                         .commentId(comment.getCommentId())
-                        .userId(userDetails.getUser().getUserId())
+                        .userId(comment.getUser().getUserId())
                         .build();
 
             } else {
@@ -157,7 +157,7 @@ public class CommentService {
                         .isLiked(commentLikeRepository.existsByCommentAndUser(comment, user))
                         .status(comment.getStatus())
                         .commentId(comment.getCommentId())
-                        .userId(userDetails.getUser().getUserId())
+                        .userId(comment.getUser().getUserId())
                         .build();
             }
         }).toList();

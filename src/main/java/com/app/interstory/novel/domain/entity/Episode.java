@@ -81,28 +81,6 @@ public class Episode {
 	@Column(name = "episode_number")
 	private Integer episodeNumber = DEFAULT_EP_NUM;
 
-	public void updateEpisode(EpisodeRequestDTO requestDTO) {
-		if (requestDTO.getTitle() != null) {
-			this.title = requestDTO.getTitle();
-		}
-		if (requestDTO.getThumbnailRenamedFilename() != null) {
-			this.thumbnailRenamedFilename = requestDTO.getThumbnailRenamedFilename();
-		}
-		if (requestDTO.getThumbnailUrl() != null) {
-			this.thumbnailUrl = requestDTO.getThumbnailUrl();
-		}
-		if (requestDTO.getContent() != null) {
-			this.content = requestDTO.getContent();
-		}
-		if (requestDTO.getStatus() != null) {
-			this.status = requestDTO.getStatus();
-		}
-	}
-
-	public void markAsDeleted() {
-		this.status = false;
-	}
-
 	public void incrementLikeCount() {
 		this.likeCount++;
 	}
@@ -112,5 +90,12 @@ public class Episode {
 		if (this.likeCount > 0) {
 			this.likeCount--;
 		}
+	}
+
+	public void update(String title, String content, String thumbnailUrl, String thumbnailRenamedFilename) {
+		this.title = title;
+		this.content = content;
+		this.thumbnailUrl = thumbnailUrl;
+		this.thumbnailRenamedFilename = thumbnailRenamedFilename;
 	}
 }

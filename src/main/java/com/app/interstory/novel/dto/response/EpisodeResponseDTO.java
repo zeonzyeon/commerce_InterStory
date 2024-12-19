@@ -2,6 +2,7 @@ package com.app.interstory.novel.dto.response;
 
 import java.sql.Timestamp;
 
+import com.app.interstory.novel.domain.entity.Episode;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -9,8 +10,6 @@ import lombok.NoArgsConstructor;
 import lombok.ToString;
 
 @Getter
-@AllArgsConstructor
-@NoArgsConstructor
 @Builder
 @ToString
 public class EpisodeResponseDTO {
@@ -23,5 +22,19 @@ public class EpisodeResponseDTO {
 	private Integer likeCount;
 	private String content;
 	private Boolean status;
+
+	public static EpisodeResponseDTO from(Episode episode) {
+		return EpisodeResponseDTO.builder()
+				.episodeId(episode.getEpisodeId())
+				.title(episode.getTitle())
+				.viewCount(episode.getViewCount())
+				.commentCount(episode.getCommentCount())
+				.publishedAt(episode.getPublishedAt())
+				.thumbnailUrl(episode.getThumbnailUrl())
+				.likeCount(episode.getLikeCount())
+				.content(episode.getContent())
+				.status(episode.getStatus())
+				.build();
+	}
 
 }
