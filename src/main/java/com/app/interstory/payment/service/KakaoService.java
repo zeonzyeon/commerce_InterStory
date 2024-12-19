@@ -194,8 +194,8 @@ public class KakaoService {
 			Point point = Point.builder()
 				.user(user)
 				.usedAt(timestamp)
-				.balance(POINT_AUTO_PRICE)
-				.description((POINT_AUTO_PRICE.intValue() / 20) + " 포인트 자동 충전")
+				.balance(POINT_AUTO_PRICE / 20)
+				.description(POINT_AUTO_PRICE + "원 자동 충전")
 				.build();
 
 			pointRepository.save(point);
@@ -235,8 +235,8 @@ public class KakaoService {
 			Point point = Point.builder()
 				.user(user)
 				.usedAt(timestamp)
-				.balance(price)
-				.description((price / 20) + " 포인트 충전")
+				.balance(price / 20)
+				.description((price) + "원 충전")
 				.build();
 
 			pointRepository.save(point);
@@ -321,8 +321,8 @@ public class KakaoService {
 			Point point = Point.builder()
 				.user(user)
 				.usedAt(timestamp)
-				.balance(POINT_AUTO_PRICE)
-				.description((POINT_AUTO_PRICE.intValue() / 20) + " 포인트 자동 충전")
+				.balance(POINT_AUTO_PRICE / 20)
+				.description((POINT_AUTO_PRICE) + "원 자동 충전")
 				.build();
 
 			pointRepository.save(point);

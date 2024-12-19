@@ -133,7 +133,7 @@ public class MypageController {
 		@RequestParam(defaultValue = "10", name = "size") int size,
 		Model model) {
 
-		Pageable pageable = PageRequest.of(page, size);
+		Pageable pageable = PageRequest.of(page, size, Sort.by(Sort.Direction.DESC, "usedAt"));
 
 		Page<PointHistoryResponseDTO> pointHistoryPage = mypageService.getPointHistory(userDetails, pageable);
 

@@ -21,7 +21,7 @@
             <div class="point-history-item" th:each="pointHistory : ${pointHistoryList}">
                 <div class="point-history-content" th:text="${pointHistory.pointChange}">포인트 충전</div>
                 <div class="point-history-date" th:text="${#dates.format(pointHistory.date, 'yyyy-MM-dd HH:mm:ss')}">2021-01-01 12:34:00</div>
-                <div class="point-history-amount" th:text="${pointHistory.description} + 'P'">+100P</div>
+                <div class="point-history-amount" th:text="${pointHistory.description}">+100P</div>
             </div>
             <div class="pagination">
                 <button class="page-prev">&lt;</button>

@@ -43,7 +43,7 @@ document.getElementById('episode-sort-old').addEventListener('click', () => {
 function viewEpisode(episodeId, episodeTitle, isFree, isPurchased, isSubscribe) {
     console.log(episodeId, episodeTitle, isFree, isPurchased);
     if (isFree === 'true' || isPurchased === 'true' || isSubscribe === 'true') {
-        window.location.href = '/episodes/' + episodeId;
+        window.location.href = '/episodes/detail/' + episodeId;
     } else {
         openPurchaseModal(episodeId, episodeTitle);
     }
