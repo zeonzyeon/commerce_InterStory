@@ -104,14 +104,15 @@ public class MypageController {
 	@GetMapping("/point-history")
 	public String getPointHistory(
 		@AuthenticationPrincipal CustomUserDetails userDetails,
-		@RequestParam(defaultValue = "1") int page,
-		@RequestParam(defaultValue = "10") int size,
+		@RequestParam(defaultValue = "0", name = "page") int page,
+		@RequestParam(defaultValue = "10", name = "size") int size,
 		Model model) {
 
-		Pageable pageable = PageRequest.of(page - 1, size);
+		Pageable pageable = PageRequest.of(page, size);
 
 		Page<PointHistoryResponseDTO> pointHistoryPage = mypageService.getPointHistory(userDetails, pageable);
 
+		model.addAttribute("user", mypageService.getUser(userDetails));
 		model.addAttribute("pointHistoryList", pointHistoryPage.getContent());
 		model.addAttribute("currentPage", page);
 		model.addAttribute("totalPages", pointHistoryPage.getTotalPages());
@@ -121,10 +122,13 @@ public class MypageController {
 
 	// 보유 쿠폰 페이지
 	@GetMapping("/my-coupons")
-	public String getCouponPage(@AuthenticationPrincipal CustomUserDetails userDetails, Pageable pageable,
-		Model model) {
+	public String getCouponPage(@AuthenticationPrincipal CustomUserDetails userDetails, Pageable pageable, Model model) {
 		Page<UserCouponResponseDTO> coupons = mypageService.getCoupons(userDetails, pageable);
-		model.addAttribute("coupons", coupons.getContent());
+
+		model.addAttribute("user", mypageService.getUser(userDetails));
+		model.addAttribute("coupons", coupons);
+		model.addAttribute("currentPage", pageable.getPageNumber());
+		model.addAttribute("totalPages", coupons.getTotalPages());
 		return "mypage/my-coupons";
 	}
 

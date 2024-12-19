@@ -4,367 +4,89 @@
     <meta charset="UTF-8">
     <title>My Coupons</title>
     <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
-    <style>
-        /* 헤더 스타일 */
-        .header {
-            background: #fff;
-            padding: 1rem 2rem;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-            position: sticky;
-            top: 0;
-            z-index: 100;
-        }
-
-        .header-content {
-            max-width: 1200px;
-            margin: 0 auto;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            gap: 2rem;
-        }
-
-        .logo-area {
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-            min-width: 150px;
-        }
-
-        .logo-image {
-            width: 32px;
-            height: 32px;
-            object-fit: cover;
-        }
-
-        .logo-text {
-            font-size: 1.25rem;
-            font-weight: 700;
-            color: #111;
-        }
-
-        .search-bar {
-            flex: 1;
-            max-width: 400px;
-            position: relative;
-        }
-
-        /* 반응형 처리 */
-        @media (max-width: 768px) {
-            .header-content {
-                gap: 1rem;
-            }
-
-            .logo-area {
-                min-width: auto;
-            }
-
-            .logo-text {
-                font-size: 1.1rem;
-            }
-
-            .search-bar {
-                max-width: 200px;
-            }
-        }
-
-        .search-bar {
-            flex: 0 1 400px;
-            position: relative;
-        }
-
-        .search-bar input {
-            width: 100%;
-            padding: 0.75rem 1rem;
-            border: 1px solid #ddd;
-            border-radius: 20px;
-            font-size: 0.9rem;
-            background: #f8f9fa;
-        }
-
-        .search-bar input:focus {
-            outline: none;
-            border-color: #333;
-            background: #fff;
-        }
-
-        .user-profile {
-            display: flex;
-            align-items: center;
-            gap: 1rem;
-        }
-
-        .user-profile img {
-            width: 40px;
-            height: 40px;
-            border-radius: 50%;
-            object-fit: cover;
-        }
-
-        /* 마이페이지 메뉴 */
-        .user-menu {
-            padding: 1rem;
-            background: #fff;
-            border-radius: 8px;
-            margin-bottom: 1rem;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .menu-items {
-            display: flex;
-            gap: 2rem;
-        }
-
-        .menu-item {
-            text-decoration: none;
-            color: #666;
-            padding: 0.5rem 1rem;
-            border-radius: 4px;
-            transition: all 0.2s;
-            cursor: pointer;
-        }
-
-        .menu-item:hover {
-            background: #f8f9fa;
-            color: #111;
-        }
-
-        .menu-item.active {
-            color: #111;
-            font-weight: 600;
-        }
-
-        /*메인 스타일*/
-        .my-coupons-container {
-            padding: 20px 180px;
-            background-color: #eeeeee;
-            border-radius: 10px;
-            box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
-        }
-
-        .coupon-register {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            border: 1px solid #ccc;
-            padding: 15px 20px;
-            margin: 20px auto;
-            gap: 20px;
-            border-radius: 10px;
-            max-width: 840px;
-            background-color: #f9f9f9;
-            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-        }
-
-        .coupon-register label {
-            font-size: 14px;
-            margin-top: 8px;
-        }
-
-        .coupon-register input {
-            flex-grow: 1;
-            border: 1px solid #ccc;
-            border-radius: 4px;
-            padding: 5px 10px;
-            font-size: 14px;
-            width: auto;
-        }
-
-        .coupon-register button {
-            display: inline-block;
-            padding: 5px 15px;
-            border: 1px solid #ccc;
-            border-radius: 5px;
-            font-size: 14px;
-            text-align: center;
-            cursor: pointer;
-            color: white;
-            background-color: rgba(51, 51, 51, 0.8);
-        }
-
-        .coupon-register button:hover {
-            background-color: #333;
-        }
-
-        .my-coupons-container h2 {
-            text-align: left;
-            font-size: 20px;
-            margin-top: 20px;
-            font-weight: bold;
-        }
-
-        .no-coupon {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 40vh;
-            text-align: center;
-            background-color: #f9f9f9;
-            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-            border: 1px solid #ccc;
-            border-radius: 10px;
-            margin: 20px auto;
-        }
-
-        .my-coupons {
-            height: 50vh;
-            border: 1px solid #ccc;
-            border-radius: 10px;
-            background-color: #f9f9f9;
-            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-            margin-bottom: 20px;
-            padding: 0 20px;
-            margin-top: 20px;
-        }
-
-        .coupon-table {
-            margin: 20px 0;
-            width: 100%;
-            table-layout: fixed
-        }
-
-        .coupon-table tr {
-            border-bottom: 1px solid #ccc;
-        }
-
-        .coupon-table td {
-            padding: 15px;
-        }
-
-        .coupon-name {
-            font-weight: bold;
-            font-size: 16px;
-        }
-
-        .coupon-effect {
-            margin-left: 20px;
-            color: #999;
-            font-size: 90%;
-        }
-
-        .coupon-table td:last-child {
-            color: #888;
-            font-size: 14px;
-            text-align: right;
-        }
-    </style>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.3/jquery.min.js"></script>
+    <link rel="stylesheet" th:href="@{/css/common/header.css}">
+    <link rel="stylesheet" th:href="@{/css/common/footer.css}">
+    <link rel="stylesheet" th:href="@{/css/mypage/my-header.css}">
+    <link rel="stylesheet" th:href="@{/css/mypage/my-coupons.css}">
 </head>
 <body>
-<!-- 헤더 -->
-<header class="header">
-    <div class="header-content">
-        <div class="logo-area">
-            <img alt="로고" class="logo-image" th:src="@{/images/logo.png}">
-            <span class="logo-text">InterStory</span>
-        </div>
-        <div class="search-bar">
-            <input placeholder="제목/작가로 검색" type="text">
-        </div>
-        <div class="user-profile">
-            <span th:text="${userNickname}">닉네임</span>
-            <img alt="프로필" src="/images/default-profile.png" th:src="${userProfileImage}">
-        </div>
-    </div>
-</header>
-<main class="my-coupons-container">
-    <!-- 마이페이지 메뉴 -->
-    <div class="user-menu">
-        <div class="menu-items">
-            <a class="menu-item active" href="/users/profile">프로필</a>
-            <a class="menu-item" href="/users/favorite-novels">관심 작품</a>
-            <a class="menu-item" href="/users/recent-novels">열람 작품</a>
-            <a class="menu-item" href="/users/point-history">포인트 내역</a>
-            <a class="menu-item" href="/users/my-coupons">쿠폰</a>
-            <a class="menu-item" href="/users/edit-profile">회원 정보 관리</a>
-        </div>
-    </div>
+<div th:replace="~{common/header :: header}"></div>
+<div th:replace="~{mypage/fragment/my-header :: my-header}"></div>
+<main>
     <div class="coupon-register">
         <label for="coupon">쿠폰</label>
         <input id="coupon" placeholder="쿠폰 코드" type="text">
         <button type="button">등록</button>
     </div>
     <h2>보유 쿠폰</h2>
-    <div class="no-coupon" id="no-coupon" style="display:none;" th:if="${#lists.isEmpty(couponList)}">
+    <div class="no-coupon" id="no-coupon" th:if="${#lists.isEmpty(coupons)}">
         <p>보유한 쿠폰이 없습니다.</p>
     </div>
-    <div class="my-coupons">
-        <table class="coupon-table" th:if="${!#lists.isEmpty(couponList)}">
-            <tbody>
-            <tr th:each="history : ${couponList}">
-                <td>
-                    <span class="coupon-name" th:text="${coupon.name}">쿠폰 이름</span>
-                    <span class="coupon-effect" th:text="${coupon.couponEffect}">쿠폰 효과</span>
-                </td>
-                <td th:text="${#dates.format(coupon.expiredAt, 'yyyy-MM-dd')}">
-                    2025.11.27
-                </td>
-            </tr>
-            </tbody>
-        </table>
+    <div class="my-coupons" th:if="${!#lists.isEmpty(coupons)}">
+        <div class="coupon-description">
+            <span class="coupon-description-effect">쿠폰 효과</span>
+            <span class="coupon-description-expired-at">만료일</span>
+        </div>
+        <div class="coupon-item" th:each="coupon : ${coupons}">
+            <div class="coupon-effect" th:text="${coupon.effect}">쿠폰 효과</div>
+            <div class="coupon-expired-at" th:text="${coupon.expiredAt}">2021-01-01 12:34:00</div>
+        </div>
+        <div class="pagination">
+            <button class="page-prev">&lt;</button>
+            <button class="page-next">&gt;</button>
+        </div>
     </div>
-    <nav th:if="${planList != null && planList.totalPages > 1}">
-        <ul class="pagination justify-content-center">
-            <li class="page-item" th:classappend="${currentPage == 1 ? 'disabled' : ''}">
-                <a class="page-link" th:href="@{/admin/plans(page=${currentPage - 1})}">&laquo;</a>
-            </li>
-            <li class="page-item"
-                th:classappend="${pageNum == currentPage ? 'active' : ''}"
-                th:each="pageNum : ${#numbers.sequence(1, planList.totalPages)}">
-                <a class="page-link" th:href="@{/admin/plans(page=${pageNum})}" th:text="${pageNum}"></a>
-            </li>
-            <li class="page-item" th:classappend="${currentPage == planList.totalPages ? 'disabled' : ''}">
-                <a class="page-link" th:href="@{/admin/plans(page=${currentPage + 1})}">&raquo;</a>
-            </li>
-        </ul>
-    </nav>
 </main>
-<script>
-    document.addEventListener("DOMContentLoaded", function () {
-        fetchCoupons(0); // 페이지 로드 시 첫 페이지 데이터 호출
+<div th:replace="~{common/footer :: footer}"></div>
 
-        function fetchCoupons(page) {
-            fetch(`/api/users/coupons?page=${page}&size=5`) // size: 한 페이지당 항목 개수
-                .then(response => response.json())
-                .then(data => {
-                    renderCoupons(data.content); // 쿠폰 데이터를 렌더링
-                    renderPagination(data); // 페이지네이션 렌더링
-                })
-                .catch(error => console.error("Error fetching coupons:", error));
+<script th:inline="javascript">
+    let currentPage = [[${currentPage}]];
+    let totalPages = [[${totalPages}]];
+
+    console.log(currentPage);
+    console.log(totalPages);
+
+    $(document).ready(function () {
+        const $pagination = $('.pagination');
+        let pagesHtml = `
+           <button class="page-prev" ${currentPage === 0 ? 'disabled' : ''}>&lt;</button>
+       `;
+
+        for (let i = 0; i < totalPages; i++) {
+            pagesHtml += `
+               <button class="page-num ${currentPage === i ? 'active' : ''}"
+                       data-page="${i}">
+                   ${i + 1}
+               </button>
+           `;
         }
 
-        function renderCoupons(coupons) {
-            const tableBody = document.querySelector(".coupon-table tbody");
-            tableBody.innerHTML = ""; // 기존 데이터 초기화
+        pagesHtml += `
+           <button class="page-next" ${currentPage === totalPages - 1 ? 'disabled' : ''}>&gt;</button>
+       `;
 
-            coupons.forEach(coupon => {
-                const row = `
-                <tr>
-                    <td>
-                        <span class="coupon-name">${coupon.name}</span>
-                        <span class="coupon-effect">${coupon.couponEffect}</span>
-                    </td>
-                    <td>${coupon.expiredAt}</td>
-                </tr>
-            `;
-                tableBody.insertAdjacentHTML("beforeend", row);
-            });
+        $pagination.html(pagesHtml);
+    });
+
+    const pagination = $('.pagination');
+
+    pagination.on('click', '.page-num', function () {
+        currentPage = $(this).data('page');
+        location.href = '/users/my-coupons?page=' + currentPage;
+    });
+
+    pagination.on('click', '.page-prev', function () {
+        if (currentPage > 0) {
+            currentPage--;
+            location.href = '/users/my-coupons?page=' + currentPage;
         }
+    });
 
-        function renderPagination(data) {
-            const pagination = document.querySelector(".pagination");
-            pagination.innerHTML = "";
-
-            for (let i = 0; i < data.totalPages; i++) {
-                const pageItem = `
-                <li class="page-item ${data.number === i ? 'active' : ''}">
-                    <a class="page-link" href="#" onclick="fetchCoupons(${i})">${i + 1}</a>
-                </li>
-            `;
-                pagination.insertAdjacentHTML("beforeend", pageItem);
-            }
+    pagination.on('click', '.page-next', function () {
+        if (currentPage < totalPages - 1) {
+            currentPage++;
+            location.href = '/users/my-coupons?page=' + currentPage;
         }
     });
 </script>

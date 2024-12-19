@@ -4,313 +4,78 @@
     <meta charset="UTF-8">
     <title>My Point History</title>
     <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
-    <style>
-        /* 헤더 스타일 */
-        .header {
-            background: #fff;
-            padding: 1rem 2rem;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-            position: sticky;
-            top: 0;
-            z-index: 100;
-        }
-
-        .header-content {
-            max-width: 1200px;
-            margin: 0 auto;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            gap: 2rem;
-        }
-
-        .logo-area {
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-            min-width: 150px;
-        }
-
-        .logo-image {
-            width: 32px;
-            height: 32px;
-            object-fit: cover;
-        }
-
-        .logo-text {
-            font-size: 1.25rem;
-            font-weight: 700;
-            color: #111;
-        }
-
-        .search-bar {
-            flex: 1;
-            max-width: 400px;
-            position: relative;
-        }
-
-        /* 반응형 처리 */
-        @media (max-width: 768px) {
-            .header-content {
-                gap: 1rem;
-            }
-
-            .logo-area {
-                min-width: auto;
-            }
-
-            .logo-text {
-                font-size: 1.1rem;
-            }
-
-            .search-bar {
-                max-width: 200px;
-            }
-        }
-
-        .search-bar {
-            flex: 0 1 400px;
-            position: relative;
-        }
-
-        .search-bar input {
-            width: 100%;
-            padding: 0.75rem 1rem;
-            border: 1px solid #ddd;
-            border-radius: 20px;
-            font-size: 0.9rem;
-            background: #f8f9fa;
-        }
-
-        .search-bar input:focus {
-            outline: none;
-            border-color: #333;
-            background: #fff;
-        }
-
-        .user-profile {
-            display: flex;
-            align-items: center;
-            gap: 1rem;
-        }
-
-        .user-profile img {
-            width: 40px;
-            height: 40px;
-            border-radius: 50%;
-            object-fit: cover;
-        }
-
-        /* 마이페이지 메뉴 */
-        .user-menu {
-            padding: 1rem;
-            background: #fff;
-            border-radius: 8px;
-            margin-bottom: 1rem;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .menu-items {
-            display: flex;
-            gap: 2rem;
-        }
-
-        .menu-item {
-            text-decoration: none;
-            color: #666;
-            padding: 0.5rem 1rem;
-            border-radius: 4px;
-            transition: all 0.2s;
-            cursor: pointer;
-        }
-
-        .menu-item:hover {
-            background: #f8f9fa;
-            color: #111;
-        }
-
-        .menu-item.active {
-            color: #111;
-            font-weight: 600;
-        }
-
-        /*메인 스타일*/
-        .point-history-container {
-            /*max-height: 950px;*/
-            padding: 20px 180px;
-            background-color: #eeeeee;
-            border-radius: 10px;
-            box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
-        }
-
-        .point-history-container h2 {
-            text-align: left;
-            font-size: 20px;
-            margin-top: 40px;
-            font-weight: bold;
-        }
-
-        .no-point-history {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 40vh;
-            text-align: center;
-            background-color: #f9f9f9;
-            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-            border: 1px solid #ccc;
-            border-radius: 10px;
-            margin: 20px auto;
-        }
-
-        .point-history {
-            height: 60vh;
-            border: 1px solid #ccc;
-            border-radius: 10px;
-            background-color: #f9f9f9;
-            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-            margin-bottom: 20px;
-            padding: 0 20px;
-        }
-
-        .point-history-table {
-            margin: 20px 0;
-            width: 100%;
-            border-collapse: collapse;
-            table-layout: fixed;
-        }
-
-        .point-history-table col {
-            width: 33.33%;
-        }
-
-        .point-history-table tr {
-            border-bottom: 1px solid #ccc;
-        }
-
-        .point-history-table td {
-            padding: 15px;
-        }
-
-        .point {
-            font-weight: bold;
-            font-size: 16px;
-        }
-
-        .point-usage {
-            text-align: right;
-            margin-left: 20px;
-            color: #999;
-            font-size: 90%;
-        }
-
-        .point-history-table td:last-child {
-            color: #888;
-            font-size: 14px;
-            text-align: right;
-        }
-    </style>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.3/jquery.min.js"></script>
+    <link rel="stylesheet" th:href="@{/css/common/header.css}">
+    <link rel="stylesheet" th:href="@{/css/common/footer.css}">
+    <link rel="stylesheet" th:href="@{/css/mypage/my-header.css}">
+    <link rel="stylesheet" th:href="@{/css/mypage/point-history.css}">
 </head>
 <body>
-<!-- 헤더 -->
-<header class="header">
-    <div class="header-content">
-        <div class="logo-area">
-            <img alt="로고" class="logo-image" th:src="@{/images/logo.png}">
-            <span class="logo-text">InterStory</span>
-        </div>
-        <div class="search-bar">
-            <input placeholder="제목/작가로 검색" type="text">
-        </div>
-        <div class="user-profile">
-            <span th:text="${userNickname}">닉네임</span>
-            <img alt="프로필" src="/images/default-profile.png" th:src="${userProfileImage}">
-        </div>
-    </div>
-</header>
-<main class="point-history-container">
-    <!-- 마이페이지 메뉴 -->
-    <div class="user-menu">
-        <div class="menu-items">
-            <a class="menu-item" href="users/profile">프로필</a>
-            <a class="menu-item" href="users/favorite-novels">관심 작품</a>
-            <a class="menu-item" href="users/recent-novels">열람 작품</a>
-            <a class="menu-item active" href="/users/point-history">포인트 내역</a>
-            <a class="menu-item" href="users/my-coupons">쿠폰</a>
-            <a class="menu-item" href="users/edit-profile">회원 정보 관리</a>
-        </div>
-    </div>
+<div th:replace="~{common/header :: header}"></div>
+<div th:replace="~{mypage/fragment/my-header :: my-header}"></div>
+<main>
     <h2>포인트 내역</h2>
     <div class="no-point-history" th:if="${#lists.isEmpty(pointHistoryList)}">
         <p>포인트 충전 / 이용 내역이 없습니다.</p>
     </div>
-    <div class="point-history">
-        <table class="point-history-table" th:if="${!#lists.isEmpty(pointHistoryList)}">
-            <tbody>
-            <tr th:each="history : ${pointHistoryList}">
-                <td>
-                <span class="point"
-                      th:classappend="${history.isPlus} ? 'plus' : 'minus'"
-                      th:text="${history.isPlus} ? ${history.pointAmount} + 'P 충전' : ${history.pointAmount} + 'P 사용'">
-                    100P 사용
-                </span>
-                    <span class="point-usage"
-                          th:text="${history.isPlus} ? ${history.pointAmount / 100 * 2000} + '원 결제' : ${history.usageDescription}">
-                    포인트 사용처
-                </span>
-                </td>
-                <td th:text="${#dates.format(history.createdAt, 'yyyy-MM-dd HH:mm:ss')}">
-                    2024.11.27 14:58
-                </td>
-            </tr>
-            </tbody>
-        </table>
+    <div class="point-history" th:if="${!#lists.isEmpty(pointHistoryList)}">
+        <div class="point-history-item" th:each="pointHistory : ${pointHistoryList}">
+            <div class="point-history-content" th:text="${pointHistory.pointChange}">포인트 충전</div>
+            <div class="point-history-date" th:text="${#dates.format(pointHistory.date, 'yyyy-MM-dd HH:mm:ss')}">2021-01-01 12:34:00</div>
+            <div class="point-history-amount" th:text="${pointHistory.description} + 'P'">+100P</div>
+        </div>
+        <div class="pagination">
+            <button class="page-prev">&lt;</button>
+            <button class="page-next">&gt;</button>
+        </div>
     </div>
-    <nav th:if="${planList != null && planList.totalPages > 1}">
-        <ul class="pagination justify-content-center">
-            <li class="page-item" th:classappend="${currentPage == 1 ? 'disabled' : ''}">
-                <a class="page-link" th:href="@{/admin/plans(page=${currentPage - 1})}">&laquo;</a>
-            </li>
-            <li class="page-item"
-                th:classappend="${pageNum == currentPage ? 'active' : ''}"
-                th:each="pageNum : ${#numbers.sequence(1, planList.totalPages)}">
-                <a class="page-link" th:href="@{/admin/plans(page=${pageNum})}" th:text="${pageNum}"></a>
-            </li>
-            <li class="page-item" th:classappend="${currentPage == planList.totalPages ? 'disabled' : ''}">
-                <a class="page-link" th:href="@{/admin/plans(page=${currentPage + 1})}">&raquo;</a>
-            </li>
-        </ul>
-    </nav>
 </main>
-<script>
-    document.addEventListener('DOMContentLoaded', function () {
-        const pointHistoryContainer = document.querySelector('.point-history-container');
+<div th:replace="~{common/footer :: footer}"></div>
 
-        document.querySelectorAll('.page-link').forEach(link => {
-            link.addEventListener('click', function (event) {
-                event.preventDefault();
-                const url = this.getAttribute('href');
-                loadPage(url);
-            });
-        });
+<script th:inline="javascript">
+    let currentPage = [[${currentPage}]];
+    let totalPages = [[${totalPages}]];
 
-        function loadPage(url) {
-            fetch(url, {method: 'GET'})
-                .then(response => {
-                    if (!response.ok) {
-                        throw new Error('Failed to load point history data');
-                    }
-                    return response.text();
-                })
-                .then(html => {
-                    pointHistoryContainer.innerHTML = html;
-                })
-                .catch(error => {
-                    console.error('Error loading page:', error);
-                });
+    $(document).ready(function () {
+        const $pagination = $('.pagination');
+        let pagesHtml = `
+           <button class="page-prev" ${currentPage === 0 ? 'disabled' : ''}>&lt;</button>
+       `;
+
+        for (let i = 0; i < totalPages; i++) {
+            pagesHtml += `
+               <button class="page-num ${currentPage === i ? 'active' : ''}"
+                       data-page="${i}">
+                   ${i + 1}
+               </button>
+           `;
+        }
+
+        pagesHtml += `
+           <button class="page-next" ${currentPage === totalPages - 1 ? 'disabled' : ''}>&gt;</button>
+       `;
+
+        $pagination.html(pagesHtml);
+    });
+
+    const pagination = $('.pagination');
+
+    pagination.on('click', '.page-num', function () {
+        currentPage = $(this).data('page');
+        location.href = '/users/point-history?page=' + currentPage;
+    });
+
+    pagination.on('click', '.page-prev', function () {
+        if (currentPage > 0) {
+            currentPage--;
+            location.href = '/users/point-history?page=' + currentPage;
+        }
+    });
+
+    pagination.on('click', '.page-next', function () {
+        if (currentPage < totalPages - 1) {
+            currentPage++;
+            location.href = '/users/point-history?page=' + currentPage;
         }
     });
 </script>
