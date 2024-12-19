@@ -1,9 +1,28 @@
 # 📖 InterStory 📖
 
+## 목차
+
+<div>
+
+- [0.프로젝트 소개](#0-프로젝트-소개)
+- [1.프로젝트 목표](#1-프로젝트-목표)
+- [2.기능 명세서](#2-기능-명세서)
+- [3.화면 설계서(Wireframe)](#3-화면-설계서wireframe)
+- [4.시연 영상 - 주요 기능 위주](#4-시연-영상---주요-기능-위주)
+- [5.구조도 - 프로젝트, 시스템](#5-구조도---프로젝트-시스템)
+- [6.데이터베이스(ERD)](#6-데이터베이스erd)
+- [7.API 명세서](#7-api-명세서)
+
+</div>
+
+## 0. 프로젝트 소개
+
 ### 작가와 독자가 함께 만들어가는 이야기
 
 Interstory는 작가와 독자가 상호작용하며 함께 만들어 나가는 반응형 소설 플랫폼입니다.
+
 작가는 소설을 연재하고 독자들은 댓글을 통해 작품에 반응하며 AI가 이 댓글들을 분석해 작가에게 실시간으로 피드백을 제공합니다.
+
 독자는 흥미로운 콘텐츠를 자유롭게 감상할 수 있을 뿐만 아니라 유료 콘텐츠를 소비하고 구독 서비스, 할인 혜택 등 다양한 커머스 기능을 이용할 수 있습니다.
 
 <br>
@@ -11,68 +30,100 @@ Interstory는 작가와 독자가 상호작용하며 함께 만들어 나가는 
 ## 1. 프로젝트 목표
 
 1. 작가와 독자의 소통 플랫폼 구축
-
-   작가와 독자가 댓글과 피드백을 통해 소설을 함께 만들어가는 상호작용형 플랫폼 제공
-
+    - 작가와 독자가 댓글과 피드백을 통해 소설을 함께 만들어가는 상호작용형 플랫폼 제공
 2. AI 기반 실시간 작품 피드백 시스템 구축
-
-   독자들의 댓글을 AI로 분석하여 주요 키워드를 도출하고 작가에게 실시간 피드백 제공
-
+    - 독자들의 댓글을 AI로 분석하여 주요 키워드를 도출하고 작가에게 실시간 피드백 제공
 3. 콘텐츠 유료화 시스템 구축
-
-   독자들이 포인트 결제나 구독 서비스를 통해 소설의 유료 회차를 열람하고 프리미엄 콘텐츠를 소비할 수 있는 커머스 시스템 제공
-
+    - 독자들이 포인트 결제나 구독 서비스를 통해 소설의 유료 회차를 열람하고 프리미엄 콘텐츠를 소비할 수 있는 커머스 시스템 제공
 4. 사용자 맞춤형 콘텐츠 제공
-
-   사용자 행동 기반 협업 필터링 추천 알고리즘을 사용하여 독자에게 취향에 맞는 작품을 추천하고 콘텐츠 접근성을 높이는 개인화된 경험 제공
-
-<br>
-
-## 2. 프로젝트 관리
-
-#### 팀 구성
-
-- 황승현
-- 임수응
-- 정상윤
-- 전지현
-
-#### 개발 기간
-
-- **개발 기간**: 2024년 11월 22일 - 2024년 12월 20일
-- **최종 수정 및 문서화**: 2024년 12월 18일 - 2024년 12월 20일
+    - 사용자 행동 기반 협업 필터링 추천 알고리즘을 사용하여 독자에게 취향에 맞는 작품을 추천하고 콘텐츠 접근성을 높이는 개인화된 경험 제공
 
 <br>
 
-## 3. 개발 환경
+## 2. 개발 환경 및 개발 일정
 
-#### Backend
+### 개발환경
 
-- Web Framework: `Spring Boot`
-- API: `REST API`
-- Auth & Security: `OAuth2`, `Spring Security`
+#### Front-end
 
-#### Infrastructure
+<div>
+  <img alt="HTML" src ="https://img.shields.io/badge/html5-%23E34F26.svg?style=for-the-badge&logo=html5&logoColor=white"/>
+  <img alt="CSS" src ="https://img.shields.io/badge/css3-%231572B6.svg?style=for-the-badge&logo=css3&logoColor=white"/>
+  <img alt="JavaScript" src ="https://img.shields.io/badge/javascript-%23323330.svg?style=for-the-badge&logo=javascript&logoColor=%23F7DF1E"/>
+  <img alt="Thymeleaf" src ="https://img.shields.io/badge/Thymeleaf-%23005C0F.svg?style=for-the-badge&logo=Thymeleaf&logoColor=white"/>
+</div>
 
-- Server: `AWS EC2`
-- Database: `AWS RDS (MySQL)`
-- Storage: `Amazon S3`
-- Containerization: `Docker`
-- Caching Tool: `Redis`
+#### Back-end
 
-#### Frontend
+<div>
+  <img alt="Spring" src ="https://img.shields.io/badge/spring-%236DB33F.svg?style=for-the-badge&logo=spring&logoColor=white"/>
+  <img alt="Hibernate" src ="https://img.shields.io/badge/Hibernate-59666C?style=for-the-badge&logo=Hibernate&logoColor=white"/>
+  <img alt="Java" src ="https://img.shields.io/badge/java-%23ED8B00.svg?style=for-the-badge&logo=openjdk&logoColor=white"/>
+</div>
 
-- Technologies: `HTML`, `CSS`, `JavaScript`
-- Template Engine: `Thymeleaf`
+#### Database
 
-#### Tools
+<div>
+  <img alt="MySQL" src ="https://img.shields.io/badge/mysql-4479A1.svg?style=for-the-badge&logo=mysql&logoColor=white"/>
+</div>
 
-- Version Control: GitHub
-- Design & Prototyping: Figma
-- Collaboration: Notion
-- IDE: IntelliJ
+#### 배포 및 클라우드
+
+<div>
+  <img alt="AmazonEC2" src ="https://img.shields.io/badge/Amazon EC2-FF9900.svg?&style=for-the-badge&logo=Amazon EC2&logoColor=white"/>
+  <img alt="S3" src ="https://img.shields.io/badge/AWS_S3-569A31?logo=amazons3&logoColor=fff&style=for-the-badge"/>
+  <img alt="AmazonRDS" src ="https://img.shields.io/badge/Amazon RDS-527FFF.svg?&style=for-the-badge&logo=Amazon RDS&logoColor=white"/>
+  <img alt="redis" src ="https://img.shields.io/badge/redis-%23DD0031.svg?style=for-the-badge&logo=redis&logoColor=white"/>
+  <img alt="docker" src ="https://img.shields.io/badge/docker-%230db7ed.svg?style=for-the-badge&logo=docker&logoColor=white"/>
+</div>
+
+#### CI/CD
+
+<div>
+  <img alt="AmazonEC2" src ="https://img.shields.io/badge/Amazon EC2-FF9900.svg?&style=for-the-badge&logo=Amazon EC2&logoColor=white"/>
+  <img alt="S3" src ="https://img.shields.io/badge/AWS_S3-569A31?logo=amazons3&logoColor=fff&style=for-the-badge"/>
+  <img alt="GitHub Actions" src ="https://img.shields.io/badge/github%20actions-%232671E5.svg?style=for-the-badge&logo=githubactions&logoColor=white"/>
+</div>
+
+#### 협업 도구
+
+<div>
+    <img alt="github" src="https://img.shields.io/badge/github-181717?style=for-the-badge&logo=github&logoColor=white">
+    <img alt="discord" src="https://img.shields.io/badge/discord-5865F2?style=for-the-badge&logo=discord&logoColor=white">
+    <img alt="Figma" src="https://img.shields.io/badge/figma-%23F24E1E.svg?style=for-the-badge&logo=figma&logoColor=white">
+    <img alt="Notion" src="https://img.shields.io/badge/Notion-%23000000.svg?style=for-the-badge&logo=notion&logoColor=white">
+</div>
+
+### 개발 일정
+
+- 팀 빌딩 / 도메인 설정 : 2024.11.22.
+- 요구사항 분석 및 기능 명세서 작성 : 2024.11.22. ~ 2024.11.28.
+- API 명세서 작성 : 2024.11.26. ~ 2024.11.29.
+- UI/UX 설계 : 2024.11.26. ~ 2024.12.02.
+- DB 설계 : 2024.11.26. ~ 2024.12.05.
+- 구현 : 2024.12.05. ~ 2024.12.19.
+- 테스트 : 2024.12.13. ~ 2024.12.19.
+- 발표 준비 : 2024.12.19.
 
 <br>
+
+## 3. 화면 설계서
+
+[InterStory 화면 설계(figma)](https://www.figma.com/design/mXSWpX1p48UCLlsu02EcRi/%ED%99%94%EB%A9%B4-%EC%84%A4%EA%B3%84%EC%84%9C?node-id=0-1&t=YCbEi94CdYIUqlmr-1)
+
+|                                                                                                              |                                                                                                                 |
+|--------------------------------------------------------------------------------------------------------------|-----------------------------------------------------------------------------------------------------------------|
+| <img src="https://github.com/user-attachments/assets/870953e6-126f-4b7e-b7c6-b8b33d18c485"> <br/> 메인 페이지     | <img src="https://github.com/user-attachments/assets/5d3817ad-8542-4d7a-9dd1-5c65febb8fd4"> <br/> 로그인 화면        |
+| <img src="https://github.com/user-attachments/assets/4e88822a-3c0d-479d-b699-6613db8a44c0"> <br/> 프로필 메뉴     | <img src="https://github.com/user-attachments/assets/6c150708-cb8c-4dd3-8053-6d3c9f811c7e"> <br/> 마이페이지         |
+| <img src="https://github.com/user-attachments/assets/f591222d-fe0d-480f-b61c-c05c91d8fa62"> <br/> 구독 모달창     | <img src="https://github.com/user-attachments/assets/9fc5e6e2-1d98-4fab-b1a3-a649c9eee68b"> <br/> 포인트 결제창       |
+| <img src="https://github.com/user-attachments/assets/a20d0ea6-193a-41dc-a0cc-404461c34926"> <br/> 연재한 작품 목록  | <img src="https://github.com/user-attachments/assets/ddf83681-71de-46f9-8afe-97478e89133f"> <br/> 연재한 작품의 반응 분석 |
+| <img src="https://github.com/user-attachments/assets/29f91af8-366d-4ea2-a153-7ad33d0da784"> <br/> 포인트 내역     | <img src="https://github.com/user-attachments/assets/c7f57f97-b137-469f-b087-8d52dcd82ffc"> <br/> 장바구니          |
+| <img src="https://github.com/user-attachments/assets/4b8852cd-b04d-427f-a7fd-a7e17b1f0960"> <br/> 회원 정보 수정   | <img src="https://github.com/user-attachments/assets/66655118-bae1-4230-84ce-da75822f8453"> <br/> 쿠폰 내역         |
+| <img src="https://github.com/user-attachments/assets/06956f1a-4e22-41df-b6a4-524976f14ba9"> <br/> 소설 상세 조회   | <img src="https://github.com/user-attachments/assets/f2f78729-27cc-4c16-8001-1fbe07c96a7e"> <br/> 작성한 댓글        |
+| <img src="https://github.com/user-attachments/assets/7e50222c-a030-4f68-aebe-41ab53118138"> <br/> 작품 수정      | <img src="https://github.com/user-attachments/assets/449c656d-9cf0-4a10-b1fc-74d2bb336d94"> <br/> 작품 추가         |
+| <img src="https://github.com/user-attachments/assets/540f78b7-0557-4cf9-b4ec-8c9a97313405"> <br/> 회차 구매 모달창  | <img src="https://github.com/user-attachments/assets/27d33174-63a1-45f3-bd80-f3754775fc8d"> <br/> 회차 댓글 조회      |
+| <img src="https://github.com/user-attachments/assets/3e8d75f3-ae38-48eb-97ba-e82452c233fa"> <br/> 회차 상세 조회   | <img src="https://github.com/user-attachments/assets/ffe3f433-43d2-4d25-9108-c524da496e7c"> <br/> 회차 수정 (소설)    |
+| <img src="https://github.com/user-attachments/assets/2876b066-731f-4166-b40a-427486d72e27"> <br/> 회차 작성 (소설) |                                                                                                                 |
 
 ## 4. 시스템 구조도
 
@@ -231,16 +282,4 @@ Interstory는 작가와 독자가 상호작용하며 함께 만들어 나가는 
 |------------------------|---------|-------------------------------|----------------------------|
 | **getNovelSuggestion** | GET     | `/{userId}/novels/suggestion` | AI를 사용한 추천                 |
 | **getEpisodeReaction** | POST    | `/ai/{episodeId}/reaction`    | 회차별 댓글 분석 (댓글 5개 이상 사용 가능) |
-
-<br>
-
-## 8. 화면 설계서
-
-| **메인페이지**                                                                                 | **마이페이지**                                                                                 |
-|-------------------------------------------------------------------------------------------|-------------------------------------------------------------------------------------------|
-| ![image](https://github.com/user-attachments/assets/5db1a673-a4b8-471b-9366-62514cb7ce0f) | ![image](https://github.com/user-attachments/assets/424ede84-11aa-46f8-a567-d4c16cb96233) |
-
-| **작품페이지**                                                                                 | **관리자페이지**                                                                                |
-|-------------------------------------------------------------------------------------------|-------------------------------------------------------------------------------------------|
-| ![image](https://github.com/user-attachments/assets/8b40239a-e8fa-44f2-b7cb-33a017be9bf2) | ![image](https://github.com/user-attachments/assets/ff34c656-0b70-4e9e-ac40-11cf98e33d6d) |
 
