@@ -18,15 +18,10 @@ import com.app.interstory.novel.dto.response.NovelDetailResponseDTO;
 import com.app.interstory.novel.service.CommentService;
 import com.app.interstory.novel.service.NovelService;
 import com.app.interstory.user.domain.CustomUserDetails;
-import com.app.interstory.user.dto.response.AccountResponseDTO;
 import com.app.interstory.user.dto.response.FavoriteNovelResponseDTO;
 import com.app.interstory.user.dto.response.MyCommentResponseDTO;
-import com.app.interstory.user.dto.response.MyNovelResponseDTO;
-import com.app.interstory.user.dto.response.MypageResponseDTO;
 import com.app.interstory.user.dto.response.PointHistoryResponseDTO;
 import com.app.interstory.user.dto.response.ReadNovelResponseDTO;
-import com.app.interstory.user.dto.response.SettlementResponseDTO;
-import com.app.interstory.user.dto.response.SubscriptionResponseDTO;
 import com.app.interstory.user.dto.response.UserCouponResponseDTO;
 import com.app.interstory.user.dto.response.UserResponseDTO;
 import com.app.interstory.user.service.MypageService;
@@ -148,7 +143,8 @@ public class MypageController {
 
 	// 보유 쿠폰 페이지
 	@GetMapping("/my-coupons")
-	public String getCouponPage(@AuthenticationPrincipal CustomUserDetails userDetails, Pageable pageable, Model model) {
+	public String getCouponPage(@AuthenticationPrincipal CustomUserDetails userDetails, Pageable pageable,
+		Model model) {
 		Page<UserCouponResponseDTO> coupons = mypageService.getCoupons(userDetails, pageable);
 
 		model.addAttribute("user", mypageService.getUser(userDetails));
@@ -161,7 +157,8 @@ public class MypageController {
 
 	// 연재 작품 페이지
 	@GetMapping("/my-novel")
-	public String getMyNovels(@AuthenticationPrincipal CustomUserDetails userDetails, @PageableDefault(size = 10000) Pageable pageable, Model model) {
+	public String getMyNovels(@AuthenticationPrincipal CustomUserDetails userDetails,
+		@PageableDefault(size = 10000) Pageable pageable, Model model) {
 		model.addAttribute("user", mypageService.getUser(userDetails));
 		model.addAttribute("myNovels", mypageService.getMyNovels(userDetails, pageable));
 		model.addAttribute("accountInfo", mypageService.getAccount(userDetails));
@@ -189,24 +186,6 @@ public class MypageController {
 
 		return "mypage/my-comments";
 	}
-
-	// // 회원정보 수정 페이지
-	// @GetMapping("/edit-profile")
-	// public String editProfile(@AuthenticationPrincipal CustomUserDetails userDetails, Model model) {
-	// 	MypageResponseDTO userInfo = mypageService.getUser(userDetails);
-	// 	model.addAttribute("userInfo", userInfo);
-	// 	return "mypage/edit-profile";
-	// }
-
-	// // 회원정보 수정 처리
-	// @PostMapping("/edit-profile")
-	// public String updateProfile(@AuthenticationPrincipal CustomUserDetails userDetails,
-	// 	@ModelAttribute UpdateUserRequestDTO updateUserRequestDTO,
-	// 	RedirectAttributes redirectAttributes) {
-	// 	mypageService.updateUser(userDetails, updateUserRequestDTO);
-	// 	redirectAttributes.addFlashAttribute("successMessage", "회원정보가 성공적으로 수정되었습니다.");
-	// 	return "redirect:/users/edit-profile";
-	// }
 
 	// 회차 리스트와 반응 분석 페이지
 	@GetMapping("/novels/{novelId}")
