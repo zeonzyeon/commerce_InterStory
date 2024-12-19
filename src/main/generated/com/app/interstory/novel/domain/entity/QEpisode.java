@@ -28,6 +28,8 @@ public class QEpisode extends EntityPathBase<Episode> {
 
     public final NumberPath<Long> episodeId = createNumber("episodeId", Long.class);
 
+    public final NumberPath<Integer> episodeNumber = createNumber("episodeNumber", Integer.class);
+
     public final NumberPath<Integer> likeCount = createNumber("likeCount", Integer.class);
 
     public final QNovel novel;

@@ -125,7 +125,7 @@
     function updateNovelList(novels) {
         const novelList = document.querySelector('.novel-list');
         novelList.innerHTML = novels.map(novel => `
-                <div class="novel-card">
+                <div class="novel-card" onclick="viewNovel(${novel.novelId})">
                     <img src="${novel.thumbnailUrl}" alt="작품 썸네일">
                     <div class="novel-info">
                         <div class="novel-title">${novel.title}</div>
@@ -176,7 +176,7 @@
     function updateTagNovelList(novels) {
         const novelGrid = document.querySelector('.tag-novel-grid');
         novelGrid.innerHTML = novels.map(novel => `
-        <div class="novel-card">
+        <div class="novel-card" onclick="viewNovel(${novel.novelId})">
             <img src="${novel.thumbnailUrl}" alt="${novel.title}">
             <div class="novel-info">
                 <div class="novel-title">${novel.title}</div>
@@ -184,6 +184,10 @@
             </div>
         </div>
     `).join('');
+    }
+
+    function viewNovel(novelId) {
+        location.href = `/novels/${novelId}`;
     }
 
     fetchNovels('POPULARITY');

@@ -1,0 +1,393 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, system-ui, Roboto, sans-serif;
+}
+
+body {
+    background-color: #f8f9fa;
+    color: #333;
+}
+
+/*메인 스타일*/
+.page-container {
+    display: flex;
+    gap: 2rem;
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 2rem;
+}
+
+main {
+    flex: 1;
+    max-width: 1200px;
+    margin: 0 auto;
+    border-radius: 10px;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+/*결제 섹션 스타일*/
+.payment-settings {
+    padding: 20px;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    background-color: #f9f9f9;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+.payment-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 0;
+    border-bottom: 1px solid #eee;
+}
+
+.payment-row:last-child {
+    border-bottom: none;
+}
+
+.payment-label {
+    font-size: 14px;
+    color: #333;
+}
+
+.point-amount {
+    font-weight: bold;
+    font-size: 16px;
+}
+
+.is-auto-payment {
+    font-weight: bold;
+    font-size: 16px;
+}
+
+.subscription-date {
+    font-weight: bold;
+    font-size: 16px;
+}
+
+.payment-action {
+    padding: 5px 15px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    background-color: rgba(51, 51, 51, 0.8);
+    color: white;
+    font-size: 14px;
+    cursor: pointer;
+    transition: background-color 0.2s, color 0.2s;
+}
+
+.payment-action:hover {
+    background-color: #333;
+}
+
+.payment-action:active {
+    background-color: #ddd;
+}
+
+/* 버튼 스타일별 색상 */
+.payment-action.payment {
+    border: 1px solid #007bff;
+    background-color: #007bff;
+    color: #fff;
+}
+
+.payment-action.payment:hover {
+    background-color: #0056b3;
+}
+
+.payment-action.cancel {
+    border: 1px solid #dc3545;
+    background-color: #dc3545;
+    color: #fff;
+}
+
+.payment-action.cancel:hover {
+    background-color: #a71d2a;
+}
+
+.payment-action.change {
+    border: 1px solid #28a745;
+    background-color: #28a745;
+    color: #fff;
+}
+
+.payment-action.change:hover {
+    background-color: #1c7c31;
+}
+
+.content-section {
+    display: flex;
+    justify-content: space-between;
+    gap: 20px;
+    width: 100%;
+}
+
+.works, .comments {
+    flex: 1;
+    width: 45%;
+    border: 1px solid #ccc;
+    border-radius: 10px;
+    padding: 10px 20px;
+    background-color: #f9f9f9;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+.works h3, .comments h3 {
+    font-size: 17px;
+}
+
+ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+ul li {
+    margin-bottom: 10px;
+    font-size: 14px;
+    color: #333;
+}
+
+/* 모달 백드롭 */
+.modal-backdrop {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5);
+    z-index: 1000;
+    display: none;
+}
+
+/* 포인트 결제 모달 */
+.modal {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 450px;
+    background: #fff;
+    border-radius: 8px;
+    z-index: 1001;
+    display: none;
+    border: 1px solid #ccc;
+}
+
+.modal-content {
+    padding: 2rem 2rem 1.5rem 2rem;
+}
+
+.modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1.5rem;
+    padding-bottom: 1rem;
+    border-bottom: 1px solid #eee;
+}
+
+.modal-header h3 {
+    margin: 0;
+    font-size: 18px;
+}
+
+.close {
+    position: absolute;
+    top: 1rem;
+    right: 1rem;
+    font-size: 1.5rem;
+    cursor: pointer;
+    color: #666;
+    transition: color 0.2s;
+}
+
+.modal-body .current-points {
+    margin-bottom: 15px;
+    font-size: 16px;
+    margin-left: 200px;
+}
+
+.point-amount {
+    font-weight: bold;
+}
+
+.point-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: 20px;
+    table-layout: fixed;
+    background-color: #f9f9f9;
+}
+
+.point-table th:first-child,
+.point-table td:first-child {
+    width: 50%;
+}
+
+.point-table th:last-child,
+.point-table td:last-child {
+    width: 50%;
+    text-align: center;
+}
+
+.point-table th,
+.point-table td {
+    padding: 10px;
+    border: 1px solid #ccc;
+    text-align: center;
+}
+
+.point-table td:first-child {
+    text-align: left;
+    padding-left: 20px;
+}
+
+.point-table input {
+    margin-right: 10px;
+}
+
+.actions {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 20px;
+}
+
+.coupon-display {
+    margin-top: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    font-size: 14px;
+}
+
+.coupon-display select, .final-price-display span {
+    margin-left: 10px;
+}
+
+.couponSelect {
+    padding: 5px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    width: 250px;
+    margin-top: 3px;
+}
+
+label {
+    font-size: 16px;
+}
+
+.actions .btn {
+    padding: 7px 15px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    text-align: center;
+}
+
+.btn-primary {
+    background: #007bff;
+    color: #fff;
+    margin: 5px;
+}
+
+.btn-primary:hover {
+    background-color: #0056b3;
+}
+
+/*구독 결제 모달*/
+.modal2 {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 600px;
+    background: #fff;
+    border-radius: 8px;
+    z-index: 1001;
+    border: 1px solid #ccc;
+    display: none;
+}
+
+.modal-content2 {
+    padding: 2rem;
+}
+
+.subscription-options {
+    display: flex;
+    justify-content: space-around;
+    gap: 20px;
+}
+
+.subscription-item {
+    width: 45%;
+    padding: 15px;
+    border: 1px solid #ccc;
+    border-radius: 10px;
+    background-color: #f9f9f9;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    text-align: center;
+}
+
+.subscription-item h4 {
+    margin-bottom: 10px;
+    font-size: 18px;
+    font-weight: bold;
+}
+
+.subscription-item .benefits {
+    font-size: 14px;
+    margin-bottom: 5px;
+}
+
+.subscription-item .price {
+    font-size: 14px;
+    margin-bottom: 10px;
+}
+
+.coupon-apply {
+    margin-top: 20px;
+    text-align: center;
+}
+
+.coupon-apply label {
+    margin-right: 10px;
+    font-size: 14px;
+}
+
+.couponSelect2 {
+    padding: 5px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    width: 250px;
+}
+
+.actions2 {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 20px;
+}
+
+.final-price-display2 span {
+    font-size: 16px;
+    font-weight: bold;
+    margin-left: 10px;
+}
+
+.btn-primary2 {
+    padding: 7px 15px;
+    background-color: #007bff;
+    color: #fff;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.btn-primary2:hover {
+    background-color: #0056b3;
+}

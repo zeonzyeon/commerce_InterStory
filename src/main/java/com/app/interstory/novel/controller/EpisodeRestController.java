@@ -54,7 +54,7 @@ public class EpisodeRestController {
 	// 회차 구매
 	@PostMapping("/{episodeId}/purchase")
 	public ResponseEntity<String> purchaseEpisode(
-		@PathVariable Long episodeId,
+		@PathVariable(name = "episodeId") Long episodeId,
 		@AuthenticationPrincipal CustomUserDetails userDetails
 	) {
 		Long userId = userDetails.getUser().getUserId();
@@ -63,13 +63,13 @@ public class EpisodeRestController {
 	}
 
 	// 장바구니 담기
-	@PostMapping("/cart")
+	@PostMapping("/{episodeId}/cart")
 	public ResponseEntity<String> addToCart(
-		@AuthenticationPrincipal CustomUserDetails userDetails,
-		@RequestBody Map<String, Long> request
+		@PathVariable(name = "episodeId") Long episodeId,
+		@AuthenticationPrincipal CustomUserDetails userDetails
 	) {
 		Long userId = userDetails.getUser().getUserId();
-		String result = episodeService.addItemToCart(userId, request.get("episodeId"));
+		String result = episodeService.addItemToCart(userId, episodeId);
 		return ResponseEntity.ok(result);
 	}
 

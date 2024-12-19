@@ -1,0 +1,142 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, system-ui, Roboto, sans-serif;
+}
+
+body {
+    background-color: #f8f9fa;
+    color: #333;
+}
+
+.page-container {
+    display: flex;
+    gap: 2rem;
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 2rem;
+}
+
+main {
+    flex: 1;
+    max-width: 1200px;
+    border-radius: 10px;
+    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+
+    .coupon-register {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        border: 1px solid #ccc;
+        padding: 15px 20px;
+        gap: 20px;
+        border-radius: 10px;
+        background-color: #f9f9f9;
+
+        label {
+            font-size: 14px;
+            margin-top: 8px;
+        }
+
+        input {
+            flex-grow: 1;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            padding: 5px 10px;
+            font-size: 14px;
+            width: auto;
+        }
+
+        button {
+            display: inline-block;
+            padding: 5px 15px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            font-size: 14px;
+            text-align: center;
+            cursor: pointer;
+            color: white;
+            background-color: rgba(51, 51, 51, 0.8);
+        }
+
+        button:hover {
+            background-color: #333;
+        }
+    }
+
+    h2 {
+        text-align: left;
+        font-size: 20px;
+        font-weight: bold;
+        margin: 0;
+    }
+
+    .no-coupon {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 40vh;
+        text-align: center;
+        border: 1px solid #ccc;
+        border-radius: 10px;
+        margin: 20px auto;
+    }
+
+    .my-coupons {
+        border: 1px solid #ccc;
+        border-radius: 10px;
+        padding: 20px;
+
+        .coupon-description {
+            display: flex;
+            justify-content: space-between;
+            flex-direction: row;
+
+            span {
+                font-size: 18px;
+                font-weight: bold;
+            }
+        }
+
+        .coupon-item {
+            display: flex;
+            justify-content: space-between;
+            flex-direction: row;
+            height: 50px;
+
+            div {
+                align-content: center;
+            }
+        }
+
+        .pagination {
+            display: flex;
+            justify-content: center;
+            margin-top: 20px;
+            gap: 5px;
+
+            button {
+                padding: 8px 12px;
+                border: 1px solid #ddd;
+                background: white;
+                cursor: pointer;
+
+                &.active {
+                    background: #4a90e2;
+                    color: white;
+                    border-color: #4a90e2;
+                }
+
+                &:disabled {
+                    background: #f5f5f5;
+                    cursor: not-allowed;
+                }
+            }
+        }
+    }
+}
+

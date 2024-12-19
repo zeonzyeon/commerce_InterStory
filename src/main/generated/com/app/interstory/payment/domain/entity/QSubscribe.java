@@ -24,6 +24,8 @@ public class QSubscribe extends EntityPathBase<Subscribe> {
 
     public final DateTimePath<java.sql.Timestamp> endAt = createDateTime("endAt", java.sql.Timestamp.class);
 
+    public final BooleanPath isContinue = createBoolean("isContinue");
+
     public final NumberPath<Long> subscribeId = createNumber("subscribeId", Long.class);
 
     public final com.app.interstory.user.domain.entity.QUser user;
