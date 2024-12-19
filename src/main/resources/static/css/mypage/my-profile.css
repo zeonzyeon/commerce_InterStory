@@ -11,13 +11,18 @@ body {
 }
 
 /*메인 스타일*/
-.my-profile-container {
+.page-container {
+    display: flex;
+    gap: 2rem;
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 2rem;
+}
+
+main {
     flex: 1;
     max-width: 1200px;
-    padding: 20px;
     margin: 0 auto;
-    /*background-color: #eeeeee;*/
-    /*box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);*/
     border-radius: 10px;
     display: flex;
     flex-direction: column;

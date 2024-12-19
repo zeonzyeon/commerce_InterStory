@@ -11,10 +11,17 @@ body {
 }
 
 /* 메인 컨테이너 스타일 */
+.page-container {
+    display: flex;
+    gap: 2rem;
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 2rem;
+}
+
 main {
     flex: 1;
     max-width: 1200px;
-    padding: 20px;
     margin: 0 auto;
     display: flex;
     flex-direction: column;
@@ -24,7 +31,7 @@ main {
         display: flex;
         justify-content: space-between;
         align-items: center;
-        gap: 150px;
+        gap: 30px;
         background-color: #f9f9f9;
         box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
         padding: 20px;
@@ -68,7 +75,7 @@ main {
     .expected-amount {
         display: flex;
         align-items: center;
-        justify-content: flex-end;
+        justify-content: space-between;
         gap: 10px;
         flex: 1;
         margin-left: auto;
@@ -81,7 +88,7 @@ main {
         .value {
             font-weight: bold;
             color: #333;
-            margin-bottom: 2px;
+            flex: 1;
         }
 
         .settlement-button {
@@ -93,7 +100,6 @@ main {
             cursor: pointer;
             font-size: 14px;
             flex: 0.5;
-            margin-left: 100px;
         }
 
         .settlement-button:hover {

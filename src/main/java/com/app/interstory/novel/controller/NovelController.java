@@ -48,6 +48,7 @@ public class NovelController {
 
 		Pageable pageable = PageRequest.of(page, pageSize);
 
+		model.addAttribute("user", userService.findById(userId));
 		model.addAttribute("novel", novel);
 		model.addAttribute("isAuthor", userId.equals(novel.getAuthorId()));
 		model.addAttribute("author", nickname);

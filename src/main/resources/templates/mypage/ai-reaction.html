@@ -4,36 +4,35 @@
     <meta charset="UTF-8">
     <title>에피소드 목록</title>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-    <link rel="stylesheet" th:href="@{/css/reset.css}">
-    <link rel="stylesheet" th:href="@{/css/common/header.css}">
-    <link rel="stylesheet" th:href="@{/css/common/footer.css}">
-    <link rel="stylesheet" th:href="@{/css/mypage/my-header.css}">
     <link rel="stylesheet" th:href="@{/css/mypage/ai-reaction.css}">
 </head>
 <body>
 <div th:replace="~{common/header :: header}"></div>
-<div th:replace="~{mypage/fragment/my-header :: my-header}"></div>
-<div class="container">
-    <div class="episode-list">
-        <h2 th:text="${title}">소설 제목</h2>
 
-        <div class="sort-section">
-            <button class="sort-btn active" data-direction="DESC">최신순</button>
-            <button class="sort-btn" data-direction="ASC">오래된순</button>
+<div class="page-container">
+    <div th:replace="~{common/mypage/mypage-sidebar :: sidebar}"></div>
+    <div class="container">
+        <div class="episode-list">
+            <h2 th:text="${title}">소설 제목</h2>
+
+            <div class="sort-section">
+                <button class="sort-btn active" data-direction="DESC">최신순</button>
+                <button class="sort-btn" data-direction="ASC">오래된순</button>
+            </div>
+
+            <div id="episodeContainer"></div>
+
+            <div class="pagination">
+                <button class="page-prev">&lt;</button>
+                <button class="page-next">&gt;</button>
+            </div>
         </div>
 
-        <div id="episodeContainer"></div>
-
-        <div class="pagination">
-            <button class="page-prev">&lt;</button>
-            <button class="page-next">&gt;</button>
+        <div class="analysis-section">
+            <h2>독자 반응 분석</h2>
+            <div class="loader"></div>
+            <div class="analysis-result" style="display: none;"></div>
         </div>
-    </div>
-
-    <div class="analysis-section">
-        <h2>독자 반응 분석</h2>
-        <div class="loader"></div>
-        <div class="analysis-result" style="display: none;"></div>
     </div>
 </div>
 <div th:replace="~{common/footer :: footer}"></div>

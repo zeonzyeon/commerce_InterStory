@@ -5,31 +5,31 @@
     <title>My Point History</title>
     <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.3/jquery.min.js"></script>
-    <link rel="stylesheet" th:href="@{/css/common/header.css}">
-    <link rel="stylesheet" th:href="@{/css/common/footer.css}">
-    <link rel="stylesheet" th:href="@{/css/mypage/my-header.css}">
     <link rel="stylesheet" th:href="@{/css/mypage/point-history.css}">
 </head>
 <body>
 <div th:replace="~{common/header :: header}"></div>
-<div th:replace="~{mypage/fragment/my-header :: my-header}"></div>
-<main>
-    <h2>포인트 내역</h2>
-    <div class="no-point-history" th:if="${#lists.isEmpty(pointHistoryList)}">
-        <p>포인트 충전 / 이용 내역이 없습니다.</p>
-    </div>
-    <div class="point-history" th:if="${!#lists.isEmpty(pointHistoryList)}">
-        <div class="point-history-item" th:each="pointHistory : ${pointHistoryList}">
-            <div class="point-history-content" th:text="${pointHistory.pointChange}">포인트 충전</div>
-            <div class="point-history-date" th:text="${#dates.format(pointHistory.date, 'yyyy-MM-dd HH:mm:ss')}">2021-01-01 12:34:00</div>
-            <div class="point-history-amount" th:text="${pointHistory.description} + 'P'">+100P</div>
+
+<div class="page-container">
+    <div th:replace="~{common/mypage/mypage-sidebar :: sidebar}"></div>
+    <main>
+        <h2>포인트 내역</h2>
+        <div class="no-point-history" th:if="${#lists.isEmpty(pointHistoryList)}">
+            <p>포인트 충전 / 이용 내역이 없습니다.</p>
         </div>
-        <div class="pagination">
-            <button class="page-prev">&lt;</button>
-            <button class="page-next">&gt;</button>
+        <div class="point-history" th:if="${!#lists.isEmpty(pointHistoryList)}">
+            <div class="point-history-item" th:each="pointHistory : ${pointHistoryList}">
+                <div class="point-history-content" th:text="${pointHistory.pointChange}">포인트 충전</div>
+                <div class="point-history-date" th:text="${#dates.format(pointHistory.date, 'yyyy-MM-dd HH:mm:ss')}">2021-01-01 12:34:00</div>
+                <div class="point-history-amount" th:text="${pointHistory.description} + 'P'">+100P</div>
+            </div>
+            <div class="pagination">
+                <button class="page-prev">&lt;</button>
+                <button class="page-next">&gt;</button>
+            </div>
         </div>
-    </div>
-</main>
+    </main>
+</div>
 <div th:replace="~{common/footer :: footer}"></div>
 
 <script th:inline="javascript">

@@ -51,14 +51,15 @@ public class MypageController {
 	public String showMyComments(
 		Model model,
 		@AuthenticationPrincipal CustomUserDetails userDetails,
-		@RequestParam(defaultValue = "0") int page
+		@RequestParam(defaultValue = "0", name = "page") int page
 	) {
 
 		Page<MyCommentResponseDTO> myComments =
 			commentService.getMyComments(userDetails.getUser().getUserId(), page);
-		
+
 		model.addAttribute("myComments", myComments);
 		model.addAttribute("user", userService.findById(userDetails.getUser().getUserId()));
+		model.addAttribute("currentMenu", "comments");
 
 		return "mypage/my-comment";
 	}
@@ -72,6 +73,7 @@ public class MypageController {
 
 		UserResponseDTO currentUser = userService.getCurrentUser(userDetails.getUser().getUserId());
 		model.addAttribute("user", currentUser);
+		model.addAttribute("currentMenu", "edit");
 
 		return "mypage/edit-profile";
 	}
@@ -87,6 +89,7 @@ public class MypageController {
 		model.addAttribute("novels", mypageService.getMyNovels(userDetails, pageable));
 		model.addAttribute("comments", mypageService.getMyComments(userDetails, pageable));
 		model.addAttribute("myCoupons", mypageService.getCoupons(userDetails, pageable2));
+		model.addAttribute("currentMenu", "profile");
 		return "mypage/my-profile";
 	}
 
@@ -96,6 +99,7 @@ public class MypageController {
 		Page<FavoriteNovelResponseDTO> favoriteNovels = mypageService.getFavoriteNovels(userDetails,
 			Pageable.unpaged());
 		model.addAttribute("favoriteNovels", favoriteNovels);
+		model.addAttribute("currentMenu", "favorites");
 		return "mypage/favorite-novel";
 	}
 
@@ -115,6 +119,7 @@ public class MypageController {
 		Page<ReadNovelResponseDTO> recentNovels = mypageService.getReadNovels(userDetails, sortedPageable);
 		model.addAttribute("recentNovels", recentNovels);
 		model.addAttribute("currentSort", sort);
+		model.addAttribute("currentMenu", "recent");
 
 		return "mypage/recent-novel";
 	}
@@ -135,6 +140,7 @@ public class MypageController {
 		model.addAttribute("pointHistoryList", pointHistoryPage.getContent());
 		model.addAttribute("currentPage", page);
 		model.addAttribute("totalPages", pointHistoryPage.getTotalPages());
+		model.addAttribute("currentMenu", "points");
 
 		return "mypage/point-history";
 	}
@@ -148,6 +154,7 @@ public class MypageController {
 		model.addAttribute("coupons", coupons);
 		model.addAttribute("currentPage", pageable.getPageNumber());
 		model.addAttribute("totalPages", coupons.getTotalPages());
+		model.addAttribute("currentMenu", "coupons");
 		return "mypage/my-coupons";
 	}
 
@@ -158,6 +165,7 @@ public class MypageController {
 		model.addAttribute("myNovels", mypageService.getMyNovels(userDetails, pageable));
 		model.addAttribute("accountInfo", mypageService.getAccount(userDetails));
 		model.addAttribute("settlement", mypageService.getSettlement(userDetails).getFee());
+		model.addAttribute("currentMenu", "myNovel");
 		return "mypage/novel-list";
 	}
 

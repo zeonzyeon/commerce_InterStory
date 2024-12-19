@@ -5,104 +5,102 @@
     <meta content="width=device-width, initial-scale=1.0" name="viewport">
     <title>프로필 수정</title>
     <link rel="stylesheet" th:href="@{/css/common/header.css}">
-    <link rel="stylesheet" th:href="@{/css/mypage/my-header.css}">
     <link rel="stylesheet" th:href="@{/css/mypage/edit-profile.css}">
 </head>
 <body>
-<!-- 헤더 -->
 <div th:replace="~{common/header :: header}"></div>
-<!-- 상단 네비게이션 -->
-<div th:replace="~{mypage/fragment/my-header :: my-header}"></div>
 
-<!-- 메인 컨텐츠 -->
-<main class="main-container">
-    <div class="content-grid">
-        <!-- 왼쪽: 프로필 섹션 -->
-        <section class="profile-section">
-            <form class="profile-image-section" enctype="multipart/form-data" id="profileImageForm">
-                <div class="profile-image-container">
-                    <img alt="프로필"
-                         class="profile-image"
-                         id="profilePreview"
-                         th:src="${user.profileUrl}">
-                    <label class="image-edit-button" for="profileImage">
-                        <svg fill="none" height="16" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"
-                             width="16">
-                            <path d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"/>
-                        </svg>
-                    </label>
-                    <input accept="image/*"
-                           class="hidden"
-                           id="profileImage"
-                           name="profileImage"
-                           onchange="handleImageChange()"
-                           type="file">
-                </div>
-                <div class="spinner hidden" id="imageUploadSpinner">
-                    <div class="spinner-content">
-                        <svg class="animate-spin h-5 w-5 text-blue-600" fill="none" viewBox="0 0 24 24"
-                             xmlns="http://www.w3.org/2000/svg">
-                            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor"
-                                    stroke-width="4"></circle>
-                            <path class="opacity-75"
-                                  d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
-                                  fill="currentColor"></path>
-                        </svg>
-                        <span class="ml-2">업로드 중...</span>
+<div class="page-container">
+    <div th:replace="~{common/mypage/mypage-sidebar :: sidebar}"></div>
+    <main class="main-container">
+        <div class="content-grid">
+            <!-- 왼쪽: 프로필 섹션 -->
+            <section class="section-profile">
+                <form class="profile-image-section" enctype="multipart/form-data" id="profileImageForm">
+                    <div class="profile-image-container">
+                        <img alt="프로필"
+                             class="profile-image"
+                             id="profilePreview"
+                             th:src="${user.profileUrl}">
+                        <label class="image-edit-button" for="profileImage">
+                            <svg fill="none" height="16" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"
+                                 width="16">
+                                <path d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"/>
+                            </svg>
+                        </label>
+                        <input accept="image/*"
+                               class="hidden"
+                               id="profileImage"
+                               name="profileImage"
+                               onchange="handleImageChange()"
+                               type="file">
                     </div>
-                </div>
-            </form>
-
-            <form class="profile-form">
-                <input class="profile-input" placeholder="닉네임" th:value="${user.nickname}" type="text">
-                <button class="profile-button hidden" type="submit">닉네임 변경</button>
-                <button class="check-button" onclick="checkNickname()" type="button">
-                    중복 확인
-                </button>
-                <span class="error-message hidden" id="nicknameError"></span>
-            </form>
-        </section>
-
-        <!-- 오른쪽: 정보 섹션 -->
-        <div>
-            <section class="info-section">
-                <div class="info-grid">
-                    <!-- 포인트 카드 -->
-                    <div class="info-card">
-                        <div class="info-row">
-                            <span class="info-label">보유 포인트</span>
-                            <span class="info-value" th:text="${#numbers.formatInteger(user.point, 0,'COMMA') + ' P'}">0 P</span>
+                    <div class="spinner hidden" id="imageUploadSpinner">
+                        <div class="spinner-content">
+                            <svg class="animate-spin h-5 w-5 text-blue-600" fill="none" viewBox="0 0 24 24"
+                                 xmlns="http://www.w3.org/2000/svg">
+                                <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor"
+                                        stroke-width="4"></circle>
+                                <path class="opacity-75"
+                                      d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                                      fill="currentColor"></path>
+                            </svg>
+                            <span class="ml-2">업로드 중...</span>
                         </div>
                     </div>
+                </form>
 
-                    <!-- 구독 상태 카드 -->
-                    <!-- <div class="info-card">
-                         <div class="info-row">
-                             <span class="info-label">구독 상태</span>
-                             <span class="status-badge" th:text="${user.isSubscribed ? '구독중' : '미구독'}">구독중</span>
-                         </div>
-                         <div class="info-row">
-                             <span class="info-label">자동 결제</span>
-                             <button class="action-button" th:if="${!user.isAutoPayment}">설정하기</button>
-                             <span class="status-badge" th:if="${user.isAutoPayment}">설정됨</span>
-                         </div>
-                     </div>-->
-                </div>
+                <form class="profile-form">
+                    <input class="profile-input" placeholder="닉네임" th:value="${user.nickname}" type="text">
+                    <button class="profile-button hidden" type="submit">닉네임 변경</button>
+                    <button class="check-button" onclick="checkNickname()" type="button">
+                        중복 확인
+                    </button>
+                    <span class="error-message hidden" id="nicknameError"></span>
+                </form>
             </section>
 
-            <!-- 구독 배너 -->
-            <section class="subscription-banner" th:if="${!user.isSubscribed}">
-                <div class="banner-content">
-                    <div class="banner-text">
-                        <!--<h3>회원 탈퇴</h3>-->
-                        <p>회원 탈퇴</p>
+            <!-- 오른쪽: 정보 섹션 -->
+            <div>
+                <section class="info-section">
+                    <div class="info-grid">
+                        <!-- 포인트 카드 -->
+                        <div class="info-card">
+                            <div class="info-row">
+                                <span class="info-label">보유 포인트</span>
+                                <span class="info-value" th:text="${#numbers.formatInteger(user.point, 0,'COMMA') + ' P'}">0 P</span>
+                            </div>
+                        </div>
+
+                        <!-- 구독 상태 카드 -->
+                        <!-- <div class="info-card">
+                             <div class="info-row">
+                                 <span class="info-label">구독 상태</span>
+                                 <span class="status-badge" th:text="${user.isSubscribed ? '구독중' : '미구독'}">구독중</span>
+                             </div>
+                             <div class="info-row">
+                                 <span class="info-label">자동 결제</span>
+                                 <button class="action-button" th:if="${!user.isAutoPayment}">설정하기</button>
+                                 <span class="status-badge" th:if="${user.isAutoPayment}">설정됨</span>
+                             </div>
+                         </div>-->
                     </div>
-                    <button class="banner-button">탈퇴하기</button>
-                </div>
-            </section>
+                </section>
+
+                <!-- 구독 배너 -->
+                <section class="subscription-banner" th:if="${!user.isSubscribed}">
+                    <div class="banner-content">
+                        <div class="banner-text">
+                            <!--<h3>회원 탈퇴</h3>-->
+                            <p>회원 탈퇴</p>
+                        </div>
+                        <button class="banner-button">탈퇴하기</button>
+                    </div>
+                </section>
+            </div>
         </div>
-    </div>
-</main>
+    </main>
+</div>
 
 <!--<script th:inline="javascript"></script>-->
 <script th:src="@{/js/mypage/edit-profile.js}"></script>

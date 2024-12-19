@@ -40,9 +40,9 @@ document.getElementById('episode-sort-old').addEventListener('click', () => {
     location.reload();
 });
 
-function viewEpisode(episodeId, episodeTitle, isFree, isPurchased) {
+function viewEpisode(episodeId, episodeTitle, isFree, isPurchased, isSubscribe) {
     console.log(episodeId, episodeTitle, isFree, isPurchased);
-    if (isFree === 'true' || isPurchased === 'true') {
+    if (isFree === 'true' || isPurchased === 'true' || isSubscribe === 'true') {
         window.location.href = '/episodes/' + episodeId;
     } else {
         openPurchaseModal(episodeId, episodeTitle);

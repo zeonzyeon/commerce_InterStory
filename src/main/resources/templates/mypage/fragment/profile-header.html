@@ -1,4 +1,5 @@
 <div class="profile-section" th:fragment="profile-header">
+    <link rel="stylesheet" th:href="@{/css/mypage/profile-header.css}">
     <div class="profile-info">
         <div class="profile-picture"></div>
         <span class="profile-name">
@@ -8,6 +9,6 @@
     <div class="profile-buttons">
         <button onclick="location.href='/users/profile'">프로필</button>
         <button onclick="location.href='/users/my-novel'">연재 작품</button>
-        <button onclick="location.href='/users/my-comments'">댓글</button>
+        <button onclick="location.href='/users/my-comment'">댓글</button>
     </div>
 </div>

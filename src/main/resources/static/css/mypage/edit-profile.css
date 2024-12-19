@@ -11,10 +11,19 @@ body {
 }
 
 /* 메인 컨텐츠 */
-.main-container {
+.page-container {
+    display: flex;
+    gap: 2rem;
     max-width: 1200px;
-    margin: 2rem auto;
+    margin: 0 auto;
+    padding: 2rem;
+}
+
+main {
+    max-width: 1200px;
+    margin: 0 auto;
     padding: 0 1rem;
+    flex: 1;
 }
 
 .content-grid {
@@ -24,7 +33,7 @@ body {
 }
 
 /* 프로필 섹션 */
-.profile-section {
+.section-profile {
     background-color: white;
     border-radius: 0.75rem;
     padding: 1.5rem;

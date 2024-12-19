@@ -5,52 +5,49 @@
     <title>My Novel List</title>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.3/jquery.min.js"></script>
     <link rel="stylesheet" th:href="@{/css/reset.css}">
-    <link rel="stylesheet" th:href="@{/css/common/header.css}">
-    <link rel="stylesheet" th:href="@{/css/common/footer.css}">
-    <link rel="stylesheet" th:href="@{/css/mypage/my-header.css}">
-    <link rel="stylesheet" th:href="@{/css/mypage/profile-header.css}">
     <link rel="stylesheet" th:href="@{/css/mypage/novel-list.css}">
 </head>
 <body>
 <div th:replace="~{common/header :: header}"></div>
-<div th:replace="~{mypage/fragment/my-header :: my-header}"></div>
-<main>
-    <div th:replace="~{mypage/fragment/profile-header :: profile-header}"></div>
 
-    <div class="account-settlement-row">
-        <div class="account-edit">
-            <label for="accountNumber">계좌번호</label>
-            <input id="accountNumber" placeholder="숫자만 입력하세요" type="number">
-            <button onclick="updateAccount()" type="button">수정</button>
-        </div>
-        <div class="expected-amount">
-            <span class="label">예상 정산 금액:</span>
-            <span class="value" id="expectedAmount" th:text="|${#numbers.formatInteger(settlement, 0,'COMMA')}원|">0원</span>
-            <button class="settlement-button" onclick="calculateSettlement()">연재 작품 정산</button>
-        </div>
-    </div>
-    <!-- 등록된 작품 목록 -->
-    <section class="my-novels">
-        <div class="novel-item" th:each="novel : ${myNovels}">
-            <img alt="" class="novel-thumbnail" th:src="${novel.thumbnailUrl}">
-            <div class="novel-content">
-                <a class="novel-title" th:href="@{/users/episode/{novelId}(novelId=${novel.novelId})}" th:text="${novel.title}">소설 제목</a>
-                <span class="novel-updated-at" th:text="${#dates.format(novel.episodeUpdatedAt, 'yyyy.MM.dd HH:mm:ss')}">연재 시간</span>
+<div class="page-container">
+    <div th:replace="~{common/mypage/mypage-sidebar :: sidebar}"></div>
+    <main>
+        <div class="account-settlement-row">
+            <div class="account-edit">
+                <label for="accountNumber">계좌번호</label>
+                <input id="accountNumber" placeholder="숫자만 입력하세요" type="number">
+                <button onclick="updateAccount()" type="button">수정</button>
             </div>
-            <div class="novel-feature">
-                <div class="novel-favorive-count">
-                    <img alt="" th:src="@{/img/full_heart.png}">
-                    <span th:text="${novel.favoriteCount}">관심작품 수</span>
-                </div>
-                <div class="novel-like-count">
-                    <img alt="" th:src="@{/img/thumb.png}">
-                    <span th:text="${novel.likeCount}">추천 수</span>
-                </div>
+            <div class="expected-amount">
+                <span class="label">예상 정산 금액:</span>
+                <span class="value" id="expectedAmount" th:text="|${#numbers.formatInteger(settlement, 0,'COMMA')}원|">0원</span>
+                <button class="settlement-button" onclick="calculateSettlement()">연재 작품 정산</button>
             </div>
         </div>
-        <div th:if="${#lists.isEmpty(myNovels)}">연재한 작품이 없습니다</div>
-    </section>
-</main>
+        <!-- 등록된 작품 목록 -->
+        <section class="my-novels">
+            <div class="novel-item" th:each="novel : ${myNovels}">
+                <img alt="" class="novel-thumbnail" th:src="${novel.thumbnailUrl}">
+                <div class="novel-content">
+                    <a class="novel-title" th:href="@{/users/episode/{novelId}(novelId=${novel.novelId})}" th:text="${novel.title}">소설 제목</a>
+                    <span class="novel-updated-at" th:text="${#dates.format(novel.episodeUpdatedAt, 'yyyy.MM.dd HH:mm:ss')}">연재 시간</span>
+                </div>
+                <div class="novel-feature">
+                    <div class="novel-favorive-count">
+                        <img alt="" th:src="@{/img/full_heart.png}">
+                        <span th:text="${novel.favoriteCount}">관심작품 수</span>
+                    </div>
+                    <div class="novel-like-count">
+                        <img alt="" th:src="@{/img/thumb.png}">
+                        <span th:text="${novel.likeCount}">추천 수</span>
+                    </div>
+                </div>
+            </div>
+            <div th:if="${#lists.isEmpty(myNovels)}">연재한 작품이 없습니다</div>
+        </section>
+    </main>
+</div>
 <div th:replace="~{common/footer :: footer}"></div>
 
 <script th:src="@{/js/mypage/novel-list.js}"></script>

@@ -74,9 +74,11 @@ public class UserController {
 
 	//내 애피소드 페이지
 	@GetMapping("users/episode/{novelId}")
-	public String myEpisode(@PathVariable(name = "novelId") Long novelId, Model model) {
+	public String myEpisode(@PathVariable(name = "novelId") Long novelId, @AuthenticationPrincipal CustomUserDetails userDetails, Model model) {
 		MyPageNovelResponseDto novel = episodeService.findByNovelId(novelId);
+		model.addAttribute("user", userService.findById(userDetails.getUser().getUserId()));
 		model.addAttribute("novel", novel);
+		model.addAttribute("currentMenu", "myNovel");
 
 		return "mypage/ai-reaction";
 	}

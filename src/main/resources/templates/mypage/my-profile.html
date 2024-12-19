@@ -4,69 +4,67 @@
     <meta charset="UTF-8">
     <title>Profile Page</title>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.3/jquery.min.js"></script>
-    <link rel="stylesheet" th:href="@{/css/common/header.css}">
-    <link rel="stylesheet" th:href="@{/css/common/footer.css}">
-    <link rel="stylesheet" th:href="@{/css/mypage/my-header.css}">
-    <link rel="stylesheet" th:href="@{/css/mypage/profile-header.css}">
     <link rel="stylesheet" th:href="@{/css/mypage/my-profile.css}">
 </head>
 <body>
 <div th:replace="~{common/header :: header}"></div>
-<div th:replace="~{mypage/fragment/my-header :: my-header}"></div>
-<main class="my-profile-container">
-    <div th:replace="~{mypage/fragment/profile-header :: profile-header}"></div>
 
-    <div class="payment-settings">
-        <div class="payment-row">
+<div class="page-container">
+    <div th:replace="~{common/mypage/mypage-sidebar :: sidebar}"></div>
+    <main class="my-profile-container">
+
+        <div class="payment-settings">
+            <div class="payment-row">
             <span class="payment-label">내 포인트 :
         <span class="point-amount" th:text="${#numbers.formatInteger(user.point, 0,'COMMA')} + 'P'">200P</span>
             </span>
-            <button class="payment-action payment" onclick="openPointPaymentModal()">결제</button>
-        </div>
-        <div class="payment-row">
+                <button class="payment-action payment" onclick="openPointPaymentModal()">결제</button>
+            </div>
+            <div class="payment-row">
             <span class="payment-label">포인트 자동 결제 :
                 <span class="is-auto-payment" th:if="${user.isAutoPayment}" th:text="사용중">사용중</span>
                 <span class="is-auto-payment" th:if="${!user.isAutoPayment}">사용하지 않음</span>
             </span>
-            <button class="payment-action payment" onclick="autoPayment()" th:if="${!user.isAutoPayment}">자동 결제 등록</button>
-        </div>
-        <div class="payment-row">
+                <button class="payment-action payment" onclick="autoPayment()" th:if="${!user.isAutoPayment}">자동 결제 등록</button>
+            </div>
+            <div class="payment-row">
             <span class="payment-label">구독 만료일 :
                 <span class="subscription-date" th:if="${user.isSubscribed}" th:text="${#dates.format(endAt, 'yyyy-MM-dd HH:mm:ss')}">2025.11.27</span>
                 <span class="subscription-date" th:if="${!user.isSubscribed}">사용하지 않음</span>
             </span>
-            <button class="payment-action payment" onclick="openSubscriptionModal()" th:if="${!user.isSubscribed}">구독 서비스 가입</button>
+                <button class="payment-action payment" onclick="openSubscriptionModal()" th:if="${!user.isSubscribed}">구독 서비스 가입</button>
+            </div>
+            <div class="payment-row">
+                <span class="payment-label">결제 수단 변경</span>
+                <button class="payment-action change" onclick="changePayment()">변경</button>
+            </div>
+            <div class="payment-row" th:if="${user.isAutoPayment}">
+                <span class="payment-label">포인트 자동 결제</span>
+                <button class="payment-action cancel" onclick="inactiveAutoPayment()">자동 결제 취소</button>
+            </div>
+            <div class="payment-row" th:if="${user.isSubscribed}">
+                <span class="payment-label">정기 구독 서비스</span>
+                <button class="payment-action cancel" onclick="inactiveSubscription()">구독 취소</button>
+            </div>
         </div>
-        <div class="payment-row">
-            <span class="payment-label">결제 수단 변경</span>
-            <button class="payment-action change" onclick="changePayment()">변경</button>
+        <div class="content-section">
+            <div class="works">
+                <h3>연재한 작품</h3>
+                <ul>
+                    <li th:each="novel : ${novels}" th:text="${novel.title}"></li>
+                    <li th:if="${#lists.isEmpty(novels)}">연재한 작품이 없습니다</li>
+                </ul>
+            </div>
+            <div class="comments">
+                <h3>작성한 댓글</h3>
+                <ul>
+                    <li th:each="comment : ${comments}" th:text="${comment.content}"></li>
+                    <li th:if="${#lists.isEmpty(comments)}">작성한 댓글이 없습니다</li>
+                </ul>
+            </div>
         </div>
-        <div class="payment-row" th:if="${user.isAutoPayment}">
-            <span class="payment-label">포인트 자동 결제</span>
-            <button class="payment-action cancel" onclick="inactiveAutoPayment()">자동 결제 취소</button>
-        </div>
-        <div class="payment-row" th:if="${user.isSubscribed}">
-            <span class="payment-label">정기 구독 서비스</span>
-            <button class="payment-action cancel" onclick="inactiveSubscription()">구독 취소</button>
-        </div>
-    </div>
-    <div class="content-section">
-        <div class="works">
-            <h3>연재한 작품</h3>
-            <ul>
-                <li th:each="novel : ${novels}" th:text="${novel.title}"></li>
-                <li th:if="${#lists.isEmpty(novels)}">연재한 작품이 없습니다</li>
-            </ul>
-        </div>
-        <div class="comments">
-            <h3>작성한 댓글</h3>
-            <ul>
-                <li th:each="comment : ${comments}" th:text="${comment.content}"></li>
-                <li th:if="${#lists.isEmpty(comments)}">작성한 댓글이 없습니다</li>
-            </ul>
-        </div>
-    </div>
-</main>
+    </main>
+</div>
 
 <div th:replace="~{common/footer :: footer}"></div>
 
