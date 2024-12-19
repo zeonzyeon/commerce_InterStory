@@ -43,14 +43,14 @@
                 <p th:text="${novel.getDescription()}">작품 설명(줄거리)</p>
             </div>
             <div class="novel-info-modify">
-                <a class="btn-novel-info-modify" href="/" th:if="${isAuthor} or ${#strings.equals(user.role, 'ADMIN')}">수정하기</a>
+                <button class="btn-novel-info-modify" onclick="editNovel()" th:if="${isAuthor} or ${#strings.equals(user.role, 'ADMIN')}">수정하기</button>
             </div>
         </div>
     </section>
 
     <section class="novel-episode">
         <div class="add-episode">
-            <a class="btn-add-episode" href="/" th:if="${isAuthor}">소설 작성</a>
+            <button class="btn-add-episode" onclick="writeNovel()" th:if="${isAuthor}">소설 작성</button>
         </div>
         <div class="episode-list">
             <div class="episode-info">
