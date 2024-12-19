@@ -7,6 +7,7 @@ import java.util.List;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -14,7 +15,7 @@ import org.springframework.transaction.annotation.Transactional;
 import com.app.interstory.novel.domain.entity.Comment;
 import com.app.interstory.novel.domain.entity.CommentLike;
 import com.app.interstory.novel.domain.entity.Episode;
-import com.app.interstory.novel.domain.enumtypes.Sort;
+import com.app.interstory.novel.domain.enumtypes.SortType;
 import com.app.interstory.novel.dto.request.CommentRequestDto;
 import com.app.interstory.novel.dto.response.CommentListResponseDto;
 import com.app.interstory.novel.dto.response.CommentResponseDto;
@@ -24,12 +25,14 @@ import com.app.interstory.novel.repository.EpisodeRepository;
 import com.app.interstory.user.domain.CustomUserDetails;
 import com.app.interstory.user.domain.entity.User;
 import com.app.interstory.user.domain.enumtypes.Roles;
+import com.app.interstory.user.dto.response.MyCommentResponseDTO;
 import com.app.interstory.user.repository.UserRepository;
 
 import lombok.RequiredArgsConstructor;
 
 @Service
 @RequiredArgsConstructor
+@Transactional(readOnly = true)
 public class CommentService {
 	private final CommentRepository commentRepository;
 	private final EpisodeRepository episodeRepository;
@@ -55,12 +58,12 @@ public class CommentService {
 	}
 
 	@Transactional
-	public CommentListResponseDto getEpisodeComment(Long episodeId, Sort sort, Integer page,
+	public CommentListResponseDto getEpisodeComment(Long episodeId, SortType sort, Integer page,
 		CustomUserDetails userDetails) {
 
 		final int getItemCount = 4;
 
-		Pageable pageable = PageRequest.of(page - 1, getItemCount);
+		Pageable pageable = PageRequest.of(page, getItemCount);
 
 		Page<Comment> comments = commentRepository.findCommentsByEpisodeId(episodeId, sort.getDescription(), pageable);
 
@@ -107,17 +110,17 @@ public class CommentService {
 	}
 
 	@Transactional
-	public CommentListResponseDto getNovelComment(Long novelId, Sort sort, Integer page,
+	public CommentListResponseDto getNovelComment(Long novelId, SortType sort, Integer page,
 		CustomUserDetails userDetails) {
 
 		final int getItemCount = 4;
 
-		Pageable pageable = PageRequest.of(page - 1, getItemCount);
+		Pageable pageable = PageRequest.of(page, getItemCount);
 
 		Page<Comment> comments = commentRepository.findCommentsByNovelId(novelId, sort.getDescription(), pageable);
 
 		if (page > comments.getTotalPages()) {
-			throw new RuntimeException("유효하지 않은 사용자입니다.");
+			throw new RuntimeException("유효하지 않은 페이지입니다.");
 		}
 
 		User user;
@@ -135,6 +138,7 @@ public class CommentService {
 					.nickname(comment.getUser().getNickname())
 					.profileUrl(comment.getUser().getProfileUrl())
 					.content("삭제된 댓글입니다.")
+					.episodeTitle(comment.getEpisode().getTitle())
 					.createdAt(formatTimestamp(comment.getCreatedAt()))
 					.likeCount(comment.getLikeCount())
 					.isLiked(false)
@@ -146,6 +150,7 @@ public class CommentService {
 					.nickname(comment.getUser().getNickname())
 					.profileUrl(comment.getUser().getProfileUrl())
 					.content(comment.getContent())
+					.episodeTitle(comment.getEpisode().getTitle())
 					.createdAt(formatTimestamp(comment.getCreatedAt()))
 					.likeCount(comment.getLikeCount())
 					.isLiked(commentLikeRepository.existsByCommentAndUser(comment, user))
@@ -203,5 +208,20 @@ public class CommentService {
 		}
 		commentRepository.save(comment);
 		return afterLikeMessage;
+	}
+
+	public Page<MyCommentResponseDTO> getMyComments(Long userId, int page) {
+
+		int page_size = 10;
+
+		Pageable pageable = PageRequest.of(
+			page,
+			page_size,
+			Sort.by(Sort.Direction.DESC, "createdAt")
+		);
+
+		Page<Comment> commentPage = commentRepository.findByUserWithNovelAndEpisode(userId, pageable);
+
+		return commentPage.map(MyCommentResponseDTO::createMyCommentResponseDTO);
 	}
 }

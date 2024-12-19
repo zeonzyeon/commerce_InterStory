@@ -1,10 +1,30 @@
 package com.app.interstory.novel.domain.entity;
 
+import java.sql.Timestamp;
+import java.util.ArrayList;
+import java.util.List;
+
+import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
+
 import com.app.interstory.novel.domain.enumtypes.MainTag;
 import com.app.interstory.novel.domain.enumtypes.NovelStatus;
 import com.app.interstory.user.domain.entity.User;
 
-import jakarta.persistence.*;
+import jakarta.persistence.CascadeType;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.EntityListeners;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
+import jakarta.persistence.FetchType;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToMany;
+import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -15,6 +35,7 @@ import lombok.NoArgsConstructor;
 @Table(name = "novel")
 @NoArgsConstructor
 @AllArgsConstructor
+@EntityListeners(AuditingEntityListener.class)
 @Builder
 public class Novel {
 	private static final NovelStatus DEFAULT_STATUS = NovelStatus.DRAFT;
@@ -30,6 +51,9 @@ public class Novel {
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "user_id", nullable = false)
 	private User user;
+
+	@OneToMany(mappedBy = "novel", cascade = CascadeType.ALL)
+	private List<Episode> episodes = new ArrayList<>();
 
 	@Column(name = "title", nullable = false)
 	private String title;
@@ -66,4 +90,44 @@ public class Novel {
 	@Column(name = "tag", nullable = false)
 	@Enumerated(EnumType.STRING)
 	private MainTag tag;
+
+	@Column(name = "published_at", nullable = false)
+	@CreatedDate
+	private Timestamp publishedAt;
+
+	@Column(name = "episode_updated_at")
+	private Timestamp episodeUpdatedAt;
+
+	public void update(
+		String title,
+		String description,
+		String plan,
+		String thumbnailRenamedFilename,
+		String thumbnailUrl,
+		MainTag tag,
+		NovelStatus status,
+		Boolean isFree
+	) {
+		this.title = title;
+		this.description = description;
+		this.plan = plan;
+		this.thumbnailRenamedFilename = thumbnailRenamedFilename;
+		this.thumbnailUrl = thumbnailUrl;
+		this.tag = tag;
+		this.status = status;
+		this.isFree = isFree;
+	}
+
+	public void updateStatus(NovelStatus status) {
+		this.status = status;
+	}
+
+	public void markAsDeleted() {
+		this.status = NovelStatus.DELETED;
+	}
+
+	public void updateFavoriteCount(Integer favoriteCount) {
+		this.favoriteCount = favoriteCount;
+	}
+
 }

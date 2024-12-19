@@ -30,6 +30,8 @@ public class QPayment extends EntityPathBase<Payment> {
 
     public final NumberPath<Long> paymentId = createNumber("paymentId", Long.class);
 
+    public final EnumPath<com.app.interstory.payment.domain.enumtypes.PaymentStatus> status = createEnum("status", com.app.interstory.payment.domain.enumtypes.PaymentStatus.class);
+
     public final com.app.interstory.user.domain.entity.QUser user;
 
     public QPayment(String variable) {

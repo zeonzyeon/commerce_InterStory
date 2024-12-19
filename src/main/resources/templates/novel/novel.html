@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta content="width=device-width, initial-scale=1.0" name="viewport">
+    <title th:text="${novel.title}"></title>
+    <link href="/static/css/novel/novel.css" rel="stylesheet" th:href="@{/css/reset.css}">
+    <link href="/static/css/reset.css" rel="stylesheet" th:href="@{/css/novel/novel.css}">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+</head>
+<body>
+<main>
+    <section class="novel-profile" id="novel-profile" th:attr="data-novel-id=${novel.novelId}">
+        <div class="novel-image">
+            <img alt="작품 섬네일 이미지" class="novel-image" th:src="${novel.getThumbnailUrl()}">
+        </div>
+        <div class="novel-info">
+            <div class="novel-info-top">
+                <div class="novel-info-top-left">
+                    <p th:text="${novel.title}">작품 제목</p>
+                    <p th:text="${author}">작성자</p>
+                    <p th:text="|추천 ${novel.likeCount < 1000 ? novel.likeCount : #numbers.formatInteger(novel.likeCount, 3)}|">추천수</p>
+                    <div class="tag-list">
+                        <span class="main-tag" th:text="${novel.tag}">메인 태그</span>
+                        <div class="sub-tags" th:each="tag : ${novel.tags}">
+                            <span th:text="${tag.tag}">태그</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="novel-info-top-right">
+                    <div class="novel-info-favorite">
+                        <button class="btn-favorite" id="btn-favorite" onclick="novelFavorite()" th:attr="data-favorite=${novel.isFavorite}">
+                            <img alt="" th:if="${novel.isFavorite}" th:src="@{/img/full_heart.png}">
+                            <img alt="" th:if="${!novel.isFavorite}" th:src="@{/img/empty_heart.png}">
+                        </button>
+                        <span th:text="${novel.favoriteCount < 1000 ? novel.favoriteCount : #numbers.formatInteger(novel.favoriteCount, 3)}">12345</span>
+                    </div>
+                    <button class="btn-share" id="btn-novel-share"><img alt="" th:src="@{/img/share.png}"></button>
+                </div>
+            </div>
+            <div class="novel-info-bottom">
+                <p th:text="${novel.getDescription()}">작품 설명(줄거리)</p>
+            </div>
+            <div class="novel-info-modify">
+                <a class="btn-novel-info-modify" href="/" th:if="${isAuthor}">수정하기</a>
+            </div>
+        </div>
+    </section>
+
+    <section class="novel-episode">
+        <div class="add-episode">
+            <a class="btn-add-episode" href="/" th:if="${isAuthor}">소설 작성</a>
+        </div>
+        <div class="episode-list">
+            <div class="episode-info">
+                <span th:text="|총 ${novel.episodeCount}화|">총 100화</span>
+                <div>
+                    <button class="btn-episode-sort-recent" id="episode-sort-recent">최신화부터</button>
+                    <span>|</span>
+                    <button class="btn-episode-sort-old" id="episode-sort-old">1화부터</button>
+                </div>
+            </div>
+            <div class="episode-item" th:attr="isFree=${episode.isFree}, isPurchased=${episode.isPurchased}" th:each="episode, iter : ${episodes.episodeList}">
+                <img alt="" class="episode-thumbnail" th:src="${episode.thumbnailUrl}">
+                <div class="episode-content">
+                    <button class="episode-title" th:onclick="'viewEpisode(' + ${episode.episodeId} + ')'" th:text="${episode.title}">회차 제목</button>
+                    <span class="episode-published-at" th:text="${#dates.format(episode.publishedAt, 'yyyy.MM.dd HH:mm:ss')}">연재 시간</span>
+                    <span class="episode-is-free" th:if="${episode.isFree}">무료</span>
+                    <span class="episode-is-free" th:if="${!episode.isFree && !episode.isPurchased}">유료</span>
+                    <span class="episode-is-free" th:if="${!episode.isFree && episode.isPurchased}">소장</span>
+                </div>
+                <div class="episode-feature">
+                    <div class="episode-view-count">
+                        <span th:text="|${episode.viewCount} 조회|">조회수</span>
+                    </div>
+                    <div class="episode-like-count">
+                        <img alt="" th:src="@{/img/full_heart.png}">
+                        <span th:text="${episode.likeCount}">좋아요 수</span>
+                    </div>
+                    <div class="episode-comment-count">
+                        <img alt="" th:src="@{/img/comment.png}">
+                        <span th:text="${episode.commentCount}">댓글 수</span>
+                    </div>
+                </div>
+            </div>
+            <div class="episode-show-all">
+                <button class="btn-episode-show-all" id="btn-episode-show-all" th:if="${!episodes.showAll}" th:onclick="showAllEpisodes()">더보기</button>
+                <button class="btn-episode-show-all" id="btn-episode-show-min" th:if="${episodes.showAll}" th:onclick="showMinEpisodes()">줄이기</button>
+            </div>
+        </div>
+    </section>
+
+    <section class="novel-comment">
+        <div class="comment-info">
+            <span th:text="|총 ${novel.commentCount}개|">총 100개</span>
+            <div>
+                <button class="btn-comment-sort-popular" id="btn-comment-sort-popular">인기순</button>
+                <span>|</span>
+                <button class="btn-comment-sort-recent" id="btn-comment-sort-recent">최신순</button>
+            </div>
+        </div>
+        <div class="comment-item" th:each="comment : ${comments.comments}">
+            <img alt="" class="episode-thumbnail" th:src="${comment.profileUrl}">
+            <div class="episode-container">
+                <div class="episode-content-top">
+                    <span class="episode-title" th:text="${comment.nickname}">닉네임</span>
+                    <div class="comment-like">
+                        <img alt="" th:src="@{/img/full_heart.png}">
+                        <span th:text="${comment.likeCount}">추천 수</span>
+                    </div>
+                </div>
+                <span class="episode-content" th:text="${comment.content}">내용</span>
+                <span class="episode-episode" th:text="${comment.episodeTitle}">회차 제목</span>
+                <span class="episode-created-at" th:text="${comment.createdAt}">작성일</span>
+            </div>
+        </div>
+    </section>
+</main>
+<script th:src="@{/js/novel/novel.js}"></script>
+</body>
+</html>

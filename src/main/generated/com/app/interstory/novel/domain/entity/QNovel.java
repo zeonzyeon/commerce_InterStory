@@ -24,6 +24,8 @@ public class QNovel extends EntityPathBase<Novel> {
 
     public final StringPath description = createString("description");
 
+    public final DateTimePath<java.sql.Timestamp> episodeUpdatedAt = createDateTime("episodeUpdatedAt", java.sql.Timestamp.class);
+
     public final NumberPath<Integer> favoriteCount = createNumber("favoriteCount", Integer.class);
 
     public final BooleanPath isFree = createBoolean("isFree");
@@ -33,6 +35,8 @@ public class QNovel extends EntityPathBase<Novel> {
     public final NumberPath<Long> novelId = createNumber("novelId", Long.class);
 
     public final StringPath plan = createString("plan");
+
+    public final DateTimePath<java.sql.Timestamp> publishedAt = createDateTime("publishedAt", java.sql.Timestamp.class);
 
     public final EnumPath<com.app.interstory.novel.domain.enumtypes.NovelStatus> status = createEnum("status", com.app.interstory.novel.domain.enumtypes.NovelStatus.class);
 

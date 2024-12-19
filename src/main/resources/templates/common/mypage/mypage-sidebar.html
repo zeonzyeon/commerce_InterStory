@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<link rel="stylesheet" th:href="@{/css/common/mypage/sidebar.css}">
+<body>
+<div class="sidebar" th:fragment="sidebar">
+    <div class="profile-section">
+        <div class="profile-info">
+            <img alt="프로필 사진" class="profile-picture" th:if="${user.profileUrl}" th:src="${user.profileUrl}"/>
+            <div class="profile-picture" th:unless="${user.profileUrl}"></div>
+            <span class="profile-name">
+                    <span class="nickname" th:text="${user.nickname}">닉네임</span> 님
+                </span>
+        </div>
+    </div>
+    <nav class="sidebar-nav">
+        <a class="menu-item" th:classappend="${currentMenu == 'profile'} ? 'active'" th:href="@{/users/profile}">
+            <i class="fas fa-user"></i>프로필
+        </a>
+        <a class="menu-item" th:classappend="${currentMenu == 'favorites'} ? 'active'"
+           th:href="@{/users/favorite-novels}">
+            <i class="fas fa-heart"></i>관심 작품
+        </a>
+        <a class="menu-item" th:classappend="${currentMenu == 'recent'} ? 'active'" th:href="@{/users/recent-novels}">
+            <i class="fas fa-history"></i>열람 작품
+        </a>
+        <a class="menu-item" th:classappend="${currentMenu == 'points'} ? 'active'" th:href="@{/users/point-history}">
+            <i class="fas fa-coins"></i>포인트 내역
+        </a>
+        <a class="menu-item" th:classappend="${currentMenu == 'coupons'} ? 'active'" th:href="@{/users/my-coupons}">
+            <i class="fas fa-ticket-alt"></i>쿠폰
+        </a>
+        <a class="menu-item" th:classappend="${currentMenu == 'edit'} ? 'active'" th:href="@{/users/edit-profile}">
+            <i class="fas fa-cog"></i>회원 정보 관리
+        </a>
+    </nav>
+</div>
+</body>
+</html>

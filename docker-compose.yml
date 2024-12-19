@@ -1,0 +1,19 @@
+version: '3.8'
+
+services:
+  redis:
+    container_name: interstory-redis
+    image: redis:latest
+    ports:
+      - "6379:6379"
+    restart: always
+    networks:
+      - interstory-network
+
+volumes:
+  redis_data:
+    driver: local
+
+networks:
+  interstory-network:
+    driver: bridge

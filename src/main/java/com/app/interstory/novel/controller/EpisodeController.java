@@ -1,94 +1,36 @@
 package com.app.interstory.novel.controller;
 
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
 
-import com.app.interstory.novel.dto.request.EpisodeRequestDTO;
-import com.app.interstory.novel.dto.response.EpisodeResponseDTO;
+import com.app.interstory.novel.dto.response.EpisodeDetailResponseDto;
 import com.app.interstory.novel.service.EpisodeService;
 
-@RestController
-@RequestMapping("/api/novels/{novelId}/episodes")
+import jakarta.servlet.http.HttpServletRequest;
+import lombok.RequiredArgsConstructor;
+
+@Controller
+@RequestMapping("episodes/")
+@RequiredArgsConstructor
 public class EpisodeController {
 
 	private final EpisodeService episodeService;
 
-	public EpisodeController(EpisodeService episodeService) {
-		this.episodeService = episodeService;
-	}
-
-	// 회차 작성
-	@PostMapping
-	public ResponseEntity<EpisodeResponseDTO> createEpisode(@PathVariable Long novelId,
-		@RequestBody EpisodeRequestDTO requestDTO) {
-		EpisodeResponseDTO responseDTO = episodeService.writeEpisode(novelId, requestDTO);
-		return ResponseEntity.ok(responseDTO);
-	}
-
-	// 회차 수정
-	@PutMapping("/{episodeId}")
-	public ResponseEntity<EpisodeResponseDTO> updateEpisode(
-		@PathVariable Long novelId,
+	@PostMapping("detail/{episodeId}")
+	public String episodeDetail(
 		@PathVariable Long episodeId,
-		@RequestBody EpisodeRequestDTO requestDTO) {
-		EpisodeResponseDTO responseDTO = episodeService.updateEpisode(novelId, episodeId, requestDTO);
-		return ResponseEntity.status(HttpStatus.OK).body(responseDTO);
-	}
-
-	// 회차 상세 조회
-	@GetMapping("/{episodeId}")
-	public ResponseEntity<EpisodeResponseDTO> readEpisode(
-		@PathVariable Long novelId,
-		@PathVariable Long episodeId) {
-		EpisodeResponseDTO responseDTO = episodeService.readEpisode(novelId, episodeId);
-		return ResponseEntity.ok(responseDTO);
-	}
-
-	// 회차 삭제
-	@DeleteMapping("/{episodeId}")
-	public ResponseEntity<String> deleteEpisode(
-		@PathVariable Long novelId,
-		@PathVariable Long episodeId) {
-		episodeService.deleteEpisode(novelId, episodeId);
-		return ResponseEntity.ok("Episode deleted successfully");
-	}
-
-	// 회차 구매
-	@PostMapping("/{episodeId}/purchase")
-	public ResponseEntity<String> purchaseEpisode(
-		@PathVariable Long novelId,
-		@PathVariable Long episodeId,
-		@RequestParam Long userId
+		HttpServletRequest request,
+		Model model
 	) {
-		episodeService.purchaseEpisode(userId, novelId, episodeId);
-		return ResponseEntity.ok("Episode purchased successfully!");
+
+		EpisodeDetailResponseDto episodeDetail = episodeService.viewEpisodeDetail(episodeId, request);
+
+		model.addAttribute("episodeDetail", episodeDetail);
+
+		return "mypage/episodeDetail";
 	}
 
-	// 장바구니 담기
-	@PostMapping("/cart")
-	public ResponseEntity<String> addItemToCart(
-		@RequestParam Long userId,
-		@RequestParam Long episodeId
-	) {
-		String message = episodeService.addItemToCart(userId, episodeId);
-		return ResponseEntity.ok(message);
-	}
-
-	// 회차 추천
-	@PostMapping("/{episodeId}/like")
-	public ResponseEntity<String> likeEpisode(
-		@PathVariable Long episodeId,
-		@RequestParam Long userId) {
-		String result = episodeService.likeEpisode(userId, episodeId);
-		return ResponseEntity.ok(result);
-	}
 }

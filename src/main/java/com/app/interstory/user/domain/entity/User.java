@@ -25,7 +25,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 @Entity
-@Table(name = "users")
+@Table(name = "user")
 @NoArgsConstructor
 @AllArgsConstructor
 @Getter
@@ -87,6 +87,9 @@ public class User {
 	@OneToOne(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
 	private Social social;
 
+	@OneToOne(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+	private Settlement settlement;
+
 	//연관관계 method
 	public void addSocialProvider(Social social) {
 		this.social = social;
@@ -129,5 +132,32 @@ public class User {
 
 	public void active() {
 		this.isActivity = true;
+	}
+
+	//프로필 정보 업데이트
+	public void updateProfile(String filePath, String dirPath) {
+		this.profileRenamedFilename = filePath.substring(filePath.lastIndexOf("/") + 1);
+		this.profileUrl = dirPath + profileRenamedFilename;
+	}
+
+	public void updateNickname(String nickname) {
+		this.nickname = nickname;
+	}
+
+	public void updateIsSubscribe(Boolean isSubscribe) {
+		this.isSubscribe = isSubscribe;
+	}
+
+	public void updateIsAutoPayment(Boolean isAutoPayment) {
+		this.isAutoPayment = isAutoPayment;
+	}
+
+	public void updatePoint(Long point) {
+		this.point = point;
+	}
+
+	public void addSettlement(Settlement settlement) {
+		this.settlement = settlement;
+		settlement.addUser(this);
 	}
 }

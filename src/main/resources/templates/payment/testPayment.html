@@ -23,17 +23,20 @@
 <button id="btn-kakao-third">kakao pay third<i class="fa-solid fa-comment"></i></button>
 <button id="btn-kakao-sequence">kakao pay sequence<i class="fa-solid fa-comment"></i></button>
 <button id="btn-kakao-auto">kakao pay auto<i class="fa-solid fa-comment"></i></button>
-<button id="btn-kakao-inactive">kakao pay inactive<i class="fa-solid fa-comment"></i></button>
+<button id="btn-kakao-inactive-subscription">kakao pay inactive<i class="fa-solid fa-comment"></i></button>
+<button id="btn-kakao-inactive-auto-payment">kakao pay inactive<i class="fa-solid fa-comment"></i></button>
+<button id="btn-kakao-change-payment">kakao pay change payment<i class="fa-solid fa-comment"></i></button>
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.3/jquery.min.js"></script>
 <script>
     $(function () {
         $("#btn-kakao-first").click(function () {
             $.ajax({
-                url: '/api/cash/ready',
+                url: '/api/cash/establish',
                 type: 'post',
                 contentType: 'application/json',
                 data: JSON.stringify({
-                    paymentType: "NORMAL_FIRST"
+                    paymentType: "NORMAL_FIRST",
+                    couponId: 0
                 }),
                 success: function (response) {
                     if (response.next_redirect_pc_url != null)
@@ -48,11 +51,12 @@
         });
         $("#btn-kakao-second").click(function () {
             $.ajax({
-                url: '/api/cash/ready',
+                url: '/api/cash/establish',
                 type: 'post',
                 contentType: 'application/json',
                 data: JSON.stringify({
-                    paymentType: "NORMAL_SECOND"
+                    paymentType: "NORMAL_SECOND",
+                    couponId: 1
                 }),
                 success: function (response) {
                     if (response.next_redirect_pc_url != null)
@@ -67,11 +71,12 @@
         });
         $("#btn-kakao-third").click(function () {
             $.ajax({
-                url: '/api/cash/ready',
+                url: '/api/cash/establish',
                 type: 'post',
                 contentType: 'application/json',
                 data: JSON.stringify({
-                    paymentType: "NORMAL_THIRD"
+                    paymentType: "NORMAL_THIRD",
+                    couponId: 1
                 }),
                 success: function (response) {
                     if (response.next_redirect_pc_url != null)
@@ -86,11 +91,12 @@
         });
         $("#btn-kakao-sequence").click(function () {
             $.ajax({
-                url: '/api/cash/ready',
+                url: '/api/cash/establish',
                 type: 'post',
                 contentType: 'application/json',
                 data: JSON.stringify({
-                    paymentType: "SEQUENCE"
+                    paymentType: "SEQUENCE",
+                    couponId: 0
                 }),
                 success: function (response) {
                     if (response.next_redirect_pc_url != null)
@@ -105,11 +111,12 @@
         });
         $("#btn-kakao-auto").click(function () {
             $.ajax({
-                url: '/api/cash/ready',
+                url: '/api/cash/establish',
                 type: 'post',
                 contentType: 'application/json',
                 data: JSON.stringify({
-                    paymentType: "AUTO"
+                    paymentType: "AUTO",
+                    couponId: 0
                 }),
                 success: function (response) {
                     if (response.next_redirect_pc_url != null)
@@ -122,13 +129,46 @@
                 }
             });
         });
-        $("#btn-kakao-inactive").click(function () {
+        $("#btn-kakao-inactive-subscription").click(function () {
             $.ajax({
-                url: '/api/cash/inactive',
+                url: '/api/cash/inactive-subscription',
                 type: 'post',
                 contentType: 'application/json',
                 success: function (response) {
                     console.log(response);
+                },
+                error: function (xhr, err, status) {
+                    alert(err + "이(가) 발생했습니다: " + status);
+                }
+            });
+        });
+        $("#btn-kakao-inactive-auto-payment").click(function () {
+            $.ajax({
+                url: '/api/cash/inactive-auto-payment',
+                type: 'post',
+                contentType: 'application/json',
+                success: function (response) {
+                    console.log(response);
+                },
+                error: function (xhr, err, status) {
+                    alert(err + "이(가) 발생했습니다: " + status);
+                }
+            });
+        });
+        $("#btn-kakao-change-payment").click(function () {
+            $.ajax({
+                url: '/api/cash/establish',
+                type: 'post',
+                contentType: 'application/json',
+                data: JSON.stringify({
+                    paymentType: "CHANGE_PAYMENT",
+                    couponId: 0
+                }),
+                success: function (response) {
+                    if (response.next_redirect_pc_url != null)
+                        location.href = response.next_redirect_pc_url;
+                    else
+                        console.log(response);
                 },
                 error: function (xhr, err, status) {
                     alert(err + "이(가) 발생했습니다: " + status);

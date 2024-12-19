@@ -98,4 +98,16 @@ public class AdminRestController {
 		adminService.deleteCoupon(couponId, userDetails);
 		return ResponseEntity.noContent().build();
 	}
+
+	@PostMapping("/plan/{novelId}/approval")
+	public ResponseEntity<Void> handlePlanApproval(@PathVariable Long novelId, @RequestParam Boolean approve, @AuthenticationPrincipal CustomUserDetails userDetails) {
+		adminService.handlePlanApproval(novelId, approve, userDetails);
+		return ResponseEntity.ok().build();
+	}
+
+	@PostMapping("/novel/{novelId}/restore")
+	public ResponseEntity<Void> restoreDeletedNovel(@PathVariable Long novelId, @AuthenticationPrincipal CustomUserDetails userDetails) {
+		adminService.restoreDeletedNovel(novelId, userDetails);
+		return ResponseEntity.ok().build();
+	}
 }

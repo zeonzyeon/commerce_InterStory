@@ -1,5 +1,9 @@
 package com.app.interstory.payment.controller;
 
+import java.net.URI;
+
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -9,7 +13,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.app.interstory.config.globalExeption.customException.PaymentException;
 import com.app.interstory.payment.domain.enumtypes.PaymentType;
 import com.app.interstory.payment.dto.request.PaymentRequestDTO;
 import com.app.interstory.payment.dto.response.PaymentAproveResponseDTO;
@@ -26,46 +29,58 @@ import lombok.RequiredArgsConstructor;
 public class KakaoRestController {
 	private final KakaoService kakaoService;
 
-	@PostMapping("/ready")
-	public ResponseEntity<PaymentResponseDTO> readyPayment(@AuthenticationPrincipal CustomUserDetails userDetails, @RequestBody PaymentRequestDTO paymentRequestDTO) {
+	@PostMapping("/establish")
+	public ResponseEntity<PaymentResponseDTO> establishPayment(@AuthenticationPrincipal CustomUserDetails userDetails, @RequestBody PaymentRequestDTO paymentRequestDTO) {
 		Long userId = userDetails.getUser().getUserId();
+		Long couponId = paymentRequestDTO.getCouponId();
 
-		if (paymentRequestDTO.getPaymentType() == PaymentType.NORMAL_FIRST) {
-			return ResponseEntity.ok(kakaoService.kakaoPayReady(userId, PaymentType.NORMAL_FIRST));
-		} else if (paymentRequestDTO.getPaymentType() == PaymentType.NORMAL_SECOND) {
-			return ResponseEntity.ok(kakaoService.kakaoPayReady(userId, PaymentType.NORMAL_SECOND));
-		} else if (paymentRequestDTO.getPaymentType() == PaymentType.NORMAL_THIRD) {
-			return ResponseEntity.ok(kakaoService.kakaoPayReady(userId, PaymentType.NORMAL_THIRD));
-		} else if (kakaoService.checkSid(userId)) {
-			if (paymentRequestDTO.getPaymentType() == PaymentType.SEQUENCE)
-				return ResponseEntity.ok(kakaoService.kakaoPayPayment(userId, PaymentType.SEQUENCE));
-			else
-				return ResponseEntity.ok(kakaoService.kakaoPayPayment(userId, PaymentType.AUTO));
-		} else {
-			if (paymentRequestDTO.getPaymentType() == PaymentType.SEQUENCE)
-				return ResponseEntity.ok(kakaoService.kakaoPayReady(userId, PaymentType.SEQUENCE));
-			else
-				return ResponseEntity.ok(kakaoService.kakaoPayReady(userId, PaymentType.AUTO));
+		PaymentType paymentType = paymentRequestDTO.getPaymentType();
+		switch (paymentType) {
+			case NORMAL_FIRST:
+			case NORMAL_SECOND:
+			case NORMAL_THIRD:
+			case NORMAL_FOURTH:
+			case NORMAL_FIFTH:
+				return ResponseEntity.ok(kakaoService.kakaoPayReady(userId, paymentRequestDTO.getPaymentType(), couponId));
+			case CHANGE_PAYMENT:
+				return ResponseEntity.ok(kakaoService.kakaoPayChangePayment(userId));
+			default:
+				if (kakaoService.checkSid(userId)) {
+					return ResponseEntity.ok(kakaoService.kakaoPayPayment(userId, paymentType));
+				} else {
+					return ResponseEntity.ok(kakaoService.kakaoPayReady(userId, paymentType, couponId));
+				}
 		}
 	}
 
-	@GetMapping("/success")
-	public ResponseEntity<PaymentAproveResponseDTO> afterPayment(@AuthenticationPrincipal CustomUserDetails userDetails, @RequestParam("pg_token") String pgToken) {
-		return ResponseEntity.ok(kakaoService.kakaoPayApprove(userDetails.getUser().getUserId(), pgToken));
+	@GetMapping("/request")
+	public ResponseEntity<PaymentAproveResponseDTO> requestPayment(@AuthenticationPrincipal CustomUserDetails userDetails, @RequestParam("pg_token") String pgToken) {
+		PaymentAproveResponseDTO result = kakaoService.kakaoPayApprove(userDetails.getUser().getUserId(), pgToken);
+
+		String redirectUrl = "/";
+		HttpHeaders headers = new HttpHeaders();
+		headers.setLocation(URI.create(redirectUrl));
+
+		return new ResponseEntity<>(result, headers, HttpStatus.SEE_OTHER);
 	}
 
 	@GetMapping("/cancel")
-	public void cancelPayment() {
-		throw new PaymentException("결제가 취소되었습니다.");
+	public ResponseEntity<String> cancelPayment() {
+		return ResponseEntity.ok(kakaoService.kakaoPayCancel());
 	}
 
 	@GetMapping("/fail")
-	public void failPayment() {
-		throw new PaymentException("결제에 실패하였습니다.");
+	public ResponseEntity<String> failPayment() {
+		return ResponseEntity.ok(kakaoService.kakaoPayFail());
 	}
 
-	@PostMapping("/inactive")
-	public ResponseEntity<PaymentInactiveResponseDTO> inactivePayment(@AuthenticationPrincipal CustomUserDetails userDetails) {
-		return ResponseEntity.ok(kakaoService.kakaoPayInactive(userDetails.getUser().getUserId()));
+	@PostMapping("/inactive-subscription")
+	public ResponseEntity<PaymentInactiveResponseDTO> inactiveSubscription(@AuthenticationPrincipal CustomUserDetails userDetails) {
+		return ResponseEntity.ok(kakaoService.kakaoPayInactiveSubscription(userDetails.getUser().getUserId()));
+	}
+
+	@PostMapping("/inactive-auto-payment")
+	public ResponseEntity<PaymentInactiveResponseDTO> inactiveAutoPayment(@AuthenticationPrincipal CustomUserDetails userDetails) {
+		return ResponseEntity.ok(kakaoService.kakaoPayInactiveAutoPayment(userDetails.getUser().getUserId()));
 	}
 }

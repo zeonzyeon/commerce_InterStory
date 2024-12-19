@@ -1,5 +1,6 @@
 package com.app.interstory.user.service;
 
+import java.sql.Timestamp;
 import java.util.List;
 import java.util.Map;
 
@@ -31,7 +32,6 @@ import com.app.interstory.user.domain.entity.UserCoupon;
 import com.app.interstory.user.dto.request.AccountRequestDTO;
 import com.app.interstory.user.dto.request.UpdateUserRequestDTO;
 import com.app.interstory.user.dto.response.AccountResponseDTO;
-import com.app.interstory.user.dto.response.CouponResponseDTO;
 import com.app.interstory.user.dto.response.FavoriteNovelResponseDTO;
 import com.app.interstory.user.dto.response.MyCommentResponseDTO;
 import com.app.interstory.user.dto.response.MyNovelResponseDTO;
@@ -103,7 +103,8 @@ public class MypageService {
 	public Page<FavoriteNovelResponseDTO> getFavoriteNovels(CustomUserDetails userDetails, Pageable pageable) {
 		Long userId = userDetails.getUser().getUserId();
 
-		Page<FavoriteNovel> favoriteNovelPage = favoriteNovelRepository.findFavoritesSortedByLatestEpisode(userId, pageable);
+		Page<FavoriteNovel> favoriteNovelPage = favoriteNovelRepository.findFavoritesSortedByLatestEpisode(userId,
+			pageable);
 		// 만약 관심작품 선정은 했지만 한번도 열람하지 않았을 경우 EpisodeId는 0으로 처리됨
 
 		return favoriteNovelPage.map(favoriteNovel -> {
@@ -119,7 +120,8 @@ public class MypageService {
 				.map(recentNovel -> recentNovel.getEpisode().getEpisodeId())
 				.orElse(0L);
 
-			Map<String, Object> getLastReadEpisodeNumber = episodeRepository.findRowNumberByNovelIdAndEpisodeId(novel.getNovelId(), lastReadEpisodeId);
+			Map<String, Object> getLastReadEpisodeNumber = episodeRepository.findRowNumberByNovelIdAndEpisodeId(
+				novel.getNovelId(), lastReadEpisodeId);
 
 			int lastReadEpisodeNumber;
 			if (getLastReadEpisodeNumber != null && getLastReadEpisodeNumber.containsKey("row_number")) {
@@ -242,13 +244,14 @@ public class MypageService {
 			Novel novel = myComment.getEpisode().getNovel();
 			Episode episode = myComment.getEpisode();
 
-			Map<String, Object> getEpisodeNumber = episodeRepository.findRowNumberByNovelIdAndEpisodeId(novel.getNovelId(), episode.getEpisodeId());
+			Map<String, Object> getEpisodeNumber = episodeRepository.findRowNumberByNovelIdAndEpisodeId(
+				novel.getNovelId(), episode.getEpisodeId());
 
-			long episodeNumber;
+			int episodeNumber;
 			if (getEpisodeNumber != null && getEpisodeNumber.containsKey("row_number")) {
 				episodeNumber = Integer.parseInt(getEpisodeNumber.get("row_number").toString());
 			} else {
-				episodeNumber = 0L;
+				episodeNumber = 0;
 			}
 
 			return MyCommentResponseDTO.builder()
@@ -318,8 +321,16 @@ public class MypageService {
 
 		Subscribe subscribe = subscribeRepository.findByUser_UserId(userId);
 
+		Timestamp endAt;
+
+		if (subscribe == null) {
+			endAt = null;
+		} else {
+			endAt = subscribe.getEndAt();
+		}
+
 		return SubscriptionResponseDTO.builder()
-			.endAt(subscribe.getEndAt())
+			.endAt(endAt)
 			.build();
 	}
 }

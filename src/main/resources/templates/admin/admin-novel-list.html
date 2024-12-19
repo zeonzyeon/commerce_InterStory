@@ -1,0 +1,527 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta content="width=device-width, initial-scale=1.0" name="viewport">
+    <title>기획서 목록 | InterStory</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, system-ui, Roboto, sans-serif;
+        }
+
+        body {
+            background: #f8f9fa;
+            color: #333;
+        }
+
+        .header {
+            background: #fff;
+            padding: 1rem 2rem;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .header-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 2rem;
+        }
+
+        .logo-area {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            min-width: 150px;
+        }
+
+        .logo-image {
+            width: 32px;
+            height: 32px;
+            object-fit: cover;
+        }
+
+        .logo-text {
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: #111;
+        }
+
+        .search-bar {
+            flex: 1;
+            max-width: 400px;
+            position: relative;
+        }
+
+        .search-bar input {
+            width: 100%;
+            padding: 0.75rem 1rem;
+            border: 1px solid #ddd;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            background: #f8f9fa;
+        }
+
+        .search-bar input:focus {
+            outline: none;
+            border-color: #333;
+            background: #fff;
+        }
+
+        .user-profile {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .user-profile img {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            object-fit: cover;
+        }
+
+        .admin-nav {
+            max-width: 1200px;
+            margin: 2rem auto;
+            padding: 1rem;
+        }
+
+        .notice-menu {
+            padding: 1rem;
+            background: #fff;
+            border-radius: 8px;
+            margin-bottom: 1rem;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+        }
+
+        .menu-items {
+            display: flex;
+            gap: 2rem;
+        }
+
+        .menu-item {
+            text-decoration: none;
+            color: #666;
+            padding: 0.5rem 1rem;
+            border-radius: 4px;
+            transition: all 0.2s;
+        }
+
+        .menu-item:hover {
+            background: #f8f9fa;
+            color: #111;
+        }
+
+        .menu-item.active {
+            color: #111;
+            font-weight: 600;
+        }
+
+        .filter-section {
+            margin-bottom: 1.5rem;
+            background: #fff;
+            padding: 1rem;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+        }
+
+        .filter-row {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        .filter-group {
+            flex: 1;
+        }
+
+        .filter-label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 500;
+            color: #111;
+        }
+
+        .filter-select {
+            width: 100%;
+            padding: 0.75rem;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            background: #fff;
+        }
+
+        .novel-table-container {
+            background: #fff;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+            overflow: hidden;
+        }
+
+        .novel-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .novel-table th,
+        .novel-table td {
+            padding: 1rem;
+            text-align: left;
+            border-bottom: 1px solid #eee;
+        }
+
+        .novel-table th {
+            background: #f8f9fa;
+            font-weight: 600;
+            color: #111;
+        }
+
+        .novel-table tr:hover {
+            background: #f8f9fa;
+        }
+
+        .status-badge {
+            display: inline-block;
+            padding: 0.25rem 0.5rem;
+            border-radius: 4px;
+            font-size: 0.85rem;
+            font-weight: 500;
+        }
+
+        .status-draft {
+            background: #fff3cd;
+            color: #856404;
+        }
+
+        .status-published {
+            background: #d4edda;
+            color: #155724;
+        }
+
+        .status-completed {
+            background: #cce5ff;
+            color: #004085;
+        }
+
+        .status-rejected {
+            background: #f8d7da;
+            color: #721c24;
+        }
+
+        .status-deleted {
+            background: #e2e3e5;
+            color: #383d41;
+        }
+
+        .btn-detail {
+            padding: 0.5rem 1rem;
+            background: #111;
+            color: #fff;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            text-decoration: none;
+            font-size: 0.9rem;
+            transition: all 0.2s;
+        }
+
+        .btn-detail:hover {
+            background: #333;
+        }
+
+        .load-more-btn {
+            display: block;
+            width: 100%;
+            padding: 1rem;
+            background: none;
+            border: none;
+            border-top: 1px solid #eee;
+            cursor: pointer;
+            color: #666;
+            font-size: 0.9rem;
+            transition: all 0.2s;
+        }
+
+        .load-more-btn:hover {
+            background: #f8f9fa;
+            color: #111;
+        }
+
+        @media (max-width: 768px) {
+            .header {
+                padding: 1rem;
+            }
+
+            .search-bar {
+                max-width: 200px;
+            }
+
+            .admin-nav {
+                padding: 1rem;
+            }
+
+            .menu-items {
+                gap: 1rem;
+            }
+
+            .filter-row {
+                flex-direction: column;
+            }
+
+            .filter-group {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+<header class="header">
+    <div class="header-content">
+        <div class="logo-area">
+            <img alt="로고" class="logo-image" th:src="@{/images/logo.png}">
+            <span class="logo-text">InterStory</span>
+        </div>
+        <div class="search-bar">
+            <input placeholder="제목/작가로 검색" type="text">
+        </div>
+        <div class="user-profile">
+            <span th:text="${userNickname}">닉네임</span>
+            <img alt="프로필" src="/images/default-profile.png" th:src="${userProfileImage}">
+        </div>
+    </div>
+</header>
+
+<main class="admin-nav">
+    <div class="notice-menu">
+        <div class="menu-items">
+            <a href="/admin/users" class="menu-item">유저 조회</a>
+            <a href="/admin/novels" class="menu-item active">작품 관리</a>
+            <a href="/admin/coupons" class="menu-item">쿠폰 관리</a>
+            <a href="/admin/notices" class="menu-item">공지사항</a>
+        </div>
+    </div>
+
+    <div class="filter-section">
+        <div class="filter-row">
+            <div class="filter-group">
+                <label class="filter-label">상태</label>
+                <select class="filter-select" id="statusFilter">
+                    <option value="ALL">전체</option>
+                    <option value="DRAFT">심사중</option>
+                    <option value="PUBLISHED">연재중</option>
+                    <option value="COMPLETED">완결</option>
+                    <option value="REJECTED">반려</option>
+                    <option value="DELETED">삭제됨</option>
+                </select>
+            </div>
+            <div class="filter-group">
+                <label class="filter-label">장르</label>
+                <select class="filter-select" id="tagFilter">
+                    <option value="">전체</option>
+                    <option value="DRAMA">드라마</option>
+                    <option value="LIGHT_NOVEL">라이트노벨</option>
+                    <option value="ROMANCE">로맨스</option>
+                    <option value="WUXIA">무협</option>
+                    <option value="SPORTS">스포츠</option>
+                    <option value="ISEKAI">이세계</option>
+                    <option value="MEDIEVAL">중세</option>
+                    <option value="FANTASY">판타지</option>
+                    <option value="HAREM">하렘</option>
+                    <option value="SCIENCE_FICTION">SF</option>
+                </select>
+            </div>
+            <div class="filter-group">
+                <label class="filter-label">정렬</label>
+                <select class="filter-select" id="sortFilter">
+                    <option value="NEW_TO_OLD">최신순</option>
+                    <option value="OLD_TO_NEW">오래된순</option>
+                    <option value="RECOMMENDATION">추천순</option>
+                </select>
+            </div>
+        </div>
+    </div>
+
+    <div class="novel-table-container">
+        <table class="novel-table">
+            <thead>
+            <tr>
+                <th>제목</th>
+                <th>작가</th>
+                <th>장르</th>
+                <th>등록일</th>
+                <th>상태</th>
+                <th>관리</th>
+            </tr>
+            </thead>
+            <tbody id="novelTableBody">
+            <tr th:each="novel : ${novelList}">
+                <td th:text="${novel.title}">소설 제목</td>
+                <td th:text="${novel.author}">작가명</td>
+                <td th:text="${novel.mainTag}">장르</td>
+                <td th:text="${novel.publishedAt}">2024-03-15</td>
+                <td>
+                    <span th:class="'status-badge ' + 'status-' + ${#strings.toLowerCase(novel.status)}"
+                          th:text="${novel.status == 'DRAFT' ? '심사중' :
+                                   novel.status == 'PUBLISHED' ? '연재중' :
+                                   novel.status == 'COMPLETED' ? '완결' :
+                                   novel.status == 'REJECTED' ? '반려' : '삭제됨'}">
+                        상태
+                    </span>
+                </td>
+                <td>
+                    <a class="btn-detail" th:href="@{/admin/novels/{novelId}(novelId=${novel.novelId})}">상세보기</a>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+        <button id="loadMoreBtn" class="load-more-btn">더보기</button>
+    </div>
+</main>
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script th:inline="javascript">
+    $(document).ready(function () {
+        let currentPage = 1;
+        let isLoading = false;
+
+        function loadNovels(page, reset = false) {
+            if (isLoading) return;
+            isLoading = true;
+
+            const status = $('#statusFilter').val();
+            const tag = $('#tagFilter').val();
+            const sort = $('#sortFilter').val();
+            const search = $('.search-bar input').val();
+
+            $.ajax({
+                url: '/api/novels',
+                type: 'GET',
+                data: {
+                    page: page,
+                    status: status === 'ALL' ? null : status,
+                    tag: tag || null,
+                    sort: sort,
+                    search: search || null
+                },
+                success: function (response) {
+                    if (reset) {
+                        $('#novelTableBody').empty();
+                    }
+
+                    appendNovels(response.novels);
+
+                    if (page >= response.totalPages) {
+                        $('#loadMoreBtn').hide();
+                    } else {
+                        $('#loadMoreBtn').show();
+                    }
+                },
+                error: function (error) {
+                    console.error('기획서를 불러오는 중 오류가 발생했습니다:', error);
+                },
+                complete: function () {
+                    isLoading = false;
+                }
+            });
+        }
+
+        function appendNovels(novels) {
+            const tableBody = $('#novelTableBody');
+            novels.forEach(function (novel) {
+                const statusText = getStatusText(novel.status);
+                const statusClass = getStatusClass(novel.status);
+
+                const row = `
+            <tr>
+                <td>${escapeHtml(novel.title)}</td>
+                <td>${escapeHtml(novel.author)}</td>
+                <td>${escapeHtml(novel.mainTag)}</td>
+                <td>${escapeHtml(novel.publishedAt)}</td>
+                <td>
+                    <span class="status-badge ${statusClass}">${statusText}</span>
+                </td>
+                <td>
+                    <a href="/admin/novels/${novel.novelId}" class="btn-detail">상세보기</a>
+                </td>
+            </tr>
+        `;
+                tableBody.append(row);
+            });
+        }
+
+        function getStatusText(status) {
+            switch (status) {
+                case 'DRAFT':
+                    return '심사중';
+                case 'PUBLISHED':
+                    return '연재중';
+                case 'COMPLETED':
+                    return '완결';
+                case 'REJECTED':
+                    return '반려';
+                case 'DELETED':
+                    return '삭제됨';
+                default:
+                    return status;
+            }
+        }
+
+        function getStatusClass(status) {
+            return `status-${status.toLowerCase()}`;
+        }
+
+        function escapeHtml(unsafe) {
+            if (!unsafe) return '';
+            return unsafe
+                .replace(/&/g, "&amp;")
+                .replace(/</g, "&lt;")
+                .replace(/>/g, "&gt;")
+                .replace(/"/g, "&quot;")
+                .replace(/'/g, "&#039;");
+        }
+
+        // 더보기 버튼 클릭 이벤트
+        $('#loadMoreBtn').click(function () {
+            currentPage++;
+            loadNovels(currentPage);
+        });
+
+        // 필터 변경 이벤트
+        $('#statusFilter, #tagFilter, #sortFilter').change(function () {
+            currentPage = 1;
+            loadNovels(currentPage, true);
+        });
+
+        // 검색 이벤트
+        let searchTimeout;
+        $('.search-bar input').on('input', function () {
+            clearTimeout(searchTimeout);
+            searchTimeout = setTimeout(() => {
+                currentPage = 1;
+                loadNovels(currentPage, true);
+            }, 500);
+        });
+
+        // 초기 필터 상태 설정
+        const urlParams = new URLSearchParams(window.location.search);
+        const initialStatus = urlParams.get('status') || 'ALL';
+        const initialTag = urlParams.get('tag') || '';
+        const initialSort = urlParams.get('sort') || 'NEW_TO_OLD';
+
+        $('#statusFilter').val(initialStatus);
+        $('#tagFilter').val(initialTag);
+        $('#sortFilter').val(initialSort);
+
+        // 페이지 로드시 기획서 목록 초기화
+        loadNovels(currentPage, true);
+    });
+</script>
+</body>
+</html>
