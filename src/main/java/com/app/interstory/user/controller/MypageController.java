@@ -65,7 +65,6 @@ public class MypageController {
 		@AuthenticationPrincipal CustomUserDetails userDetails,
 		Model model
 	) {
-
 		UserResponseDTO currentUser = userService.getCurrentUser(userDetails.getUser().getUserId());
 		model.addAttribute("user", currentUser);
 		model.addAttribute("currentMenu", "edit");
