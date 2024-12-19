@@ -117,3 +117,13 @@ function closePurchaseModal() {
     document.getElementById('modal-backdrop').style.display = 'none';
     document.getElementById('episode-purchase-modal').style.display = 'none';
 }
+
+function editNovel() {
+    const novelId = document.getElementById('novel-profile').getAttribute('data-novel-id');
+    location.href = '/novels/' + novelId + '/edit';
+}
+
+function writeNovel() {
+    const novelId = document.getElementById('novel-profile').getAttribute('data-novel-id');
+    location.href = '/novels/' + novelId + '/write-episode';
+}
