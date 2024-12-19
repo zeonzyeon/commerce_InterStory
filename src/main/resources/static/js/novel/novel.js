@@ -105,7 +105,7 @@ function openPurchaseModal(episodeId, episodeTitle) {
             type: 'POST',
             success: function (response) {
                 alert(response);
-                location.href = '/episodes/' + episodeId;
+                location.href = '/episodes/detail/' + episodeId;
             },
             error: function () {
             }
