@@ -39,3 +39,7 @@ function registerNewWork() {
     // 신규 작품 등록 페이지로 이동
     window.location.href = "/works/new";
 }
+
+function writeNovel() {
+    location.href = "/novels/write";
+}
