@@ -1,8 +1,8 @@
-<!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
-<link rel="stylesheet" th:href="@{/css/common/mypage/sidebar.css}">
-<body>
+<!--<!DOCTYPE html>-->
+<!--<html xmlns:th="http://www.thymeleaf.org">-->
+<!--<body>-->
 <div class="sidebar" th:fragment="sidebar">
+    <link rel="stylesheet" th:href="@{/css/common/mypage/sidebar.css}">
     <div class="profile-section">
         <div class="profile-info">
             <img alt="프로필 사진" class="profile-picture" th:if="${user.profileUrl}" th:src="${user.profileUrl}"/>
@@ -29,10 +29,16 @@
         <a class="menu-item" th:classappend="${currentMenu == 'coupons'} ? 'active'" th:href="@{/users/my-coupons}">
             <i class="fas fa-ticket-alt"></i>쿠폰
         </a>
+        <a class="menu-item" th:classappend="${currentMenu == 'myNovel'} ? 'active'" th:href="@{/users/my-novel}">
+            <i class="fa fa-book"></i>연재 작품
+        </a>
+        <a class="menu-item" th:classappend="${currentMenu == 'comments'} ? 'active'" th:href="@{/users/my-comment}">
+            <i class="fa fa-comment"></i>내 댓글
+        </a>
         <a class="menu-item" th:classappend="${currentMenu == 'edit'} ? 'active'" th:href="@{/users/edit-profile}">
             <i class="fas fa-cog"></i>회원 정보 관리
         </a>
     </nav>
 </div>
-</body>
-</html>
+<!--</body>-->
+<!--</html>-->

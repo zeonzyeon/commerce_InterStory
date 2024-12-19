@@ -254,24 +254,21 @@ public class EpisodeService {
                             .orElseThrow(() -> new RuntimeException("Novel not found"))
                             .getIsFree();
 
-                    return NovelEpisodeResponseDTO.builder()
-                            .episodeId(episodeId)
-                            .novelId(novelId)
-                            .title(episode.getTitle())
-                            .viewCount(episode.getViewCount())
-                            .publishedAt(episode.getPublishedAt())
-                            .thumbnailUrl(episode.getThumbnailUrl())
-                            .likeCount(episode.getLikeCount())
-                            .status(episode.getStatus())
-                            .isPurchased(collectionRepository.existsByUser_UserIdAndEpisode_EpisodeId(userId, episodeId))
-                            .isFree(isFree || episodes.getContent().stream()
-                                    .sorted(Comparator.comparing(Episode::getPublishedAt))
-                                    .toList()
-                                    .indexOf(episode) < 5)
-                            .commentCount(episode.getCommentCount())
-                            .build();
-                })
-                .toList();
+				return NovelEpisodeResponseDTO.builder()
+					.episodeId(episodeId)
+					.novelId(novelId)
+					.title(episode.getTitle())
+					.viewCount(episode.getViewCount())
+					.publishedAt(episode.getPublishedAt())
+					.thumbnailUrl(episode.getThumbnailUrl())
+					.likeCount(episode.getLikeCount())
+					.status(episode.getStatus())
+					.isPurchased(collectionRepository.existsByUser_UserIdAndEpisode_EpisodeId(userId, episodeId))
+					.isFree(isFree || episode.getEpisodeNumber() < 5)
+					.commentCount(episode.getCommentCount())
+					.build();
+			})
+			.toList();
 
         return EpisodeListResponseDTO.builder()
                 .episodeList(episodeDTOs)

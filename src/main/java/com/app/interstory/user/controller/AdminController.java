@@ -28,7 +28,7 @@ public class AdminController {
 
 	@GetMapping("/notices")
 	public String getNoticeList(
-		@RequestParam(defaultValue = "1") Integer page,
+		@RequestParam(defaultValue = "1", name = "page") Integer page,
 		@AuthenticationPrincipal CustomUserDetails userDetails,
 		Model model) {
 
@@ -50,7 +50,7 @@ public class AdminController {
 
 	// 공지사항 상세 페이지
 	@GetMapping("/notices/{noticeId}")
-	public String getNoticeDetail(@PathVariable Long noticeId, Model model, @AuthenticationPrincipal CustomUserDetails userDetails) {
+	public String getNoticeDetail(@PathVariable(name = "noticeId") Long noticeId, Model model, @AuthenticationPrincipal CustomUserDetails userDetails) {
 		NoticeResponseDTO notice = adminService.getNoticeDetail(noticeId);
 		model.addAttribute("user", userDetails.getUser());
 		model.addAttribute("notice", notice);
@@ -59,7 +59,7 @@ public class AdminController {
 
 	// 공지사항 수정 페이지
 	@GetMapping("/notices/{noticeId}/edit")
-	public String getNoticeEditPage(@PathVariable Long noticeId, Model model, @AuthenticationPrincipal CustomUserDetails userDetails) {
+	public String getNoticeEditPage(@PathVariable(name = "noticeId") Long noticeId, Model model, @AuthenticationPrincipal CustomUserDetails userDetails) {
 		NoticeResponseDTO notice = adminService.getNoticeDetail(noticeId);
 		model.addAttribute("user", userDetails.getUser());
 		model.addAttribute("notice", notice);
@@ -69,7 +69,7 @@ public class AdminController {
 	// 쿠폰 목록 페이지
 	@GetMapping("/coupons")
 	public String getCouponList(
-		@RequestParam(defaultValue = "1") Integer page,
+		@RequestParam(defaultValue = "1", name = "page") Integer page,
 		@AuthenticationPrincipal CustomUserDetails userDetails,
 		Model model) {
 
@@ -88,7 +88,7 @@ public class AdminController {
 	// 유저 목록 페이지
 	@GetMapping("/users")
 	public String getUserList(
-		@RequestParam(defaultValue = "1") Integer page,
+		@RequestParam(defaultValue = "1", name = "page") Integer page,
 		@AuthenticationPrincipal CustomUserDetails userDetails,
 		Model model) {
 		try {
@@ -106,9 +106,9 @@ public class AdminController {
 	// 유저 검색
 	@GetMapping("/users/search")
 	public String searchUsers(
-		@RequestParam(required = false) String nickname,
-		@RequestParam(required = false) String email,
-		@RequestParam(defaultValue = "1") Integer page,
+		@RequestParam(required = false, name = "nickname") String nickname,
+		@RequestParam(required = false, name = "email") String email,
+		@RequestParam(defaultValue = "1", name = "page") Integer page,
 		@AuthenticationPrincipal CustomUserDetails userDetails,
 		Model model) {
 		try {
@@ -128,8 +128,8 @@ public class AdminController {
 	// 작품 목록 조회
 	@GetMapping("/novels")
 	public String getNovelList(
-		@RequestParam(defaultValue = "1") Integer page,
-		@RequestParam(required = false) String status,
+		@RequestParam(defaultValue = "1", name = "page") Integer page,
+		@RequestParam(required = false, name = "status") String status,
 		Model model,
 		@AuthenticationPrincipal CustomUserDetails userDetails) {
 		try {

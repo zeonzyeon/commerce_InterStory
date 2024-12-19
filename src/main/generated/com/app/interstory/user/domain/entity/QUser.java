@@ -44,6 +44,8 @@ public class QUser extends EntityPathBase<User> {
 
     public final EnumPath<com.app.interstory.user.domain.enumtypes.Roles> role = createEnum("role", com.app.interstory.user.domain.enumtypes.Roles.class);
 
+    public final QSettlement settlement;
+
     public final QSocial social;
 
     public final NumberPath<Long> userId = createNumber("userId", Long.class);
@@ -66,6 +68,7 @@ public class QUser extends EntityPathBase<User> {
 
     public QUser(Class<? extends User> type, PathMetadata metadata, PathInits inits) {
         super(type, metadata, inits);
+        this.settlement = inits.isInitialized("settlement") ? new QSettlement(forProperty("settlement"), inits.get("settlement")) : null;
         this.social = inits.isInitialized("social") ? new QSocial(forProperty("social"), inits.get("social")) : null;
     }
 

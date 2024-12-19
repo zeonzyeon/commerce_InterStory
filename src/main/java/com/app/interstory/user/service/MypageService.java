@@ -206,10 +206,13 @@ public class MypageService {
 				.toList();
 
 			return MyNovelResponseDTO.builder()
+				.novelId(myNovel.getNovelId())
 				.title(myNovel.getTitle())
 				.likeCount(myNovel.getLikeCount())
 				.tags(tags)
 				.thumbnailUrl(myNovel.getThumbnailUrl())
+				.episodeUpdatedAt(myNovel.getEpisodeUpdatedAt())
+				.favoriteCount(myNovel.getFavoriteCount())
 				.build();
 		});
 	}
@@ -322,15 +325,19 @@ public class MypageService {
 		Subscribe subscribe = subscribeRepository.findByUser_UserId(userId);
 
 		Timestamp endAt;
+		Boolean isContinue;
 
 		if (subscribe == null) {
 			endAt = null;
+			isContinue = null;
 		} else {
 			endAt = subscribe.getEndAt();
+			isContinue = subscribe.getIsContinue();
 		}
 
 		return SubscriptionResponseDTO.builder()
 			.endAt(endAt)
+			.isContinue(isContinue)
 			.build();
 	}
 }
