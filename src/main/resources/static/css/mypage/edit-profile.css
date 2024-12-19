@@ -273,8 +273,8 @@ main {
     cursor: not-allowed;
 }
 
-/* 구독 배너 */
-.subscription-banner {
+/* 탈퇴 배너 */
+.withdraw-banner {
     margin-top: 1.5rem;
     background: linear-gradient(to right, #D3D3D3, #696969);
     border-radius: 0.75rem;

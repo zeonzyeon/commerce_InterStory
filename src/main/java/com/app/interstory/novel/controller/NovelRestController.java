@@ -93,7 +93,7 @@ public class NovelRestController {
 		@RequestParam(name = "monetized", required = false) Boolean monetized,
 		@RequestParam(name = "tag", required = false) MainTag tag,
 		@RequestParam(name = "sort", defaultValue = "NEW_TO_OLD") SortType sort,
-		@RequestParam(defaultValue = "1") Integer page
+		@RequestParam(name = "page", defaultValue = "1") Integer page
 	) {
 		NovelListResponseDTO novels = novelService.getNovelList(status, title, author, monetized, tag, sort, page);
 		return ResponseEntity.ok(novels);
