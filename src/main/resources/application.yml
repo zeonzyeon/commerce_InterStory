@@ -84,7 +84,7 @@ spring:
 
   data:
     redis:
-      host: localhost
+      host: interstory-redis
       port: 6379
 
   aop:
