@@ -85,6 +85,28 @@ Interstory는 작가와 독자가 상호작용하며 함께 만들어 나가는 
   <img alt="GitHub Actions" src ="https://img.shields.io/badge/github%20actions-%232671E5.svg?style=for-the-badge&logo=githubactions&logoColor=white"/>
 </div>
 
+
+##  흐름도
+
+
+```mermaid
+
+graph LR
+    Git[GitHub] -->|1. Push| Actions[GitHub Actions]
+    Actions -->|2. Build된 파일 전달/저장| S3[AWS S3]
+    Actions -->|3. 배포 요청| CodeDeploy[AWS CodeDeploy]
+    S3 -->|4. Build된 파일 전달| CodeDeploy
+    CodeDeploy -->|5. 배포| EC2[AWS EC2]
+    
+    subgraph AWS EC2 Instance
+        EC2 -->|scripts/deploy.sh| Spring[Spring Boot App]
+        EC2 -->|appspec.yml| Config[Configuration]
+        Spring --> Redis[(Redis Docker)]
+        Spring --> RDS[(AWS RDS MySQL)]
+    end
+
+```
+
 #### 협업 도구
 
 <div>
@@ -293,4 +315,9 @@ Interstory는 작가와 독자가 상호작용하며 함께 만들어 나가는 
 |------------------------|---------|-------------------------------|----------------------------|
 | **getNovelSuggestion** | GET     | `/{userId}/novels/suggestion` | AI를 사용한 추천                 |
 | **getEpisodeReaction** | POST    | `/ai/{episodeId}/reaction`    | 회차별 댓글 분석 (댓글 5개 이상 사용 가능) |
+
+
+
+
+
 
