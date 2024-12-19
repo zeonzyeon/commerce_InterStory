@@ -107,6 +107,9 @@ Interstory는 작가와 독자가 상호작용하며 함께 만들어 나가는 
 
 <br>
 
+
+<img src="https://github.com/user-attachments/assets/49cf8382-1053-4ab5-bcc4-6fd0a4d6a1cc">
+
 ## 3. 화면 설계서
 
 [InterStory 화면 설계(figma)](https://www.figma.com/design/mXSWpX1p48UCLlsu02EcRi/%ED%99%94%EB%A9%B4-%EC%84%A4%EA%B3%84%EC%84%9C?node-id=0-1&t=YCbEi94CdYIUqlmr-1)
@@ -124,6 +127,14 @@ Interstory는 작가와 독자가 상호작용하며 함께 만들어 나가는 
 | <img src="https://github.com/user-attachments/assets/540f78b7-0557-4cf9-b4ec-8c9a97313405"> <br/> 회차 구매 모달창  | <img src="https://github.com/user-attachments/assets/27d33174-63a1-45f3-bd80-f3754775fc8d"> <br/> 회차 댓글 조회      |
 | <img src="https://github.com/user-attachments/assets/3e8d75f3-ae38-48eb-97ba-e82452c233fa"> <br/> 회차 상세 조회   | <img src="https://github.com/user-attachments/assets/ffe3f433-43d2-4d25-9108-c524da496e7c"> <br/> 회차 수정 (소설)    |
 | <img src="https://github.com/user-attachments/assets/2876b066-731f-4166-b40a-427486d72e27"> <br/> 회차 작성 (소설) |                                                                                                                 |
+
+<img src="https://github.com/user-attachments/assets/a88398f7-d653-4ca2-b383-6948ef12db70">
+
+|                                                                                                          |                                                                                                            |
+|----------------------------------------------------------------------------------------------------------|------------------------------------------------------------------------------------------------------------|
+| <img src="https://github.com/user-attachments/assets/e58772b8-5243-4a2c-8721-cec6feccc7e1"> <br/> 메인 페이지 | <img src="https://github.com/user-attachments/assets/88a1cdad-b70f-41fa-8e94-5f81cd37d30e"> <br/> 마이페이지    |
+| <img src="https://github.com/user-attachments/assets/413dea56-413f-4725-a38a-396bfe940ca3"> <br/> 포인트 내역 | <img src="https://github.com/user-attachments/assets/1b7c54d1-38ce-430c-9a1b-5e5db655d5c0"> <br/> 소설 상세 조회 |
+| <img src="https://github.com/user-attachments/assets/ebaad24c-f58e-4d8e-9b6e-4fabc31df4e0"> <br/> 회차 구매  | <img src="https://github.com/user-attachments/assets/7ef849c8-2692-4204-8e54-c68c07b78fc6"> <br/> 공지사항     |
 
 ## 4. 시스템 구조도
 
