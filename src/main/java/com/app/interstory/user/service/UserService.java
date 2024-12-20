@@ -101,7 +101,7 @@ public class UserService {
         //본인이 아니거나, 관리자가 아니면 에러
         checkIdentity(request, currentUser);
         //s3 이미지 삭제 및 소셜 삭제
-        User withdrawalUser = deleteUserRelatedData(currentUser);
+        User withdrawalUser = deleteUserRelatedData(request.getUserId());
         //회원 탈퇴 설정
         withdrawalUser.withdrawal(request);
 
@@ -111,8 +111,8 @@ public class UserService {
     }
 
     //s3 이미지 삭제 및 소셜 삭제 탈퇴
-    private User deleteUserRelatedData(CustomUserDetails currentUser) {
-        User withdrawalUser = userRepository.findByIdWithSocial(currentUser.getUser().getUserId())
+    private User deleteUserRelatedData(Long userId) {
+        User withdrawalUser = userRepository.findByIdWithSocial(userId)
                 .orElseThrow(() -> new EntityNotFoundException("사용자를 찾을 수 없습니다."));
 
         if (withdrawalUser.getSocial() != null) {
