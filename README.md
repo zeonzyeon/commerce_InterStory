@@ -8,10 +8,9 @@
 - [1.프로젝트 목표](#1-프로젝트-목표)
 - [2.개발 환경 및 개발 일정](#2-개발-환경-및-개발-일정)
 - [3.화면 설계서](#3-화면-설계서)
-- [4.시스템 구조도](#4-시스템-구조도)
-- [5.ERD](#5-ERD)
-- [6.기능 명세서](#6-기능-명세서)
-- [7.API 명세서](#7-api-명세서)
+- [4.ERD](#5-ERD)
+- [5.기능 명세서](#6-기능-명세서)
+- [6.API 명세서](#7-api-명세서)
 
 </div>
 
@@ -142,19 +141,16 @@ graph LR
 | **회차 구매**                                                                                   | **공지사항**                                                                                    | 
 | <img src="https://github.com/user-attachments/assets/ebaad24c-f58e-4d8e-9b6e-4fabc31df4e0"> | <img src="https://github.com/user-attachments/assets/7ef849c8-2692-4204-8e54-c68c07b78fc6"> |
 
-## 4. 시스템 구조도
-
-![image](https://github.com/user-attachments/assets/409ef510-c3ca-47b5-bb63-55e40d434f8f)
 
 <br>
 
-## 5. ERD
+## 4. ERD
 
 ![image](https://github.com/user-attachments/assets/2ae78964-00fc-47ab-9247-539c7c1d93b9)
 
 <br>
 
-## 6. 기능 명세서
+## 5. 기능 명세서
 
 | **기능**          | **상세 기능**            | **설명**                                                       |
 |-----------------|----------------------|--------------------------------------------------------------|
@@ -190,7 +186,7 @@ graph LR
 
 <br>
 
-## 7. API 명세서
+## 6. API 명세서
 
 ### **회원관리 API /api/auth**
 
