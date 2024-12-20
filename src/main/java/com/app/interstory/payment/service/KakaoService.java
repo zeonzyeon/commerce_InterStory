@@ -203,7 +203,7 @@ public class KakaoService {
 			user.updateIsAutoPayment(true);
 
 			user.updatePoint(user.getPoint() + (POINT_AUTO_PRICE.intValue() / 20));
-		} else if (totalAmount == POINT_SEQUENCE_PRICE.intValue()) {
+		} else if (totalAmount == POINT_SEQUENCE_PRICE.intValue() || totalAmount == SUBSCRIBE_ONCE.intValue()) {
 			user.updateIsSubscribe(true);
 
 			Subscribe subscribe = subscribeRepository.findByUser_UserId(userId);
