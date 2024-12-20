@@ -129,9 +129,6 @@ graph LR
 
 <br>
 
-
-<img src="https://github.com/user-attachments/assets/49cf8382-1053-4ab5-bcc4-6fd0a4d6a1cc">
-
 ## 3. 화면 설계서
 
 [InterStory 화면 설계(figma)](https://www.figma.com/design/mXSWpX1p48UCLlsu02EcRi/%ED%99%94%EB%A9%B4-%EC%84%A4%EA%B3%84%EC%84%9C?node-id=0-1&t=YCbEi94CdYIUqlmr-1)
