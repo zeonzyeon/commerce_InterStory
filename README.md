@@ -8,9 +8,9 @@
 - [1.프로젝트 목표](#1-프로젝트-목표)
 - [2.개발 환경 및 개발 일정](#2-개발-환경-및-개발-일정)
 - [3.화면 설계서](#3-화면-설계서)
-- [4.ERD](#5-ERD)
-- [5.기능 명세서](#6-기능-명세서)
-- [6.API 명세서](#7-api-명세서)
+- [4.ERD](#4-ERD)
+- [5.기능 명세서](#5-기능-명세서)
+- [6.API 명세서](#6-api-명세서)
 
 </div>
 
@@ -140,7 +140,6 @@ graph LR
 | <img src="https://github.com/user-attachments/assets/413dea56-413f-4725-a38a-396bfe940ca3"> | <img src="https://github.com/user-attachments/assets/1b7c54d1-38ce-430c-9a1b-5e5db655d5c0"> |
 | **회차 구매**                                                                                   | **공지사항**                                                                                    | 
 | <img src="https://github.com/user-attachments/assets/ebaad24c-f58e-4d8e-9b6e-4fabc31df4e0"> | <img src="https://github.com/user-attachments/assets/7ef849c8-2692-4204-8e54-c68c07b78fc6"> |
-
 
 <br>
 
