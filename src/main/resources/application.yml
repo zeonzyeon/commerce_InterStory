@@ -1,7 +1,7 @@
 spring:
   config:
-    #    import: "/home/ec2-user/app/interstory/.env.properties"
-    import: "classpath:.env.properties"
+    import: "/home/ec2-user/app/interstory/.env.properties"
+    # import: "classpath:.env.properties"
   application:
     name: InterStory
 
